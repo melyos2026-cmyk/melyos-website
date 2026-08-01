@@ -1,16 +1,19 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 
 export default function ComingSoonPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  function accessWebsite() {
+    if (password.trim() === "MelyOS2026") {
+      window.sessionStorage.setItem(
+        "melyos-preview-access",
+        "granted"
+      );
 
-    if (password === "MelyOS2026") {
-      window.location.href = "/";
+      window.location.reload();
       return;
     }
 
@@ -25,10 +28,7 @@ export default function ComingSoonPage() {
         className="absolute inset-0 h-full w-full object-cover object-center"
       />
 
-      <form
-        onSubmit={handleSubmit}
-        className="absolute bottom-[105px] right-[185px] z-10 flex items-center gap-3"
-      >
+      <div className="absolute bottom-[105px] right-[185px] z-20 flex items-center gap-3">
         <input
           type="password"
           value={password}
@@ -36,23 +36,29 @@ export default function ComingSoonPage() {
             setPassword(event.target.value);
             setError("");
           }}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              accessWebsite();
+            }
+          }}
           placeholder="Enter password"
           className="w-44 rounded-xl border border-white/30 bg-[#06182e]/90 px-4 py-3 text-sm text-white shadow-xl outline-none backdrop-blur-md placeholder:text-slate-400 focus:border-[#39d5ee]"
         />
 
         <button
-          type="submit"
-          className="rounded-xl bg-[#08B8D8] px-5 py-3 text-sm font-black text-white shadow-xl transition hover:bg-[#079db9]"
+          type="button"
+          onClick={accessWebsite}
+          className="cursor-pointer rounded-xl bg-[#08B8D8] px-5 py-3 text-sm font-black text-white shadow-xl transition hover:bg-[#079db9]"
         >
           Access Website
         </button>
-      </form>
 
-      {error && (
-        <p className="absolute bottom-[75px] right-[270px] z-10 text-xs font-semibold text-red-300">
-          {error}
-        </p>
-      )}
+        {error && (
+          <p className="absolute left-0 top-full mt-2 text-xs font-semibold text-red-300">
+            {error}
+          </p>
+        )}
+      </div>
     </main>
   );
 }

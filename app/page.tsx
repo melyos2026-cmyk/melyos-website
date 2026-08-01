@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
+import ComingSoonPage from "./coming-soon/page";
 const heroSlides = [
   {
     image: "/hero-interactive-map.png",
@@ -98,6 +98,14 @@ const portalFeatures = [
 export default function Home() {
   const [currentHero, setCurrentHero] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showComingSoon, setShowComingSoon] = useState(true);
+
+  useEffect(() => {
+    const hasAccess =
+      window.sessionStorage.getItem("melyos-preview-access") === "granted";
+
+    setShowComingSoon(!hasAccess);
+  }, []);
 
   useEffect(() => {
     const interval = window.setInterval(() => {
@@ -106,7 +114,9 @@ export default function Home() {
 
     return () => window.clearInterval(interval);
   }, []);
-
+   if (showComingSoon) {
+  return <ComingSoonPage />;
+}
   const currentSlide = heroSlides[currentHero];
 
   return (
@@ -117,7 +127,7 @@ export default function Home() {
       <img
         src="/melyos-logo-transparent.png"
         alt="MelyOS"
-        className="h-16 w-auto object-contain"
+         className="h-30 w-auto"
       />
     </a>
 
