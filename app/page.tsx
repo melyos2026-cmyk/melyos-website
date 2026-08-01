@@ -527,59 +527,112 @@ className={`absolute left-0 top-20 h-[520px] w-full object-cover object-[62%_100
         </div>
       </section>
 
-      <section id="pricing" className="scroll-mt-24 py-16 md:py-20 lg:py-24">
-        <div className="mx-auto max-w-5xl px-5 text-center lg:px-8">
-          <p className="mb-3 font-black uppercase tracking-[0.18em] text-[#08B8D8]">
-            Simple starting point
-          </p>
-          <h2 className="text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
-            Built around your property
-          </h2>
-          <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">
-            Pricing may vary based on property size, required modules,
-            onboarding and custom configuration.
-          </p>
-
-          <div className="mx-auto mt-12 max-w-xl rounded-[32px] border-2 border-cyan-300 bg-white p-8 text-left shadow-2xl">
-            <p className="font-black uppercase tracking-wide text-[#08B8D8]">
-              MelyOS Platform
+      <section
+        id="pricing"
+        className="scroll-mt-24 bg-slate-50 py-16 md:py-20 lg:py-24"
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-5 lg:px-8">
+          <div className="mx-auto mb-12 max-w-3xl text-center">
+            <p className="mb-3 font-black uppercase tracking-[0.18em] text-[#08B8D8]">
+              Flexible pricing
             </p>
 
-            <div className="mt-6 border-b border-slate-200 pb-6">
-              <p className="text-sm font-bold text-slate-500">Starting at</p>
-              <p className="mt-1 text-5xl font-black">
-                $199
-                <span className="text-lg font-bold text-slate-500">/month</span>
+            <h2 className="text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
+              Built around your property
+            </h2>
+
+            <p className="mt-4 text-base leading-7 text-slate-600 md:text-lg md:leading-8">
+              Every property is different. MelyOS combines a customized
+              implementation with an affordable monthly platform.
+            </p>
+          </div>
+
+          <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-2">
+            <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-xl md:p-9">
+              <p className="text-sm font-black uppercase tracking-[0.16em] text-[#08B8D8]">
+                Custom Setup & Implementation
               </p>
-            </div>
 
-            <div className="mt-6 space-y-4">
-              {[
-                "Interactive property management",
-                "Resident and customer accounts",
-                "Billing and payment management",
-                "Maintenance request tracking",
-                "Documents and leases",
-                "Staff accounts and permissions",
-              ].map((item) => (
-                <div key={item} className="flex gap-3 font-semibold">
-                  <span className="text-[#08B8D8]">✓</span>
-                  <span>{item}</span>
-                </div>
-              ))}
-            </div>
+              <h3 className="mt-4 text-3xl font-black text-[#071A33]">
+                Designed for your property
+              </h3>
 
-            <p className="mt-7 rounded-xl bg-slate-50 p-4 text-sm leading-6 text-slate-600">
-Transaction and processing
-              fees may apply.
-            </p>
+              <p className="mt-4 leading-7 text-slate-600">
+                We configure MelyOS around your property, spaces, branding,
+                workflows and operational needs.
+              </p>
 
-            <a
-              href="#demo"
-              className="mt-7 block rounded-xl bg-[#08B8D8] px-7 py-4 text-center font-black text-white transition hover:bg-[#079db9]"
-            >
-              Request Custom Pricing
-            </a>
+              <div className="mt-7 space-y-4">
+                {[
+                  "Custom property website",
+                  "Interactive property map",
+                  "Lots, sites or slips configuration",
+                  "Reservations and resident portal setup",
+                  "Branding and business information",
+                  "Onboarding and launch assistance",
+                ].map((item) => (
+                  <div key={item} className="flex gap-3 font-semibold text-slate-700">
+                    <span className="text-[#08B8D8]">✓</span>
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+
+              <a
+                href="#demo"
+                className="mt-8 block rounded-xl border-2 border-[#08B8D8] px-6 py-4 text-center font-black text-[#079db9] transition hover:bg-cyan-50"
+              >
+                Request a Custom Quote
+              </a>
+            </article>
+
+            <article className="relative rounded-3xl bg-[#071A33] p-7 text-white shadow-2xl transition hover:-translate-y-1 md:p-9">
+              <span className="absolute right-6 top-6 rounded-full bg-[#08B8D8] px-3 py-1 text-xs font-black uppercase tracking-wide">
+                Platform
+              </span>
+
+              <p className="text-sm font-black uppercase tracking-[0.16em] text-cyan-300">
+                MelyOS Platform
+              </p>
+
+              <div className="mt-5 flex items-end gap-2">
+                <span className="text-5xl font-black">$199</span>
+                <span className="pb-2 font-bold text-slate-300">/month</span>
+              </div>
+
+              <p className="mt-4 leading-7 text-slate-300">
+                Ongoing access to the tools you need to manage your property
+                from one connected platform.
+              </p>
+
+              <div className="mt-7 space-y-4">
+                {[
+                  "Interactive map management",
+                  "Reservations and resident accounts",
+                  "Payments and billing",
+                  "Maintenance request tracking",
+                  "Documents and leases",
+                  "Staff accounts and permissions",
+                  "Platform updates and support",
+                ].map((item) => (
+                  <div key={item} className="flex gap-3 font-semibold text-slate-100">
+                    <span className="text-[#39d5ee]">✓</span>
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+
+              <a
+                href="#demo"
+                className="mt-8 block rounded-xl bg-[#08B8D8] px-6 py-4 text-center font-black text-white transition hover:bg-[#079db9]"
+              >
+                Book a Demo
+              </a>
+
+              <p className="mt-4 text-center text-xs text-slate-400">
+                Transaction and processing fees may apply.
+              </p>
+            </article>
           </div>
         </div>
       </section>
