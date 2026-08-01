@@ -237,7 +237,7 @@ export default function Home() {
             src={slide.image}
             alt=""
             aria-hidden="true"
-className={`absolute inset-0 h-full w-full object-cover object-[62%_center] transition-opacity md:object-center duration-1000 ${
+className={`absolute inset-0 h-full w-full object-cover object-[62%_88%] transition-opacity md:object-center duration-1000 ${
   index === currentHero ? "opacity-100" : "opacity-0"
 }`}
           />
