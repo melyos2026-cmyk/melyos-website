@@ -122,12 +122,12 @@ export default function Home() {
   return (
     <main className="min-h-screen overflow-x-hidden bg-white text-[#071A33]">
     <header className="fixed top-0 z-50 w-full border-b border-slate-200/70 bg-white/95 shadow-sm backdrop-blur-xl">
-  <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-5 md:h-24 lg:px-8">
+  <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-5 lg:px-8">
     <a href="#home" aria-label="MelyOS home" className="flex items-center">
       <img
         src="/melyos-logo-transparent.png"
         alt="MelyOS"
-         className="h-14 w-auto sm:h-16 md:h-20 lg:h-[120px]"
+         className="h-30 w-auto"
       />
     </a>
 
@@ -229,7 +229,7 @@ export default function Home() {
 
       <section
         id="home"
-        className="relative flex min-h-[680px] items-center overflow-hidden pt-20 md:min-h-[720px] md:pt-24 lg:min-h-[760px]"
+        className="relative flex min-h-[760px] items-center overflow-hidden pt-20"
       >
         {heroSlides.map((slide, index) => (
           <img
@@ -237,18 +237,18 @@ export default function Home() {
             src={slide.image}
             alt=""
             aria-hidden="true"
-className={`absolute inset-0 h-full w-full object-cover object-[62%_center] transition-opacity md:object-center duration-1000 ${
+className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-1000 ${
   index === currentHero ? "opacity-100" : "opacity-0"
 }`}
           />
         ))}
 
-        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-white/10 md:via-white/60 lg:via-white/45 lg:to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/45 to-transparent" />
        <div className="absolute inset-0 bg-gradient-to-t from-white/10 via-transparent to-transparent" />
 
-        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-16 sm:px-5 md:py-20 lg:px-8 lg:py-24">
-          <div className="max-w-lg md:max-w-xl lg:max-w-2xl">
-            <div className="mb-4 inline-flex items-center gap-2 md:mb-6 rounded-full border border-cyan-200 bg-white/85 px-4 py-2 text-xs font-black tracking-[0.18em] text-[#079db9] shadow-sm backdrop-blur">
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-5 py-24 lg:px-8">
+          <div className="max-w-2xl">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-200 bg-white/85 px-4 py-2 text-xs font-black tracking-[0.18em] text-[#079db9] shadow-sm backdrop-blur">
               <span className="h-2 w-2 rounded-full bg-[#08B8D8]" />
               {currentSlide.label}
             </div>
@@ -264,30 +264,30 @@ className={`absolute inset-0 h-full w-full object-cover object-[62%_center] tran
               {currentSlide.description}
             </p>
 
-            <div className="mt-7 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:gap-4">
+            <div className="mt-9 flex flex-col gap-4 sm:flex-row">
               <a
                 href="#demo"
-                className="w-full rounded-xl bg-[#08B8D8] px-6 py-3.5 text-center sm:w-auto sm:px-8 sm:py-4 font-black text-white shadow-xl shadow-cyan-500/20 transition hover:-translate-y-1 hover:bg-[#079db9]"
+                className="rounded-xl bg-[#08B8D8] px-8 py-4 text-center font-black text-white shadow-xl shadow-cyan-500/20 transition hover:-translate-y-1 hover:bg-[#079db9]"
               >
                 Book a Demo
               </a>
 
               <a
                 href="#platform-preview"
-                className="w-full rounded-xl border border-slate-200 bg-white/90 px-6 py-3.5 text-center sm:w-auto sm:px-8 sm:py-4 font-black text-[#071A33] shadow-xl transition hover:-translate-y-1 hover:border-cyan-300"
+                className="rounded-xl border border-slate-200 bg-white/90 px-8 py-4 text-center font-black text-[#071A33] shadow-xl transition hover:-translate-y-1 hover:border-cyan-300"
               >
                 Explore the Platform
               </a>
             </div>
 
-            <div className="mt-7 flex flex-wrap gap-x-4 gap-y-2 text-xs sm:mt-10 sm:gap-x-7 sm:gap-y-3 sm:text-sm font-bold text-slate-600">
+            <div className="mt-10 flex flex-wrap gap-x-7 gap-y-3 text-sm font-bold text-slate-600">
               <span>✓ Interactive maps</span>
               <span>✓ Resident portal</span>
               <span>✓ Payments and billing</span>
             </div>
           </div>
 
-          <div className="absolute bottom-6 left-4 flex gap-2 sm:left-5 md:bottom-10 lg:left-8">
+          <div className="absolute bottom-10 left-5 flex gap-2 lg:left-8">
             {heroSlides.map((slide, index) => (
               <button
                 key={slide.image}
@@ -306,7 +306,7 @@ className={`absolute inset-0 h-full w-full object-cover object-[62%_center] tran
       </section>
 
       <section className="border-y border-slate-100 bg-slate-50">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-4 py-6 text-center sm:px-5 md:grid-cols-4 md:gap-6 md:py-8 lg:px-8">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-5 py-8 text-center md:grid-cols-4 lg:px-8">
           {[
             ["One Platform", "For your entire operation"],
             ["Real-Time", "Property visibility"],
@@ -321,16 +321,16 @@ className={`absolute inset-0 h-full w-full object-cover object-[62%_center] tran
         </div>
       </section>
 
-      <section id="features" className="scroll-mt-24 py-16 md:py-20 lg:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-5 lg:px-8">
-          <div className="mx-auto mb-10 max-w-3xl text-center md:mb-14">
+      <section id="features" className="scroll-mt-24 py-24">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="mx-auto mb-14 max-w-3xl text-center">
             <p className="mb-3 font-black uppercase tracking-[0.18em] text-[#08B8D8]">
               One connected system
             </p>
-            <h2 className="text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
+            <h2 className="text-4xl font-black tracking-tight sm:text-5xl">
               Everything you need to operate your property
             </h2>
-            <p className="mt-4 text-base leading-7 text-slate-600 md:mt-5 md:text-lg md:leading-8">
+            <p className="mt-5 text-lg leading-8 text-slate-600">
               Replace scattered spreadsheets, disconnected tools and manual
               processes with one platform built around your property.
             </p>
@@ -373,7 +373,7 @@ className={`absolute inset-0 h-full w-full object-cover object-[62%_center] tran
             <p className="mb-3 font-black uppercase tracking-[0.18em] text-[#39d5ee]">
               Interactive property management
             </p>
-            <h2 className="text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
+            <h2 className="text-4xl font-black tracking-tight sm:text-5xl">
               See your entire property at a glance
             </h2>
             <p className="mt-6 text-lg leading-8 text-slate-300">
@@ -432,16 +432,16 @@ className={`absolute inset-0 h-full w-full object-cover object-[62%_center] tran
         </div>
       </section>
 
-      <section id="industries" className="scroll-mt-24 py-16 md:py-20 lg:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-5 lg:px-8">
+      <section id="industries" className="scroll-mt-24 py-24">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <div className="mb-14 max-w-3xl">
             <p className="mb-3 font-black uppercase tracking-[0.18em] text-[#08B8D8]">
               Built for your industry
             </p>
-            <h2 className="text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
+            <h2 className="text-4xl font-black tracking-tight sm:text-5xl">
               One platform. Multiple property types.
             </h2>
-            <p className="mt-4 text-base leading-7 text-slate-600 md:mt-5 md:text-lg md:leading-8">
+            <p className="mt-5 text-lg leading-8 text-slate-600">
               MelyOS adapts to the way your property operates, whether you
               manage lots, slips, units, residents or short-term guests.
             </p>
@@ -505,7 +505,7 @@ className={`absolute inset-0 h-full w-full object-cover object-[62%_center] tran
             <p className="mb-3 font-black uppercase tracking-[0.18em] text-[#08B8D8]">
               Resident self-service
             </p>
-            <h2 className="text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
+            <h2 className="text-4xl font-black tracking-tight sm:text-5xl">
               Give residents access without adding more work
             </h2>
             <p className="mt-6 text-lg leading-8 text-slate-600">
@@ -527,12 +527,12 @@ className={`absolute inset-0 h-full w-full object-cover object-[62%_center] tran
         </div>
       </section>
 
-      <section id="pricing" className="scroll-mt-24 py-16 md:py-20 lg:py-24">
+      <section id="pricing" className="scroll-mt-24 py-24">
         <div className="mx-auto max-w-5xl px-5 text-center lg:px-8">
           <p className="mb-3 font-black uppercase tracking-[0.18em] text-[#08B8D8]">
             Simple starting point
           </p>
-          <h2 className="text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
+          <h2 className="text-4xl font-black tracking-tight sm:text-5xl">
             Built around your property
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">
@@ -591,7 +591,7 @@ className={`absolute inset-0 h-full w-full object-cover object-[62%_center] tran
               <p className="mb-3 font-black uppercase tracking-[0.18em] text-[#39d5ee]">
                 Book a personalized demo
               </p>
-              <h2 className="text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
+              <h2 className="text-4xl font-black tracking-tight sm:text-5xl">
                 See how MelyOS can work for your property
               </h2>
               <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">
