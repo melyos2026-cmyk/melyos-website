@@ -243,10 +243,10 @@ className={`absolute inset-0 h-full w-full object-cover object-[62%_center] tran
           />
         ))}
 
-        <div className="absolute left-0 top-20 h-[310px] w-full bg-gradient-to-t from-white/15 via-transparent to-transparent md:inset-0 md:h-full md:bg-gradient-to-r md:from-white/95 md:via-white/60 md:to-transparent lg:via-white/45" />
+        <div className="absolute left-0 top-20 h-[250px] w-full bg-gradient-to-t from-white/15 via-transparent to-transparent md:inset-0 md:h-full md:bg-gradient-to-r md:from-white/95 md:via-white/60 md:to-transparent lg:via-white/45" />
        <div className="hidden md:absolute md:inset-0 md:block md:bg-gradient-to-t md:from-white/10 md:via-transparent md:to-transparent" />
 
-        <div className="relative z-10 mx-auto mt-[310px] w-full max-w-7xl bg-white px-5 py-10 sm:px-6 md:mt-0 md:bg-transparent md:py-20 lg:px-8 lg:py-24">
+        <div className="relative z-10 mx-auto mt-[250px] w-full max-w-7xl bg-white px-5 py-10 sm:px-6 md:mt-0 md:bg-transparent md:py-20 lg:px-8 lg:py-24">
           <div className="max-w-lg md:max-w-xl lg:max-w-2xl">
             <div className="mb-4 inline-flex items-center gap-2 md:mb-6 rounded-full border border-cyan-200 bg-white/85 px-4 py-2 text-xs font-black tracking-[0.18em] text-[#079db9] shadow-sm backdrop-blur">
               <span className="h-2 w-2 rounded-full bg-[#08B8D8]" />
