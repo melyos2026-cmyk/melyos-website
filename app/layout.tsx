@@ -29,7 +29,7 @@ export const metadata = {
     siteName: "MelyOS",
     images: [
       {
-        url: "/opengraph-image.png",
+        url: "/melyos-share-logo.png",
         width: 1200,
         height: 630,
         alt: "MelyOS logo",
@@ -43,7 +43,7 @@ export const metadata = {
     title: "MelyOS | Property Management Platform",
     description:
       "Interactive maps, reservations, payments and property management.",
-    images: ["/opengraph-image.png"],
+    images: ["/melyos-share-logo.png"],
   },
 };
 
