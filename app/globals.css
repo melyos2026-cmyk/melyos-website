@@ -49,3 +49,22 @@ a {
   background: rgba(8, 184, 216, 0.25);
   color: #071a33;
 }
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+}
+
+@media (max-width: 767px) {
+  input,
+  button,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}

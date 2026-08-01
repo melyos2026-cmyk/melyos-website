@@ -25,10 +25,10 @@ export default function ComingSoonPage() {
       <img
         src="/coming-soon-hero.png"
         alt="MelyOS Coming Soon"
-        className="absolute inset-0 h-full w-full object-cover object-[58%_center] sm:object-center"
+        className="absolute inset-0 h-full w-full object-cover object-center"
       />
 
-      <div className="absolute bottom-6 left-1/2 z-20 flex w-[calc(100%-32px)] -translate-x-1/2 flex-col gap-3 rounded-2xl bg-[#06182e]/75 p-4 shadow-2xl backdrop-blur-md sm:bottom-10 sm:w-auto sm:flex-row sm:bg-transparent sm:p-0 sm:backdrop-blur-none lg:bottom-[105px] lg:left-auto lg:right-[185px] lg:translate-x-0">
+      <div className="absolute bottom-[105px] right-[185px] z-20 flex items-center gap-3">
         <input
           type="password"
           value={password}
@@ -42,13 +42,13 @@ export default function ComingSoonPage() {
             }
           }}
           placeholder="Enter password"
-          className="w-full rounded-xl border border-white/30 sm:w-44 bg-[#06182e]/90 px-4 py-3 text-sm text-white shadow-xl outline-none backdrop-blur-md placeholder:text-slate-400 focus:border-[#39d5ee]"
+          className="w-44 rounded-xl border border-white/30 bg-[#06182e]/90 px-4 py-3 text-sm text-white shadow-xl outline-none backdrop-blur-md placeholder:text-slate-400 focus:border-[#39d5ee]"
         />
 
         <button
           type="button"
           onClick={accessWebsite}
-          className="w-full cursor-pointer rounded-xl bg-[#08B8D8] px-5 py-3 sm:w-auto text-sm font-black text-white shadow-xl transition hover:bg-[#079db9]"
+          className="cursor-pointer rounded-xl bg-[#08B8D8] px-5 py-3 text-sm font-black text-white shadow-xl transition hover:bg-[#079db9]"
         >
           Access Website
         </button>
