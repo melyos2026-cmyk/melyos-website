@@ -127,7 +127,7 @@ export default function Home() {
       <img
         src="/melyos-logo-transparent.png"
         alt="MelyOS"
-         className="h-14 w-auto sm:h-16 md:h-20 lg:h-[120px]"
+         className="h-auto w-[115px] origin-left object-contain sm:w-[135px] md:w-[150px] lg:w-[180px]"
       />
     </a>
 
@@ -229,7 +229,7 @@ export default function Home() {
 
       <section
         id="home"
-        className="relative flex min-h-[680px] items-center overflow-hidden pt-20 md:min-h-[720px] md:pt-24 lg:min-h-[760px]"
+        className="relative overflow-hidden pt-20 md:flex md:min-h-[720px] md:items-center md:pt-24 lg:min-h-[760px]"
       >
         {heroSlides.map((slide, index) => (
           <img
@@ -243,10 +243,10 @@ className={`absolute inset-0 h-full w-full object-cover object-[62%_center] tran
           />
         ))}
 
-        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-white/10 md:via-white/60 lg:via-white/45 lg:to-transparent" />
-       <div className="absolute inset-0 bg-gradient-to-t from-white/10 via-transparent to-transparent" />
+        <div className="absolute left-0 top-20 h-[310px] w-full bg-gradient-to-t from-white/15 via-transparent to-transparent md:inset-0 md:h-full md:bg-gradient-to-r md:from-white/95 md:via-white/60 md:to-transparent lg:via-white/45" />
+       <div className="hidden md:absolute md:inset-0 md:block md:bg-gradient-to-t md:from-white/10 md:via-transparent md:to-transparent" />
 
-        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-16 sm:px-5 md:py-20 lg:px-8 lg:py-24">
+        <div className="relative z-10 mx-auto mt-[310px] w-full max-w-7xl bg-white px-5 py-10 sm:px-6 md:mt-0 md:bg-transparent md:py-20 lg:px-8 lg:py-24">
           <div className="max-w-lg md:max-w-xl lg:max-w-2xl">
             <div className="mb-4 inline-flex items-center gap-2 md:mb-6 rounded-full border border-cyan-200 bg-white/85 px-4 py-2 text-xs font-black tracking-[0.18em] text-[#079db9] shadow-sm backdrop-blur">
               <span className="h-2 w-2 rounded-full bg-[#08B8D8]" />
@@ -287,7 +287,7 @@ className={`absolute inset-0 h-full w-full object-cover object-[62%_center] tran
             </div>
           </div>
 
-          <div className="absolute bottom-6 left-4 flex gap-2 sm:left-5 md:bottom-10 lg:left-8">
+          <div className="hidden md:absolute md:bottom-10 md:left-5 md:flex md:gap-2 lg:left-8">
             {heroSlides.map((slide, index) => (
               <button
                 key={slide.image}
