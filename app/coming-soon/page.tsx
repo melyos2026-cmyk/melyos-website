@@ -25,11 +25,21 @@ export default function ComingSoonPage() {
       {/* MOBILE AND TABLET */}
       <div className="flex min-h-screen flex-col md:hidden">
         <div className="w-full bg-[#06182e]">
-          <img
-            src="/coming-soon-hero.png"
-            alt="MelyOS Coming Soon"
-            className="block h-auto w-full object-contain"
-          />
+          <>
+  {/* Mobile */}
+  <img
+    src="/coming-soon-mobile2.png"
+    alt="MelyOS Coming Soon"
+    className="block w-full md:hidden"
+  />
+
+  {/* Desktop */}
+  <img
+    src="/coming-soon-hero.png"
+    alt="MelyOS Coming Soon"
+    className="hidden h-auto w-full object-contain md:block"
+  />
+</>
         </div>
 
         <div className="flex flex-1 items-start justify-center px-4 py-6">
