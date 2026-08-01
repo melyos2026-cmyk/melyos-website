@@ -21,43 +21,93 @@ export default function ComingSoonPage() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#06182e]">
-      <img
-        src="/coming-soon-hero.png"
-        alt="MelyOS Coming Soon"
-        className="absolute inset-0 h-full w-full object-cover object-[58%_center] sm:object-center"
-      />
+    <main className="min-h-screen bg-[#06182e] text-white">
+      {/* MOBILE AND TABLET */}
+      <div className="flex min-h-screen flex-col md:hidden">
+        <div className="w-full bg-[#06182e]">
+          <img
+            src="/coming-soon-hero.png"
+            alt="MelyOS Coming Soon"
+            className="block h-auto w-full object-contain"
+          />
+        </div>
 
-      <div className="absolute bottom-6 left-1/2 z-20 flex w-[calc(100%-32px)] -translate-x-1/2 flex-col gap-3 rounded-2xl bg-[#06182e]/75 p-4 shadow-2xl backdrop-blur-md sm:bottom-10 sm:w-auto sm:flex-row sm:bg-transparent sm:p-0 sm:backdrop-blur-none lg:bottom-[105px] lg:left-auto lg:right-[185px] lg:translate-x-0">
-        <input
-          type="password"
-          value={password}
-          onChange={(event) => {
-            setPassword(event.target.value);
-            setError("");
-          }}
-          onKeyDown={(event) => {
-            if (event.key === "Enter") {
-              accessWebsite();
-            }
-          }}
-          placeholder="Enter password"
-          className="w-full rounded-xl border border-white/30 sm:w-44 bg-[#06182e]/90 px-4 py-3 text-sm text-white shadow-xl outline-none backdrop-blur-md placeholder:text-slate-400 focus:border-[#39d5ee]"
+        <div className="flex flex-1 items-start justify-center px-4 py-6">
+          <div className="w-full max-w-md rounded-3xl border border-white/15 bg-[#081d36] p-5 shadow-2xl">
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => {
+                setPassword(event.target.value);
+                setError("");
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  accessWebsite();
+                }
+              }}
+              placeholder="Enter password"
+              autoComplete="off"
+              className="w-full rounded-2xl border border-white/25 bg-[#06182e] px-5 py-4 text-base text-white outline-none placeholder:text-slate-400 focus:border-[#22c7e5]"
+            />
+
+            <button
+              type="button"
+              onClick={accessWebsite}
+              className="mt-4 w-full rounded-2xl bg-[#08B8D8] px-6 py-4 text-base font-black text-white shadow-xl transition active:scale-[0.98]"
+            >
+              Access Website
+            </button>
+
+            {error && (
+              <p className="mt-3 text-center text-sm font-semibold text-red-300">
+                {error}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* DESKTOP */}
+      <div className="relative hidden min-h-screen overflow-hidden md:block">
+        <img
+          src="/coming-soon-hero.png"
+          alt="MelyOS Coming Soon"
+          className="absolute inset-0 h-full w-full object-cover object-center"
         />
 
-        <button
-          type="button"
-          onClick={accessWebsite}
-          className="w-full cursor-pointer rounded-xl bg-[#08B8D8] px-5 py-3 sm:w-auto text-sm font-black text-white shadow-xl transition hover:bg-[#079db9]"
-        >
-          Access Website
-        </button>
+        <div className="absolute bottom-[105px] right-[185px] z-20 flex items-center gap-3">
+          <input
+            type="password"
+            value={password}
+            onChange={(event) => {
+              setPassword(event.target.value);
+              setError("");
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                accessWebsite();
+              }
+            }}
+            placeholder="Enter password"
+            autoComplete="off"
+            className="w-44 rounded-xl border border-white/30 bg-[#06182e]/90 px-4 py-3 text-sm text-white shadow-xl outline-none backdrop-blur-md placeholder:text-slate-400 focus:border-[#39d5ee]"
+          />
 
-        {error && (
-          <p className="absolute left-0 top-full mt-2 text-xs font-semibold text-red-300">
-            {error}
-          </p>
-        )}
+          <button
+            type="button"
+            onClick={accessWebsite}
+            className="cursor-pointer rounded-xl bg-[#08B8D8] px-5 py-3 text-sm font-black text-white shadow-xl transition hover:bg-[#079db9]"
+          >
+            Access Website
+          </button>
+
+          {error && (
+            <p className="absolute left-0 top-full mt-2 text-xs font-semibold text-red-300">
+              {error}
+            </p>
+          )}
+        </div>
       </div>
     </main>
   );
