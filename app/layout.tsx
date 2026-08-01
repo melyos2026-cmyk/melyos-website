@@ -16,18 +16,15 @@ const geistMono = Geist_Mono({
 export const metadata = {
   metadataBase: new URL("https://melyos.io"),
 
-  title: {
-    default: "MelyOS | Property Management, Reimagined",
-    template: "%s | MelyOS",
-  },
+  title: "MelyOS | Property Management Platform",
 
   description:
-    "Interactive maps, reservations, payments, resident portals and property management tools for RV parks, marinas, campgrounds and communities.",
+    "Interactive maps, reservations, payments and property management for RV parks, marinas, campgrounds and communities.",
 
   openGraph: {
-    title: "MelyOS | Property Management, Reimagined",
+    title: "MelyOS | Property Management Platform",
     description:
-      "Manage interactive maps, reservations, payments, residents and daily operations from one powerful platform.",
+      "Interactive maps, reservations, payments and property management in one powerful platform.",
     url: "https://melyos.io",
     siteName: "MelyOS",
     images: [
@@ -35,18 +32,17 @@ export const metadata = {
         url: "/opengraph-image.png",
         width: 1200,
         height: 630,
-        alt: "MelyOS property management platform",
+        alt: "MelyOS logo",
       },
     ],
-    locale: "en_US",
     type: "website",
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "MelyOS | Property Management, Reimagined",
+    title: "MelyOS | Property Management Platform",
     description:
-      "Interactive maps, reservations, payments and property management in one platform.",
+      "Interactive maps, reservations, payments and property management.",
     images: ["/opengraph-image.png"],
   },
 };
