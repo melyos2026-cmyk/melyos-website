@@ -613,6 +613,7 @@ className={`absolute left-0 top-20 h-[520px] w-full object-cover object-[62%_100
                   "Maintenance request tracking",
                   "Documents and leases",
                   "Staff accounts and permissions",
+                  "Ask Mely — Your 24/7 AI Assistant",
                   "Platform updates and support",
                 ].map((item) => (
                   <div key={item} className="flex gap-3 font-semibold text-slate-100">
