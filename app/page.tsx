@@ -570,7 +570,7 @@ className={`absolute left-0 top-20 h-[520px] w-full object-cover object-[62%_100
             </div>
 
             <p className="mt-7 rounded-xl bg-slate-50 p-4 text-sm leading-6 text-slate-600">
-              Setup and onboarding start at $499. Transaction and processing
+              Additional fees may apply. Transaction and processing
               fees may apply.
             </p>
 
