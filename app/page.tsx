@@ -405,7 +405,7 @@ className={`absolute left-0 top-20 h-[520px] w-full object-cover object-[62%_100
             <div className="absolute -inset-5 rounded-[36px] bg-cyan-400/20 blur-3xl" />
             <div className="relative overflow-hidden rounded-[28px] border border-white/15 bg-white p-3 shadow-2xl">
               <img
-            src="/marina-interactive-map.png"
+            src="/marina-interactive-map-v2.png"
             alt="Interactive marina slip reservation map"
             className="aspect-[4/3] w-full rounded-2xl object-cover"
             />
