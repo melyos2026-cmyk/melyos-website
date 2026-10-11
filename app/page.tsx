@@ -583,9 +583,10 @@ className={`absolute left-0 top-20 h-[520px] w-full object-cover object-[62%_100
                 MelyOS Platform
               </p>
 
-              <div className="mt-5 flex items-end gap-2">
-                <span className="text-5xl font-black">$199</span>
-                <span className="pb-2 font-bold text-slate-300">/month</span>
+              {/* Oct 10 (per Mely): no public pricing — decided Sep 26 to
+                  show "Contact Us for Pricing" instead of a dollar amount. */}
+              <div className="mt-5">
+                <span className="text-4xl font-black">Contact Us for Pricing</span>
               </div>
 
               <p className="mt-4 leading-7 text-slate-300">
