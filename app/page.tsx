@@ -97,6 +97,24 @@ const portalFeatures = [
 export default function Home() {
   const [currentHero, setCurrentHero] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // Oct 20 (per Mely): the demo form now really sends the request to MelyOS.
+  const [demo, setDemo] = useState({ name: "", business: "", email: "", phone: "", propertyType: "", spaces: "" });
+  const [demoState, setDemoState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [demoError, setDemoError] = useState("");
+  async function submitDemo(event: React.FormEvent) {
+    event.preventDefault();
+    setDemoState("sending");
+    setDemoError("");
+    try {
+      const r = await fetch("/api/demo-request", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(demo) });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error || "Something went wrong.");
+      setDemoState("sent");
+    } catch (e: any) {
+      setDemoError(e.message);
+      setDemoState("error");
+    }
+  }
 
   useEffect(() => {
     const interval = window.setInterval(() => {
@@ -645,26 +663,48 @@ className={`absolute left-0 top-20 h-[520px] w-full object-cover object-[62%_100
 
             <form
               className="rounded-3xl bg-white p-6 text-[#071A33] shadow-2xl"
-              onSubmit={(event) => event.preventDefault()}
+              onSubmit={submitDemo}
             >
+              {demoState === "sent" ? (
+                <div className="py-10 text-center">
+                  <p className="text-2xl font-black">Thank you! 🎉</p>
+                  <p className="mt-3 text-slate-600">We received your request. The MelyOS team will contact you soon to schedule your demo.</p>
+                </div>
+              ) : (
               <div className="grid gap-4">
                 <input
                   type="text"
+                  required
+                  value={demo.name}
+                  onChange={(e) => setDemo({ ...demo, name: e.target.value })}
                   placeholder="Full name"
                   className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400"
                 />
                 <input
                   type="text"
+                  value={demo.business}
+                  onChange={(e) => setDemo({ ...demo, business: e.target.value })}
                   placeholder="Business name"
                   className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400"
                 />
                 <input
                   type="email"
+                  required
+                  value={demo.email}
+                  onChange={(e) => setDemo({ ...demo, email: e.target.value })}
                   placeholder="Business email"
                   className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400"
                 />
+                <input
+                  type="tel"
+                  value={demo.phone}
+                  onChange={(e) => setDemo({ ...demo, phone: e.target.value })}
+                  placeholder="Phone (optional)"
+                  className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400"
+                />
                 <select
-                  defaultValue=""
+                  value={demo.propertyType}
+                  onChange={(e) => setDemo({ ...demo, propertyType: e.target.value })}
                   className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none transition focus:border-cyan-400"
                 >
                   <option value="" disabled>
@@ -680,16 +720,21 @@ className={`absolute left-0 top-20 h-[520px] w-full object-cover object-[62%_100
                 </select>
                 <input
                   type="number"
+                  value={demo.spaces}
+                  onChange={(e) => setDemo({ ...demo, spaces: e.target.value })}
                   placeholder="Number of spaces"
                   className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400"
                 />
                 <button
                   type="submit"
-                  className="rounded-xl bg-[#08B8D8] px-6 py-4 font-black text-white transition hover:bg-[#079db9]"
+                  disabled={demoState === "sending"}
+                  className="rounded-xl bg-[#08B8D8] px-6 py-4 font-black text-white transition hover:bg-[#079db9] disabled:opacity-60"
                 >
-                  Request My Demo
+                  {demoState === "sending" ? "Sending…" : "Request My Demo"}
                 </button>
+                {demoState === "error" && <p className="text-center text-sm text-red-600">{demoError}</p>}
               </div>
+              )}
 
               <p className="mt-4 text-center text-xs leading-5 text-slate-500">
                 Submitting this form does not create an account or commit you
