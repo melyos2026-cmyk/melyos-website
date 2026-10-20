@@ -2,26 +2,33 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// Oct 20 (per Mely): Mely chat on melyos.io for future clients. English /
-// Spanish (follows the visitor's browser, with a toggle).
+// Oct 20 (per Mely): Mely chat on melyos.io for future clients.
+// Oct 20 (per Mely): no language button — Mely answers in whatever language the
+// visitor writes. The greeting follows the visitor's browser language.
 
 type Msg = { role: "user" | "assistant"; content: string };
 
 const T = {
-  en: { hi: "Hi! I'm Mely 👋 I can tell you how MelyOS works for your property, or set up a personalized demo. How can I help?", ph: "Type your question…", send: "Send", title: "Ask Mely", sub: "MelyOS assistant", other: "Español", thinking: "Mely is typing…" },
-  es: { hi: "¡Hola! Soy Mely 👋 Te cuento cómo funciona MelyOS para tu propiedad o te agendo una demo personalizada. ¿En qué te ayudo?", ph: "Escribe tu pregunta…", send: "Enviar", title: "Pregúntale a Mely", sub: "Asistente de MelyOS", other: "English", thinking: "Mely está escribiendo…" },
+  en: { hi: "Hi! I'm Mely 👋 I can tell you how MelyOS works for your property, or set up a personalized demo. How can I help?", ph: "Type your question…", send: "Send", title: "Ask Mely", sub: "MelyOS assistant", thinking: "Mely is typing…" },
+  es: { hi: "¡Hola! Soy Mely 👋 Te cuento cómo funciona MelyOS para tu propiedad o te agendo una demo personalizada. ¿En qué te ayudo?", ph: "Escribe tu pregunta…", send: "Enviar", title: "Pregúntale a Mely", sub: "Asistente de MelyOS", thinking: "Mely está escribiendo…" },
+  pt: { hi: "Olá! Sou a Mely 👋 Posso explicar como o MelyOS funciona para sua propriedade ou agendar uma demonstração. Como posso ajudar?", ph: "Escreva sua pergunta…", send: "Enviar", title: "Fale com a Mely", sub: "Assistente MelyOS", thinking: "Mely está digitando…" },
+  fr: { hi: "Bonjour ! Je suis Mely 👋 Je peux vous expliquer comment MelyOS fonctionne pour votre établissement ou organiser une démo. Comment puis-je vous aider ?", ph: "Écrivez votre question…", send: "Envoyer", title: "Parlez à Mely", sub: "Assistante MelyOS", thinking: "Mely écrit…" },
 };
+type Lang = keyof typeof T;
 
 export default function MelyChat() {
   const [open, setOpen] = useState(false);
-  const [lang, setLang] = useState<"en" | "es">("en");
+  const [lang, setLang] = useState<Lang>("en");
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const end = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    try { if (navigator.language?.toLowerCase().startsWith("es")) setLang("es"); } catch {}
+    try {
+      const b = (navigator.language || "").slice(0, 2).toLowerCase();
+      if (b in T) setLang(b as Lang);
+    } catch {}
   }, []);
   useEffect(() => { end.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs, busy, open]);
 
@@ -65,7 +72,6 @@ export default function MelyChat() {
               <div className="text-sm font-bold">{t.title}</div>
               <div className="text-[11px] text-slate-300">{t.sub}</div>
             </div>
-            <button onClick={() => setLang(lang === "en" ? "es" : "en")} className="rounded-full border border-white/30 px-2 py-0.5 text-[11px]">{t.other}</button>
             <button onClick={() => setOpen(false)} aria-label="Close" className="ml-1 text-xl leading-none">×</button>
           </div>
           <div className="flex-1 space-y-2 overflow-y-auto bg-slate-50 p-3">
