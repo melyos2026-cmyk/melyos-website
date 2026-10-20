@@ -53,14 +53,14 @@ export default function MelyChat() {
           aria-label={t.title}
           className="fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full bg-[#071A33] py-2 pl-2 pr-4 text-white shadow-2xl transition hover:scale-105"
         >
-          <img src="/mely-avatar.jpeg" alt="" className="h-10 w-10 rounded-full object-cover" />
+          <img src="/mely-avatar-v2.jpg" alt="" className="h-10 w-10 rounded-full object-cover" />
           <span className="text-sm font-bold">{t.title}</span>
         </button>
       )}
       {open && (
         <div className="fixed bottom-4 right-4 z-50 flex h-[min(560px,calc(100vh-32px))] w-[min(380px,calc(100vw-32px))] flex-col overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-slate-200">
           <div className="flex items-center gap-3 bg-[#071A33] px-4 py-3 text-white">
-            <img src="/mely-avatar.jpeg" alt="" className="h-9 w-9 rounded-full object-cover" />
+            <img src="/mely-avatar-v2.jpg" alt="" className="h-9 w-9 rounded-full object-cover" />
             <div className="flex-1">
               <div className="text-sm font-bold">{t.title}</div>
               <div className="text-[11px] text-slate-300">{t.sub}</div>
