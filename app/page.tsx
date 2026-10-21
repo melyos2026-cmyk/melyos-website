@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { LucideIcon } from "lucide-react";
-import { Map, CalendarCheck, CreditCard, UserRound, PenLine, ShieldCheck, ScanBarcode, MessagesSquare, Wrench, Users, BarChart3, Bot, Caravan, Anchor, Tent, Home as HomeIcon, Warehouse, Landmark, Lock, Banknote, FileCheck2, MapPin, Mail, MessageCircle } from "lucide-react";
+import { Map, CalendarCheck, CreditCard, UserRound, PenLine, ShieldCheck, ScanBarcode, MessagesSquare, Wrench, Users, BarChart3, Bot, Caravan, Anchor, Tent, Home as HomeIcon, Warehouse, Landmark, Lock, Banknote, FileCheck2, MapPin, Mail, MessageCircle, BadgeCheck, Receipt } from "lucide-react";
 
 // Oct 21 (per Mely): melyos.io refreshed with everything MelyOS offers today for
 // RV parks and marinas. Only features that exist; never public prices.
@@ -338,6 +338,30 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Built-in services (per Mely): payment processing, background checks, QuickBooks */}
+      <section id="services" className="scroll-mt-24 bg-slate-50 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="mx-auto mb-12 max-w-3xl text-center">
+            <p className={eyebrow}>Built in, no extra vendors</p>
+            <h2 className={h2}>Payments, screening and accounting included</h2>
+            <p className="mt-5 text-lg leading-8 text-slate-600">The services most properties buy from three different companies are already part of MelyOS.</p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {([
+              [CreditCard, "Payment processing", ["Customers pay rent, reservations and invoices by card, online", "Autopay for monthly rent and slip fees", "Money deposited to your own bank account", "Receipts emailed automatically; refunds tracked in your reports"]],
+              [BadgeCheck, "Background checks", ["Screening ordered right from the online application", "Applicant and adult occupants each get their own check", "Results reviewed in the office before you approve", "Fee collected from the applicant with the application"]],
+              [Receipt, "QuickBooks Online", ["Export for QuickBooks: customers and invoices ready to import", "Payments list to match your bank deposits", "Revenue and sales-tax reports", "Sign in to QuickBooks, or open an account, from MelyOS"]],
+            ] as [LucideIcon, string, string[]][]).map(([Icon, t, list]) => (
+              <article key={t} className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#071A33]"><Icon className="h-6 w-6 text-[#39d5ee]" strokeWidth={1.8} aria-hidden /></div>
+                <h3 className="mt-5 text-xl font-black">{t}</h3>
+                <ul className="mt-4 space-y-2.5">{list.map((i) => <li key={i} className="flex gap-2.5 text-slate-700"><span className="text-[#08B8D8]">✓</span><span>{i}</span></li>)}</ul>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Pricing (no public prices) */}
       <section id="pricing" className="scroll-mt-24 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
@@ -411,6 +435,7 @@ export default function Home() {
           <div className="md:col-span-2">
             <img src="/melyos-logo-transparent.png" alt="MelyOS" className="h-14 w-auto" />
             <p className="mt-4 max-w-md leading-7 text-slate-600">Property management software for RV parks, marinas, campgrounds, communities and storage properties. MelyOS LLC, Kissimmee, Florida.</p>
+            <p className="mt-4 text-sm font-bold text-slate-700">Online payment processing · Background checks · Works with QuickBooks Online</p>
             <p className="mt-3 flex items-center gap-2 text-slate-600"><Mail className="h-4 w-4 text-[#079db9]" aria-hidden /><a className="underline" href="mailto:info@melyos.io">info@melyos.io</a></p>
           </div>
           <div>
