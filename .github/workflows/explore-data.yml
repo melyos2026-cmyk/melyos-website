@@ -1,5 +1,7 @@
 # Oct 21 (per Mely): refresh MelyOS Explore data (marinas, RV parks, campgrounds) from
-# OpenStreetMap and commit it to the branch it runs on. Optional input: states, e.g. "FL,GA".
+# OpenStreetMap and commit it to the branch it runs on. Runs the states in parallel
+# batches; a state that fails is skipped and reported, the rest are saved.
+# Optional input: states, e.g. "FL,GA" (empty = all states).
 name: Explore data
 on:
   workflow_dispatch:
@@ -13,13 +15,48 @@ permissions:
 jobs:
   fetch:
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        batch:
+          - "AL,AK,AZ,AR,CA,CO,CT,DE,DC"
+          - "FL,GA,HI,ID,IL,IN,IA,KS"
+          - "KY,LA,ME,MD,MA,MI,MN,MS"
+          - "MO,MT,NE,NV,NH,NJ,NM,NY"
+          - "NC,ND,OH,OK,OR,PA,RI,SC"
+          - "SD,TN,TX,UT,VT,VA,WA,WV,WI,WY"
     steps:
       - uses: actions/checkout@v4
       - name: Fetch
-        run: python3 scripts/explore_fetch.py "${{ github.event.inputs.states }}"
-      - name: Commit
+        env:
+          BATCH: ${{ strategy.job-index }}
         run: |
+          rm -rf public/explore && mkdir -p public/explore   # upload only what this batch fetched
+          WANT="${{ github.event.inputs.states }}"
+          LIST="${{ matrix.batch }}"
+          if [ -n "$WANT" ]; then LIST=$(python3 -c "import sys;w=set(sys.argv[1].upper().split(','));print(','.join(s for s in sys.argv[2].split(',') if s in w))" "$WANT" "$LIST"); fi
+          if [ -z "$LIST" ]; then echo "nothing in this batch"; mkdir -p public/explore; exit 0; fi
+          python3 scripts/explore_fetch.py "$LIST"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: explore-${{ strategy.job-index }}
+          path: public/explore/
+          if-no-files-found: ignore
+  commit:
+    needs: fetch
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: explore-*
+          path: public/explore/
+          merge-multiple: true
+      - name: Merge and commit
+        run: |
+          python3 scripts/explore_merge.py
           git config user.name "MelyOS Explore bot"
           git config user.email "info@melyos.io"
           git add public/explore

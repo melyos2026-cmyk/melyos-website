@@ -13,13 +13,13 @@ STATES = {
  "SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","WA":"Washington",
  "WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming",
 }
-SERVERS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"]
+SERVERS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"]
 only = [s.strip().upper() for s in (sys.argv[1] if len(sys.argv) > 1 else "").split(",") if s.strip()]
 out_dir = "public/explore"
 os.makedirs(out_dir, exist_ok=True)
 
 def query(st):
-    q = f"""[out:json][timeout:240];
+    q = f"""[out:json][timeout:200];
 area["ISO3166-2"="US-{st}"][admin_level=4]->.a;
 (
   nwr["leisure"="marina"]["name"](area.a);
@@ -45,12 +45,18 @@ def kind(t):
     if t.get("tourism") == "caravan_site": return "r"
     return "c"
 
-index = {}
-if os.path.exists(f"{out_dir}/index.json"):
-    index = json.load(open(f"{out_dir}/index.json"))
+# Oct 21: each batch writes its own index part; a failing state is skipped (and
+# reported) instead of stopping the whole run, so finished states are never lost.
+batch = os.environ.get("BATCH", "")
+index, failed = {}, []
 for st, name in STATES.items():
     if only and st not in only: continue
-    res = query(st)
+    try:
+        res = query(st)
+    except Exception as e:
+        failed.append(st)
+        print(f"::warning title=Explore {st} failed::{str(e)[:200]}", flush=True)
+        continue
     seen, rows = set(), []
     for el in res.get("elements", []):
         t = el.get("tags", {})
@@ -75,4 +81,6 @@ for st, name in STATES.items():
     index[st] = {"name": name, "m": sum(r[0] == "m" for r in rows), "r": sum(r[0] == "r" for r in rows), "c": sum(r[0] == "c" for r in rows)}
     print(st, index[st], flush=True)
     time.sleep(8)
-json.dump(index, open(f"{out_dir}/index.json", "w"), separators=(",", ":"), sort_keys=True)
+part = f"{out_dir}/index-part-{batch or 'all'}.json"
+json.dump(index, open(part, "w"), separators=(",", ":"), sort_keys=True)
+print(f"::notice title=Explore batch {batch or 'all'}::done {len(index)} states; failed: {','.join(failed) or 'none'}", flush=True)
