@@ -44,14 +44,14 @@ export const metadata: Metadata = {
     url: "https://melyos.io",
     siteName: "MelyOS",
     locale: "en_US",
-    images: [{ url: "/melyos-share-logo.png", width: 1200, height: 630, alt: "MelyOS" }],
+    images: [{ url: "/melyos-share.jpg", width: 1200, height: 630, alt: "MelyOS" }],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "MelyOS | RV Park & Marina Management Software",
     description: "A live map of your property, online booking and payments, contracts, screening and an AI assistant.",
-    images: ["/melyos-share-logo.png"],
+    images: ["/melyos-share.jpg"],
   },
   category: "technology",
 };
