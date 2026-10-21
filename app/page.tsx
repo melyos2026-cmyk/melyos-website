@@ -15,7 +15,7 @@ export default function Home() {
 
       {/* Hero */}
       <section id="home" className="relative overflow-hidden bg-[#06182e] pt-20 md:pt-24">
-        <img src="/hero-tablet-2026.jpg" alt="Marina and RV park interactive maps managed with MelyOS on a tablet" className="h-[300px] w-full object-cover object-center sm:h-[380px] md:absolute md:inset-x-0 md:top-24 md:h-[calc(100%-6rem)]" />
+        <img src="/hero-tablet-2026.jpg" alt="Marina and RV park interactive maps managed with MelyOS on a tablet" className="block h-auto w-full md:absolute md:inset-x-0 md:top-24 md:h-[calc(100%-6rem)] md:object-cover md:object-right" />
         <div className="hidden md:absolute md:inset-x-0 md:bottom-0 md:top-24 md:block md:bg-gradient-to-r md:from-[#06182e]/90 md:via-[#06182e]/55 md:to-transparent" />
         <div className="relative z-10 mx-auto max-w-7xl px-5 py-12 md:py-16 lg:px-8 lg:py-20">
           <div className="max-w-xl text-white lg:max-w-2xl">
