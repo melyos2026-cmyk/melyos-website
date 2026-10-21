@@ -15,25 +15,25 @@ export default function Home() {
 
       {/* Hero */}
       <section id="home" className="relative overflow-hidden bg-[#06182e] pt-20 md:pt-24">
-        <img src="/hero-tablet-2026.jpg" alt="Marina and RV park interactive maps managed with MelyOS on a tablet" className="block h-auto w-full md:absolute md:inset-x-0 md:top-24 md:h-[calc(100%-6rem)] md:object-cover md:object-right" />
-        <div className="hidden md:absolute md:inset-x-0 md:bottom-0 md:top-24 md:block md:bg-gradient-to-r md:from-[#06182e]/90 md:via-[#06182e]/55 md:to-transparent" />
-        <div className="relative z-10 mx-auto max-w-7xl px-5 py-12 md:py-16 lg:px-8 lg:py-20">
-          <div className="max-w-xl text-white lg:max-w-2xl">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/40 bg-white/10 px-4 py-2 text-xs font-black tracking-[0.18em] text-cyan-200 backdrop-blur">
+        <img src="/hero-tablet-2026.jpg" alt="Marina and RV park interactive maps managed with MelyOS on a tablet" className="block h-auto w-full" />
+        <div className="hidden xl:absolute xl:inset-x-0 xl:bottom-0 xl:top-24 xl:block xl:bg-gradient-to-r xl:from-[#06182e]/90 xl:via-[#06182e]/45 xl:via-[22%] xl:to-transparent xl:to-[34%]" />
+        <div className="relative z-10 mx-auto max-w-7xl px-5 py-10 md:py-12 lg:px-8 xl:absolute xl:bottom-0 xl:left-0 xl:top-24 xl:flex xl:max-w-none xl:items-center xl:px-12 xl:py-0">
+          <div className="max-w-xl text-white xl:max-w-[22rem]">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-300/40 bg-white/10 px-3 py-1.5 text-[11px] font-black tracking-[0.18em] text-cyan-200 backdrop-blur">
               <span className="h-2 w-2 rounded-full bg-[#39d5ee]" /> RV PARKS · MARINAS · CAMPGROUNDS
             </div>
-            <h1 className="text-4xl font-black leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 className="text-4xl font-black leading-[1.05] tracking-tight lg:text-5xl xl:text-[2.4rem]">
               Run your property.
               <span className="mt-2 block text-[#39d5ee]">Not your day.</span>
             </h1>
-            <p className="mt-6 max-w-lg text-base leading-7 text-slate-200 sm:text-lg sm:leading-8">
-              One platform for reservations, payments, contracts, your customer portal and daily operations, built around a live map of your property and set up for you by our team.
+            <p className="mt-4 max-w-md text-base leading-7 text-slate-200 xl:text-sm xl:leading-6">
+              Reservations, payments, contracts and your customer portal, built around a live map of your property and set up for you.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-4">
-              <a href="/demo" className={`${cta} text-center sm:px-8 sm:py-4`}>Book a Free Demo</a>
-              <a href="/features" className="rounded-xl border border-white/30 bg-white/10 px-7 py-3.5 text-center font-black text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/20 sm:px-8 sm:py-4">Explore the Platform</a>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row xl:mt-5 xl:gap-2.5">
+              <a href="/demo" className={`${cta} whitespace-nowrap text-center xl:px-5 xl:py-3 xl:text-sm`}>Book a Free Demo</a>
+              <a href="/features" className="rounded-xl border border-white/30 bg-white/10 whitespace-nowrap px-6 py-3.5 text-center font-black text-white xl:px-5 xl:py-3 xl:text-sm backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/20">Explore the Platform</a>
             </div>
-            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm font-bold text-slate-200">
+            <div className="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-[13px] font-bold text-slate-200 xl:mt-4 xl:text-xs">
               <span>✓ Your own website & map</span><span>✓ Online payments</span><span>✓ Done-for-you setup</span>
             </div>
           </div>
