@@ -353,7 +353,9 @@ export default function Home() {
               [Receipt, "QuickBooks Online", ["Export for QuickBooks: customers and invoices ready to import", "Payments list to match your bank deposits", "Revenue and sales-tax reports", "Sign in to QuickBooks, or open an account, from MelyOS"]],
             ] as [LucideIcon, string, string[]][]).map(([Icon, t, list]) => (
               <article key={t} className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#071A33]"><Icon className="h-6 w-6 text-[#39d5ee]" strokeWidth={1.8} aria-hidden /></div>
+                {t === "QuickBooks Online"
+                  ? <div className="flex h-12 items-center"><img src="/quickbooks-logo.png" alt="Intuit QuickBooks" className="h-9 w-auto object-contain" /></div>
+                  : <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#071A33]"><Icon className="h-6 w-6 text-[#39d5ee]" strokeWidth={1.8} aria-hidden /></div>}
                 <h3 className="mt-5 text-xl font-black">{t}</h3>
                 <ul className="mt-4 space-y-2.5">{list.map((i) => <li key={i} className="flex gap-2.5 text-slate-700"><span className="text-[#08B8D8]">✓</span><span>{i}</span></li>)}</ul>
               </article>
@@ -433,9 +435,12 @@ export default function Home() {
       <footer className="border-t border-slate-200 bg-slate-50">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-4 lg:px-8">
           <div className="md:col-span-2">
-            <img src="/melyos-logo-transparent.png" alt="MelyOS" className="h-14 w-auto" />
+            <img src="/melyos-logo-trimmed.png" alt="MelyOS" className="h-14 w-auto" />
             <p className="mt-4 max-w-md leading-7 text-slate-600">Property management software for RV parks, marinas, campgrounds, communities and storage properties. MelyOS LLC, Kissimmee, Florida.</p>
-            <p className="mt-4 text-sm font-bold text-slate-700">Online payment processing · Background checks · Works with QuickBooks Online</p>
+            <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm font-bold text-slate-700">
+              <span>Online payment processing · Background checks · Works with</span>
+              <img src="/quickbooks-logo.png" alt="Intuit QuickBooks" className="h-6 w-auto object-contain" />
+            </div>
             <p className="mt-3 flex items-center gap-2 text-slate-600"><Mail className="h-4 w-4 text-[#079db9]" aria-hidden /><a className="underline" href="mailto:info@melyos.io">info@melyos.io</a></p>
           </div>
           <div>
