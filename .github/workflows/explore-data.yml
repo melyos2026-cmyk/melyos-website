@@ -1,0 +1,26 @@
+# Oct 21 (per Mely): refresh MelyOS Explore data (marinas, RV parks, campgrounds) from
+# OpenStreetMap and commit it to the branch it runs on. Optional input: states, e.g. "FL,GA".
+name: Explore data
+on:
+  workflow_dispatch:
+    inputs:
+      states:
+        description: 'Comma-separated state codes (empty = all states)'
+        required: false
+        default: ''
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch
+        run: python3 scripts/explore_fetch.py "${{ github.event.inputs.states }}"
+      - name: Commit
+        run: |
+          git config user.name "MelyOS Explore bot"
+          git config user.email "info@melyos.io"
+          git add public/explore
+          git diff --cached --quiet && echo "no changes" || (git commit -m "Explore data refresh" && git push)
