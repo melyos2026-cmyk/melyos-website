@@ -1,5 +1,6 @@
 import { eyebrow, h2, cta, features, rvParks, marinas, industries, steps, trust, CreditCard, BadgeCheck, Receipt, Caravan, Anchor } from "./data";
 import type { LucideIcon } from "./data";
+import { Check, Plus } from "lucide-react";
 
 export function FeaturesSection() {
   return (
@@ -361,6 +362,62 @@ export function FaqSection({ items }: { items: [string, string][] }) {
               <p className="mt-3 leading-7 text-slate-600">{a}</p>
             </details>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Oct 21 (per Mely): "One plan, everything included" — MelyOS vs. platforms that sell
+// each tool as a separate monthly module. No prices and no competitor names.
+const ONE_PLAN: [string, string][] = [
+  ["Interactive map & occupancy", "Every lot, site or slip, live"],
+  ["Online reservations", "Book and pay 24/7"],
+  ["Contracts & e-signature", "Signed online, invoices created on signing"],
+  ["Billing, autopay & utilities", "Rent, dockage, meter readings, late fees"],
+  ["Customer portal", "Balance, payments, documents, messages"],
+  ["Point of sale & inventory", "Store, propane, barcode scanning"],
+  ["Fuel dock", "Pumps, tank levels, sales"],
+  ["Dry stack launch requests", "From the boater's phone"],
+  ["QuickBooks export & reports", "Revenue, tax, statements"],
+  ["Mely AI assistant", "Answers guests 24/7 in their language"],
+  ["Your own website", "On your domain, with your map"],
+  ["Updates & support", "New features at no extra cost"],
+];
+
+export function OnePlanSection() {
+  return (
+    <section id="one-plan" className="scroll-mt-24 bg-slate-50 py-16 md:py-24">
+      <div className="mx-auto max-w-6xl px-5 lg:px-8">
+        <div className="mx-auto mb-10 max-w-3xl text-center">
+          <p className={eyebrow}>One plan</p>
+          <h2 className={h2}>Everything included. No modules to add.</h2>
+          <p className="mt-5 text-lg leading-8 text-slate-600">Many platforms sell each tool as its own monthly module, so the bill grows every time you need something new. With MelyOS every tool comes in one plan.</p>
+        </div>
+        <p className="mb-4 text-center text-sm font-semibold text-slate-500 sm:hidden">On many other platforms, each of these is an extra monthly module.</p>
+        <div className="overflow-x-auto rounded-3xl border border-slate-200 bg-white shadow-sm">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b border-slate-200">
+                <th className="px-5 py-4 text-sm font-black uppercase tracking-[0.12em] text-slate-500 md:px-7">What you get</th>
+                <th className="bg-[#071A33] px-5 py-4 text-center text-sm font-black uppercase tracking-[0.12em] text-cyan-300">MelyOS</th>
+                <th className="hidden px-5 py-4 text-center text-sm font-black uppercase tracking-[0.12em] text-slate-500 sm:table-cell">Module-based platforms</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ONE_PLAN.map(([t, s]) => (
+                <tr key={t} className="border-b border-slate-100 last:border-0">
+                  <td className="px-5 py-3.5 md:px-7"><p className="font-bold">{t}</p><p className="text-sm text-slate-500">{s}</p></td>
+                  <td className="bg-[#071A33]/[0.04] px-5 py-3.5 text-center"><span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-sm font-bold text-emerald-700"><Check className="h-4 w-4" strokeWidth={2.5} aria-hidden />Included</span></td>
+                  <td className="hidden px-5 py-3.5 text-center sm:table-cell"><span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-500"><Plus className="h-4 w-4" strokeWidth={2.5} aria-hidden />Often an extra module</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="mt-8 flex flex-col items-center gap-3 text-center">
+          <p className="max-w-2xl text-slate-600">One monthly fee, month to month. One setup done by our team. Card and bank processing fees may apply to online payments.</p>
+          <a href="/demo" className={cta}>Get your custom quote</a>
         </div>
       </div>
     </section>
