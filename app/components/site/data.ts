@@ -1,6 +1,6 @@
 // Oct 21 (per Mely): shared content for melyos.io pages. Only features that exist; no prices.
 import type { LucideIcon } from "lucide-react";
-import { Map, CalendarCheck, CreditCard, UserRound, PenLine, ShieldCheck, ScanBarcode, MessagesSquare, Wrench, Users, BarChart3, Bot, Caravan, Anchor, Tent, Home as HomeIcon, Warehouse, Landmark, Lock, Banknote, FileCheck2, MapPin, Mail, MessageCircle, BadgeCheck, Receipt } from "lucide-react";
+import { Fuel, Ship, Target, Wallet, Zap, HelpCircle, Info, LifeBuoy, Building2, Map, CalendarCheck, CreditCard, UserRound, PenLine, ShieldCheck, ScanBarcode, MessagesSquare, Wrench, Users, BarChart3, Bot, Caravan, Anchor, Tent, Home as HomeIcon, Warehouse, Landmark, Lock, Banknote, FileCheck2, MapPin, Mail, MessageCircle, BadgeCheck, Receipt } from "lucide-react";
 export { Map, CalendarCheck, CreditCard, UserRound, PenLine, ShieldCheck, ScanBarcode, MessagesSquare, Wrench, Users, BarChart3, Bot, Caravan, Anchor, Tent, HomeIcon, Warehouse, Landmark, Lock, Banknote, FileCheck2, MapPin, Mail, MessageCircle, BadgeCheck, Receipt };
 export type { LucideIcon };
 export const eyebrow = "mb-3 text-sm font-black uppercase tracking-[0.18em] text-[#08B8D8]";
@@ -17,18 +17,18 @@ export const NAV = [
 ];
 
 export const features = [
-  { icon: Map, title: "Interactive property map", text: "Every lot, site or slip on a real map of your property: open, occupied, reserved or under maintenance, with photo, size and hookups." },
-  { icon: CalendarCheck, title: "Online reservations", text: "Guests pick their exact space and dates and pay online. The calendar blocks double bookings across every channel." },
-  { icon: CreditCard, title: "Payments & billing", text: "Invoices, recurring rent, metered utilities, late-fee schedules and online payments that go straight to your own bank account." },
-  { icon: UserRound, title: "Customer portal", text: "Residents and boat owners see their balance, pay, download documents and send requests from their phone, 24/7." },
-  { icon: PenLine, title: "Contracts & e-signature", text: "Leases and slip agreements signed online, with a signature record, a signed PDF on file and invoices created on signing." },
-  { icon: ShieldCheck, title: "Applications & screening", text: "Online rental applications with background checks, occupants, vehicles and pets, reviewed and approved from the office." },
-  { icon: ScanBarcode, title: "Point of sale", text: "Sell propane, fuel and store items at the counter, with barcode scanning, inventory and low-stock alerts." },
-  { icon: MessagesSquare, title: "Messages & notices", text: "Send a notice to one customer or a whole group. Each one gets a private copy by email and in their account." },
-  { icon: Wrench, title: "Maintenance", text: "Requests with photos, notes and status updates that the resident can follow from the portal." },
-  { icon: Users, title: "Staff, roles & daily close", text: "Logins for every employee with their own permissions, shift open and close, and a drawer count for every shift." },
-  { icon: BarChart3, title: "Reports & accounting", text: "Revenue and tax reports, statements, collections, Export for QuickBooks Online and printable PDFs with your logo." },
-  { icon: Bot, title: "Mely, your AI assistant", text: "Answers your guests 24/7 in their own language on your website, and helps your staff find anything in the system." },
+  { id: "map", icon: Map, title: "Interactive property map", text: "Every lot, site or slip on a real map of your property: open, occupied, reserved or under maintenance, with photo, size and hookups." },
+  { id: "reservations", icon: CalendarCheck, title: "Online reservations", text: "Guests pick their exact space and dates and pay online. The calendar blocks double bookings across every channel." },
+  { id: "payments", icon: CreditCard, title: "Payments & billing", text: "Invoices, recurring rent, metered utilities, late-fee schedules and online payments that go straight to your own bank account." },
+  { id: "portal", icon: UserRound, title: "Customer portal", text: "Residents and boat owners see their balance, pay, download documents and send requests from their phone, 24/7." },
+  { id: "contracts", icon: PenLine, title: "Contracts & e-signature", text: "Leases and slip agreements signed online, with a signature record, a signed PDF on file and invoices created on signing." },
+  { id: "screening", icon: ShieldCheck, title: "Applications & screening", text: "Online rental applications with background checks, occupants, vehicles and pets, reviewed and approved from the office." },
+  { id: "point-of-sale", icon: ScanBarcode, title: "Point of sale", text: "Sell propane, fuel and store items at the counter, with barcode scanning, inventory and low-stock alerts." },
+  { id: "messages", icon: MessagesSquare, title: "Messages & notices", text: "Send a notice to one customer or a whole group. Each one gets a private copy by email and in their account." },
+  { id: "maintenance", icon: Wrench, title: "Maintenance", text: "Requests with photos, notes and status updates that the resident can follow from the portal." },
+  { id: "staff", icon: Users, title: "Staff, roles & daily close", text: "Logins for every employee with their own permissions, shift open and close, and a drawer count for every shift." },
+  { id: "reports", icon: BarChart3, title: "Reports & accounting", text: "Revenue and tax reports, statements, collections, Export for QuickBooks Online and printable PDFs with your logo." },
+  { id: "mely-ai", icon: Bot, title: "Mely, your AI assistant", text: "Answers your guests 24/7 in their own language on your website, and helps your staff find anything in the system." },
 ];
 
 export const rvParks = [
@@ -76,3 +76,53 @@ export const trust: [LucideIcon, string, string][] = [
   [MapPin, "Built in Florida", "MelyOS LLC is based in Kissimmee, FL. Small team, fast answers."],
 ];
 
+
+// Oct 21 (per Mely): Dockwa-style menu for melyos.io. Desktop: drop-downs with a side
+// panel on hover; mobile: sections that open and close inside the ☰ menu.
+export type MenuLink = { href: string; label: string; note?: string; icon?: LucideIcon };
+export type MenuGroup = { label: string; links: MenuLink[] };
+export type MenuItem = { label: string; href?: string; groups?: MenuGroup[]; links?: MenuLink[]; wide?: boolean };
+
+export const MENU: MenuItem[] = [
+  { label: "Platform", href: "/features" },
+  { label: "Who we serve", groups: [
+    { label: "By property type", links: [
+      { href: "/rv-park-software", label: "RV Parks & Resorts", icon: Caravan },
+      { href: "/marina-software", label: "Marinas", icon: Anchor },
+      { href: "/campground-software", label: "Campgrounds", icon: Tent },
+      { href: "/features#industries", label: "Mobile Home Communities", icon: HomeIcon },
+      { href: "/marina-software", label: "Municipal Marinas", icon: Landmark },
+      { href: "/features#industries", label: "Multi-property Owners", icon: Building2 },
+    ] },
+    { label: "By goal", links: [
+      { href: "/features#reservations", label: "Fill more spaces", icon: Target },
+      { href: "/features#payments", label: "Get paid faster", icon: Wallet },
+      { href: "/features#staff", label: "Simplify operations", icon: Zap },
+      { href: "/features#screening", label: "Reduce risk", icon: ShieldCheck },
+    ] },
+  ] },
+  { label: "Solutions", wide: true, links: [
+    { href: "/features#map", label: "Interactive Map", note: "Every space, live", icon: Map },
+    { href: "/features#reservations", label: "Online Reservations", note: "Book and pay 24/7", icon: CalendarCheck },
+    { href: "/features#payments", label: "Billing & Payments", note: "Rent, invoices, utilities", icon: CreditCard },
+    { href: "/features#contracts", label: "Contracts & E-signature", note: "Signed online, on file", icon: PenLine },
+    { href: "/features#portal", label: "Customer Portal", note: "Balance, pay, documents", icon: UserRound },
+    { href: "/features#screening", label: "Applications & Screening", note: "Background checks", icon: BadgeCheck },
+    { href: "/features#point-of-sale", label: "Point of Sale", note: "Store, propane, barcodes", icon: ScanBarcode },
+    { href: "/marina-software", label: "Fuel Dock", note: "Pumps, tanks, sales", icon: Fuel },
+    { href: "/marina-software", label: "Dry Stack", note: "Launch requests", icon: Ship },
+    { href: "/features#messages", label: "Messages & Notices", note: "One or a whole group", icon: MessagesSquare },
+    { href: "/features#maintenance", label: "Maintenance", note: "Requests with photos", icon: Wrench },
+    { href: "/features#staff", label: "Staff & Daily Close", note: "Roles, shifts, drawer", icon: Users },
+    { href: "/features#reports", label: "Reports & QuickBooks", note: "Revenue, tax, export", icon: BarChart3 },
+    { href: "/features#mely-ai", label: "Mely AI Assistant", note: "Answers guests 24/7", icon: Bot },
+  ] },
+  { label: "Explore", href: "/explore" },
+  { label: "Resources", links: [
+    { href: "/about", label: "About MelyOS", icon: Info },
+    { href: "/pricing#faq", label: "Questions & Answers", icon: HelpCircle },
+    { href: "/demo", label: "Book a Demo", icon: CalendarCheck },
+    { href: "mailto:info@melyos.io", label: "Help & Support", icon: LifeBuoy },
+  ] },
+  { label: "Pricing", href: "/pricing" },
+];

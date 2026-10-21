@@ -14,7 +14,7 @@ export function FeaturesSection() {
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
-              <article key={f.title} className="group rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-cyan-300 hover:shadow-xl">
+              <article key={f.title} id={f.id} className="group scroll-mt-28 rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-cyan-300 hover:shadow-xl">
                 <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-50 transition group-hover:scale-110"><f.icon className="h-6 w-6 text-[#079db9]" strokeWidth={1.8} aria-hidden /></div>
                 <h3 className="text-lg font-black">{f.title}</h3>
                 <p className="mt-2 leading-7 text-slate-600">{f.text}</p>
@@ -351,7 +351,7 @@ export function CapabilityGrid({ kicker, title, items }: { kicker: string; title
 
 export function FaqSection({ items }: { items: [string, string][] }) {
   return (
-    <section className="bg-slate-50 py-16 md:py-24">
+    <section id="faq" className="scroll-mt-24 bg-slate-50 py-16 md:py-24">
       <div className="mx-auto max-w-4xl px-5 lg:px-8">
         <div className="mb-10 text-center"><p className={eyebrow}>Questions</p><h2 className={h2}>Frequently asked questions</h2></div>
         <div className="space-y-3">
