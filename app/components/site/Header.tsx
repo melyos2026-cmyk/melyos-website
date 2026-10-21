@@ -70,16 +70,16 @@ export default function SiteHeader() {
     <header className="fixed top-0 z-50 w-full border-b border-slate-200/70 bg-white/95 shadow-sm backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-5 md:h-24 lg:px-8">
         <a href="/" aria-label="MelyOS home" className="flex items-center">
-          <img src="/melyos-logo-trimmed.png" alt="MelyOS" className="h-[50px] w-auto object-contain md:h-[64px]" />
+          <img src="/melyos-logo-trimmed.png" alt="MelyOS" className="h-[50px] w-auto object-contain md:h-[56px] xl:h-[64px]" />
         </a>
-        <nav ref={navRef} aria-label="Main" className="hidden items-center gap-1 text-[15px] font-bold text-slate-700 lg:flex xl:gap-2">
+        <nav ref={navRef} aria-label="Main" className="hidden items-center gap-0 text-[14px] font-bold text-slate-700 min-[900px]:flex xl:gap-2 xl:text-[15px]">
           {MENU.map((m) =>
             m.href ? (
-              <a key={m.label} href={m.href} className="rounded-lg px-2.5 py-2 transition hover:text-[#08B8D8] xl:px-3">{m.label}</a>
+              <a key={m.label} href={m.href} className="whitespace-nowrap rounded-lg px-2 py-2 transition hover:text-[#08B8D8] lg:px-2.5 xl:px-3">{m.label}</a>
             ) : (
               <div key={m.label} className="relative" onMouseEnter={() => enter(m.label)} onMouseLeave={leave}>
                 <button type="button" aria-expanded={open === m.label} aria-haspopup="true" onClick={() => setOpen(open === m.label ? null : m.label)}
-                  className={`flex items-center gap-1 rounded-lg px-2.5 py-2 transition hover:text-[#08B8D8] xl:px-3 ${open === m.label ? "text-[#08B8D8]" : ""}`}>
+                  className={`flex items-center gap-1 whitespace-nowrap rounded-lg px-2 py-2 transition hover:text-[#08B8D8] lg:px-2.5 xl:px-3 ${open === m.label ? "text-[#08B8D8]" : ""}`}>
                   {m.label}<ChevronDown className={`h-4 w-4 transition ${open === m.label ? "rotate-180" : ""}`} aria-hidden />
                 </button>
                 {open === m.label && (
@@ -91,17 +91,17 @@ export default function SiteHeader() {
             )
           )}
         </nav>
-        <div className="hidden items-center gap-2 lg:flex xl:gap-3">
-          <a href="https://admin.melyos.io" className="rounded-xl px-4 py-3 font-bold text-slate-700 transition hover:bg-slate-100 hover:text-[#08B8D8]">Login</a>
-          <a href="/demo" className={`${cta} whitespace-nowrap px-5 xl:px-7`}>Book a Demo</a>
+        <div className="hidden items-center gap-2 min-[900px]:flex xl:gap-3">
+          <a href="https://admin.melyos.io" className="hidden rounded-xl px-4 py-3 font-bold lg:inline-block text-slate-700 transition hover:bg-slate-100 hover:text-[#08B8D8]">Login</a>
+          <a href="/demo" className={`${cta} whitespace-nowrap px-4 text-[14px] lg:px-5 xl:px-7 xl:text-base`}>Book a Demo</a>
         </div>
         <button type="button" aria-label="Open navigation menu" aria-expanded={mobileMenuOpen} onClick={() => setMobileMenuOpen((o) => !o)}
-          className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 text-2xl transition hover:border-cyan-300 hover:bg-cyan-50 lg:hidden">
+          className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 text-2xl transition hover:border-cyan-300 hover:bg-cyan-50 min-[900px]:hidden">
           {mobileMenuOpen ? "×" : "☰"}
         </button>
       </div>
       {mobileMenuOpen && (
-        <div className="max-h-[calc(100vh-5rem)] overflow-y-auto border-t border-slate-200 bg-white px-4 py-3 shadow-lg lg:hidden">
+        <div className="max-h-[calc(100vh-5rem)] overflow-y-auto border-t border-slate-200 bg-white px-4 py-3 shadow-lg min-[900px]:hidden">
           <nav aria-label="Main" className="flex flex-col font-bold text-slate-700">
             {MENU.map((m) =>
               m.href ? (
