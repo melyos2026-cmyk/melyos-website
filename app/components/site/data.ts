@@ -117,7 +117,6 @@ export const MENU: MenuItem[] = [
     { href: "/features#reports", label: "Reports & QuickBooks", note: "Revenue, tax, export", icon: BarChart3 },
     { href: "/features#mely-ai", label: "Mely AI Assistant", note: "Answers guests 24/7", icon: Bot },
   ] },
-  { label: "Explore", href: "/explore" },
   { label: "Resources", links: [
     { href: "/about", label: "About MelyOS", icon: Info },
     { href: "/pricing#faq", label: "Questions & Answers", icon: HelpCircle },
