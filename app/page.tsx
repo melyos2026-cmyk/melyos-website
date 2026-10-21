@@ -9,7 +9,6 @@ const NAV = [
   ["#platform", "Platform"],
   ["#rv-parks", "RV Parks"],
   ["#marinas", "Marinas"],
-  ["#live-demos", "Live Demos"],
   ["#how-it-works", "How It Works"],
   ["#pricing", "Pricing"],
 ];
@@ -131,9 +130,9 @@ export default function Home() {
 
       {/* Hero */}
       <section id="home" className="relative overflow-hidden bg-[#06182e] pt-20 md:pt-24">
-        <img src="/hero-marina-2026.jpg" alt="Interactive marina slip map built with MelyOS" className="h-[300px] w-full object-cover object-center sm:h-[380px] md:absolute md:inset-0 md:h-full" />
-        <div className="hidden md:absolute md:inset-0 md:block md:bg-gradient-to-r md:from-[#06182e]/90 md:via-[#06182e]/55 md:to-transparent" />
-        <div className="relative z-10 mx-auto max-w-7xl px-5 py-12 md:py-24 lg:px-8 lg:py-32">
+        <img src="/hero-tablet-2026.jpg" alt="Marina and RV park interactive maps managed with MelyOS on a tablet" className="h-[300px] w-full object-cover object-center sm:h-[380px] md:absolute md:inset-x-0 md:bottom-0 md:top-24 md:h-auto" />
+        <div className="hidden md:absolute md:inset-x-0 md:bottom-0 md:top-24 md:block md:bg-gradient-to-r md:from-[#06182e]/90 md:via-[#06182e]/55 md:to-transparent" />
+        <div className="relative z-10 mx-auto max-w-7xl px-5 py-12 md:py-16 lg:px-8 lg:py-20">
           <div className="max-w-xl text-white lg:max-w-2xl">
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/40 bg-white/10 px-4 py-2 text-xs font-black tracking-[0.18em] text-cyan-200 backdrop-blur">
               <span className="h-2 w-2 rounded-full bg-[#39d5ee]" /> RV PARKS · MARINAS · CAMPGROUNDS
@@ -147,7 +146,7 @@ export default function Home() {
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-4">
               <a href="#demo" className={`${cta} text-center sm:px-8 sm:py-4`}>Book a Free Demo</a>
-              <a href="#live-demos" className="rounded-xl border border-white/30 bg-white/10 px-7 py-3.5 text-center font-black text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/20 sm:px-8 sm:py-4">Try a Live Demo</a>
+              <a href="#platform" className="rounded-xl border border-white/30 bg-white/10 px-7 py-3.5 text-center font-black text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/20 sm:px-8 sm:py-4">Explore the Platform</a>
             </div>
             <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm font-bold text-slate-200">
               <span>✓ Your own website & map</span><span>✓ Online payments</span><span>✓ Done-for-you setup</span>
@@ -215,42 +214,39 @@ export default function Home() {
             <h2 className={h2}>Built for RV parks. Built for marinas.</h2>
           </div>
           <div className="grid gap-6 lg:grid-cols-2">
-            {[["rv-parks", "🚐", "RV parks & communities", rvParks, "https://demo.melyos.io", "See the RV park demo"], ["marinas", "⚓", "Marinas, private & municipal", marinas, "https://marinademo.melyos.io", "See the marina demo"]].map(([id, icon, title, list, href, label]) => (
+            {[["rv-parks", "🚐", "RV parks & communities", rvParks, "#demo", "Request an RV park demo"], ["marinas", "⚓", "Marinas, private & municipal", marinas, "#demo", "Request a marina demo"]].map(([id, icon, title, list, href, label]) => (
               <article key={id as string} id={id as string} className="scroll-mt-28 rounded-3xl border border-slate-200 bg-slate-50 p-7 md:p-9">
                 <div className="flex items-center gap-3"><span className="text-3xl">{icon as string}</span><h3 className="text-2xl font-black">{title as string}</h3></div>
                 <ul className="mt-6 space-y-3">
                   {(list as string[]).map((i) => <li key={i} className="flex gap-3 text-slate-700"><span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cyan-100 text-xs font-black text-[#079db9]">✓</span><span className="font-medium">{i}</span></li>)}
                 </ul>
-                <a href={href as string} target="_blank" rel="noopener noreferrer" className="mt-7 inline-block font-black text-[#079db9] hover:underline">{label as string} →</a>
+                <a href={href as string} className="mt-7 inline-block font-black text-[#079db9] hover:underline">{label as string} →</a>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Live demos */}
-      <section id="live-demos" className="scroll-mt-24 bg-slate-50 py-16 md:py-24">
+      {/* Live demos — by request only (per Mely: not public, to avoid copying) */}
+      <section id="see-it-live" className="scroll-mt-24 bg-slate-50 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <div className="mx-auto mb-12 max-w-3xl text-center">
-            <p className={eyebrow}>Try it yourself</p>
-            <h2 className={h2}>Explore a live demo, no sign-up</h2>
-            <p className="mt-5 text-lg leading-8 text-slate-600">These are real MelyOS websites with sample data. Pick a space on the map, sign in as a customer, sign a contract, or ask Mely a question.</p>
+            <p className={eyebrow}>See it live</p>
+            <h2 className={h2}>A private live demo for your property type</h2>
+            <p className="mt-5 text-lg leading-8 text-slate-600">After a short call, we give you access to a working MelyOS website and office with sample data: pick a space on the map, sign in as a customer, sign a contract, and see the admin your staff would use.</p>
           </div>
           <div className="grid gap-6 md:grid-cols-2">
             {[
-              ["Sunset Ridge RV Resort", "RV park demo", "Interactive lot map, online booking, applications and Mely.", "https://demo.melyos.io", "/hero-interactive-map.png", null],
-              ["Demo Marina", "Marina demo", "Slip map, boater account, contracts, fuel dock, ship store, and an office tour of the admin.", "https://marinademo.melyos.io", "/interactive-slips-2026.jpg", "https://marinademo.melyos.io/marina/tour"],
-            ].map(([name, kind, text, href, img, tour]) => (
-              <article key={name as string} className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-                <img src={img as string} alt="" className="h-48 w-full object-cover" />
+              ["RV park demo", "A full RV resort: interactive lot map, online booking, lease applications, resident portal and Mely.", "/hero-interactive-map.png"],
+              ["Marina demo", "A full marina: slip map, boater accounts, contracts, fuel dock, ship store, dry stack and an office tour.", "/interactive-slips-2026.jpg"],
+            ].map(([kind, text, img]) => (
+              <article key={kind} className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+                <img src={img} alt="" className="h-48 w-full object-cover" />
                 <div className="p-7">
-                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[#08B8D8]">{kind}</p>
-                  <h3 className="mt-2 text-2xl font-black">{name}</h3>
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[#08B8D8]">By request</p>
+                  <h3 className="mt-2 text-2xl font-black">{kind}</h3>
                   <p className="mt-2 leading-7 text-slate-600">{text}</p>
-                  <div className="mt-5 flex flex-wrap gap-3">
-                    <a href={href as string} target="_blank" rel="noopener noreferrer" className="rounded-xl bg-[#071A33] px-5 py-3 font-black text-white transition hover:bg-[#0b2a4f]">Open the demo ↗</a>
-                    {tour && <a href={tour as string} target="_blank" rel="noopener noreferrer" className="rounded-xl border border-slate-300 px-5 py-3 font-black transition hover:border-cyan-400">Office tour ↗</a>}
-                  </div>
+                  <a href="#demo" className="mt-5 inline-block rounded-xl bg-[#071A33] px-5 py-3 font-black text-white transition hover:bg-[#0b2a4f]">Request access</a>
                 </div>
               </article>
             ))}
@@ -418,7 +414,7 @@ export default function Home() {
           <div>
             <p className="font-black">Platform</p>
             <div className="mt-4 flex flex-col gap-3 text-sm text-slate-600">
-              <a href="#platform">Features</a><a href="#rv-parks">RV Parks</a><a href="#marinas">Marinas</a><a href="#live-demos">Live Demos</a><a href="#pricing">Pricing</a>
+              <a href="#platform">Features</a><a href="#rv-parks">RV Parks</a><a href="#marinas">Marinas</a><a href="#see-it-live">See It Live</a><a href="#pricing">Pricing</a>
             </div>
           </div>
           <div>
