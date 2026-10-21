@@ -1,103 +1,81 @@
 "use client";
 
-import { useEffect, useState } from "react";
-const heroSlides = [
-  {
-    image: "/hero-interactive-map.png",
-    label: "PROPERTY MANAGEMENT",
-    title: "Run Your Property.",
-    highlightedTitle: "Not Your Day.",
-    description:
-      "Manage reservations, residents, payments, maintenance, billing and daily operations from one powerful platform.",
-  },
+import { useState } from "react";
+
+// Oct 21 (per Mely): melyos.io refreshed with everything MelyOS offers today for
+// RV parks and marinas. Only features that exist; never public prices.
+
+const NAV = [
+  ["#platform", "Platform"],
+  ["#rv-parks", "RV Parks"],
+  ["#marinas", "Marinas"],
+  ["#live-demos", "Live Demos"],
+  ["#how-it-works", "How It Works"],
+  ["#pricing", "Pricing"],
 ];
 
 const features = [
-  {
-    icon: "🗺️",
-    title: "Interactive Maps",
-    description:
-      "See availability, occupancy, reservations and maintenance status directly from your property map.",
-  },
-  {
-    icon: "📅",
-    title: "Reservations",
-    description:
-      "Manage online bookings, availability, deposits, check-ins and check-outs from one place.",
-  },
-  {
-    icon: "💳",
-    title: "Payments & Billing",
-    description:
-      "Create invoices, collect payments and manage recurring rent, utilities and additional charges.",
-  },
-  {
-    icon: "🏠",
-    title: "Resident Portal",
-    description:
-      "Give residents secure access to balances, payments, documents, leases and maintenance requests.",
-  },
-  {
-    icon: "🤖",
-    title: "Ask Mely",
-    description:
-      "Use AI assistance to answer questions, streamline daily tasks and help your team work faster.",
-  },
-  {
-    icon: "🛠️",
-    title: "Maintenance",
-    description:
-      "Track service requests, photos, priorities, assignments, notes and completion status.",
-  },
+  { icon: "🗺️", title: "Interactive property map", text: "Every lot, site or slip on a real map of your property: open, occupied, reserved or under maintenance, with photo, size and hookups." },
+  { icon: "📅", title: "Online reservations", text: "Guests pick their exact space and dates and pay online. The calendar blocks double bookings across every channel." },
+  { icon: "💳", title: "Payments & billing", text: "Invoices, recurring rent, metered utilities, late-fee schedules and online payments that go straight to your own bank account." },
+  { icon: "👤", title: "Customer portal", text: "Residents and boat owners see their balance, pay, download documents and send requests from their phone, 24/7." },
+  { icon: "✍️", title: "Contracts & e-signature", text: "Leases and slip agreements signed online, with a signature record, a signed PDF on file and invoices created on signing." },
+  { icon: "🛡️", title: "Applications & screening", text: "Online rental applications with background checks, occupants, vehicles and pets, reviewed and approved from the office." },
+  { icon: "🧾", title: "Point of sale", text: "Sell propane, fuel and store items at the counter, with barcode scanning, inventory and low-stock alerts." },
+  { icon: "💬", title: "Messages & notices", text: "Send a notice to one customer or a whole group. Each one gets a private copy by email and in their account." },
+  { icon: "🛠️", title: "Maintenance", text: "Requests with photos, notes and status updates that the resident can follow from the portal." },
+  { icon: "👥", title: "Staff, roles & daily close", text: "Logins for every employee with their own permissions, shift open and close, and a drawer count for every shift." },
+  { icon: "📊", title: "Reports & accounting", text: "Revenue and tax reports, statements, collections, Export for QuickBooks Online and printable PDFs with your logo." },
+  { icon: "🤖", title: "Mely, your AI assistant", text: "Answers your guests 24/7 in their own language on your website, and helps your staff find anything in the system." },
+];
+
+const rvParks = [
+  "Interactive lot map with real-time availability and date-range booking",
+  "Nightly, weekly and monthly stays with seasonal pricing",
+  "Online lease applications with background screening",
+  "Resident portal: rent, autopay, documents, vehicles, occupants, move-out requests",
+  "Recurring billing: rent, electric meter readings (any meter type), laundry and late fees",
+  "Propane sales with QR pickup codes",
+  "Rent-to-own plans with payment tracking and bill of sale",
+  "Storage lots, real-estate listings and park events",
+];
+
+const marinas = [
+  "Interactive slip map for wet slips, lift slips and dry storage",
+  "Rates per slip or per foot, with resident and non-resident pricing",
+  "Slip contracts with e-signature and one-click annual renewals",
+  "Fuel dock sales with pumps, tank levels and delivery log",
+  "Ship store point of sale with barcode scanning and inventory",
+  "Dry stack launch requests from the boater's phone",
+  "Waitlist with slip offers, event rooms, insurance and registration tracking",
+  "Shift close-out and per-payment records built for city and county audits",
 ];
 
 const industries = [
-  {
-    icon: "🚐",
-    title: "RV Parks",
-    description:
-      "Manage lots, residents, reservations, utilities and property operations.",
-  },
-  {
-    icon: "🏕️",
-    title: "Campgrounds",
-    description:
-      "Handle short-term stays, availability, amenities and guest communication.",
-  },
-  {
-    icon: "⚓",
-    title: "Marinas",
-    description:
-      "Organize slips, vessel information, reservations, billing and customer records.",
-  },
-  {
-    icon: "🏘️",
-    title: "Mobile Home Communities",
-    description:
-      "Manage residents, leases, recurring rent, maintenance and documents.",
-  },
-  {
-    icon: "🚐",
-    title: "RV Storage",
-    description:
-      "Track spaces, occupancy, recurring charges and customer information.",
-  },
-  
+  ["🚐", "RV Parks & Resorts", "Long-term residents and short stays on one map."],
+  ["⚓", "Marinas", "Private and municipal: slips, dry storage, fuel and store."],
+  ["🏕️", "Campgrounds", "Sites, cabins, amenities and seasonal rates."],
+  ["🏘️", "Mobile Home Communities", "Leases, rent, utilities and maintenance."],
+  ["🚤", "RV & Boat Storage", "Spaces, recurring charges and customer records."],
+  ["🏛️", "Government Properties", "City and county parks and marinas that need clean, auditable records."],
 ];
 
-const portalFeatures = [
-  "View outstanding balances",
-  "Make secure online payments",
-  "Review invoices and payment history",
-  "Submit maintenance requests",
-  "Access leases and documents",
-  "Manage vehicles and occupants",
+const steps = [
+  ["1", "Free consultation", "We learn how your property works today: spaces, rates, billing and what slows your team down."],
+  ["2", "We build it for you", "Your own website and domain, your property map, spaces, rates, fees and contracts, all set up by the MelyOS team."],
+  ["3", "Training & launch", "We train your staff, help bring your current customers into the system, and stay with you on launch day."],
+  ["4", "Support that answers", "A real team in Florida, plus regular updates included in the platform."],
+];
+
+const trust = [
+  ["🔒", "Secure by design", "Encrypted card payments, role-based access, and each property's data kept separate."],
+  ["🏦", "Your money, your bank", "Customer payments go to your own bank account. Payouts are tracked in your reports."],
+  ["📁", "Records you can audit", "Every payment, refund and shift close is tied to a person, a date and a receipt."],
+  ["🇺🇸", "Built in Florida", "MelyOS LLC is based in Kissimmee, FL. Small team, fast answers."],
 ];
 
 export default function Home() {
-  const [currentHero, setCurrentHero] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // Oct 20 (per Mely): the demo form now really sends the request to MelyOS.
   const [demo, setDemo] = useState({ name: "", business: "", email: "", phone: "", propertyType: "", spaces: "" });
   const [demoState, setDemoState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [demoError, setDemoError] = useState("");
@@ -116,673 +94,343 @@ export default function Home() {
     }
   }
 
-  useEffect(() => {
-    const interval = window.setInterval(() => {
-      setCurrentHero((previous) => (previous + 1) % heroSlides.length);
-    }, 6000);
-
-    return () => window.clearInterval(interval);
-  }, []);
-  const currentSlide = heroSlides[currentHero];
+  const eyebrow = "mb-3 text-sm font-black uppercase tracking-[0.18em] text-[#08B8D8]";
+  const h2 = "text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl";
+  const cta = "rounded-xl bg-[#08B8D8] px-7 py-3.5 font-black text-white shadow-lg shadow-cyan-500/25 transition hover:-translate-y-0.5 hover:bg-[#079db9]";
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-white text-[#071A33]">
-    <header className="fixed top-0 z-50 w-full border-b border-slate-200/70 bg-white/95 shadow-sm backdrop-blur-xl">
-  <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-5 md:h-24 lg:px-8">
-    <a href="#home" aria-label="MelyOS home" className="flex items-center">
-      <img
-        src="/melyos-logo-transparent.png"
-        alt="MelyOS"
-         className="h-auto w-[115px] origin-left object-contain sm:w-[135px] md:w-[150px] lg:w-[180px]"
-      />
-    </a>
-
-    <nav className="hidden items-center gap-10 text-[15px] font-bold text-slate-700 lg:flex">
-      <a
-        className="transition hover:text-[#08B8D8]"
-        href="#features"
-      >
-        Features
-      </a>
-
-      <a
-        className="transition hover:text-[#08B8D8]"
-        href="#industries"
-      >
-        Industries
-      </a>
-
-      <a
-        className="transition hover:text-[#08B8D8]"
-        href="#portal"
-      >
-        Resident Portal
-      </a>
-
-      <a
-        className="transition hover:text-[#08B8D8]"
-        href="#pricing"
-      >
-        Pricing
-      </a>
-
-      <a
-        className="transition hover:text-[#08B8D8]"
-        href="#demo"
-      >
-        Demo
-      </a>
-    </nav>
-
-    <div className="hidden items-center gap-4 lg:flex">
-      <a
-        href="https://admin.melyos.io"
-        className="rounded-xl px-4 py-3 font-bold text-slate-700 transition hover:bg-slate-100 hover:text-[#08B8D8]"
-      >
-        Login
-      </a>
-
-      <a
-        href="#demo"
-        className="rounded-xl bg-[#08B8D8] px-7 py-3.5 font-black text-white shadow-lg shadow-cyan-500/25 transition hover:-translate-y-0.5 hover:bg-[#079db9] hover:shadow-xl"
-      >
-        Book a Demo
-      </a>
-    </div>
-
-    <button
-      type="button"
-      aria-label="Open navigation menu"
-      aria-expanded={mobileMenuOpen}
-      onClick={() => setMobileMenuOpen((open) => !open)}
-      className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 text-2xl text-[#071A33] transition hover:border-cyan-300 hover:bg-cyan-50 lg:hidden"
-    >
-      {mobileMenuOpen ? "×" : "☰"}
-    </button>
-  </div>
-
-  {mobileMenuOpen && (
-    <div className="border-t border-slate-200 bg-white px-5 py-5 shadow-lg lg:hidden">
-      <nav className="flex flex-col gap-4 font-bold text-slate-700">
-        <a onClick={() => setMobileMenuOpen(false)} href="#features">
-          Features
-        </a>
-        <a onClick={() => setMobileMenuOpen(false)} href="#industries">
-          Industries
-        </a>
-        <a onClick={() => setMobileMenuOpen(false)} href="#portal">
-          Resident Portal
-        </a>
-        <a onClick={() => setMobileMenuOpen(false)} href="#pricing">
-          Pricing
-        </a>
-        <a onClick={() => setMobileMenuOpen(false)} href="#demo">
-          Demo
-        </a>
-        <a href="https://admin.melyos.io">Login</a>
-
-        <a
-          onClick={() => setMobileMenuOpen(false)}
-          href="#demo"
-          className="mt-2 rounded-xl bg-[#08B8D8] px-5 py-3 text-center text-white"
-        >
-          Book a Demo
-        </a>
-      </nav>
-    </div>
-  )}
-</header>
-
-      <section
-        id="home"
-        className="relative overflow-hidden pt-20 md:flex md:min-h-[720px] md:items-center md:pt-24 lg:min-h-[760px]"
-      >
-        {heroSlides.map((slide, index) => (
-          <img
-            key={slide.image}
-            src={slide.image}
-            alt=""
-            aria-hidden="true"
-className={`absolute left-0 top-20 h-[520px] w-full object-cover object-[62%_100%] transition-opacity duration-1000 md:inset-0 md:h-full md:object-center ${
-  index === currentHero ? "opacity-100" : "opacity-0"
-}`}
-          />
-        ))}
-
-        <div className="absolute left-0 top-20 h-[520px] w-full bg-gradient-to-t from-white/15 via-transparent to-transparent md:inset-0 md:h-full md:bg-gradient-to-r md:from-white/95 md:via-white/60 md:to-transparent lg:via-white/45" />
-       <div className="hidden md:absolute md:inset-0 md:block md:bg-gradient-to-t md:from-white/10 md:via-transparent md:to-transparent" />
-
-        <div className="relative z-10 mx-auto mt-[520px] w-full max-w-7xl bg-white px-5 py-10 sm:px-6 md:mt-0 md:bg-transparent md:py-20 lg:px-8 lg:py-24">
-          <div className="max-w-lg md:max-w-xl lg:max-w-2xl">
-            <div className="mb-4 inline-flex items-center gap-2 md:mb-6 rounded-full border border-cyan-200 bg-white/85 px-4 py-2 text-xs font-black tracking-[0.18em] text-[#079db9] shadow-sm backdrop-blur">
-              <span className="h-2 w-2 rounded-full bg-[#08B8D8]" />
-              {currentSlide.label}
-            </div>
-
-<h1 className="text-3xl font-black leading-tight tracking-tight text-[#071A33] sm:text-4xl lg:text-5xl">
-              {currentSlide.title}
-              <span className="mt-2 block text-[#08B8D8]">
-                {currentSlide.highlightedTitle}
-              </span>
-            </h1>
-
-<p className="mt-5 max-w-md text-[15px] leading-7 text-slate-700 sm:text-base">
-              {currentSlide.description}
-            </p>
-
-            <div className="mt-7 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:gap-4">
-              <a
-                href="#demo"
-                className="w-full rounded-xl bg-[#08B8D8] px-6 py-3.5 text-center sm:w-auto sm:px-8 sm:py-4 font-black text-white shadow-xl shadow-cyan-500/20 transition hover:-translate-y-1 hover:bg-[#079db9]"
-              >
-                Book a Demo
-              </a>
-
-              <a
-                href="#platform-preview"
-                className="w-full rounded-xl border border-slate-200 bg-white/90 px-6 py-3.5 text-center sm:w-auto sm:px-8 sm:py-4 font-black text-[#071A33] shadow-xl transition hover:-translate-y-1 hover:border-cyan-300"
-              >
-                Explore the Platform
-              </a>
-            </div>
-
-            <div className="mt-7 flex flex-wrap gap-x-4 gap-y-2 text-xs sm:mt-10 sm:gap-x-7 sm:gap-y-3 sm:text-sm font-bold text-slate-600">
-              <span>✓ Interactive maps</span>
-              <span>✓ Resident portal</span>
-              <span>✓ Payments and billing</span>
-            </div>
+      {/* Header */}
+      <header className="fixed top-0 z-50 w-full border-b border-slate-200/70 bg-white/95 shadow-sm backdrop-blur-xl">
+        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-5 md:h-24 lg:px-8">
+          <a href="#home" aria-label="MelyOS home" className="flex items-center">
+            <img src="/melyos-logo-transparent.png" alt="MelyOS" className="h-auto w-[115px] object-contain sm:w-[135px] md:w-[150px] lg:w-[170px]" />
+          </a>
+          <nav className="hidden items-center gap-7 text-[15px] font-bold text-slate-700 xl:flex">
+            {NAV.map(([href, label]) => <a key={href} className="transition hover:text-[#08B8D8]" href={href}>{label}</a>)}
+          </nav>
+          <div className="hidden items-center gap-3 xl:flex">
+            <a href="https://admin.melyos.io" className="rounded-xl px-4 py-3 font-bold text-slate-700 transition hover:bg-slate-100 hover:text-[#08B8D8]">Login</a>
+            <a href="#demo" className={cta}>Book a Demo</a>
           </div>
+          <button type="button" aria-label="Open navigation menu" aria-expanded={mobileMenuOpen} onClick={() => setMobileMenuOpen((o) => !o)}
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 text-2xl transition hover:border-cyan-300 hover:bg-cyan-50 xl:hidden">
+            {mobileMenuOpen ? "×" : "☰"}
+          </button>
+        </div>
+        {mobileMenuOpen && (
+          <div className="border-t border-slate-200 bg-white px-5 py-5 shadow-lg xl:hidden">
+            <nav className="flex flex-col gap-4 font-bold text-slate-700">
+              {NAV.map(([href, label]) => <a key={href} onClick={() => setMobileMenuOpen(false)} href={href}>{label}</a>)}
+              <a href="https://admin.melyos.io">Login</a>
+              <a onClick={() => setMobileMenuOpen(false)} href="#demo" className="mt-2 rounded-xl bg-[#08B8D8] px-5 py-3 text-center text-white">Book a Demo</a>
+            </nav>
+          </div>
+        )}
+      </header>
 
-          <div className="hidden md:absolute md:bottom-10 md:left-5 md:flex md:gap-2 lg:left-8">
-            {heroSlides.map((slide, index) => (
-              <button
-                key={slide.image}
-                type="button"
-                aria-label={`Show hero slide ${index + 1}`}
-                onClick={() => setCurrentHero(index)}
-                className={`h-2.5 rounded-full transition-all ${
-                  currentHero === index
-                    ? "w-10 bg-[#08B8D8]"
-                    : "w-2.5 bg-slate-400/60"
-                }`}
-              />
-            ))}
+      {/* Hero */}
+      <section id="home" className="relative overflow-hidden bg-[#06182e] pt-20 md:pt-24">
+        <img src="/hero-marina-2026.jpg" alt="Interactive marina slip map built with MelyOS" className="h-[300px] w-full object-cover object-center sm:h-[380px] md:absolute md:inset-0 md:h-full" />
+        <div className="hidden md:absolute md:inset-0 md:block md:bg-gradient-to-r md:from-[#06182e]/90 md:via-[#06182e]/55 md:to-transparent" />
+        <div className="relative z-10 mx-auto max-w-7xl px-5 py-12 md:py-24 lg:px-8 lg:py-32">
+          <div className="max-w-xl text-white lg:max-w-2xl">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/40 bg-white/10 px-4 py-2 text-xs font-black tracking-[0.18em] text-cyan-200 backdrop-blur">
+              <span className="h-2 w-2 rounded-full bg-[#39d5ee]" /> RV PARKS · MARINAS · CAMPGROUNDS
+            </div>
+            <h1 className="text-4xl font-black leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+              Run your property.
+              <span className="mt-2 block text-[#39d5ee]">Not your day.</span>
+            </h1>
+            <p className="mt-6 max-w-lg text-base leading-7 text-slate-200 sm:text-lg sm:leading-8">
+              One platform for reservations, payments, contracts, your customer portal and daily operations, built around a live map of your property and set up for you by our team.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-4">
+              <a href="#demo" className={`${cta} text-center sm:px-8 sm:py-4`}>Book a Free Demo</a>
+              <a href="#live-demos" className="rounded-xl border border-white/30 bg-white/10 px-7 py-3.5 text-center font-black text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/20 sm:px-8 sm:py-4">Try a Live Demo</a>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm font-bold text-slate-200">
+              <span>✓ Your own website & map</span><span>✓ Online payments</span><span>✓ Done-for-you setup</span>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="border-y border-slate-100 bg-slate-50">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-4 py-6 text-center sm:px-5 md:grid-cols-4 md:gap-6 md:py-8 lg:px-8">
-          {[
-            ["One Platform", "For your entire operation"],
-            ["Real-Time", "Property visibility"],
-            ["Secure", "Role-based access"],
-            ["Built to Scale", "From one property to many"],
-          ].map(([title, text]) => (
-            <div key={title}>
-              <p className="font-black text-[#071A33]">{title}</p>
-              <p className="mt-1 text-sm text-slate-500">{text}</p>
-            </div>
+      {/* Highlights */}
+      <section className="border-b border-slate-100 bg-slate-50">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-5 px-5 py-7 text-center md:grid-cols-4 lg:px-8">
+          {[["All in one place", "Map, bookings, billing and portal"], ["24/7 online", "Customers book and pay anytime"], ["Any language", "Mely answers your guests in theirs"], ["Built for growth", "One property or many"]].map(([t, s]) => (
+            <div key={t}><p className="font-black">{t}</p><p className="mt-1 text-sm text-slate-500">{s}</p></div>
           ))}
         </div>
       </section>
 
-      <section id="features" className="scroll-mt-24 py-16 md:py-20 lg:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-5 lg:px-8">
-          <div className="mx-auto mb-10 max-w-3xl text-center md:mb-14">
-            <p className="mb-3 font-black uppercase tracking-[0.18em] text-[#08B8D8]">
-              One connected system
-            </p>
-            <h2 className="text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
-              Everything you need to operate your property
-            </h2>
-            <p className="mt-4 text-base leading-7 text-slate-600 md:mt-5 md:text-lg md:leading-8">
-              Replace scattered spreadsheets, disconnected tools and manual
-              processes with one platform built around your property.
-            </p>
+      {/* Platform */}
+      <section id="platform" className="scroll-mt-24 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="mx-auto mb-12 max-w-3xl text-center">
+            <p className={eyebrow}>One connected platform</p>
+            <h2 className={h2}>Everything your office does, in one system</h2>
+            <p className="mt-5 text-lg leading-8 text-slate-600">Replace spreadsheets, paper contracts and disconnected tools. Every screen talks to the others, so a payment, a contract or a reservation is updated everywhere at once.</p>
           </div>
-
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-         {features.map((feature) => (
-  <a
-    key={feature.title}
-    href={
-      feature.title === "Interactive Maps"
-        ? "#platform-preview"
-        : feature.title === "Resident Portal"
-        ? "#portal"
-        : "#demo"
-    }
-    className="group block cursor-pointer rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition duration-300 hover:-translate-y-2 hover:border-cyan-400 hover:shadow-xl"
-  >
-    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-50 text-2xl transition duration-300 group-hover:scale-110">
-      {feature.icon}
-    </div>
-
-    <h3 className="text-xl font-black">{feature.title}</h3>
-
-    <p className="mt-3 leading-7 text-slate-600">
-      {feature.description}
-    </p>
-  </a>
-))}
-          </div>
-        </div>
-      </section>
-
-      <section
-        id="platform-preview"
-        className="scroll-mt-24 bg-[#06182e] py-24 text-white"
-      >
-        <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 lg:grid-cols-2 lg:px-8">
-          <div>
-            <p className="mb-3 font-black uppercase tracking-[0.18em] text-[#39d5ee]">
-              Interactive property management
-            </p>
-            <h2 className="text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
-              See your entire property at a glance
-            </h2>
-            <p className="mt-6 text-lg leading-8 text-slate-300">
-              View available, occupied, reserved and maintenance spaces
-              directly from a visual map created for your property.
-            </p>
-
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              {[
-                "Live availability",
-                "Color-coded space status",
-                "Clickable lots and slips",
-                "Property amenities",
-                "Reservation details",
-                "Maintenance visibility",
-              ].map((item) => (
-                <div
-                  key={item}
-                  className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3"
-                >
-                  <span className="text-[#39d5ee]">✓</span>
-                  <span className="font-semibold">{item}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="relative">
-            <div className="absolute -inset-5 rounded-[36px] bg-cyan-400/20 blur-3xl" />
-            <div className="relative overflow-hidden rounded-[28px] border border-white/15 bg-white p-3 shadow-2xl">
-              <img
-            src="/marina-interactive-map-v2.png"
-            alt="Interactive marina slip reservation map"
-            className="aspect-[4/3] w-full rounded-2xl object-cover"
-            />
-            </div>
-
-            <div className="absolute -bottom-6 -left-4 rounded-2xl border border-slate-200 bg-white p-4 text-[#071A33] shadow-2xl sm:-left-8">
-             <p className="text-xs font-black uppercase tracking-wide text-slate-400">
-  Slip 7
-</p>
-
-<p className="mt-1 font-black text-lg">
-  Available
-</p>
-
-<p className="mt-2 text-sm text-slate-500">
-  Accommodates vessels up to 40 ft
-</p>
-
-<p className="text-sm text-slate-500">
-  Water • 30 AMP Power • Dock Access
-</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="industries" className="scroll-mt-24 py-16 md:py-20 lg:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-5 lg:px-8">
-          <div className="mb-14 max-w-3xl">
-            <p className="mb-3 font-black uppercase tracking-[0.18em] text-[#08B8D8]">
-              Built for your industry
-            </p>
-            <h2 className="text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
-              One platform. Multiple property types.
-            </h2>
-            <p className="mt-4 text-base leading-7 text-slate-600 md:mt-5 md:text-lg md:leading-8">
-              MelyOS adapts to the way your property operates, whether you
-              manage lots, slips, units, residents or short-term guests.
-            </p>
-          </div>
-
-<div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
-            {industries.map((industry) => (
-              <article
-                key={industry.title}
-                className="rounded-3xl border border-slate-200 bg-slate-50 p-7 transition hover:bg-white hover:shadow-xl"
-              >
-                <div className="text-3xl">{industry.icon}</div>
-                <h3 className="mt-5 text-xl font-black">{industry.title}</h3>
-                <p className="mt-3 leading-7 text-slate-600">
-                  {industry.description}
-                </p>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map((f) => (
+              <article key={f.title} className="group rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-cyan-300 hover:shadow-xl">
+                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-50 text-2xl transition group-hover:scale-110">{f.icon}</div>
+                <h3 className="text-lg font-black">{f.title}</h3>
+                <p className="mt-2 leading-7 text-slate-600">{f.text}</p>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section id="portal" className="scroll-mt-24 bg-slate-50 py-24">
+      {/* Interactive map */}
+      <section id="map" className="scroll-mt-24 bg-[#06182e] py-20 text-white md:py-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 lg:grid-cols-2 lg:px-8">
+          <div>
+            <p className="mb-3 text-sm font-black uppercase tracking-[0.18em] text-[#39d5ee]">Interactive property management</p>
+            <h2 className={h2}>See your whole property at a glance</h2>
+            <p className="mt-6 text-lg leading-8 text-slate-300">We draw your real property as a live map. Your office manages it, and your customers use the same map on your website to choose their space and book it.</p>
+            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              {["Live availability by date", "Color-coded status", "Tap a space for photo, size and hookups", "Filter by boat or RV length", "Book and pay from the map", "Same map in your office"].map((i) => (
+                <div key={i} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3"><span className="text-[#39d5ee]">✓</span><span className="font-semibold">{i}</span></div>
+              ))}
+            </div>
+          </div>
+          <div className="relative">
+            <div className="absolute -inset-5 rounded-[36px] bg-cyan-400/20 blur-3xl" />
+            <div className="relative overflow-hidden rounded-[28px] border border-white/15 bg-white p-2 shadow-2xl">
+              <img src="/interactive-slips-2026.jpg" alt="Interactive slip map with an available slip selected" className="aspect-[3/2] w-full rounded-2xl object-cover" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* RV parks & marinas */}
+      <section className="py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="mx-auto mb-12 max-w-3xl text-center">
+            <p className={eyebrow}>Made for how you operate</p>
+            <h2 className={h2}>Built for RV parks. Built for marinas.</h2>
+          </div>
+          <div className="grid gap-6 lg:grid-cols-2">
+            {[["rv-parks", "🚐", "RV parks & communities", rvParks, "https://demo.melyos.io", "See the RV park demo"], ["marinas", "⚓", "Marinas, private & municipal", marinas, "https://marinademo.melyos.io", "See the marina demo"]].map(([id, icon, title, list, href, label]) => (
+              <article key={id as string} id={id as string} className="scroll-mt-28 rounded-3xl border border-slate-200 bg-slate-50 p-7 md:p-9">
+                <div className="flex items-center gap-3"><span className="text-3xl">{icon as string}</span><h3 className="text-2xl font-black">{title as string}</h3></div>
+                <ul className="mt-6 space-y-3">
+                  {(list as string[]).map((i) => <li key={i} className="flex gap-3 text-slate-700"><span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cyan-100 text-xs font-black text-[#079db9]">✓</span><span className="font-medium">{i}</span></li>)}
+                </ul>
+                <a href={href as string} target="_blank" rel="noopener noreferrer" className="mt-7 inline-block font-black text-[#079db9] hover:underline">{label as string} →</a>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Live demos */}
+      <section id="live-demos" className="scroll-mt-24 bg-slate-50 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="mx-auto mb-12 max-w-3xl text-center">
+            <p className={eyebrow}>Try it yourself</p>
+            <h2 className={h2}>Explore a live demo, no sign-up</h2>
+            <p className="mt-5 text-lg leading-8 text-slate-600">These are real MelyOS websites with sample data. Pick a space on the map, sign in as a customer, sign a contract, or ask Mely a question.</p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            {[
+              ["Sunset Ridge RV Resort", "RV park demo", "Interactive lot map, online booking, applications and Mely.", "https://demo.melyos.io", "/hero-interactive-map.png", null],
+              ["Demo Marina", "Marina demo", "Slip map, boater account, contracts, fuel dock, ship store, and an office tour of the admin.", "https://marinademo.melyos.io", "/interactive-slips-2026.jpg", "https://marinademo.melyos.io/marina/tour"],
+            ].map(([name, kind, text, href, img, tour]) => (
+              <article key={name as string} className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+                <img src={img as string} alt="" className="h-48 w-full object-cover" />
+                <div className="p-7">
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[#08B8D8]">{kind}</p>
+                  <h3 className="mt-2 text-2xl font-black">{name}</h3>
+                  <p className="mt-2 leading-7 text-slate-600">{text}</p>
+                  <div className="mt-5 flex flex-wrap gap-3">
+                    <a href={href as string} target="_blank" rel="noopener noreferrer" className="rounded-xl bg-[#071A33] px-5 py-3 font-black text-white transition hover:bg-[#0b2a4f]">Open the demo ↗</a>
+                    {tour && <a href={tour as string} target="_blank" rel="noopener noreferrer" className="rounded-xl border border-slate-300 px-5 py-3 font-black transition hover:border-cyan-400">Office tour ↗</a>}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Portal */}
+      <section id="portal" className="scroll-mt-24 py-16 md:py-24">
         <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 lg:grid-cols-2 lg:px-8">
           <div className="order-2 lg:order-1">
             <div className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-2xl">
               <div className="mb-5 flex items-center justify-between border-b border-slate-100 pb-4">
-                <div>
-                  <p className="text-sm font-black text-slate-400">
-                    RESIDENT PORTAL
-                  </p>
-                  <p className="mt-1 text-xl font-black">Welcome Back</p>
-                </div>
-                <div className="h-11 w-11 rounded-full bg-cyan-100" />
+                <div><p className="text-sm font-black text-slate-400">CUSTOMER PORTAL</p><p className="mt-1 text-xl font-black">Welcome back</p></div>
+                <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-black text-amber-800">1 contract to sign</span>
               </div>
-
               <div className="grid gap-4 sm:grid-cols-2">
-                {[
-                  ["Current Balance", "$1,250.00"],
-                  ["Next Payment", "August 1"],
-                  ["Lease Status", "Active"],
-                  ["Open Requests", "1"],
-                ].map(([label, value]) => (
-                  <div key={label} className="rounded-2xl bg-slate-50 p-5">
-                    <p className="text-sm font-bold text-slate-500">{label}</p>
-                    <p className="mt-2 text-xl font-black">{value}</p>
-                  </div>
+                {[["Balance due", "$532.00"], ["Next payment", "Nov 1"], ["Contract", "Ready to sign"], ["Messages", "1 new"]].map(([l, v]) => (
+                  <div key={l} className="rounded-2xl bg-slate-50 p-5"><p className="text-sm font-bold text-slate-500">{l}</p><p className="mt-2 text-xl font-black">{v}</p></div>
                 ))}
               </div>
-
-              <div className="mt-5 rounded-2xl bg-[#08B8D8] p-5 text-white">
-                <p className="font-black">Make a Payment</p>
-                <p className="mt-1 text-sm text-cyan-50">
-                  Review your balance and securely submit payment.
-                </p>
-              </div>
+              <div className="mt-5 rounded-2xl bg-[#08B8D8] p-5 text-white"><p className="font-black">Pay now</p><p className="mt-1 text-sm text-cyan-50">Secure online payment from any phone.</p></div>
             </div>
           </div>
-
           <div className="order-1 lg:order-2">
-            <p className="mb-3 font-black uppercase tracking-[0.18em] text-[#08B8D8]">
-              Resident self-service
-            </p>
-            <h2 className="text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
-              Give residents access without adding more work
-            </h2>
-            <p className="mt-6 text-lg leading-8 text-slate-600">
-              Residents can securely manage important information and complete
-              common tasks without calling the office.
-            </p>
-
+            <p className={eyebrow}>Self-service for your customers</p>
+            <h2 className={h2}>Fewer calls to the office</h2>
+            <p className="mt-6 text-lg leading-8 text-slate-600">Residents and boat owners sign in with their email and handle the everyday things themselves, any time of day.</p>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              {portalFeatures.map((feature) => (
-                <div key={feature} className="flex items-start gap-3">
-                  <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-cyan-100 text-sm font-black text-[#079db9]">
-                    ✓
-                  </span>
-                  <span className="font-semibold text-slate-700">{feature}</span>
-                </div>
+              {["See balances and pay online", "Set up autopay", "Read and sign contracts", "Download receipts and documents", "Send maintenance or launch requests", "Read notices and message the office"].map((i) => (
+                <div key={i} className="flex items-start gap-3"><span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-cyan-100 text-sm font-black text-[#079db9]">✓</span><span className="font-semibold text-slate-700">{i}</span></div>
               ))}
             </div>
           </div>
         </div>
       </section>
 
-      <section
-        id="pricing"
-        className="scroll-mt-24 bg-slate-50 py-16 md:py-20 lg:py-24"
-      >
-        <div className="mx-auto max-w-7xl px-4 sm:px-5 lg:px-8">
-          <div className="mx-auto mb-12 max-w-3xl text-center">
-            <p className="mb-3 font-black uppercase tracking-[0.18em] text-[#08B8D8]">
-              Flexible pricing
-            </p>
-
-            <h2 className="text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
-              Built around your property
-            </h2>
-
-            <p className="mt-4 text-base leading-7 text-slate-600 md:text-lg md:leading-8">
-              Every property is different. MelyOS combines a customized
-              implementation with an affordable monthly platform.
-            </p>
+      {/* Industries */}
+      <section id="industries" className="scroll-mt-24 bg-slate-50 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="mb-12 max-w-3xl">
+            <p className={eyebrow}>Who we serve</p>
+            <h2 className={h2}>One platform, many kinds of property</h2>
+            <p className="mt-5 text-lg leading-8 text-slate-600">MelyOS adapts to the way your property works, whether you manage lots, sites, slips, units or storage spaces.</p>
           </div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {industries.map(([icon, t, s]) => (
+              <article key={t} className="rounded-3xl border border-slate-200 bg-white p-7 transition hover:shadow-xl">
+                <div className="text-3xl">{icon}</div><h3 className="mt-4 text-xl font-black">{t}</h3><p className="mt-2 leading-7 text-slate-600">{s}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
 
+      {/* How it works */}
+      <section id="how-it-works" className="scroll-mt-24 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="mx-auto mb-12 max-w-3xl text-center">
+            <p className={eyebrow}>How it works</p>
+            <h2 className={h2}>We set it up. You run your property.</h2>
+            <p className="mt-5 text-lg leading-8 text-slate-600">No long forms and no do-it-yourself setup. Our team builds your platform around the way you already work.</p>
+          </div>
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+            {steps.map(([n, t, s]) => (
+              <article key={n} className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#071A33] text-lg font-black text-white">{n}</div>
+                <h3 className="mt-5 text-xl font-black">{t}</h3><p className="mt-2 leading-7 text-slate-600">{s}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Trust */}
+      <section className="bg-[#06182e] py-16 text-white md:py-20">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="mx-auto mb-12 max-w-3xl text-center">
+            <p className="mb-3 text-sm font-black uppercase tracking-[0.18em] text-[#39d5ee]">Why owners trust MelyOS</p>
+            <h2 className={h2}>Your property, your customers, your data</h2>
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {trust.map(([icon, t, s]) => (
+              <div key={t} className="rounded-3xl border border-white/10 bg-white/5 p-7"><div className="text-3xl">{icon}</div><h3 className="mt-4 text-lg font-black">{t}</h3><p className="mt-2 leading-7 text-slate-300">{s}</p></div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing (no public prices) */}
+      <section id="pricing" className="scroll-mt-24 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="mx-auto mb-12 max-w-3xl text-center">
+            <p className={eyebrow}>Pricing</p>
+            <h2 className={h2}>A quote built around your property</h2>
+            <p className="mt-5 text-lg leading-8 text-slate-600">Every property is different, so we price each one after a short call: a one-time setup plus a simple monthly platform fee, month to month.</p>
+          </div>
           <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-2">
-            <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-xl md:p-9">
-              <p className="text-sm font-black uppercase tracking-[0.16em] text-[#08B8D8]">
-                Custom Setup & Implementation
-              </p>
-
-              <h3 className="mt-4 text-3xl font-black text-[#071A33]">
-                Designed for your property
-              </h3>
-
-              <p className="mt-4 leading-7 text-slate-600">
-                We configure MelyOS around your property, spaces, branding,
-                workflows and operational needs.
-              </p>
-
-              <div className="mt-7 space-y-4">
-                {[
-                  "Custom property website",
-                  "Interactive property map",
-                  "Lots, sites or slips configuration",
-                  "Reservations and resident portal setup",
-                  "Branding and business information",
-                  "Onboarding and launch assistance",
-                ].map((item) => (
-                  <div key={item} className="flex gap-3 font-semibold text-slate-700">
-                    <span className="text-[#08B8D8]">✓</span>
-                    <span>{item}</span>
-                  </div>
-                ))}
+            <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm md:p-9">
+              <p className="text-sm font-black uppercase tracking-[0.16em] text-[#08B8D8]">Setup & implementation</p>
+              <h3 className="mt-4 text-3xl font-black">Done for you</h3>
+              <div className="mt-7 space-y-3">
+                {["Your own website on your domain", "Your property map drawn and connected", "Spaces, rates, fees and contracts configured", "Help moving your current customers in", "Staff training and launch-day support"].map((i) => <div key={i} className="flex gap-3 font-semibold text-slate-700"><span className="text-[#08B8D8]">✓</span><span>{i}</span></div>)}
               </div>
-
-              <a
-                href="#demo"
-                className="mt-8 block rounded-xl border-2 border-[#08B8D8] px-6 py-4 text-center font-black text-[#079db9] transition hover:bg-cyan-50"
-              >
-                Request a Custom Quote
-              </a>
+              <a href="#demo" className="mt-8 block rounded-xl border-2 border-[#08B8D8] px-6 py-4 text-center font-black text-[#079db9] transition hover:bg-cyan-50">Request a custom quote</a>
             </article>
-
-            <article className="relative rounded-3xl bg-[#071A33] p-7 text-white shadow-2xl transition hover:-translate-y-1 md:p-9">
-              <span className="absolute right-6 top-6 rounded-full bg-[#08B8D8] px-3 py-1 text-xs font-black uppercase tracking-wide">
-                Platform
-              </span>
-
-              <p className="text-sm font-black uppercase tracking-[0.16em] text-cyan-300">
-                MelyOS Platform
-              </p>
-
-              {/* Oct 10 (per Mely): no public pricing — decided Sep 26 to
-                  show "Contact Us for Pricing" instead of a dollar amount. */}
-              <div className="mt-5">
-                <span className="text-4xl font-black">Contact Us for Pricing</span>
+            <article className="rounded-3xl bg-[#071A33] p-7 text-white shadow-2xl md:p-9">
+              <p className="text-sm font-black uppercase tracking-[0.16em] text-cyan-300">MelyOS platform</p>
+              <h3 className="mt-4 text-3xl font-black">Contact us for pricing</h3>
+              <div className="mt-7 space-y-3">
+                {["Every feature your property needs", "Staff accounts with roles and permissions", "Customer portal and online payments", "Mely AI assistant for guests and staff", "Updates and support included", "No long-term contract"].map((i) => <div key={i} className="flex gap-3 font-semibold text-slate-100"><span className="text-[#39d5ee]">✓</span><span>{i}</span></div>)}
               </div>
-
-              <p className="mt-4 leading-7 text-slate-300">
-                Ongoing access to the tools you need to manage your property
-                from one connected platform.
-              </p>
-
-              <div className="mt-7 space-y-4">
-                {[
-                  "Interactive map management",
-                  "Reservations and resident accounts",
-                  "Payments and billing",
-                  "Maintenance request tracking",
-                  "Documents and leases",
-                  "Staff accounts and permissions",
-                  "Ask Mely — Your 24/7 AI Assistant",
-                  "Platform updates and support",
-                ].map((item) => (
-                  <div key={item} className="flex gap-3 font-semibold text-slate-100">
-                    <span className="text-[#39d5ee]">✓</span>
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-
-              <a
-                href="#demo"
-                className="mt-8 block rounded-xl bg-[#08B8D8] px-6 py-4 text-center font-black text-white transition hover:bg-[#079db9]"
-              >
-                Book a Demo
-              </a>
-
-              <p className="mt-4 text-center text-xs text-slate-400">
-                Transaction and processing fees may apply.
-              </p>
+              <a href="#demo" className="mt-8 block rounded-xl bg-[#08B8D8] px-6 py-4 text-center font-black text-white transition hover:bg-[#079db9]">Book a demo</a>
+              <p className="mt-4 text-center text-xs text-slate-400">Card and bank processing fees may apply.</p>
             </article>
           </div>
         </div>
       </section>
 
+      {/* Demo form */}
       <section id="demo" className="scroll-mt-24 px-5 pb-24 lg:px-8">
         <div className="mx-auto max-w-7xl overflow-hidden rounded-[36px] bg-[#071A33] px-6 py-16 text-white sm:px-10 lg:px-16">
           <div className="grid items-center gap-12 lg:grid-cols-[1fr_440px]">
             <div>
-              <p className="mb-3 font-black uppercase tracking-[0.18em] text-[#39d5ee]">
-                Book a personalized demo
-              </p>
-              <h2 className="text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
-                See how MelyOS can work for your property
-              </h2>
-              <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">
-                Tell us about your business and we will show you the tools most
-                relevant to your property and daily operations.
-              </p>
-            </div>
-
-            <form
-              className="rounded-3xl bg-white p-6 text-[#071A33] shadow-2xl"
-              onSubmit={submitDemo}
-            >
-              {demoState === "sent" ? (
-                <div className="py-10 text-center">
-                  <p className="text-2xl font-black">Thank you! 🎉</p>
-                  <p className="mt-3 text-slate-600">We received your request. The MelyOS team will contact you soon to schedule your demo.</p>
-                </div>
-              ) : (
-              <div className="grid gap-4">
-                <input
-                  type="text"
-                  required
-                  value={demo.name}
-                  onChange={(e) => setDemo({ ...demo, name: e.target.value })}
-                  placeholder="Full name"
-                  className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400"
-                />
-                <input
-                  type="text"
-                  value={demo.business}
-                  onChange={(e) => setDemo({ ...demo, business: e.target.value })}
-                  placeholder="Business name"
-                  className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400"
-                />
-                <input
-                  type="email"
-                  required
-                  value={demo.email}
-                  onChange={(e) => setDemo({ ...demo, email: e.target.value })}
-                  placeholder="Business email"
-                  className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400"
-                />
-                <input
-                  type="tel"
-                  value={demo.phone}
-                  onChange={(e) => setDemo({ ...demo, phone: e.target.value })}
-                  placeholder="Phone (optional)"
-                  className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400"
-                />
-                <select
-                  value={demo.propertyType}
-                  onChange={(e) => setDemo({ ...demo, propertyType: e.target.value })}
-                  className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none transition focus:border-cyan-400"
-                >
-                  <option value="" disabled>
-                    Property type
-                  </option>
-                  <option>RV Park</option>
-                  <option>Campground</option>
-                  <option>Marina</option>
-                  <option>Mobile Home Community</option>
-                  <option>RV Storage</option>
-                  <option>Self Storage</option>
-                  <option>Other</option>
-                </select>
-                <input
-                  type="number"
-                  value={demo.spaces}
-                  onChange={(e) => setDemo({ ...demo, spaces: e.target.value })}
-                  placeholder="Number of spaces"
-                  className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400"
-                />
-                <button
-                  type="submit"
-                  disabled={demoState === "sending"}
-                  className="rounded-xl bg-[#08B8D8] px-6 py-4 font-black text-white transition hover:bg-[#079db9] disabled:opacity-60"
-                >
-                  {demoState === "sending" ? "Sending…" : "Request My Demo"}
-                </button>
-                {demoState === "error" && <p className="text-center text-sm text-red-600">{demoError}</p>}
+              <p className="mb-3 text-sm font-black uppercase tracking-[0.18em] text-[#39d5ee]">Book a free demo</p>
+              <h2 className={h2}>See MelyOS working for your property</h2>
+              <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">Tell us about your property. We will show you the tools that matter to you and send you a custom quote, with no obligation.</p>
+              <div className="mt-8 space-y-2 text-slate-200">
+                <p>✉️ <a className="font-bold underline" href="mailto:info@melyos.io">info@melyos.io</a></p>
+                <p>💬 Or chat with Mely, bottom right, any time.</p>
               </div>
+            </div>
+            <form className="rounded-3xl bg-white p-6 text-[#071A33] shadow-2xl" onSubmit={submitDemo}>
+              {demoState === "sent" ? (
+                <div className="py-10 text-center"><p className="text-2xl font-black">Thank you! 🎉</p><p className="mt-3 text-slate-600">We received your request. The MelyOS team will contact you soon to schedule your demo.</p></div>
+              ) : (
+                <div className="grid gap-4">
+                  <input type="text" required value={demo.name} onChange={(e) => setDemo({ ...demo, name: e.target.value })} placeholder="Full name" className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400" />
+                  <input type="text" value={demo.business} onChange={(e) => setDemo({ ...demo, business: e.target.value })} placeholder="Business name" className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400" />
+                  <input type="email" required value={demo.email} onChange={(e) => setDemo({ ...demo, email: e.target.value })} placeholder="Business email" className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400" />
+                  <input type="tel" value={demo.phone} onChange={(e) => setDemo({ ...demo, phone: e.target.value })} placeholder="Phone (optional)" className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400" />
+                  <select value={demo.propertyType} onChange={(e) => setDemo({ ...demo, propertyType: e.target.value })} className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none transition focus:border-cyan-400">
+                    <option value="" disabled>Property type</option>
+                    <option>RV Park</option><option>Marina</option><option>Campground</option><option>Mobile Home Community</option><option>RV / Boat Storage</option><option>Government property</option><option>Other</option>
+                  </select>
+                  <input type="number" value={demo.spaces} onChange={(e) => setDemo({ ...demo, spaces: e.target.value })} placeholder="Number of lots, sites or slips" className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400" />
+                  <button type="submit" disabled={demoState === "sending"} className="rounded-xl bg-[#08B8D8] px-6 py-4 font-black text-white transition hover:bg-[#079db9] disabled:opacity-60">{demoState === "sending" ? "Sending…" : "Request my demo"}</button>
+                  {demoState === "error" && <p className="text-center text-sm text-red-600">{demoError}</p>}
+                </div>
               )}
-
-              <p className="mt-4 text-center text-xs leading-5 text-slate-500">
-                Submitting this form does not create an account or commit you
-                to a purchase.
-              </p>
+              <p className="mt-4 text-center text-xs leading-5 text-slate-500">Submitting this form does not create an account or commit you to a purchase.</p>
             </form>
           </div>
         </div>
       </section>
 
+      {/* Footer */}
       <footer className="border-t border-slate-200 bg-slate-50">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-4 lg:px-8">
           <div className="md:col-span-2">
-            <img
-              src="/melyos-logo-transparent.png"
-              alt="MelyOS"
-              className="h-14 w-auto"
-            />
-            <p className="mt-4 max-w-md leading-7 text-slate-600">
-              Modern property management software for RV parks, campgrounds,
-              marinas, communities and storage properties.
-            </p>
+            <img src="/melyos-logo-transparent.png" alt="MelyOS" className="h-14 w-auto" />
+            <p className="mt-4 max-w-md leading-7 text-slate-600">Property management software for RV parks, marinas, campgrounds, communities and storage properties. MelyOS LLC, Kissimmee, Florida.</p>
+            <p className="mt-3 text-slate-600">✉️ <a className="underline" href="mailto:info@melyos.io">info@melyos.io</a></p>
           </div>
-
           <div>
             <p className="font-black">Platform</p>
             <div className="mt-4 flex flex-col gap-3 text-sm text-slate-600">
-              <a href="#features">Features</a>
-              <a href="#industries">Industries</a>
-              <a href="#portal">Resident Portal</a>
-              <a href="#pricing">Pricing</a>
+              <a href="#platform">Features</a><a href="#rv-parks">RV Parks</a><a href="#marinas">Marinas</a><a href="#live-demos">Live Demos</a><a href="#pricing">Pricing</a>
             </div>
           </div>
-
           <div>
             <p className="font-black">Company</p>
             <div className="mt-4 flex flex-col gap-3 text-sm text-slate-600">
-              <a href="#demo">Book a Demo</a>
-              <a href="https://admin.melyos.io">Login</a>
-              <a href="/privacy">Privacy Policy</a>
-              <a href="/terms">Terms of Service</a>
+              <a href="#demo">Book a Demo</a><a href="https://admin.melyos.io">Login</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a>
             </div>
           </div>
         </div>
-
         <div className="border-t border-slate-200">
           <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-6 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between lg:px-8">
-            <p>© {new Date().getFullYear()} MelyOS. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} MelyOS LLC. All rights reserved.</p>
             <p>Property Management, Reimagined.</p>
           </div>
         </div>

@@ -20,7 +20,7 @@ export const metadata = {
   title: "MelyOS | Property Management Platform",
 
   description:
-    "Interactive maps, reservations, payments and property management for RV parks, marinas, campgrounds and communities.",
+    "One platform for RV parks, marinas and campgrounds: a live property map, online booking and payments, contracts with e-signature, customer portal and an AI assistant. Set up for you by our team.",
 
   openGraph: {
     title: "MelyOS | Property Management Platform",
