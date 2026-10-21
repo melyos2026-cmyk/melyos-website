@@ -1,18 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Mail, MessageCircle, h2 } from "./data";
 
 export default function DemoSection() {
   const [demo, setDemo] = useState({ name: "", business: "", email: "", phone: "", propertyType: "", spaces: "" });
   const [demoState, setDemoState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [demoError, setDemoError] = useState("");
+  const [claim, setClaim] = useState<string | null>(null);
+  // Oct 21 (per Mely): coming from MelyOS Explore "Claim it free" (/demo?claim=Name&type=Marina).
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    if (!sp.has("claim")) return;
+    const name = (sp.get("claim") || "").slice(0, 160);
+    const t = (sp.get("type") || "").toLowerCase();
+    const type = t.startsWith("marina") ? "Marina" : t.startsWith("rv") ? "RV Park" : t.startsWith("camp") ? "Campground" : "";
+    setClaim(name || "my property");
+    setDemo((d) => ({ ...d, business: name || d.business, propertyType: type || d.propertyType }));
+  }, []);
   async function submitDemo(event: React.FormEvent) {
     event.preventDefault();
     setDemoState("sending");
     setDemoError("");
     try {
-      const r = await fetch("/api/demo-request", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(demo) });
+      const r = await fetch("/api/demo-request", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(claim ? { ...demo, claim } : demo) });
       const j = await r.json();
       if (!r.ok) throw new Error(j.error || "Something went wrong.");
       setDemoState("sent");
@@ -41,6 +52,7 @@ export default function DemoSection() {
                 <div className="py-10 text-center"><p className="text-2xl font-black">Thank you!</p><p className="mt-3 text-slate-600">We received your request. The MelyOS team will contact you soon to schedule your demo.</p></div>
               ) : (
                 <div className="grid gap-4">
+                  {claim && <p className="rounded-xl bg-cyan-50 px-4 py-3 text-sm font-semibold text-[#075e73]">Claiming your free listing{claim !== "my property" ? `: ${claim}` : ""}. Tell us how to reach you and we will confirm it.</p>}
                   <input type="text" required value={demo.name} onChange={(e) => setDemo({ ...demo, name: e.target.value })} placeholder="Full name" className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400" />
                   <input type="text" value={demo.business} onChange={(e) => setDemo({ ...demo, business: e.target.value })} placeholder="Business name" className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400" />
                   <input type="email" required value={demo.email} onChange={(e) => setDemo({ ...demo, email: e.target.value })} placeholder="Business email" className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400" />

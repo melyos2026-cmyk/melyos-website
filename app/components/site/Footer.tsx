@@ -25,7 +25,7 @@ export default function SiteFooter() {
           <div>
             <p className="font-black">Company</p>
             <div className="mt-4 flex flex-col gap-3 text-sm text-slate-600">
-              <a href="/demo">Book a Demo</a><a href="https://admin.melyos.io">Login</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a>
+              <a href="/demo">Book a Demo</a><a href="/about">About</a><a href="https://admin.melyos.io">Login</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a>
             </div>
           </div>
         </div>

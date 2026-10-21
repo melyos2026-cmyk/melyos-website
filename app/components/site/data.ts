@@ -12,8 +12,8 @@ export const NAV = [
   ["/rv-park-software", "RV Parks"],
   ["/marina-software", "Marinas"],
   ["/campground-software", "Campgrounds"],
+  ["/explore", "Explore"],
   ["/pricing", "Pricing"],
-  ["/about", "About"],
 ];
 
 export const features = [
