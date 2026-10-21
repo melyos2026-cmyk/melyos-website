@@ -423,3 +423,26 @@ export function OnePlanSection() {
     </section>
   );
 }
+
+// Oct 21 (per Mely): a real sequence on solution pages (the order is the information).
+export function FlowSection({ kicker, title, steps }: { kicker: string; title: string; steps: [string, string][] }) {
+  return (
+    <section className="bg-slate-50 py-16 md:py-24">
+      <div className="mx-auto max-w-6xl px-5 lg:px-8">
+        <div className="mx-auto mb-12 max-w-3xl text-center">
+          <p className={eyebrow}>{kicker}</p>
+          <h2 className={h2}>{title}</h2>
+        </div>
+        <ol className="grid gap-5 md:grid-cols-3">
+          {steps.map(([t, s], i) => (
+            <li key={t} className="rounded-3xl border border-slate-200 bg-white p-7">
+              <span className="text-sm font-black tracking-[0.16em] text-[#08B8D8]">STEP {i + 1}</span>
+              <h3 className="mt-3 text-lg font-black">{t}</h3>
+              <p className="mt-2 leading-7 text-slate-600">{s}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
