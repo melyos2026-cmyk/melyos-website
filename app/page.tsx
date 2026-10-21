@@ -105,7 +105,7 @@ export default function Home() {
       <header className="fixed top-0 z-50 w-full border-b border-slate-200/70 bg-white/95 shadow-sm backdrop-blur-xl">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-5 md:h-24 lg:px-8">
           <a href="#home" aria-label="MelyOS home" className="flex items-center">
-            <img src="/melyos-logo-transparent.png" alt="MelyOS" className="h-auto w-[115px] object-contain sm:w-[135px] md:w-[140px] xl:w-[170px]" />
+            <img src="/melyos-logo-trimmed.png" alt="MelyOS" className="h-[50px] w-auto object-contain md:h-[64px]" />
           </a>
           <nav className="hidden items-center gap-5 text-[15px] font-bold text-slate-700 lg:flex xl:gap-7">
             {NAV.map(([href, label]) => <a key={href} className="transition hover:text-[#08B8D8]" href={href}>{label}</a>)}
