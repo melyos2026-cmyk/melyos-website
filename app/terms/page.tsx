@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalPage, { h2 } from "../components/LegalPage";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions | MelyOS LLC",
+  title: "Terms & Conditions",
   description: "Terms & Conditions for MelyOS LLC services, including SMS terms.",
 };
 

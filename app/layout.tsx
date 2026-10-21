@@ -96,8 +96,8 @@ const jsonLd = {
     },
     {
       "@type": "SiteNavigationElement",
-      name: ["Platform", "RV Parks", "Marinas", "How It Works", "Pricing", "Book a Demo"],
-      url: ["https://melyos.io/#platform", "https://melyos.io/#rv-parks", "https://melyos.io/#marinas", "https://melyos.io/#how-it-works", "https://melyos.io/#pricing", "https://melyos.io/#demo"],
+      name: ["RV Park Software", "Marina Software", "Campground Software", "Features", "Pricing", "Book a Demo", "About"],
+      url: ["https://melyos.io/rv-park-software", "https://melyos.io/marina-software", "https://melyos.io/campground-software", "https://melyos.io/features", "https://melyos.io/pricing", "https://melyos.io/demo", "https://melyos.io/about"],
     },
   ],
 };

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalPage, { h2 } from "../components/LegalPage";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | MelyOS LLC",
+  title: "Privacy Policy",
   description: "How MelyOS LLC collects, uses and protects personal information, including text-message (SMS) opt-in data.",
 };
 
