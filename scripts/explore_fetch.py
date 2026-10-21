@@ -2,7 +2,7 @@
 # for every US state from OpenStreetMap (Overpass API) and writes one compact JSON per
 # state to public/explore/<ST>.json plus public/explore/index.json with counts.
 # Data © OpenStreetMap contributors, ODbL — the site shows the attribution.
-import json, os, sys, time, urllib.request, urllib.parse
+import json, os, re, sys, time, urllib.request, urllib.parse
 
 STATES = {
  "AL":"Alabama","AK":"Alaska","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware",
@@ -58,6 +58,8 @@ for st, name in STATES.items():
         lon = el.get("lon") or (el.get("center") or {}).get("lon")
         nm = (t.get("name") or "").strip()
         if not nm or lat is None: continue
+        # Individual pitches/sites inside a campground ("1", "24", "Site 12", "A-3") are not places.
+        if len(nm) < 4 or re.fullmatch(r"(?i)(site|lot|pad|loop|pitch|spot|campsite|cabin)?\s*#?\s*[A-Za-z]{0,2}[-\s]?\d+[A-Za-z]?", nm): continue
         k = kind(t)
         if k == "c" and (t.get("backcountry") == "yes" or t.get("access") in ("private", "no") or t.get("camp_site") in ("basic", "pitch")): continue
         key = (k, nm.lower(), round(lat, 3), round(lon, 3))
