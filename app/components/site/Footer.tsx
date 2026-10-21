@@ -32,8 +32,9 @@ export default function SiteFooter() {
         <div className="border-t border-slate-200">
           <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-6 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between lg:px-8">
             <p>© {new Date().getFullYear()} MelyOS LLC. All rights reserved.</p>
-            <p>Property Management, Reimagined. <span className="mx-1 text-slate-300">·</span> Powered by <a href="https://melyos.io" className="font-bold text-[#0aa6c2] hover:underline">MelyOS.io</a></p>
+            <p>Property Management, Reimagined.</p>
           </div>
+          <p className="pb-6 text-center text-sm text-slate-500">Powered by <a href="https://melyos.io" className="font-bold text-[#0aa6c2] hover:underline">MelyOS.io</a></p>
         </div>
       </footer>
     </>
