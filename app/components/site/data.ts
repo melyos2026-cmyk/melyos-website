@@ -104,11 +104,11 @@ export const MENU: MenuItem[] = [
   { label: "Solutions", wide: true, links: [
     { href: "/features#map", label: "Interactive Map", note: "Every space, live", icon: Map },
     { href: "/online-reservation-software", label: "Online Reservations", note: "Book and pay 24/7", icon: CalendarCheck },
-    { href: "/features#payments", label: "Billing & Payments", note: "Rent, invoices, utilities", icon: CreditCard },
+    { href: "/billing-payments-software", label: "Billing & Payments", note: "Rent, invoices, utilities", icon: CreditCard },
     { href: "/contract-e-signature-software", label: "Contracts & E-signature", note: "Signed online, on file", icon: PenLine },
     { href: "/features#portal", label: "Customer Portal", note: "Balance, pay, documents", icon: UserRound },
     { href: "/features#screening", label: "Applications & Screening", note: "Background checks", icon: BadgeCheck },
-    { href: "/features#point-of-sale", label: "Point of Sale", note: "Store, propane, barcodes", icon: ScanBarcode },
+    { href: "/point-of-sale-software", label: "Point of Sale", note: "Store, propane, barcodes", icon: ScanBarcode },
     { href: "/marina-fuel-dock-software", label: "Fuel Dock", note: "Pumps, tanks, sales", icon: Fuel },
     { href: "/dry-stack-software", label: "Dry Stack", note: "Launch requests", icon: Ship },
     { href: "/features#messages", label: "Messages & Notices", note: "One or a whole group", icon: MessagesSquare },
