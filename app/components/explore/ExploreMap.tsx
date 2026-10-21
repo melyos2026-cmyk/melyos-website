@@ -60,7 +60,13 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
     const Lm = L.current;
     if (!ready || !Lm || !map.current) return;
     if (layer.current) map.current.removeLayer(layer.current);
-    const group = (Lm as any).markerClusterGroup({ showCoverageOnHover: false, maxClusterRadius: 45, chunkedLoading: true });
+    const group = (Lm as any).markerClusterGroup({
+      showCoverageOnHover: false, maxClusterRadius: 45, chunkedLoading: true,
+      iconCreateFunction: (c: any) => {
+        const n = c.getChildCount(); const d = n < 10 ? 34 : n < 100 ? 40 : 48;
+        return Lm.divIcon({ className: "", iconSize: [d, d], html: `<div style="width:${d}px;height:${d}px;border-radius:50%;background:#071A33;color:#fff;display:flex;align-items:center;justify-content:center;font:800 13px system-ui,sans-serif;border:3px solid #39d5ee;box-shadow:0 2px 8px rgba(7,26,51,.35)">${n}</div>` });
+      },
+    });
     markers.current = {};
     for (const r of shown) {
       const k = KIND[r[0]];

@@ -41,11 +41,17 @@ export default function Page() {
     <main className="min-h-screen overflow-x-hidden bg-white text-[#071A33]">
       <SiteHeader />
       <section className="bg-[#06182e] pt-20 text-white md:pt-24">
-        <div className="mx-auto max-w-7xl px-5 py-14 md:py-20 lg:px-8">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 py-14 md:py-20 lg:grid-cols-[1.1fr_1fr] lg:px-8">
+          <div>
           <p className="mb-4 text-sm font-black uppercase tracking-[0.18em] text-[#39d5ee]">MelyOS Explore</p>
           <h1 className="max-w-3xl text-4xl font-black leading-tight tracking-tight sm:text-5xl">Find marinas, RV parks and campgrounds across the U.S.</h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">{total ? `${total.toLocaleString()} places on the map so far. ` : ""}Pick a state to see every marina, RV park and campground on an interactive map.</p>
           <div className="mt-8 flex flex-wrap items-center gap-3"><StatePicker /><a href="/explore/fl" className="rounded-xl border border-white/30 bg-white/10 px-6 py-3 font-black text-white transition hover:bg-white/20">Start with Florida</a></div>
+          </div>
+          <div className="relative hidden lg:block">
+            <div className="absolute -inset-5 rounded-[36px] bg-cyan-400/20 blur-3xl" />
+            <img src="/hero-marina-2026.jpg" alt="" className="relative aspect-[16/10] w-full rounded-[28px] border border-white/15 object-cover shadow-2xl" />
+          </div>
         </div>
       </section>
       <section className="py-14 md:py-20">
