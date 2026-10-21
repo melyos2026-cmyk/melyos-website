@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import type { LucideIcon } from "lucide-react";
+import { Map, CalendarCheck, CreditCard, UserRound, PenLine, ShieldCheck, ScanBarcode, MessagesSquare, Wrench, Users, BarChart3, Bot, Caravan, Anchor, Tent, Home as HomeIcon, Warehouse, Landmark, Lock, Banknote, FileCheck2, MapPin, Mail, MessageCircle } from "lucide-react";
 
 // Oct 21 (per Mely): melyos.io refreshed with everything MelyOS offers today for
 // RV parks and marinas. Only features that exist; never public prices.
@@ -14,18 +16,18 @@ const NAV = [
 ];
 
 const features = [
-  { icon: "🗺️", title: "Interactive property map", text: "Every lot, site or slip on a real map of your property: open, occupied, reserved or under maintenance, with photo, size and hookups." },
-  { icon: "📅", title: "Online reservations", text: "Guests pick their exact space and dates and pay online. The calendar blocks double bookings across every channel." },
-  { icon: "💳", title: "Payments & billing", text: "Invoices, recurring rent, metered utilities, late-fee schedules and online payments that go straight to your own bank account." },
-  { icon: "👤", title: "Customer portal", text: "Residents and boat owners see their balance, pay, download documents and send requests from their phone, 24/7." },
-  { icon: "✍️", title: "Contracts & e-signature", text: "Leases and slip agreements signed online, with a signature record, a signed PDF on file and invoices created on signing." },
-  { icon: "🛡️", title: "Applications & screening", text: "Online rental applications with background checks, occupants, vehicles and pets, reviewed and approved from the office." },
-  { icon: "🧾", title: "Point of sale", text: "Sell propane, fuel and store items at the counter, with barcode scanning, inventory and low-stock alerts." },
-  { icon: "💬", title: "Messages & notices", text: "Send a notice to one customer or a whole group. Each one gets a private copy by email and in their account." },
-  { icon: "🛠️", title: "Maintenance", text: "Requests with photos, notes and status updates that the resident can follow from the portal." },
-  { icon: "👥", title: "Staff, roles & daily close", text: "Logins for every employee with their own permissions, shift open and close, and a drawer count for every shift." },
-  { icon: "📊", title: "Reports & accounting", text: "Revenue and tax reports, statements, collections, Export for QuickBooks Online and printable PDFs with your logo." },
-  { icon: "🤖", title: "Mely, your AI assistant", text: "Answers your guests 24/7 in their own language on your website, and helps your staff find anything in the system." },
+  { icon: Map, title: "Interactive property map", text: "Every lot, site or slip on a real map of your property: open, occupied, reserved or under maintenance, with photo, size and hookups." },
+  { icon: CalendarCheck, title: "Online reservations", text: "Guests pick their exact space and dates and pay online. The calendar blocks double bookings across every channel." },
+  { icon: CreditCard, title: "Payments & billing", text: "Invoices, recurring rent, metered utilities, late-fee schedules and online payments that go straight to your own bank account." },
+  { icon: UserRound, title: "Customer portal", text: "Residents and boat owners see their balance, pay, download documents and send requests from their phone, 24/7." },
+  { icon: PenLine, title: "Contracts & e-signature", text: "Leases and slip agreements signed online, with a signature record, a signed PDF on file and invoices created on signing." },
+  { icon: ShieldCheck, title: "Applications & screening", text: "Online rental applications with background checks, occupants, vehicles and pets, reviewed and approved from the office." },
+  { icon: ScanBarcode, title: "Point of sale", text: "Sell propane, fuel and store items at the counter, with barcode scanning, inventory and low-stock alerts." },
+  { icon: MessagesSquare, title: "Messages & notices", text: "Send a notice to one customer or a whole group. Each one gets a private copy by email and in their account." },
+  { icon: Wrench, title: "Maintenance", text: "Requests with photos, notes and status updates that the resident can follow from the portal." },
+  { icon: Users, title: "Staff, roles & daily close", text: "Logins for every employee with their own permissions, shift open and close, and a drawer count for every shift." },
+  { icon: BarChart3, title: "Reports & accounting", text: "Revenue and tax reports, statements, collections, Export for QuickBooks Online and printable PDFs with your logo." },
+  { icon: Bot, title: "Mely, your AI assistant", text: "Answers your guests 24/7 in their own language on your website, and helps your staff find anything in the system." },
 ];
 
 const rvParks = [
@@ -50,13 +52,13 @@ const marinas = [
   "Shift close-out and per-payment records built for city and county audits",
 ];
 
-const industries = [
-  ["🚐", "RV Parks & Resorts", "Long-term residents and short stays on one map."],
-  ["⚓", "Marinas", "Private and municipal: slips, dry storage, fuel and store."],
-  ["🏕️", "Campgrounds", "Sites, cabins, amenities and seasonal rates."],
-  ["🏘️", "Mobile Home Communities", "Leases, rent, utilities and maintenance."],
-  ["🚤", "RV & Boat Storage", "Spaces, recurring charges and customer records."],
-  ["🏛️", "Government Properties", "City and county parks and marinas that need clean, auditable records."],
+const industries: [LucideIcon, string, string][] = [
+  [Caravan, "RV Parks & Resorts", "Long-term residents and short stays on one map."],
+  [Anchor, "Marinas", "Private and municipal: slips, dry storage, fuel and store."],
+  [Tent, "Campgrounds", "Sites, cabins, amenities and seasonal rates."],
+  [HomeIcon, "Mobile Home Communities", "Leases, rent, utilities and maintenance."],
+  [Warehouse, "RV & Boat Storage", "Spaces, recurring charges and customer records."],
+  [Landmark, "Government Properties", "City and county parks and marinas that need clean, auditable records."],
 ];
 
 const steps = [
@@ -66,11 +68,11 @@ const steps = [
   ["4", "Support that answers", "A real team in Florida, plus regular updates included in the platform."],
 ];
 
-const trust = [
-  ["🔒", "Secure by design", "Encrypted card payments, role-based access, and each property's data kept separate."],
-  ["🏦", "Your money, your bank", "Customer payments go to your own bank account. Payouts are tracked in your reports."],
-  ["📁", "Records you can audit", "Every payment, refund and shift close is tied to a person, a date and a receipt."],
-  ["🇺🇸", "Built in Florida", "MelyOS LLC is based in Kissimmee, FL. Small team, fast answers."],
+const trust: [LucideIcon, string, string][] = [
+  [Lock, "Secure by design", "Encrypted card payments, role-based access, and each property's data kept separate."],
+  [Banknote, "Your money, your bank", "Customer payments go to your own bank account. Payouts are tracked in your reports."],
+  [FileCheck2, "Records you can audit", "Every payment, refund and shift close is tied to a person, a date and a receipt."],
+  [MapPin, "Built in Florida", "MelyOS LLC is based in Kissimmee, FL. Small team, fast answers."],
 ];
 
 export default function Home() {
@@ -175,7 +177,7 @@ export default function Home() {
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
               <article key={f.title} className="group rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-cyan-300 hover:shadow-xl">
-                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-50 text-2xl transition group-hover:scale-110">{f.icon}</div>
+                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-50 transition group-hover:scale-110"><f.icon className="h-6 w-6 text-[#079db9]" strokeWidth={1.8} aria-hidden /></div>
                 <h3 className="text-lg font-black">{f.title}</h3>
                 <p className="mt-2 leading-7 text-slate-600">{f.text}</p>
               </article>
@@ -214,9 +216,9 @@ export default function Home() {
             <h2 className={h2}>Built for RV parks. Built for marinas.</h2>
           </div>
           <div className="grid gap-6 lg:grid-cols-2">
-            {[["rv-parks", "🚐", "RV parks & communities", rvParks, "#demo", "Request an RV park demo"], ["marinas", "⚓", "Marinas, private & municipal", marinas, "#demo", "Request a marina demo"]].map(([id, icon, title, list, href, label]) => (
+            {[["rv-parks", Caravan, "RV parks & communities", rvParks, "#demo", "Request an RV park demo"], ["marinas", Anchor, "Marinas, private & municipal", marinas, "#demo", "Request a marina demo"]].map(([id, icon, title, list, href, label]) => (
               <article key={id as string} id={id as string} className="scroll-mt-28 rounded-3xl border border-slate-200 bg-slate-50 p-7 md:p-9">
-                <div className="flex items-center gap-3"><span className="text-3xl">{icon as string}</span><h3 className="text-2xl font-black">{title as string}</h3></div>
+                <div className="flex items-center gap-3">{(() => { const I = icon as LucideIcon; return <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#071A33]"><I className="h-6 w-6 text-[#39d5ee]" strokeWidth={1.8} aria-hidden /></span>; })()}<h3 className="text-2xl font-black">{title as string}</h3></div>
                 <ul className="mt-6 space-y-3">
                   {(list as string[]).map((i) => <li key={i} className="flex gap-3 text-slate-700"><span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cyan-100 text-xs font-black text-[#079db9]">✓</span><span className="font-medium">{i}</span></li>)}
                 </ul>
@@ -293,9 +295,9 @@ export default function Home() {
             <p className="mt-5 text-lg leading-8 text-slate-600">MelyOS adapts to the way your property works, whether you manage lots, sites, slips, units or storage spaces.</p>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {industries.map(([icon, t, s]) => (
+            {industries.map(([Icon, t, s]) => (
               <article key={t} className="rounded-3xl border border-slate-200 bg-white p-7 transition hover:shadow-xl">
-                <div className="text-3xl">{icon}</div><h3 className="mt-4 text-xl font-black">{t}</h3><p className="mt-2 leading-7 text-slate-600">{s}</p>
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-50"><Icon className="h-6 w-6 text-[#079db9]" strokeWidth={1.8} aria-hidden /></div><h3 className="mt-4 text-xl font-black">{t}</h3><p className="mt-2 leading-7 text-slate-600">{s}</p>
               </article>
             ))}
           </div>
@@ -329,8 +331,8 @@ export default function Home() {
             <h2 className={h2}>Your property, your customers, your data</h2>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {trust.map(([icon, t, s]) => (
-              <div key={t} className="rounded-3xl border border-white/10 bg-white/5 p-7"><div className="text-3xl">{icon}</div><h3 className="mt-4 text-lg font-black">{t}</h3><p className="mt-2 leading-7 text-slate-300">{s}</p></div>
+            {trust.map(([Icon, t, s]) => (
+              <div key={t} className="rounded-3xl border border-white/10 bg-white/5 p-7"><div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10"><Icon className="h-6 w-6 text-[#39d5ee]" strokeWidth={1.8} aria-hidden /></div><h3 className="mt-4 text-lg font-black">{t}</h3><p className="mt-2 leading-7 text-slate-300">{s}</p></div>
             ))}
           </div>
         </div>
@@ -375,13 +377,13 @@ export default function Home() {
               <h2 className={h2}>See MelyOS working for your property</h2>
               <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">Tell us about your property. We will show you the tools that matter to you and send you a custom quote, with no obligation.</p>
               <div className="mt-8 space-y-2 text-slate-200">
-                <p>✉️ <a className="font-bold underline" href="mailto:info@melyos.io">info@melyos.io</a></p>
-                <p>💬 Or chat with Mely, bottom right, any time.</p>
+                <p className="flex items-center gap-2"><Mail className="h-5 w-5 text-[#39d5ee]" aria-hidden /><a className="font-bold underline" href="mailto:info@melyos.io">info@melyos.io</a></p>
+                <p className="flex items-center gap-2"><MessageCircle className="h-5 w-5 text-[#39d5ee]" aria-hidden />Or chat with Mely, bottom right, any time.</p>
               </div>
             </div>
             <form className="rounded-3xl bg-white p-6 text-[#071A33] shadow-2xl" onSubmit={submitDemo}>
               {demoState === "sent" ? (
-                <div className="py-10 text-center"><p className="text-2xl font-black">Thank you! 🎉</p><p className="mt-3 text-slate-600">We received your request. The MelyOS team will contact you soon to schedule your demo.</p></div>
+                <div className="py-10 text-center"><p className="text-2xl font-black">Thank you!</p><p className="mt-3 text-slate-600">We received your request. The MelyOS team will contact you soon to schedule your demo.</p></div>
               ) : (
                 <div className="grid gap-4">
                   <input type="text" required value={demo.name} onChange={(e) => setDemo({ ...demo, name: e.target.value })} placeholder="Full name" className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400" />
@@ -409,7 +411,7 @@ export default function Home() {
           <div className="md:col-span-2">
             <img src="/melyos-logo-transparent.png" alt="MelyOS" className="h-14 w-auto" />
             <p className="mt-4 max-w-md leading-7 text-slate-600">Property management software for RV parks, marinas, campgrounds, communities and storage properties. MelyOS LLC, Kissimmee, Florida.</p>
-            <p className="mt-3 text-slate-600">✉️ <a className="underline" href="mailto:info@melyos.io">info@melyos.io</a></p>
+            <p className="mt-3 flex items-center gap-2 text-slate-600"><Mail className="h-4 w-4 text-[#079db9]" aria-hidden /><a className="underline" href="mailto:info@melyos.io">info@melyos.io</a></p>
           </div>
           <div>
             <p className="font-black">Platform</p>
