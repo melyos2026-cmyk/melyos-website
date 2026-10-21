@@ -12,8 +12,8 @@ export const NAV = [
   ["/rv-park-software", "RV Parks"],
   ["/marina-software", "Marinas"],
   ["/campground-software", "Campgrounds"],
+  ["/explore", "Explore"],
   ["/pricing", "Pricing"],
-  ["/about", "About"],
 ];
 
 export const features = [
@@ -117,6 +117,7 @@ export const MENU: MenuItem[] = [
     { href: "/features#reports", label: "Reports & QuickBooks", note: "Revenue, tax, export", icon: BarChart3 },
     { href: "/ai-assistant-for-rv-parks-and-marinas", label: "Mely AI Assistant", note: "Answers guests 24/7", icon: Bot },
   ] },
+  { label: "Explore", href: "/explore" },
   { label: "Resources", links: [
     { href: "/about", label: "About MelyOS", icon: Info },
     { href: "/pricing#faq", label: "Questions & Answers", icon: HelpCircle },

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { STATES } from "./components/explore/states";
 
 // Oct 21 (per Mely): pages Google should know about.
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -22,6 +23,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: "https://melyos.io/pricing", lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: "https://melyos.io/demo", lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: "https://melyos.io/about", lastModified: now, changeFrequency: "yearly", priority: 0.5 },
+    { url: "https://melyos.io/explore", lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    ...Object.keys(STATES).map((s) => ({ url: `https://melyos.io/explore/${s.toLowerCase()}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.6 })),
     { url: "https://melyos.io/privacy", lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: "https://melyos.io/terms", lastModified: now, changeFrequency: "yearly", priority: 0.3 },
   ];

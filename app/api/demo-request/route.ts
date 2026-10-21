@@ -20,6 +20,8 @@ export async function POST(req: NextRequest) {
       phone: String(b.phone || "").slice(0, 40),
       propertyType: String(b.propertyType || "").slice(0, 60),
       spaces: String(b.spaces || "").slice(0, 10),
+      // Oct 21 (per Mely): MelyOS Explore "Claim it free" requests.
+      message: b.claim ? `Claim request from MelyOS Explore: ${String(b.claim).slice(0, 160)}` : undefined,
     });
   } catch (e: any) {
     console.error("demo-request:", e?.message);
