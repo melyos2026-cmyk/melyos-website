@@ -8,6 +8,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: "https://melyos.io/rv-park-software", lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: "https://melyos.io/marina-software", lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: "https://melyos.io/campground-software", lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: "https://melyos.io/marina-fuel-dock-software", lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: "https://melyos.io/dry-stack-software", lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: "https://melyos.io/features", lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: "https://melyos.io/pricing", lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: "https://melyos.io/demo", lastModified: now, changeFrequency: "monthly", priority: 0.8 },
