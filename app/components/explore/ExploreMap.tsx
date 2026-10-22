@@ -22,6 +22,7 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
   const markers = useRef<Record<string, any>>({});
   const L = useRef<any>(null);
   const [ready, setReady] = useState(false);
+  const fitted = useRef<string | null>(null);
   const meta = STATES[state];
 
   useEffect(() => {
@@ -40,10 +41,15 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
       if (off || !mapEl.current || map.current) return;
       L.current = Lmod;
       map.current = Lmod.map(mapEl.current, { zoomControl: true, scrollWheelZoom: true }).setView([meta[1], meta[2]], meta[3]);
-      Lmod.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-        maxZoom: 19, subdomains: "abcd",
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>',
+      // Oct 21 (per Mely): CARTO started asking for an API key, so the base map is now
+      // OpenStreetMap's standard tiles (no key; attribution required).
+      Lmod.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
       }).addTo(map.current);
+      // Phones: the map box can get its final size after Leaflet starts; re-measure.
+      setTimeout(() => map.current && map.current.invalidateSize(), 250);
+      window.addEventListener("resize", () => map.current && map.current.invalidateSize());
       setReady(true);
     })();
     return () => { off = true; };
@@ -86,7 +92,19 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
     }
     group.addTo(map.current);
     layer.current = group;
-  }, [shown, ready, state]);
+    // Zoom so every place of the state fits on screen (once per state, on any screen size).
+    if (fitted.current !== state && rows && rows.length) {
+      fitted.current = state;
+      map.current.invalidateSize();
+      // Ignore the few places with odd coordinates (2% on each side) so one bad pin
+      // doesn't zoom the whole state out.
+      const qt = (a: number[], p: number) => { const v = [...a].sort((x, y) => x - y); return v[Math.min(v.length - 1, Math.max(0, Math.floor(p * (v.length - 1))))]; };
+      const lats = rows.map((r: Row) => r[2]), lons = rows.map((r: Row) => r[3]);
+      const tight = rows.length > 30;
+      const b = Lm.latLngBounds([[tight ? qt(lats, 0.02) : Math.min(...lats), tight ? qt(lons, 0.02) : Math.min(...lons)], [tight ? qt(lats, 0.98) : Math.max(...lats), tight ? qt(lons, 0.98) : Math.max(...lons)]]);
+      map.current.fitBounds(b, { padding: [24, 24], maxZoom: 9 });
+    }
+  }, [shown, ready, state, rows]);
 
   function focus(r: Row) {
     setPicked(r[7]);
@@ -125,7 +143,7 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
         </div>
       </div>
       <div className="order-1 overflow-hidden rounded-2xl border border-slate-200 lg:order-2">
-        <div ref={mapEl} className="h-[460px] w-full lg:h-[680px]" />
+        <div ref={mapEl} className="relative z-0 isolate h-[460px] w-full lg:h-[680px]" />
       </div>
     </div>
   );
