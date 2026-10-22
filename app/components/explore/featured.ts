@@ -9,3 +9,8 @@ export const FEATURED: Record<string, Row[]> = {
   ],
 };
 export const isFeatured = (r: Row) => String(r[7]).startsWith("melyos-");
+
+// Preview photo shown at the top of the pin (the property's own header photo).
+export const FEATURED_PHOTO: Record<string, string> = {
+  "melyos-aloha": "/explore/featured/aloha.jpg",
+};

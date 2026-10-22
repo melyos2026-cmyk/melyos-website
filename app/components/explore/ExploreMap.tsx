@@ -6,7 +6,7 @@ import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { STATES, KIND, type Row } from "./states";
 import StatePicker from "./StatePicker";
-import { FEATURED, isFeatured } from "./featured";
+import { FEATURED, FEATURED_PHOTO, isFeatured } from "./featured";
 
 // Oct 21 (per Mely): MelyOS Explore search — every marina, RV park and campground of
 // a state as a pin on the map, with a list, filters and "Claim it free".
@@ -94,7 +94,9 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
         ? Lm.divIcon({ className: "", html: `<span style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#08B8D8;color:#fff;font:900 15px system-ui;border:3px solid #fff;box-shadow:0 2px 8px rgba(7,26,51,.5)">&#9733;</span>`, iconSize: [30, 30], iconAnchor: [15, 15] })
         : Lm.divIcon({ className: "", html: `<span style="display:block;width:16px;height:16px;border-radius:50%;background:${k.color};border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45)"></span>`, iconSize: [16, 16], iconAnchor: [8, 8] });
       const m = Lm.marker([r[2], r[3]], { icon, title: nice(r[1]), zIndexOffset: feat ? 1000 : 0 });
-      m.bindPopup(`<div style="font-family:system-ui,sans-serif;min-width:210px">
+      const photo = feat ? FEATURED_PHOTO[r[7]] : "";
+      m.bindPopup(`<div style="font-family:system-ui,sans-serif;min-width:210px;max-width:250px">
+        ${photo ? `<img src="${photo}" alt="${esc(nice(r[1]))}" style="display:block;width:100%;height:110px;object-fit:cover;border-radius:10px;margin-bottom:8px" />` : ""}
         <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:${k.color}">${k.label}</div>
         <div style="font-size:15px;font-weight:800;color:#071A33;margin:2px 0 4px">${esc(nice(r[1]))}</div>
         <div style="color:#475569">${r[4] ? `${esc(r[4])}, ` : ""}${esc(meta[0])}</div>
