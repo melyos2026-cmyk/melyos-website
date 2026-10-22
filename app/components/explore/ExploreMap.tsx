@@ -5,6 +5,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { STATES, KIND, type Row } from "./states";
+import StatePicker from "./StatePicker";
 
 // Oct 21 (per Mely): MelyOS Explore search — every marina, RV park and campground of
 // a state as a pin on the map, with a list, filters and "Claim it free".
@@ -147,7 +148,15 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
     <div className="grid gap-4 lg:grid-cols-[400px_1fr]">
       <div className="order-2 flex min-h-0 flex-col rounded-2xl border border-slate-200 bg-white lg:order-1 lg:h-[680px]">
         <div className="space-y-3 border-b border-slate-200 p-4">
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={`Search by name or city in ${meta[0]}`} className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-cyan-400" />
+          {/* Oct 21 (per Mely): the state is chosen from the dropdown, never typed. If someone
+              types a state's name in the search box anyway, we open that state. */}
+          <div className="[&>select]:w-full"><StatePicker current={state} /></div>
+          <input value={q} onChange={(e) => {
+              const v = e.target.value;
+              const hit = Object.entries(STATES).find(([k, m]) => k !== state && m[0].toLowerCase() === v.trim().toLowerCase());
+              if (hit) { window.location.href = `/explore/${hit[0].toLowerCase()}`; return; }
+              setQ(v);
+            }} placeholder="Search a name or city" aria-label={`Search places in ${meta[0]} by name or city`} className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-cyan-400" />
           <div className="flex flex-wrap gap-2">
             {Object.entries(KIND).map(([k, v]) => (
               <button key={k} type="button" onClick={() => setKinds(kinds.includes(k) ? kinds.filter((x) => x !== k) : [...kinds, k])}
@@ -160,7 +169,7 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
           <p className="text-xs text-slate-500">{rows ? `${shown.length.toLocaleString()} shown` : "Loading…"}</p>
         </div>
         <div className="max-h-[420px] overflow-y-auto lg:max-h-none lg:flex-1">
-          {rows && !shown.length && <p className="p-5 text-sm text-slate-500">Nothing matches. Try another name or turn on more types.</p>}
+          {rows && !shown.length && <p className="p-5 text-sm text-slate-500">Nothing matches in {meta[0]}. Try another name or city, or choose another state above.</p>}
           {shown.slice(0, 400).map((r) => (
             <button key={r[7]} type="button" onClick={() => focus(r)} className={`block w-full border-b border-slate-100 px-4 py-3 text-left transition hover:bg-slate-50 ${picked === r[7] ? "bg-cyan-50" : ""}`}>
               <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: KIND[r[0]].color }} /><span className="font-bold text-[#071A33]">{nice(r[1])}</span></div>
