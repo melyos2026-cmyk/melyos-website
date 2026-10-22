@@ -9,7 +9,9 @@ import { STATES, KIND, type Row } from "./states";
 // Oct 21 (per Mely): MelyOS Explore search — every marina, RV park and campground of
 // a state as a pin on the map, with a list, filters and "Claim it free".
 const esc = (s: string) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string));
-const claimUrl = (r: Row) => `/demo?claim=${encodeURIComponent(r[1])}&type=${encodeURIComponent(KIND[r[0]].label)}`;
+// Names typed all in lowercase on the public map ("west delancy") show as "West Delancy".
+const nice = (n: string) => (n === n.toLowerCase() ? n.replace(/\b\w/g, (c) => c.toUpperCase()) : n);
+const claimUrl = (r: Row) => `/demo?claim=${encodeURIComponent(nice(r[1]))}&type=${encodeURIComponent(KIND[r[0]].label)}`;
 
 export default function ExploreMap({ state, initialKinds }: { state: string; initialKinds?: string[] }) {
   const [rows, setRows] = useState<Row[] | null>(null);
@@ -77,13 +79,18 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
     for (const r of shown) {
       const k = KIND[r[0]];
       const icon = Lm.divIcon({ className: "", html: `<span style="display:block;width:16px;height:16px;border-radius:50%;background:${k.color};border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45)"></span>`, iconSize: [16, 16], iconAnchor: [8, 8] });
-      const m = Lm.marker([r[2], r[3]], { icon, title: r[1] });
+      const m = Lm.marker([r[2], r[3]], { icon, title: nice(r[1]) });
       m.bindPopup(`<div style="font-family:system-ui,sans-serif;min-width:210px">
         <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:${k.color}">${k.label}</div>
-        <div style="font-size:15px;font-weight:800;color:#071A33;margin:2px 0 4px">${esc(r[1])}</div>
-        ${r[4] ? `<div style="color:#475569">${esc(r[4])}, ${state}</div>` : ""}
-        ${r[5] ? `<div><a href="tel:${esc(r[5].replace(/[^\d+]/g, ""))}">${esc(r[5])}</a></div>` : ""}
-        ${r[6] ? `<div><a href="${esc(r[6])}" target="_blank" rel="noopener nofollow">Website ↗</a></div>` : ""}
+        <div style="font-size:15px;font-weight:800;color:#071A33;margin:2px 0 4px">${esc(nice(r[1]))}</div>
+        <div style="color:#475569">${r[4] ? `${esc(r[4])}, ` : ""}${esc(meta[0])}</div>
+        ${r[5] ? `<div style="margin-top:4px">&#9742; <a href="tel:${esc(r[5].replace(/[^\d+]/g, ""))}">${esc(r[5])}</a></div>` : ""}
+        ${r[6] ? `<div style="margin-top:2px">&#127760; <a href="${esc(r[6])}" target="_blank" rel="noopener nofollow">Website</a></div>` : ""}
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+          <a href="https://www.google.com/maps/dir/?api=1&destination=${r[2]},${r[3]}" target="_blank" rel="noopener" style="border:1px solid #cbd5e1;color:#071A33;padding:5px 9px;border-radius:8px;font-weight:700;text-decoration:none;font-size:12px">Directions</a>
+          ${!r[5] || !r[6] ? `<a href="https://www.google.com/search?q=${encodeURIComponent(r[1] + " " + meta[0])}" target="_blank" rel="noopener nofollow" style="border:1px solid #cbd5e1;color:#071A33;padding:5px 9px;border-radius:8px;font-weight:700;text-decoration:none;font-size:12px">Phone &amp; hours</a>` : ""}
+        </div>
+        ${!r[5] && !r[6] ? `<div style="color:#64748b;font-size:12px;margin-top:8px">Contact details not listed yet. Owners can add them by claiming this page.</div>` : ""}
         <a href="${claimUrl(r)}" style="display:inline-block;margin-top:8px;background:#071A33;color:#fff;padding:7px 10px;border-radius:8px;font-weight:700;text-decoration:none">Is this your property? Claim it free</a>
       </div>`);
       m.on("click", () => setPicked(r[7]));
@@ -135,7 +142,7 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
           {rows && !shown.length && <p className="p-5 text-sm text-slate-500">Nothing matches. Try another name or turn on more types.</p>}
           {shown.slice(0, 400).map((r) => (
             <button key={r[7]} type="button" onClick={() => focus(r)} className={`block w-full border-b border-slate-100 px-4 py-3 text-left transition hover:bg-slate-50 ${picked === r[7] ? "bg-cyan-50" : ""}`}>
-              <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: KIND[r[0]].color }} /><span className="font-bold text-[#071A33]">{r[1]}</span></div>
+              <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: KIND[r[0]].color }} /><span className="font-bold text-[#071A33]">{nice(r[1])}</span></div>
               <div className="ml-[18px] text-sm text-slate-500">{KIND[r[0]].label}{r[4] ? ` · ${r[4]}` : ""}</div>
             </button>
           ))}
