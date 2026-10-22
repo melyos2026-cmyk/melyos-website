@@ -119,10 +119,10 @@ export const MENU: MenuItem[] = [
   ] },
   { label: "Explore", href: "/explore" },
   { label: "Resources", links: [
-    { href: "/about", label: "About MelyOS", icon: Info },
     { href: "/pricing#faq", label: "Questions & Answers", icon: HelpCircle },
     { href: "/demo", label: "Book a Demo", icon: CalendarCheck },
     { href: "mailto:info@melyos.io", label: "Help & Support", icon: LifeBuoy },
   ] },
   { label: "Pricing", href: "/pricing" },
+  { label: "About", href: "/about" },
 ];
