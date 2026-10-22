@@ -148,7 +148,7 @@ const shared = (t: QType): Section[] => [
       { id: "web_manager", label: "Who built and manages your website today?", kind: "text" },
       { id: "domain_owner", label: "Who owns the domain (web address)?", kind: "choice", options: ["We do (our company)", "Our web designer", "Not sure", "We don't have one"] },
       { id: "domain_login", label: "Do you have the login to the domain account (GoDaddy, Namecheap, etc.)?", kind: "choice", options: yesNo },
-      { id: "web_plan", label: "How would you like MelyOS to work with your website?", kind: "choice", options: ["Build me a new website", "Keep my website and add buttons (pay, reserve, login)", "Add the map or reservations inside my website", "I'd like a recommendation"] },
+      { id: "web_plan", label: "How would you like MelyOS to work with your website?", kind: "choice", options: ["Build me a new website", "Keep my website and add buttons (pay, reserve, login)", "Add the map or reservations inside my website", "I'd like a recommendation"], hint: "If you keep your website, we send you simple buttons or a short code to paste in. Your web designer, or we, can add them in a few minutes." },
     ],
   },
   {
@@ -165,6 +165,7 @@ const shared = (t: QType): Section[] => [
           "Customer portal (pay, documents, requests)",
           ...(t === "marina" ? ["Fuel dock sales and tank levels", "Ship store point of sale", "Dry stack launch requests"] : ["Point of sale (store, propane)"]),
           ...(t === "rv" ? ["Applications with background checks", "Meter readings and utility billing"] : []),
+          `Marketplace where ${t === "marina" ? "boaters" : t === "campground" ? "guests" : "residents"} can post items for sale`,
           "Messages and notices to customers",
           "Maintenance requests",
           "Staff logins with permissions",
