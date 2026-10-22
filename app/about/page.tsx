@@ -87,7 +87,7 @@ export default function Page() {
         <div className="mx-auto max-w-4xl px-5 text-center lg:px-8">
           <p className="text-sm font-black uppercase tracking-[0.18em] text-cyan-300">A Florida company</p>
           <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Woman-owned and Hispanic-owned</h2>
-          <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-300">MelyOS LLC is based in Kissimmee, Florida, and proudly founded and owned by a Hispanic woman. We serve private and municipal properties across the United States.</p>
+          <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-300">MelyOS LLC is based in Kissimmee, Florida, and proudly founded and owned by a Hispanic woman. We serve private and municipal properties across the United States, and we work with you in English or Spanish. <span className="font-bold text-white">Se habla español.</span></p>
           <a href="/demo" className={`${cta} mt-8 inline-block`}>Book a demo</a>
         </div>
       </section>
