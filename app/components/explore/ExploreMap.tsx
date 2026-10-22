@@ -6,6 +6,7 @@ import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { STATES, KIND, type Row } from "./states";
 import StatePicker from "./StatePicker";
+import { FEATURED, isFeatured } from "./featured";
 
 // Oct 21 (per Mely): MelyOS Explore search — every marina, RV park and campground of
 // a state as a pin on the map, with a list, filters and "Claim it free".
@@ -26,12 +27,19 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
   const L = useRef<any>(null);
   const [ready, setReady] = useState(false);
   const fitted = useRef<string | null>(null);
+  const featRef = useRef<any>(null);
   const meta = STATES[state];
 
   useEffect(() => {
     let off = false;
     setRows(null);
-    fetch(`/explore/${state}.json`).then((r) => (r.ok ? r.json() : { rows: [] })).then((j) => { if (!off) setRows(j.rows || []); }).catch(() => !off && setRows([]));
+    fetch(`/explore/${state}.json`).then((r) => (r.ok ? r.json() : { rows: [] })).then((j) => {
+      if (off) return;
+      // MelyOS properties first; drop the public-map copy of the same place if there is one.
+      const feat = FEATURED[state] || [];
+      const names = new Set(feat.map((r) => r[1].toLowerCase()));
+      setRows([...feat, ...((j.rows || []) as Row[]).filter((r) => !names.has(String(r[1]).toLowerCase()))]);
+    }).catch(() => !off && setRows([...(FEATURED[state] || [])]));
     return () => { off = true; };
   }, [state]);
 
@@ -69,6 +77,8 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
     const Lm = L.current;
     if (!ready || !Lm || !map.current) return;
     if (layer.current) map.current.removeLayer(layer.current);
+    if (featRef.current) map.current.removeLayer(featRef.current);
+    const featLayer = Lm.layerGroup();
     const group = (Lm as any).markerClusterGroup({
       showCoverageOnHover: false, maxClusterRadius: 45, chunkedLoading: true,
       iconCreateFunction: (c: any) => {
@@ -79,8 +89,11 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
     markers.current = {};
     for (const r of shown) {
       const k = KIND[r[0]];
-      const icon = Lm.divIcon({ className: "", html: `<span style="display:block;width:16px;height:16px;border-radius:50%;background:${k.color};border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45)"></span>`, iconSize: [16, 16], iconAnchor: [8, 8] });
-      const m = Lm.marker([r[2], r[3]], { icon, title: nice(r[1]) });
+      const feat = isFeatured(r);
+      const icon = feat
+        ? Lm.divIcon({ className: "", html: `<span style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#08B8D8;color:#fff;font:900 15px system-ui;border:3px solid #fff;box-shadow:0 2px 8px rgba(7,26,51,.5)">&#9733;</span>`, iconSize: [30, 30], iconAnchor: [15, 15] })
+        : Lm.divIcon({ className: "", html: `<span style="display:block;width:16px;height:16px;border-radius:50%;background:${k.color};border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45)"></span>`, iconSize: [16, 16], iconAnchor: [8, 8] });
+      const m = Lm.marker([r[2], r[3]], { icon, title: nice(r[1]), zIndexOffset: feat ? 1000 : 0 });
       m.bindPopup(`<div style="font-family:system-ui,sans-serif;min-width:210px">
         <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:${k.color}">${k.label}</div>
         <div style="font-size:15px;font-weight:800;color:#071A33;margin:2px 0 4px">${esc(nice(r[1]))}</div>
@@ -89,17 +102,22 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
         ${r[6] ? `<div style="margin-top:2px">&#127760; <a href="${esc(r[6])}" target="_blank" rel="noopener nofollow">Website</a></div>` : ""}
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
           <a href="https://www.google.com/maps/dir/?api=1&destination=${r[2]},${r[3]}" target="_blank" rel="noopener" style="border:1px solid #cbd5e1;color:#071A33;padding:5px 9px;border-radius:8px;font-weight:700;text-decoration:none;font-size:12px">Directions</a>
-          ${!r[5] || !r[6] ? `<a href="https://www.google.com/search?q=${encodeURIComponent(r[1] + " " + meta[0])}" target="_blank" rel="noopener nofollow" style="border:1px solid #cbd5e1;color:#071A33;padding:5px 9px;border-radius:8px;font-weight:700;text-decoration:none;font-size:12px">Phone &amp; hours</a>` : ""}
+          ${!feat && (!r[5] || !r[6]) ? `<a href="https://www.google.com/search?q=${encodeURIComponent(r[1] + " " + meta[0])}" target="_blank" rel="noopener nofollow" style="border:1px solid #cbd5e1;color:#071A33;padding:5px 9px;border-radius:8px;font-weight:700;text-decoration:none;font-size:12px">Phone &amp; hours</a>` : ""}
         </div>
-        ${!r[5] && !r[6] ? `<div style="color:#64748b;font-size:12px;margin-top:8px">Contact details not listed yet. Owners can add them by claiming this page.</div>` : ""}
-        <a href="${claimUrl(r)}" style="display:inline-block;margin-top:8px;background:#071A33;color:#fff;padding:7px 10px;border-radius:8px;font-weight:700;text-decoration:none">Is this your property? Claim it free</a>
+        ${!feat && !r[5] && !r[6] ? `<div style="color:#64748b;font-size:12px;margin-top:8px">Contact details not listed yet. Owners can add them by claiming this page.</div>` : ""}
+        ${feat
+          ? `<a href="${esc(r[6])}" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;background:#08B8D8;color:#fff;padding:7px 12px;border-radius:8px;font-weight:800;text-decoration:none">Book online</a><div style="color:#079db9;font-size:11px;font-weight:700;margin-top:6px">&#9733; Runs on MelyOS</div>`
+          : `<a href="${claimUrl(r)}" style="display:inline-block;margin-top:8px;background:#071A33;color:#fff;padding:7px 10px;border-radius:8px;font-weight:700;text-decoration:none">Is this your property? Claim it free</a>`}
       </div>`);
       m.on("click", () => setPicked(r[7]));
       markers.current[r[7]] = m;
-      group.addLayer(m);
+      // MelyOS properties stay visible at every zoom (never folded into a number circle).
+      if (feat) featLayer.addLayer(m); else group.addLayer(m);
     }
     group.addTo(map.current);
     layer.current = group;
+    featLayer.addTo(map.current);
+    featRef.current = featLayer;
     // Zoom so every place of the state fits on screen (once per state, on any screen size).
     if (fitted.current !== state && rows && rows.length) {
       fitted.current = state;
@@ -118,6 +136,7 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
     setPicked(r[7]);
     const m = markers.current[r[7]];
     if (!m || !layer.current) return;
+    if (isFeatured(r)) { map.current.setView([r[2], r[3]], 15); m.openPopup(); return; }
     layer.current.zoomToShowLayer(m, () => m.openPopup());
   }
 
@@ -172,7 +191,7 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
           {rows && !shown.length && <p className="p-5 text-sm text-slate-500">Nothing matches in {meta[0]}. Try another name or city, or choose another state above.</p>}
           {shown.slice(0, 400).map((r) => (
             <button key={r[7]} type="button" onClick={() => focus(r)} className={`block w-full border-b border-slate-100 px-4 py-3 text-left transition hover:bg-slate-50 ${picked === r[7] ? "bg-cyan-50" : ""}`}>
-              <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: KIND[r[0]].color }} /><span className="font-bold text-[#071A33]">{nice(r[1])}</span></div>
+              <div className="flex items-center gap-2"><span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: KIND[r[0]].color }} /><span className="font-bold text-[#071A33]">{nice(r[1])}</span>{isFeatured(r) && <span className="rounded-full bg-cyan-50 px-2 py-0.5 text-[11px] font-bold text-[#079db9]">Book online</span>}</div>
               <div className="ml-[18px] text-sm text-slate-500">{KIND[r[0]].label}{r[4] ? ` · ${r[4]}` : ""}</div>
             </button>
           ))}
