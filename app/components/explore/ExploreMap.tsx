@@ -72,7 +72,7 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
       showCoverageOnHover: false, maxClusterRadius: 45, chunkedLoading: true,
       iconCreateFunction: (c: any) => {
         const n = c.getChildCount(); const d = n < 10 ? 34 : n < 100 ? 40 : 48;
-        return Lm.divIcon({ className: "", iconSize: [d, d], html: `<div style="width:${d}px;height:${d}px;border-radius:50%;background:#071A33;color:#fff;display:flex;align-items:center;justify-content:center;font:800 13px system-ui,sans-serif;border:3px solid #39d5ee;box-shadow:0 2px 8px rgba(7,26,51,.35)">${n}</div>` });
+        return Lm.divIcon({ className: "", iconSize: [d, d], html: `<div style="width:${d}px;height:${d}px;border-radius:50%;background:${kinds.length === 1 ? KIND[kinds[0]].color : "#071A33"};color:#fff;display:flex;align-items:center;justify-content:center;font:800 13px system-ui,sans-serif;border:3px solid ${kinds.length === 1 ? "#fff" : "#39d5ee"};box-shadow:0 2px 8px rgba(7,26,51,.35)">${n}</div>` });
       },
     });
     markers.current = {};
@@ -122,7 +122,28 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
 
   const count = (k: string) => (rows || []).filter((r) => r[0] === k).length;
 
+  // Oct 21 (per Mely): one tap to see only marinas, only RV parks or only campgrounds,
+  // right above the map (on phones the type chips were below the map).
+  const tabs: [string, string, string[]][] = [["all", "All", ["m", "r", "c"]], ["m", KIND.m.plural, ["m"]], ["r", KIND.r.plural, ["r"]], ["c", KIND.c.plural, ["c"]]];
+  const activeTab = kinds.length === 3 ? "all" : kinds.length === 1 ? kinds[0] : "";
+
   return (
+    <div className="grid gap-4">
+    <div role="tablist" aria-label="Show" className="grid grid-cols-2 gap-1 rounded-2xl border border-slate-200 bg-white p-1.5 sm:flex">
+      {tabs.map(([id, label, ks]) => {
+        const on = activeTab === id;
+        const color = id === "all" ? "#071A33" : KIND[id].color;
+        return (
+          <button key={id} type="button" role="tab" aria-selected={on} onClick={() => setKinds(ks)}
+            className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-3 py-2.5 text-sm font-bold transition ${on ? "text-white shadow" : "text-slate-600 hover:bg-slate-50"}`}
+            style={on ? { background: color } : undefined}>
+            {id !== "all" && <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: on ? "#fff" : color }} />}
+            {label}
+            <span className={on ? "opacity-80" : "text-slate-400"}>{rows ? (id === "all" ? rows.length : count(id)).toLocaleString() : ""}</span>
+          </button>
+        );
+      })}
+    </div>
     <div className="grid gap-4 lg:grid-cols-[400px_1fr]">
       <div className="order-2 flex min-h-0 flex-col rounded-2xl border border-slate-200 bg-white lg:order-1 lg:h-[680px]">
         <div className="space-y-3 border-b border-slate-200 p-4">
@@ -152,6 +173,7 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
       <div className="order-1 overflow-hidden rounded-2xl border border-slate-200 lg:order-2">
         <div ref={mapEl} className="relative z-0 isolate h-[460px] w-full lg:h-[680px]" />
       </div>
+    </div>
     </div>
   );
 }
