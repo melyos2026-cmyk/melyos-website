@@ -27,7 +27,7 @@ What MelyOS is: a property management platform built around a live map of each p
 - Staff logins with roles and permissions; shift open/close with drawer count.
 - Mely: an AI assistant on the property's website (answers guests 24/7 in their language) and for its staff.
 - Rentals & Experiences: golf carts, boats, kayaks, jet skis, bikes, event rooms, and scheduled experiences (sunset tours, fishing charters, airboat rides, restaurant seating) booked and paid on the property's website, with deposits, online rental agreements and check-out/return in the office.
-- Concierge & Requests: customers ask for ice, drinks, provisions, catering, boat cleaning or crew for a date, time and slip; fixed prices bill to the account, others get a quote the customer approves.
+- Concierge & Requests: customers ask for ice, drinks, provisions, catering, boat cleaning or crew for a date, time and slip; fixed prices bill to the account, others get a quote the customer approves. Services can offer choices the customer picks from (which drinks in the case, ice type, menu style).
 - Careers & Crew: a careers page where captains, mates, deckhands and cleaners apply, upload their license and pay their own background check; the property approves and assigns them to requests.
 - Community Marketplace: residents (RV parks) and boaters (marinas) sell personal items to each other from their portal; Mely reviews every listing before it is published, and buyers contact the seller without seeing their email or phone.
 - Already have a website (your own, or a city/county site)? You can keep it: MelyOS gives you buttons to add (pay, login, apply, reserve) and the live map can be shown inside your page. Your web team can add them in minutes, or MelyOS helps.
