@@ -21,6 +21,7 @@ const items: [string, string][] = [
   ["Boats, RVs and vehicles", "Their boats, RV, vehicles and occupants on file, kept up to date."],
   ["Dry stack launches", "Boat owners ask for their boat in the water from the portal."],
   ["Community Marketplace", "Residents and boaters sell personal items to each other. Mely reviews every listing before it is published."],
+  ["Rentals and experiences", "Golf carts, boats, kayaks, tours and more, booked and paid from your website with online rental agreements."],
   ["Your brand, your website", "The portal lives on your own website, with your name and logo."],
 ];
 
