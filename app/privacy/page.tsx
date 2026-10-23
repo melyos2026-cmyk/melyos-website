@@ -39,6 +39,9 @@ export default function PrivacyPage() {
       <h2 style={h2}>6. Retention and security</h2>
       <p>We keep information for as long as needed for the purposes described, as our Customer instructs, and as required by law. We use safeguards designed to protect information, including encryption in transit, access controls, hashed passwords and separation of each Customer&apos;s data. No system is completely secure, and we cannot guarantee absolute security.</p>
 
+      <h2 style={h2}>6a. Cookies</h2>
+      <p>melyos.io and the websites we host for our Customers use cookies and similar storage that are needed for them to work (for example, keeping you signed in, remembering a shopping cart and remembering your cookie choice). If you accept all cookies, a simple visit counter (which pages are viewed) is also kept to help improve the site. We do not sell cookie data or share it for advertising. You can change your choice by clearing your browser&apos;s site data.</p>
+
       <h2 style={h2}>7. Your choices and rights</h2>
       <p>Depending on where you live, you may have rights to request access to, correction of, or deletion of your personal information. If your information is held for a park, please make the request to the park; if you send it to us, we will refer it to them where required. For information we control, contact us at the address below.</p>
 
