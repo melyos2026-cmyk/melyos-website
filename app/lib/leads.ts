@@ -22,7 +22,8 @@ export async function recordLead(lead: Lead) {
   try {
     await fetch(`${process.env.MELYOS_ADMIN_ORIGIN || "https://admin.melyos.io"}/api/public/melyos-site`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      // Oct 24 (security run): shared secret so only this server can add leads.
+      headers: { "Content-Type": "application/json", ...(process.env.MELYOS_SITE_SECRET ? { "x-site-secret": process.env.MELYOS_SITE_SECRET } : {}) },
       body: JSON.stringify({ type: "lead", ...lead }),
       signal: AbortSignal.timeout(4000),
     });
