@@ -8,6 +8,13 @@ import { useEffect, useRef, useState } from "react";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
+// Oct 24 (per Mely): show **bold** as real bold and never the raw asterisks or # marks.
+function Pretty({ text }: { text: string }) {
+  const clean = text.replace(/^#{1,6}\s+/gm, "").replace(/^\s*[-*]\s+/gm, "• ");
+  const parts = clean.split(/(\*\*[^*]+\*\*)/g);
+  return <>{parts.map((p, i) => (/^\*\*[^*]+\*\*$/.test(p) ? <strong key={i}>{p.slice(2, -2)}</strong> : <span key={i}>{p.replace(/\*\*/g, "")}</span>))}</>;
+}
+
 // Oct 24 (per Mely): Mely is the star salesperson — a welcome bubble invites visitors to ask her
 // anything, with starter questions so the conversation begins with one tap.
 const T = {
@@ -105,7 +112,7 @@ export default function MelyChat() {
           <div className="flex-1 space-y-2 overflow-y-auto bg-slate-50 p-3">
             {shown.map((m, i) => (
               <div key={i} className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3 py-2 text-sm ${m.role === "user" ? "ml-auto bg-[#08B8D8] text-white" : "bg-white text-slate-800 shadow-sm"}`}>
-                {m.content}
+                {m.role === "assistant" ? <Pretty text={m.content} /> : m.content}
               </div>
             ))}
             {msgs.length === 0 && !busy && (

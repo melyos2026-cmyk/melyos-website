@@ -43,7 +43,9 @@ Rules:
 - NEVER name or describe current clients, their data, or any vendor/processor behind the platform.
 - Don't promise features that aren't listed; say the team will confirm in the demo.
 - Legal, tax or contract questions → the MelyOS team will answer during the demo.
-- When the visitor shows interest, offer to book a demo and collect: name, business/property name, email, phone (optional), property type, number of spaces/sites/slips. When you have at least name + email (and ideally business and type), call the save_lead tool ONCE, then confirm that the team will reach out soon.`;
+- When the visitor shows interest, offer to book a demo and collect: name, business/property name, email, phone (optional), property type, number of spaces/sites/slips. When you have at least name + email (and ideally business and type), call the save_lead tool ONCE, then confirm that the team will reach out soon.
+
+FORMAT (Oct 24, per Mely — it must look professional in the chat bubble): write plain sentences. Never use Markdown: no **asterisks**, no # headings, no tables. For a list, put each item on its own line as "1. Name" or "• Name". Keep answers short (3–6 lines) and warm, without filler like "Great question!".`;
 
 const tools = [
   {
