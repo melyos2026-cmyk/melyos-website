@@ -9,7 +9,7 @@ export default function CookieBanner() {
   const [show, setShow] = useState(false);
   useEffect(() => { try { if (!localStorage.getItem(KEY)) setShow(true); } catch {} }, []);
   if (!show) return null;
-  const choose = (v: string) => { try { localStorage.setItem(KEY, v); } catch {} setShow(false); };
+  const choose = (v: string) => { try { localStorage.setItem(KEY, v); } catch {} setShow(false); if (v === "all") window.dispatchEvent(new Event("cookie-consent-all")); };
   return (
     <div role="dialog" aria-label="Cookies" className="fixed left-3 right-3 bottom-3 z-[1500] mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl text-sm text-[#071A33] flex flex-wrap items-center gap-3">
       <p className="flex-1 min-w-[280px] m-0 leading-relaxed">

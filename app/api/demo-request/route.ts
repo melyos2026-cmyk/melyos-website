@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendLead, tooMany } from "@/app/lib/leads";
+import { sendLead, tooMany, geoOf } from "@/app/lib/leads";
 
 // Oct 20 (per Mely): the "Request My Demo" form used to go nowhere — it now
 // emails the lead to MelyOS.
@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
   try {
     await sendLead({
       source: "demo_form",
+      ...geoOf(req.headers),
       name: String(b.name).slice(0, 120),
       business: String(b.business || "").slice(0, 160),
       email,

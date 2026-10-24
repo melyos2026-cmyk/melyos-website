@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import MelyChat from "./components/MelyChat"; // Oct 20: Mely chat for future clients
 import CookieBanner from "./components/CookieBanner";
+import SiteTracker from "./components/SiteTracker";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -124,6 +125,7 @@ export default function RootLayout({
         {children}
         <MelyChat />
         <CookieBanner />
+        <SiteTracker />
       </body>
     </html>
   );

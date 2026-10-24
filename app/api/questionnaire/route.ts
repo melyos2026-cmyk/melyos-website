@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { tooMany } from "@/app/lib/leads";
+import { tooMany, recordLead, geoOf } from "@/app/lib/leads";
 
 // Oct 22 (per Mely): private onboarding questionnaire — answers are emailed to MelyOS.
 const esc = (v: any) => String(v ?? "").replace(/[<>&"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c] as string)).slice(0, 3000);
@@ -14,6 +14,8 @@ export async function POST(req: NextRequest) {
   if (!NAMES[b.type] || !String(b.name || "").trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: "Please enter your name and a valid email." }, { status: 400 });
   }
+  // Oct 24: keep it in Insights too (contact + type; the full answers stay in the email).
+  await recordLead({ source: "questionnaire", name: String(b.name).slice(0, 120), business: String(b.business || b.company || "").slice(0, 160) || undefined, email, phone: String(b.phone || "").slice(0, 40) || undefined, propertyType: NAMES[b.type], ...geoOf(req.headers) });
   if (!process.env.RESEND_API_KEY) return NextResponse.json({ error: "We couldn't send it. Please email us." }, { status: 500 });
   const sections = (Array.isArray(b.answers) ? b.answers : []).slice(0, 20);
   const html = `<div style="font-family:Arial,sans-serif;max-width:720px"><h2>Questionnaire — ${NAMES[b.type]}</h2>${sections.map((s: any) =>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendLead, tooMany } from "@/app/lib/leads";
+import { sendLead, tooMany, geoOf } from "@/app/lib/leads";
 
 // Oct 20 (per Mely): Mely on melyos.io — answers questions from FUTURE
 // MelyOS clients (park, campground, marina and storage owners) and books
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
           else if (tooMany(`lead:${ip}`, 3)) out = "Already received; tell the visitor the team will reach out.";
           else {
             try {
-              await sendLead({ source: "mely_chat", ...b.input, email });
+              await sendLead({ source: "mely_chat", ...b.input, email, ...geoOf(req.headers) });
               leadSaved = true;
             } catch {
               out = "Could not send. Ask the visitor to use the demo form on the page.";
