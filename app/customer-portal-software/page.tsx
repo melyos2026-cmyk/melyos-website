@@ -23,6 +23,7 @@ const items: [string, string][] = [
   ["Community Marketplace", "Residents and boaters sell personal items to each other. Mely reviews every listing before it is published."],
   ["Rentals and experiences", "Golf carts, boats, kayaks, tours and more, booked and paid from your website with online rental agreements."],
   ["Concierge requests", "Ice, provisions, catering, boat cleaning or crew to the slip, requested online and billed to the account."],
+  ["Restaurant", "Menu, hours, delivery links and table reservations for the property's restaurant, with reservations visible in the customer's account."],
   ["Your brand, your website", "The portal lives on your own website, with your name and logo."],
 ];
 
