@@ -1,7 +1,7 @@
 // Oct 21 (per Mely): shared content for melyos.io pages. Only features that exist; no prices.
 import type { LucideIcon } from "lucide-react";
-import { Fuel, Ship, Target, Wallet, Zap, HelpCircle, Info, LifeBuoy, Building2, Map, CalendarCheck, CreditCard, UserRound, PenLine, ShieldCheck, ScanBarcode, MessagesSquare, Wrench, Users, BarChart3, Bot, Caravan, Anchor, Tent, Home as HomeIcon, Warehouse, Landmark, Lock, Banknote, FileCheck2, MapPin, Mail, MessageCircle, BadgeCheck, Receipt } from "lucide-react";
-export { Map, CalendarCheck, CreditCard, UserRound, PenLine, ShieldCheck, ScanBarcode, MessagesSquare, Wrench, Users, BarChart3, Bot, Caravan, Anchor, Tent, HomeIcon, Warehouse, Landmark, Lock, Banknote, FileCheck2, MapPin, Mail, MessageCircle, BadgeCheck, Receipt };
+import { Fuel, Ship, Target, Wallet, Zap, HelpCircle, Info, LifeBuoy, Building2, Map, CalendarCheck, CreditCard, UserRound, PenLine, ShieldCheck, ScanBarcode, MessagesSquare, Wrench, Users, BarChart3, Bot, Caravan, Anchor, Tent, Home as HomeIcon, Warehouse, Landmark, Lock, Banknote, FileCheck2, MapPin, Mail, MessageCircle, BadgeCheck, Receipt, Scale } from "lucide-react";
+export { Map, CalendarCheck, CreditCard, UserRound, PenLine, ShieldCheck, ScanBarcode, MessagesSquare, Wrench, Users, BarChart3, Bot, Caravan, Anchor, Tent, HomeIcon, Warehouse, Landmark, Lock, Banknote, FileCheck2, MapPin, Mail, MessageCircle, BadgeCheck, Receipt, Scale };
 export type { LucideIcon };
 export const eyebrow = "mb-3 text-sm font-black uppercase tracking-[0.18em] text-[#08B8D8]";
 export const h2 = "text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl";
@@ -17,29 +17,30 @@ export const NAV = [
 ];
 
 export const features = [
-  { id: "map", icon: Map, title: "Interactive property map", text: "Every lot, site or slip on a real map of your property: open, occupied, reserved or under maintenance, with photo, size and hookups." },
-  { id: "reservations", icon: CalendarCheck, title: "Online reservations", text: "Guests pick their exact space and dates and pay online. The calendar blocks double bookings across every channel." },
-  { id: "payments", icon: CreditCard, title: "Payments & billing", text: "Invoices, recurring rent, metered utilities, late-fee schedules and online payments that go straight to your own bank account." },
-  { id: "portal", icon: UserRound, title: "Customer portal", text: "Residents and boat owners see their balance, pay, download documents and send requests from their phone, 24/7." },
-  { id: "contracts", icon: PenLine, title: "Contracts & e-signature", text: "Leases and slip agreements signed online, with a signature record, a signed PDF on file and invoices created on signing." },
-  { id: "screening", icon: ShieldCheck, title: "Applications & screening", text: "Online rental applications with background checks, occupants, vehicles and pets, reviewed and approved from the office." },
+  { id: "map", icon: Map, title: "Interactive property map", text: "Every lot, site or slip on a real map of your property: open, occupied, reserved or under maintenance, with photo, size and hookups, and grouped by section across your office." },
+  { id: "reservations", icon: CalendarCheck, title: "Online reservations", text: "Guests pick their exact space and dates and pay online. The calendar blocks double bookings, and when you are full your website shows a waitlist instead." },
+  { id: "payments", icon: CreditCard, title: "Payments & billing", text: "Monthly invoices with pay ahead, metered utilities and late-fee schedules. Customers pay by card or bank (ACH) with autopay, straight to your own bank account, with instant payout when you need it." },
+  { id: "portal", icon: UserRound, title: "Customer portal", text: "Residents and boat owners see their balance, pay, sign, request the Rec Hall and use the community marketplace from their phone, 24/7, in English, Spanish or Portuguese." },
+  { id: "contracts", icon: PenLine, title: "Contracts & e-signature", text: "Leases, slip agreements and resident agreements signed online, with a signature record, a signed PDF on file and invoices created on signing." },
+  { id: "screening", icon: ShieldCheck, title: "Applications & screening", text: "Online rental applications with background checks for the applicant and adult household members, paid by the applicant. Results come to your office, and the decision stays with you." },
   { id: "point-of-sale", icon: ScanBarcode, title: "Point of sale", text: "Sell propane, fuel and store items at the counter, with barcode scanning, inventory and low-stock alerts." },
   { id: "messages", icon: MessagesSquare, title: "Messages & notices", text: "Send a notice to one customer or a whole group. Each one gets a private copy by email and in their account." },
   { id: "maintenance", icon: Wrench, title: "Maintenance", text: "Requests with photos, notes and status updates that the resident can follow from the portal." },
-  { id: "staff", icon: Users, title: "Staff, roles & daily close", text: "Logins for every employee with their own permissions, shift open and close, and a drawer count for every shift." },
-  { id: "reports", icon: BarChart3, title: "Reports & accounting", text: "Revenue and tax reports, statements, collections, Export for QuickBooks Online and printable PDFs with your logo." },
+  { id: "staff", icon: Users, title: "Staff, roles & daily close", text: "Logins for every employee with their own permissions and alert preferences, shift open and close, and a drawer count for every shift." },
+  { id: "reports", icon: BarChart3, title: "Reports & accounting", text: "Revenue and tax reports, statements, collections, Export for QuickBooks Online and printable PDFs with your logo. Send former residents' overdue accounts to a licensed collections agency." },
   { id: "mely-ai", icon: Bot, title: "Mely, your AI assistant", text: "Answers your guests 24/7 in their own language on your website, and helps your staff find anything in the system." },
 ];
 
 export const rvParks = [
   "Interactive lot map with real-time availability and date-range booking",
   "Nightly, weekly and monthly stays with seasonal pricing",
-  "Online lease applications with background screening",
-  "Resident portal: rent, autopay, documents, vehicles, occupants, move-out requests",
-  "Recurring billing: rent, electric meter readings (any meter type), laundry and late fees",
+  "Online lease applications with background checks for each adult, paid by the applicant",
+  "Resident portal in English, Spanish and Portuguese: rent, autopay, documents, Rec Hall requests, marketplace",
+  "Monthly invoices with pay ahead: rent, electric meter readings (any meter type), laundry and late fees, paid by card or bank",
   "Propane sales with QR pickup codes",
   "Rent-to-own plans with payment tracking and bill of sale",
   "Storage lots, real-estate listings and park events",
+  "Waitlist when the park is full, and Send to Collections for former residents' overdue accounts",
 ];
 
 export const marinas = [

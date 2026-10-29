@@ -1,4 +1,4 @@
-import { eyebrow, h2, cta, features, rvParks, marinas, industries, steps, trust, CreditCard, BadgeCheck, Receipt, Caravan, Anchor } from "./data";
+import { eyebrow, h2, cta, features, rvParks, marinas, industries, steps, trust, CreditCard, BadgeCheck, Receipt, Scale, Caravan, Anchor } from "./data";
 import type { LucideIcon } from "./data";
 import { Check, Plus } from "lucide-react";
 
@@ -145,7 +145,7 @@ export function PortalSection() {
             <h2 className={h2}>Fewer calls to the office</h2>
             <p className="mt-6 text-lg leading-8 text-slate-600">Residents and boat owners sign in with their email and handle the everyday things themselves, any time of day.</p>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              {["See balances and pay online", "Set up autopay", "Read and sign contracts", "Download receipts and documents", "Send maintenance or launch requests", "Read notices and message the office"].map((i) => (
+              {["See balances and pay by card or bank", "Set up autopay", "Read and sign contracts", "Download receipts and documents", "Send maintenance, launch or Rec Hall requests", "Read notices and message the office", "Buy, sell and offer services in the marketplace", "Use it in English, Spanish or Portuguese"].map((i) => (
                 <div key={i} className="flex items-start gap-3"><span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-cyan-100 text-sm font-black text-[#079db9]">✓</span><span className="font-semibold text-slate-700">{i}</span></div>
               ))}
             </div>
@@ -233,18 +233,19 @@ export function TrustSection() {
 export function ServicesSection() {
   return (
     <>
-      {/* Built-in services (per Mely): payment processing, background checks, QuickBooks */}
+      {/* Built-in services (per Mely): payment processing, background checks, QuickBooks, Send to Collections (never name the agency) */}
       <section id="services" className="scroll-mt-24 bg-slate-50 py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <div className="mx-auto mb-12 max-w-3xl text-center">
-            <p className={eyebrow}>Built in, no extra vendors</p>
-            <h2 className={h2}>Payments, screening and accounting included</h2>
-            <p className="mt-5 text-lg leading-8 text-slate-600">The services most properties buy from three different companies are already part of MelyOS.</p>
+            <p className={eyebrow}>Built in and connected</p>
+            <h2 className={h2}>Payments, screening, accounting and collections</h2>
+            <p className="mt-5 text-lg leading-8 text-slate-600">The services most properties set up with different companies are already connected to MelyOS.</p>
           </div>
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
             {([
-              [CreditCard, "Payment processing", ["Customers pay rent, reservations and invoices by card, online", "Autopay for monthly rent and slip fees", "Money deposited to your own bank account", "Receipts emailed automatically; refunds tracked in your reports"]],
-              [BadgeCheck, "Background checks", ["Screening ordered right from the online application", "Applicant and adult occupants each get their own check", "Results reviewed in the office before you approve", "Fee collected from the applicant with the application"]],
+              [CreditCard, "Payment processing", ["Customers pay rent, reservations and invoices online by card or bank (ACH)", "Autopay from a card or bank account", "Money deposited to your own bank account, or in about 30 minutes with instant payout", "Receipts emailed automatically; refunds tracked in your reports"]],
+              [BadgeCheck, "Background checks", ["Screening ordered right from the online application", "Applicant and adult household members each get their own check", "Paid by the applicant with the application", "Results in your office; your park makes the decision and handles any adverse action"]],
+              [Scale, "Send to Collections", ["Refer former residents' overdue accounts to a licensed collections agency", "Accept the agency's terms once", "Send each account yourself, one at a time", "Track status and recoveries in one place"]],
               [Receipt, "QuickBooks Online", ["Export for QuickBooks: customers and invoices ready to import", "Payments list to match your bank deposits", "Revenue and sales-tax reports", "Sign in to QuickBooks, or open an account, from MelyOS"]],
             ] as [LucideIcon, string, string[]][]).map(([Icon, t, list]) => (
               <article key={t} className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
@@ -374,8 +375,8 @@ const ONE_PLAN: [string, string][] = [
   ["Interactive map & occupancy", "Every lot, site or slip, live"],
   ["Online reservations", "Book and pay 24/7"],
   ["Contracts & e-signature", "Signed online, invoices created on signing"],
-  ["Billing, autopay & utilities", "Rent, dockage, meter readings, late fees"],
-  ["Customer portal", "Balance, payments, documents, messages"],
+  ["Billing, autopay & utilities", "Card and bank payments, meter readings, late fees"],
+  ["Customer portal", "Balance, payments, documents, in 3 languages"],
   ["Point of sale & inventory", "Store, propane, barcode scanning"],
   ["Fuel dock", "Pumps, tank levels, sales"],
   ["Dry stack launch requests", "From the boater's phone"],

@@ -91,9 +91,10 @@ const jsonLd = {
       url: "https://melyos.io",
       publisher: { "@id": "https://melyos.io/#organization" },
       featureList: [
-        "Interactive property map", "Online reservations", "Payment processing and billing", "Customer portal",
+        "Interactive property map", "Online reservations", "Payment processing and billing", "Bank (ACH) payments and autopay", "Instant payout",
+        "Customer portal in English, Spanish and Portuguese", "Resident agreements signed online", "Waitlist", "Rec Hall and amenity booking requests", "Community marketplace",
         "Contracts with e-signature", "Background checks", "Point of sale (propane, fuel dock, ship store)",
-        "Messages to customers", "Maintenance requests", "Staff roles and shift close-out", "QuickBooks Online export", "AI assistant",
+        "Messages to customers", "Maintenance requests", "Staff roles and shift close-out", "QuickBooks Online export", "Send to Collections", "AI assistant",
       ],
     },
     {

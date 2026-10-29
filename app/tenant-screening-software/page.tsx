@@ -14,9 +14,9 @@ export const metadata: Metadata = {
 
 const items: [string, string][] = [
   ["Online application", "Applicants apply from your website, with their RV, vehicles, occupants and pets."],
-  ["Background checks built in", "Order a background check for each adult from the application. Results come back to your office."],
+  ["Background checks built in", "A background check for the applicant and each adult household member, ordered from the application. Results come back to your office."],
   ["Application fee collected", "The applicant pays the application and screening fees online when they apply."],
-  ["Your rules", "You decide which stays need screening and what each fee is."],
+  ["Your rules, your decision", "You decide which stays need screening and what each fee is. Your park makes the final decision and handles any adverse action."],
   ["Review and approve", "See everything in one place and approve or decline with a note."],
   ["Lease created for you", "On approval the lease PDF is generated with your clauses and saved in the resident's documents."],
   ["Resident account ready", "The resident's portal account, the lot and the calendar are set up automatically."],
@@ -37,7 +37,7 @@ export default function Page() {
       ]} />
       <OnePlanSection />
       <FaqSection items={[
-        ["Are background checks included?", "The screening tool is included in your MelyOS plan. Each background check has a per-person cost, which you can pass to the applicant."],
+        ["Are background checks included?", "The screening tool is included in your MelyOS plan. Each background check has a per-person cost, paid by the applicant with the application."],
         ["Can I skip screening for short stays?", "Yes. You decide which stays need an application and screening."],
         ["Who sees the applicant's information?", "Only your office. Applicant data is never shared with other properties."],
         ["Is the lease created automatically?", "Yes. On approval, the lease PDF is generated with your clauses and saved in the resident's documents."],
