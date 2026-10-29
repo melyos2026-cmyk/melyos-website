@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SiteHeader from "../components/site/Header";
 import SiteFooter from "../components/site/Footer";
 import DemoSection from "../components/site/DemoSection";
-import { PageHero, CapabilityGrid, ServicesSection, HowItWorksSection, PortalSection, FaqSection } from "../components/site/Sections";
+import { PageHero, CapabilityGrid, RvMarinaSection, ServicesSection, HowItWorksSection, PortalSection, FaqSection } from "../components/site/Sections";
 
 export const metadata: Metadata = {
   title: "Marina Management Software",
@@ -28,6 +28,7 @@ export default function Page() {
       <SiteHeader />
       <PageHero kicker="Marina management software" title="A marina office that runs itself" text="Slips, boaters, contracts, the fuel dock and the ship store in one platform, built around a live map of your docks and set up for you by our team." image="/interactive-slips-2026.jpg" imageAlt="Interactive marina slip map with an available slip selected" />
       <CapabilityGrid kicker="Built for marinas, private & municipal" title="Everything from the dock to the office" items={items} />
+      <RvMarinaSection only="marinas" />
       <PortalSection />
       <ServicesSection />
       <HowItWorksSection />

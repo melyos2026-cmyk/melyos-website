@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SiteHeader from "../components/site/Header";
 import SiteFooter from "../components/site/Footer";
 import DemoSection from "../components/site/DemoSection";
-import { PageHero, FeaturesSection, MapSection, PortalSection, ServicesSection, IndustriesSection } from "../components/site/Sections";
+import { PageHero, FeaturesSection, MapSection, RvMarinaSection, PortalSection, ServicesSection, IndustriesSection } from "../components/site/Sections";
 
 export const metadata: Metadata = {
   title: "Features",
@@ -17,6 +17,7 @@ export default function Page() {
       <PageHero kicker="The MelyOS platform" title="Every tool your property needs, connected" text="One system for the map, bookings, billing, contracts, the customer portal and daily operations. Every screen talks to the others." image="/interactive-slips-2026.jpg" imageAlt="MelyOS interactive map" />
       <FeaturesSection />
       <MapSection />
+      <RvMarinaSection />
       <PortalSection />
       <ServicesSection />
       <IndustriesSection />

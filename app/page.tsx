@@ -5,7 +5,7 @@
 import SiteHeader from "./components/site/Header";
 import SiteFooter from "./components/site/Footer";
 import DemoSection from "./components/site/DemoSection";
-import { FeaturesSection, MapSection, RvMarinaSection, SeeItLiveSection, PortalSection, IndustriesSection, HowItWorksSection, TrustSection, ServicesSection, PricingSection } from "./components/site/Sections";
+import { HomeAudienceSection, HomePlatformSection, SeeItLiveSection, HowItWorksSection, TrustSection, ServicesSection, HomePricingBand, FaqSection, HOME_FAQ } from "./components/site/Sections";
 import { cta } from "./components/site/data";
 
 export default function Home() {
@@ -40,25 +40,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Highlights */}
-      <section className="border-b border-slate-100 bg-slate-50">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-5 px-5 py-7 text-center md:grid-cols-4 lg:px-8">
-          {[["All in one place", "Map, bookings, billing and portal"], ["24/7 online", "Customers book and pay anytime"], ["Any language", "Mely answers your guests in theirs"], ["Built for growth", "One property or many"]].map(([t, s]) => (
-            <div key={t}><p className="font-black">{t}</p><p className="mt-1 text-sm text-slate-500">{s}</p></div>
-          ))}
-        </div>
-      </section>
-
-      <FeaturesSection />
-      <MapSection />
-      <RvMarinaSection />
-      <SeeItLiveSection />
-      <PortalSection />
-      <IndustriesSection />
-      <HowItWorksSection />
-      <TrustSection />
+      {/* Oct 29 (per Mely): reorganized home. Full feature lists moved to the detail pages
+          (/features, /rv-park-software, /marina-software, /pricing); nothing was removed. */}
+      <HomeAudienceSection />
+      <HomePlatformSection />
       <ServicesSection />
-      <PricingSection />
+      <HowItWorksSection />
+      <SeeItLiveSection />
+      <TrustSection />
+      <HomePricingBand />
+      <FaqSection items={HOME_FAQ} />
       <DemoSection />
       <SiteFooter />
     </main>

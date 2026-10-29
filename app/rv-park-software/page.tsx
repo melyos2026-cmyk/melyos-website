@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SiteHeader from "../components/site/Header";
 import SiteFooter from "../components/site/Footer";
 import DemoSection from "../components/site/DemoSection";
-import { PageHero, CapabilityGrid, ServicesSection, HowItWorksSection, PortalSection, FaqSection } from "../components/site/Sections";
+import { PageHero, CapabilityGrid, RvMarinaSection, ServicesSection, HowItWorksSection, PortalSection, FaqSection } from "../components/site/Sections";
 
 export const metadata: Metadata = {
   title: "RV Park Management Software",
@@ -28,6 +28,7 @@ export default function Page() {
       <SiteHeader />
       <PageHero kicker="RV park management software" title="Run your RV park from one live map" text="Reservations, long-term residents, billing and the front office in one platform, built around a map of your own park and set up for you by our team." image="/hero-interactive-map.png" imageAlt="Interactive RV park lot map on a tablet" />
       <CapabilityGrid kicker="Built for RV parks" title="Everything your park office handles" items={items} />
+      <RvMarinaSection only="rv-parks" />
       <PortalSection />
       <ServicesSection />
       <HowItWorksSection />

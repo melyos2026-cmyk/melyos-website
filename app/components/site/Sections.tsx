@@ -1,6 +1,6 @@
 import { eyebrow, h2, cta, features, rvParks, marinas, industries, steps, trust, CreditCard, BadgeCheck, Receipt, Scale, Caravan, Anchor } from "./data";
 import type { LucideIcon } from "./data";
-import { Check, Plus } from "lucide-react";
+import { ArrowRight, Check, Plus } from "lucide-react";
 
 export function FeaturesSection() {
   return (
@@ -58,7 +58,11 @@ export function MapSection() {
   );
 }
 
-export function RvMarinaSection() {
+// Oct 29 (per Mely): the home page now shows short photo cards; this full list lives on
+// /features (both) and on /rv-park-software and /marina-software (`only` = one list).
+export function RvMarinaSection({ only }: { only?: "rv-parks" | "marinas" } = {}) {
+  const all = [["rv-parks", Caravan, "RV parks & communities", rvParks, "#demo", "Request an RV park demo"], ["marinas", Anchor, "Marinas, private & municipal", marinas, "#demo", "Request a marina demo"]];
+  const shown = only ? all.filter(([id]) => id === only) : all;
   return (
     <>
       {/* RV parks & marinas */}
@@ -66,10 +70,10 @@ export function RvMarinaSection() {
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <div className="mx-auto mb-12 max-w-3xl text-center">
             <p className={eyebrow}>Made for how you operate</p>
-            <h2 className={h2}>Built for RV parks. Built for marinas.</h2>
+            <h2 className={h2}>{only === "rv-parks" ? "Built for RV parks." : only === "marinas" ? "Built for marinas." : "Built for RV parks. Built for marinas."}</h2>
           </div>
-          <div className="grid gap-6 lg:grid-cols-2">
-            {[["rv-parks", Caravan, "RV parks & communities", rvParks, "#demo", "Request an RV park demo"], ["marinas", Anchor, "Marinas, private & municipal", marinas, "#demo", "Request a marina demo"]].map(([id, icon, title, list, href, label]) => (
+          <div className={only ? "mx-auto grid max-w-3xl gap-6" : "grid gap-6 lg:grid-cols-2"}>
+            {shown.map(([id, icon, title, list, href, label]) => (
               <article key={id as string} id={id as string} className="scroll-mt-28 rounded-3xl border border-slate-200 bg-slate-50 p-7 md:p-9">
                 <div className="flex items-center gap-3">{(() => { const I = icon as LucideIcon; return <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#071A33]"><I className="h-6 w-6 text-[#39d5ee]" strokeWidth={1.8} aria-hidden /></span>; })()}<h3 className="text-2xl font-black">{title as string}</h3></div>
                 <ul className="mt-6 space-y-3">
@@ -300,6 +304,125 @@ export function PricingSection() {
     </>
   );
 }
+
+// Oct 29 (per Mely): home page reorganized. Who it's for + highlights, the 12 features
+// grouped into 4 photo cards (full detail on /features and each solution page), a short
+// pricing band (full detail on /pricing) and a FAQ. Same wording, shorter page.
+const HOME_AUDIENCE: [string, LucideIcon, string, string][] = [
+  ["/rv-park-software", industries[0][0], industries[0][1], industries[0][2]],
+  ["/marina-software", industries[1][0], industries[1][1], industries[1][2]],
+  ["/campground-software", industries[2][0], industries[2][1], industries[2][2]],
+];
+
+export function HomeAudienceSection() {
+  return (
+    <section id="who-its-for" className="scroll-mt-24 border-b border-slate-100 bg-slate-50">
+      <div className="mx-auto max-w-7xl px-5 py-12 md:py-14 lg:px-8">
+        <p className={`${eyebrow} text-center`}>Who it&apos;s for</p>
+        <div className="grid gap-3 md:grid-cols-3 md:gap-5">
+          {HOME_AUDIENCE.map(([href, Icon, t, s]) => (
+            <a key={href} href={href} className="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-cyan-300 hover:shadow-lg md:p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#071A33]"><Icon className="h-6 w-6 text-[#39d5ee]" strokeWidth={1.8} aria-hidden /></span>
+              <span className="min-w-0 flex-1"><span className="block font-black">{t}</span><span className="mt-0.5 block text-sm leading-5 text-slate-500">{s}</span></span>
+              <ArrowRight className="h-5 w-5 shrink-0 text-[#08B8D8] transition group-hover:translate-x-0.5" aria-hidden />
+            </a>
+          ))}
+        </div>
+        <p className="mt-5 text-center text-sm text-slate-500">
+          Also for {industries.slice(3).map(([, t]) => t).join(" · ")}. <a href="/features#industries" className="font-bold text-[#079db9] hover:underline">See all →</a>
+        </p>
+        <div className="mt-10 grid grid-cols-2 gap-5 border-t border-slate-200 pt-8 text-center md:grid-cols-4">
+          {[["All in one place", "Map, bookings, billing and portal"], ["24/7 online", "Customers book and pay anytime"], ["Any language", "Mely answers your guests in theirs"], ["Built for growth", "One property or many"]].map(([t, s]) => (
+            <div key={t}><p className="font-black">{t}</p><p className="mt-1 text-sm text-slate-500">{s}</p></div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const featureTitle = (id: string) => features.find((f) => f.id === id)?.title ?? id;
+
+const HOME_CARDS: { title: string; img: string; alt: string; text: string; ids: string[]; href: string; more: string }[] = [
+  { title: "Map & online reservations", img: "/hero-interactive-map.png", alt: "Interactive lot map with a site selected and dates being booked",
+    text: "Every lot, site or slip on a real map of your property. Guests pick their exact space and dates and pay online, and the calendar blocks double bookings.",
+    ids: ["map", "reservations"], href: "/interactive-property-map", more: "See the interactive map" },
+  { title: "Billing, contracts & screening", img: "/interactive-slips-2026.jpg", alt: "Interactive slip map with billing for each space",
+    text: "Monthly invoices with pay ahead, utilities and late fees, paid by card or bank (ACH) with autopay to your own bank account. Leases and slip agreements signed online, and applications with background checks.",
+    ids: ["payments", "contracts", "screening"], href: "/billing-payments-software", more: "See billing & payments" },
+  { title: "Customer portal & Mely", img: "/marina-interactive-map-v2.png", alt: "Marina map with slip details a boater can reserve",
+    text: "Residents and boat owners see their balance, pay, sign and send requests from their phone, 24/7, in English, Spanish, Portuguese and more languages. Mely answers your guests 24/7 in their own language.",
+    ids: ["portal", "messages", "mely-ai"], href: "/customer-portal-software", more: "See the customer portal" },
+  { title: "Front office & daily operations", img: "/hero-marina-2026.jpg", alt: "Marina docks with boats at sunset",
+    text: "Sell propane, fuel and store items at the counter, track maintenance, give every employee their own login, close each shift with a drawer count, and run revenue and tax reports with Export for QuickBooks Online.",
+    ids: ["point-of-sale", "maintenance", "staff", "reports"], href: "/features", more: "See every feature" },
+];
+
+export function HomePlatformSection() {
+  return (
+    <section id="platform" className="scroll-mt-24 py-16 md:py-24">
+      <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <div className="mx-auto mb-10 max-w-3xl text-center md:mb-12">
+          <p className={eyebrow}>One connected platform</p>
+          <h2 className={h2}>Everything your office does, in one system</h2>
+          <p className="mt-5 text-lg leading-8 text-slate-600">Replace spreadsheets, paper contracts and disconnected tools. Every screen talks to the others, so a payment, a contract or a reservation is updated everywhere at once.</p>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          {HOME_CARDS.map((c) => (
+            <article key={c.title} className="group flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-cyan-300 hover:shadow-xl">
+              <div className="overflow-hidden"><img src={c.img} alt={c.alt} className="aspect-[16/9] w-full object-cover transition duration-500 group-hover:scale-[1.03]" /></div>
+              <div className="flex flex-1 flex-col p-6 md:p-7">
+                <h3 className="text-2xl font-black">{c.title}</h3>
+                <p className="mt-3 leading-7 text-slate-600">{c.text}</p>
+                <ul className="mt-5 flex flex-wrap gap-2">
+                  {c.ids.map((id) => <li key={id}><a href={`/features#${id}`} className="inline-block rounded-full bg-cyan-50 px-3 py-1 text-sm font-bold text-[#075e73] transition hover:bg-cyan-100">{featureTitle(id)}</a></li>)}
+                </ul>
+                <a href={c.href} className="mt-auto inline-flex items-center gap-1.5 pt-6 font-black text-[#079db9] hover:underline">{c.more}<ArrowRight className="h-4 w-4" aria-hidden /></a>
+              </div>
+            </article>
+          ))}
+        </div>
+        <div className="mt-10 text-center">
+          <a href="/features" className="inline-block rounded-xl border-2 border-[#08B8D8] px-6 py-3.5 font-black text-[#079db9] transition hover:bg-cyan-50">Explore the full platform</a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function HomePricingBand() {
+  return (
+    <section id="pricing" className="scroll-mt-24 py-16 md:py-20">
+      <div className="mx-auto max-w-5xl px-5 lg:px-8">
+        <div className="rounded-[32px] border border-slate-200 bg-white p-7 text-center shadow-sm md:p-12">
+          <p className={eyebrow}>Pricing</p>
+          <h2 className={h2}>A quote built around your property</h2>
+          <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">Every property is different, so we price each one after a short call: a one-time setup plus a simple monthly platform fee, month to month.</p>
+          <div className="mx-auto mt-7 flex max-w-2xl flex-wrap justify-center gap-x-6 gap-y-2 font-semibold text-slate-700">
+            {["Done for you", "Updates and support included", "No long-term contract"].map((i) => <span key={i} className="flex items-center gap-2"><span className="text-[#08B8D8]">✓</span>{i}</span>)}
+          </div>
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <a href="/demo" className={`${cta} text-center`}>Request a custom quote</a>
+            <a href="/pricing" className="rounded-xl border-2 border-[#08B8D8] px-7 py-3.5 text-center font-black text-[#079db9] transition hover:bg-cyan-50">See what&apos;s included</a>
+          </div>
+          <p className="mt-5 text-xs text-slate-400">Card and bank processing fees may apply.</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Home FAQ: the same questions and answers used on /pricing, /rv-park-software and /marina-software.
+export const HOME_FAQ: [string, string][] = [
+  ["Does it work for both short stays and long-term residents?", "Yes. Nightly, weekly and monthly reservations live on the same map as your long-term residents and their leases."],
+  ["Do you support dry storage and lift slips?", "Yes. Wet slips, lift slips and dry storage are all supported, each with its own rates and on the same map."],
+  ["Does it work for city or county marinas?", "Yes. Every payment is tied to an employee and a shift close, with resident and non-resident pricing and fee schedules with effective dates."],
+  ["Do you move our current residents into the system?", "We help bring your current residents, lots and balances into MelyOS during setup."],
+  ["Do you charge per module?", "No. One plan includes every tool: the map, reservations, contracts, billing, the customer portal, point of sale, fuel dock, dry stack, reports, QuickBooks export and the Mely AI assistant."],
+  ["Is there a long-term contract?", "No. The platform is month to month."],
+  ["Are there card processing fees?", "Card and bank processing fees may apply to online payments. We explain them in your quote."],
+  ["How do I get a price?", "Book a free demo or email info@melyos.io. We answer with a custom quote for your property."],
+];
 
 // Oct 21 (per Mely): top of each inside page.
 export function PageHero({ kicker, title, text, image, imageAlt }: { kicker: string; title: string; text: string; image?: string; imageAlt?: string }) {
