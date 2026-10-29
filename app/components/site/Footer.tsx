@@ -11,7 +11,7 @@ export default function SiteFooter() {
             <img src="/melyos-logo-trimmed.png" alt="MelyOS" className="h-14 w-auto" />
             <p className="mt-4 max-w-md leading-7 text-slate-600">Property management software for RV parks, marinas, campgrounds, communities and storage properties. MelyOS LLC, Kissimmee, Florida.</p>
             <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm font-bold text-slate-700">
-              <span>Online payment processing · Background checks · Works with</span>
+              <span>Online payment processing · Background checks · Collections · Works with</span>
               <img src="/quickbooks-logo.png" alt="Intuit QuickBooks" className="h-6 w-auto object-contain" />
             </div>
             <p className="mt-3 flex items-center gap-2 text-slate-600"><Mail className="h-4 w-4 text-[#079db9]" aria-hidden /><a className="underline" href="mailto:info@melyos.io">info@melyos.io</a></p>
