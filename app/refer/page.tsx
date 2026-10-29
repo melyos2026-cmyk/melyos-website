@@ -11,6 +11,21 @@ export const metadata: Metadata = {
   title: "Referral Program",
   description: "Know an RV park, campground or marina that could use MelyOS? Refer them: you earn 20% of their one-time setup fee, and they get their first month free.",
   alternates: { canonical: "/refer" },
+  // Oct 29 (per Mely): the shared link shows "MelyOS Referral Program" with its own image.
+  openGraph: {
+    title: "MelyOS Referral Program",
+    description: "Refer an RV park, campground or marina. You earn 20% of their one-time setup fee, and they get their first month free.",
+    url: "https://melyos.io/refer",
+    siteName: "MelyOS",
+    images: [{ url: "/melyos-referral-share.jpg", width: 1200, height: 630, alt: "MelyOS Referral Program" }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MelyOS Referral Program",
+    description: "Refer an RV park, campground or marina. Earn 20% of their setup fee; they get their first month free.",
+    images: ["/melyos-referral-share.jpg"],
+  },
 };
 
 const STEPS: [string, string][] = [
