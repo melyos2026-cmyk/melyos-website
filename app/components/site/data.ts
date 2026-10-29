@@ -1,6 +1,6 @@
 // Oct 21 (per Mely): shared content for melyos.io pages. Only features that exist; no prices.
 import type { LucideIcon } from "lucide-react";
-import { Fuel, Ship, Target, Wallet, Zap, HelpCircle, Info, LifeBuoy, Building2, Map, CalendarCheck, CreditCard, UserRound, PenLine, ShieldCheck, ScanBarcode, MessagesSquare, Wrench, Users, BarChart3, Bot, Caravan, Anchor, Tent, Home as HomeIcon, Warehouse, Landmark, Lock, Banknote, FileCheck2, MapPin, Mail, MessageCircle, BadgeCheck, Receipt, Scale } from "lucide-react";
+import { Fuel, Ship, Target, Wallet, Zap, HelpCircle, Info, LifeBuoy, Building2, Map, CalendarCheck, CreditCard, UserRound, PenLine, ShieldCheck, ScanBarcode, MessagesSquare, Wrench, Users, BarChart3, Bot, Caravan, Anchor, Tent, Home as HomeIcon, Warehouse, Landmark, Lock, Banknote, FileCheck2, MapPin, Mail, MessageCircle, BadgeCheck, Receipt, Scale, Gift } from "lucide-react";
 export { Map, CalendarCheck, CreditCard, UserRound, PenLine, ShieldCheck, ScanBarcode, MessagesSquare, Wrench, Users, BarChart3, Bot, Caravan, Anchor, Tent, HomeIcon, Warehouse, Landmark, Lock, Banknote, FileCheck2, MapPin, Mail, MessageCircle, BadgeCheck, Receipt, Scale };
 export type { LucideIcon };
 export const eyebrow = "mb-3 text-sm font-black uppercase tracking-[0.18em] text-[#08B8D8]";
@@ -122,6 +122,7 @@ export const MENU: MenuItem[] = [
   { label: "Resources", links: [
     { href: "/pricing#faq", label: "Questions & Answers", icon: HelpCircle },
     { href: "/demo", label: "Book a Demo", icon: CalendarCheck },
+    { href: "/refer", label: "Referral Program", note: "Earn 20% of the setup fee", icon: Gift },
     { href: "mailto:info@melyos.io", label: "Help & Support", icon: LifeBuoy },
   ] },
   { label: "Pricing", href: "/pricing" },

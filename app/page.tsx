@@ -5,6 +5,7 @@
 import SiteHeader from "./components/site/Header";
 import SiteFooter from "./components/site/Footer";
 import DemoSection from "./components/site/DemoSection";
+import ReferShare from "./components/site/ReferShare";
 import { HomeAudienceSection, HomePlatformSection, SeeItLiveSection, HowItWorksSection, TrustSection, ServicesSection, HomePricingBand, FaqSection, HOME_FAQ } from "./components/site/Sections";
 import { cta } from "./components/site/data";
 
@@ -50,6 +51,18 @@ export default function Home() {
       <TrustSection />
       <HomePricingBand />
       <FaqSection items={HOME_FAQ} />
+      {/* Oct 29 (per Mely): Referral Program band */}
+      <section className="px-5 pb-16 lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 rounded-[28px] bg-[#071A33] px-6 py-10 text-white sm:px-10 lg:flex-row lg:items-center lg:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-sm font-black uppercase tracking-[0.18em] text-[#39d5ee]">Referral program</p>
+            <h2 className="mt-2 text-2xl font-black sm:text-3xl">Know a property that could use MelyOS?</h2>
+            <p className="mt-3 leading-7 text-slate-300">Refer an RV park, campground or marina. You earn 20% of their one-time setup fee, and they get their first month free.</p>
+            <a href="/refer" className="mt-5 inline-block rounded-xl bg-[#08B8D8] px-6 py-3 font-black text-white transition hover:bg-[#079db9]">Referral Program</a>
+          </div>
+          <ReferShare dark />
+        </div>
+      </section>
       <DemoSection />
       <SiteFooter />
     </main>

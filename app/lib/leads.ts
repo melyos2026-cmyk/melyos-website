@@ -11,7 +11,7 @@ export type Lead = {
   propertyType?: string;
   spaces?: string | number;
   message?: string;
-  source: "demo_form" | "mely_chat" | "questionnaire";
+  source: "demo_form" | "mely_chat" | "questionnaire" | "referral";
   country?: string | null;   // Oct 24: visitor's country/region (from the request), for Insights
   region?: string | null;
 };
@@ -61,7 +61,7 @@ export async function sendLead(lead: Lead) {
       from: process.env.LEADS_FROM_EMAIL || "MelyOS <noreply@melyos.io>",
       to: process.env.LEADS_EMAIL || "melyos2026@gmail.com",
       reply_to: lead.email || undefined,
-      subject: `New MelyOS lead (${lead.source === "mely_chat" ? "Mely chat" : lead.source === "questionnaire" ? "questionnaire" : "demo form"}): ${String(lead.business || lead.name || "").slice(0, 80)}`,
+      subject: `New MelyOS lead (${lead.source === "mely_chat" ? "Mely chat" : lead.source === "questionnaire" ? "questionnaire" : lead.source === "referral" ? "referral" : "demo form"}): ${String(lead.business || lead.name || "").slice(0, 80)}`,
       html: `<div style="font-family:Arial,sans-serif"><h2>New lead from melyos.io</h2><table cellpadding="6">${rows
         .filter(([, v]) => v !== undefined && v !== null && String(v).trim() !== "")
         .map(([k, v]) => `<tr><td><b>${k}</b></td><td>${esc(v)}</td></tr>`)
