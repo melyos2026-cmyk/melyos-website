@@ -7,7 +7,7 @@ import { PageHero, CapabilityGrid, FlowSection, OnePlanSection, FaqSection } fro
 // Oct 21 (per Mely): solution page for Google ("RV park resident portal", "marina boater portal").
 export const metadata: Metadata = {
   title: "Resident and Boater Portal for RV Parks and Marinas",
-  description: "A customer portal for RV park residents and boat owners in English, Spanish or Portuguese: see the balance, pay by card or bank or set up autopay, sign contracts and agreements, download documents, request the Rec Hall, use the community marketplace and message the office, from any phone.",
+  description: "A customer portal for RV park residents and boat owners in English, Spanish, Portuguese and more languages: see the balance, pay by card or bank or set up autopay, sign contracts and agreements, download documents, request the Rec Hall, use the community marketplace and message the office, from any phone.",
   alternates: { canonical: "/customer-portal-software" },
 };
 
@@ -22,7 +22,7 @@ const items: [string, string][] = [
   ["Dry stack launches", "Boat owners ask for their boat in the water from the portal."],
   ["Community Marketplace", "Residents and boaters sell personal items and offer services to each other. Mely reviews every listing before it is published."],
   ["Rec Hall requests", "Residents request the Rec Hall or event room for a date and time, following your rules. The office approves or declines."],
-  ["Their language, their alerts", "Residents use the portal in English, Spanish or Portuguese, with bell and phone alerts in their language when a payment is received, a late fee is added or a payment is returned."],
+  ["Their language, their alerts", "Residents use the portal in English, Spanish, Portuguese and more languages, with bell and phone alerts in their language when a payment is received, a late fee is added or a payment is returned."],
   ["Rentals and experiences", "Golf carts, boats, kayaks, tours and more, booked and paid from your website with online rental agreements."],
   ["Concierge requests", "Ice, provisions, catering, boat cleaning or crew to the slip, requested online and billed to the account."],
   ["Restaurant", "Menu, hours, delivery links and table reservations for the property's restaurant, with reservations visible in the customer's account."],

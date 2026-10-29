@@ -145,7 +145,7 @@ export function PortalSection() {
             <h2 className={h2}>Fewer calls to the office</h2>
             <p className="mt-6 text-lg leading-8 text-slate-600">Residents and boat owners sign in with their email and handle the everyday things themselves, any time of day.</p>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              {["See balances and pay by card or bank", "Set up autopay", "Read and sign contracts", "Download receipts and documents", "Send maintenance, launch or Rec Hall requests", "Read notices and message the office", "Buy, sell and offer services in the marketplace", "Use it in English, Spanish or Portuguese"].map((i) => (
+              {["See balances and pay by card or bank", "Set up autopay", "Read and sign contracts", "Download receipts and documents", "Send maintenance, launch or Rec Hall requests", "Read notices and message the office", "Buy, sell and offer services in the marketplace", "Use it in English, Spanish, Portuguese and more languages"].map((i) => (
                 <div key={i} className="flex items-start gap-3"><span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-cyan-100 text-sm font-black text-[#079db9]">✓</span><span className="font-semibold text-slate-700">{i}</span></div>
               ))}
             </div>
