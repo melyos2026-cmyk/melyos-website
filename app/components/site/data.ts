@@ -35,7 +35,7 @@ export const rvParks = [
   "Interactive lot map with real-time availability and date-range booking",
   "Nightly, weekly and monthly stays with seasonal pricing",
   "Online lease applications with background checks for each adult, paid by the applicant",
-  "Resident portal in English, Spanish and Portuguese: rent, autopay, documents, Rec Hall requests, marketplace",
+  "Resident portal in English, Spanish, Portuguese and more: rent, autopay, documents, Rec Hall requests, marketplace",
   "Monthly invoices with pay ahead: rent, electric meter readings (any meter type), laundry and late fees, paid by card or bank",
   "Propane sales with QR pickup codes",
   "Rent-to-own plans with payment tracking and bill of sale",
