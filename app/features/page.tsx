@@ -14,8 +14,9 @@ export default function Page() {
   return (
     <main className="min-h-screen overflow-x-hidden bg-white text-[#071A33]">
       <SiteHeader />
-      <PageHero kicker="The MelyOS platform" title="Every tool your property needs, connected" text="One system for the map, bookings, billing, contracts, the customer portal and daily operations. Every screen talks to the others." image="/interactive-slips-2026.jpg" imageAlt="MelyOS interactive map" />
-      <FeaturesSection />
+      <PageHero kicker="The MelyOS platform" title="Every tool your property needs, connected" text="One system for the map, bookings, billing, contracts, the customer portal and daily operations. Every screen talks to the others." image="/interactive-slips-2026.jpg" imageAlt="MelyOS interactive map" featuresHref="#all-features" />
+      {/* Oct 30 (per Mely): "See all features" on this page scrolls here instead of reloading /features */}
+      <div id="all-features" className="scroll-mt-24"><FeaturesSection /></div>
       <MapSection />
       <RvMarinaSection />
       <PortalSection />

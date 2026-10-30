@@ -425,7 +425,7 @@ export const HOME_FAQ: [string, string][] = [
 ];
 
 // Oct 21 (per Mely): top of each inside page.
-export function PageHero({ kicker, title, text, image, imageAlt }: { kicker: string; title: string; text: string; image?: string; imageAlt?: string }) {
+export function PageHero({ kicker, title, text, image, imageAlt, featuresHref = "/features" }: { kicker: string; title: string; text: string; image?: string; imageAlt?: string; featuresHref?: string }) {
   return (
     <section className="relative overflow-hidden bg-[#06182e] pt-20 text-white md:pt-24">
       <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 py-14 md:py-20 lg:grid-cols-2 lg:px-8">
@@ -435,7 +435,7 @@ export function PageHero({ kicker, title, text, image, imageAlt }: { kicker: str
           <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">{text}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <a href="/demo" className={`${cta} text-center`}>Book a Free Demo</a>
-            <a href="/features" className="rounded-xl border border-white/30 bg-white/10 px-7 py-3.5 text-center font-black text-white transition hover:bg-white/20">See all features</a>
+            <a href={featuresHref} className="rounded-xl border border-white/30 bg-white/10 px-7 py-3.5 text-center font-black text-white transition hover:bg-white/20">See all features</a>
           </div>
         </div>
         {image && (
