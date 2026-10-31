@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-import { sendLead, tooMany, geoOf } from "@/app/lib/leads";
+import { NextRequest, NextResponse, after } from "next/server";
+import { sendLead, tooMany, geoOf, cityOf, recordChat } from "@/app/lib/leads";
 
 // Oct 20 (per Mely): Mely on melyos.io — answers questions from FUTURE
 // MelyOS clients (park, campground, marina and storage owners) and books
@@ -85,8 +85,27 @@ export async function POST(req: NextRequest) {
     .filter((m) => m.content.trim());
   if (!messages.length || messages[messages.length - 1].role !== "user") return NextResponse.json({ reply: "Hi! How can I help?" });
 
+  // Oct 31 (per Mely): log this turn in MelyOS Insights → "Mely chat" AFTER the reply is sent
+  // (Next's after()), so logging never slows or breaks the chat. No IP is stored.
+  const sessionId = typeof body.session_id === "string" && /^[A-Za-z0-9-]{8,64}$/.test(body.session_id) ? body.session_id : null;
+  const result = await answer(messages, req, ip);
+  if (sessionId) {
+    try {
+      const geo = geoOf(req.headers), city = cityOf(req.headers);
+      after(() => recordChat({
+        session_id: sessionId, page: typeof body.page === "string" ? body.page.slice(0, 200) : null, is_me: body.is_me === true,
+        user: messages[messages.length - 1].content, reply: result.reply, lead: result.lead, city, ...geo,
+      }));
+    } catch { /* never affect the chat */ }
+  }
+  return NextResponse.json({ reply: result.reply, leadSaved: result.leadSaved });
+}
+
+type Answer = { reply: string; leadSaved: boolean; lead: { name?: string; email?: string; business?: string } | null };
+async function answer(messages: { role: string; content: string }[], req: NextRequest, ip: string): Promise<Answer> {
   const api: any[] = [...messages];
   let leadSaved = false;
+  let lead: Answer["lead"] = null;
   for (let round = 0; round < 3; round++) {
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -96,7 +115,7 @@ export async function POST(req: NextRequest) {
     const data = await res.json();
     if (!res.ok) {
       console.error("mely (melyos.io):", data?.error);
-      return NextResponse.json({ reply: "Sorry, I had trouble answering. Please try again or use the demo form below." });
+      return { reply: "Sorry, I had trouble answering. Please try again or use the demo form below.", leadSaved, lead };
     }
     if (data.stop_reason === "tool_use") {
       api.push({ role: "assistant", content: data.content });
@@ -112,6 +131,7 @@ export async function POST(req: NextRequest) {
             try {
               await sendLead({ source: "mely_chat", ...b.input, email, ...geoOf(req.headers) });
               leadSaved = true;
+              lead = { name: b.input?.name ? String(b.input.name) : undefined, email, business: b.input?.business ? String(b.input.business) : undefined };
             } catch {
               out = "Could not send. Ask the visitor to use the demo form on the page.";
             }
@@ -123,7 +143,7 @@ export async function POST(req: NextRequest) {
       continue;
     }
     const text = (data.content || []).map((b: any) => (b.type === "text" ? b.text : "")).join("\n").trim();
-    return NextResponse.json({ reply: text || "How can I help?", leadSaved });
+    return { reply: text || "How can I help?", leadSaved, lead };
   }
-  return NextResponse.json({ reply: "Thanks! Our team will be in touch soon.", leadSaved });
+  return { reply: "Thanks! Our team will be in touch soon.", leadSaved, lead };
 }

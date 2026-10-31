@@ -29,6 +29,37 @@ export async function recordLead(lead: Lead) {
     });
   } catch { /* never block the visitor */ }
 }
+// Oct 31 (per Mely): every Mely chat on melyos.io is saved (per session) in MelyOS Insights → melyos.io →
+// "Mely chat", so Mely can see who asked what. Sends only this turn (visitor message + Mely's reply);
+// admin.melyos.io appends it. Approximate city from the request, never the IP. Best effort: never throws.
+export type ChatTurn = {
+  session_id: string;
+  page?: string | null;
+  is_me?: boolean;
+  user: string;
+  reply: string;
+  lead?: { name?: string; email?: string; business?: string } | null;
+  city?: string | null;
+  region?: string | null;
+  country?: string | null;
+};
+export async function recordChat(turn: ChatTurn) {
+  try {
+    if (!process.env.MELYOS_SITE_SECRET) return;   // the admin endpoint only accepts signed chat logs
+    await fetch(`${process.env.MELYOS_ADMIN_ORIGIN || "https://admin.melyos.io"}/api/public/melyos-site`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-site-secret": process.env.MELYOS_SITE_SECRET },
+      body: JSON.stringify({ type: "chat", ...turn, user: turn.user.slice(0, 2000), reply: turn.reply.slice(0, 2000) }),
+      signal: AbortSignal.timeout(4000),
+    });
+  } catch { /* never affect the chat */ }
+}
+export function cityOf(headers: Headers) {
+  let city = headers.get("x-vercel-ip-city") || "";
+  try { city = decodeURIComponent(city); } catch {}
+  return city.slice(0, 80) || null;
+}
+
 export function geoOf(headers: Headers) {
   let region = headers.get("x-vercel-ip-country-region") || "";
   try { region = decodeURIComponent(region); } catch {}

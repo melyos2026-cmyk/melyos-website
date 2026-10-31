@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalPage title="Privacy Policy" updated="October 8, 2026">
+    <LegalPage title="Privacy Policy" updated="October 31, 2026">
       <p>
         MelyOS LLC (&quot;<strong>MelyOS</strong>,&quot; &quot;<strong>we</strong>,&quot; &quot;<strong>us</strong>&quot;) provides property-management software and payment tools to RV parks, marinas, campgrounds and similar businesses (&quot;<strong>Customers</strong>&quot;). This Privacy Policy explains how we handle personal information. Please read it together with the privacy notice of the park or business you deal with.
       </p>
@@ -23,6 +23,7 @@ export default function PrivacyPage() {
         <li><strong>Payment information:</strong> card details are entered into the secure forms of our payment processing partners. We receive limited information, such as payment status, the last four digits of a card and a payment reference. We do not store full card numbers.</li>
         <li><strong>Background screening:</strong> if you apply to rent, a consumer-reporting agency may collect additional information from you through its own form to prepare a screening report for the park.</li>
         <li><strong>Automatically collected information:</strong> such as device and browser type, IP address, pages viewed, and security and error logs.</li>
+        <li><strong>Chats with Mely:</strong> conversations with Mely, the assistant on melyos.io, are saved together with your approximate city so we can answer follow-ups and improve the service; they are never sold.</li>
       </ul>
 
       <h2 style={h2}>3. How we use information</h2>

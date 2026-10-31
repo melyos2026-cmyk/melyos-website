@@ -33,6 +33,21 @@ const T = {
 };
 type Lang = keyof typeof T;
 
+// Oct 31 (per Mely): a random id for this chat (kept only in this browser tab) so the conversation is
+// saved as one session in MelyOS Insights. Mely's own devices: open melyos.io/?me=1 once (same
+// "melyos_demo_me" marker as the demo sites) and her chats are marked as hers.
+function chatMeta() {
+  let session_id: string | null = null, is_me = false;
+  try {
+    session_id = sessionStorage.getItem("mely_chat_sid");
+    if (!session_id) { session_id = crypto.randomUUID?.() || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`; sessionStorage.setItem("mely_chat_sid", session_id); }
+  } catch { session_id = null; }
+  try { is_me = localStorage.getItem("melyos_demo_me") === "1"; } catch {}
+  let page: string | null = null;
+  try { page = window.location.pathname; } catch {}
+  return { session_id, is_me, page };
+}
+
 export default function MelyChat() {
   const [open, setOpen] = useState(false);
   const [lang, setLang] = useState<Lang>("en");
@@ -50,6 +65,7 @@ export default function MelyChat() {
   const dismissTease = () => { setTease(false); try { sessionStorage.setItem("mely_tease", "1"); } catch {} };
 
   useEffect(() => {
+    try { if (new URLSearchParams(window.location.search).get("me") === "1") localStorage.setItem("melyos_demo_me", "1"); } catch {}
     try {
       const b = (navigator.language || "").slice(0, 2).toLowerCase();
       if (b in T) setLang(b as Lang);
@@ -68,7 +84,7 @@ export default function MelyChat() {
     setInput("");
     setBusy(true);
     try {
-      const r = await fetch("/api/mely", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: [{ role: "assistant", content: t.hi }, ...next].slice(1) }) });
+      const r = await fetch("/api/mely", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: [{ role: "assistant", content: t.hi }, ...next].slice(1), ...chatMeta() }) });
       const j = await r.json();
       setMsgs([...next, { role: "assistant", content: j.reply || "…" }]);
     } catch {
