@@ -41,7 +41,7 @@ const TERMS = [
   "The reward is earned only when the referred property signs and pays its one-time setup fee. It is paid 30 days after that payment, as long as the setup fee was not refunded.",
   "Reward: 20% of the referred property's one-time setup fee, paid once. If you are a MelyOS customer, you can choose 1 free month of your platform fee instead.",
   "The referred property gets its first month of the platform fee free.",
-  "Cash rewards are paid by bank transfer or Zelle. Before we pay a cash reward, we ask for a completed IRS Form W-9. If you receive $2,000 or more in a calendar year (payments made in 2026 or later), we will send you a Form 1099-NEC by January 31 of the next year. We never ask for tax ID numbers on this website.",
+  "Cash rewards are paid by bank transfer or Zelle. Before we pay a cash reward, we ask for a completed IRS Form W-9. If you receive $2,000 or more in a calendar year (payments made in 2026 or later), we will send you a Form 1099-NEC early the next year. We never ask for tax ID numbers on this website.",
   "MelyOS may change or end this program at any time. Rewards already earned will still be paid.",
 ];
 
