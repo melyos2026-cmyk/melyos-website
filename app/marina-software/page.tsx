@@ -6,7 +6,7 @@ import { PageHero, CapabilityGrid, RvMarinaSection, ServicesSection, HowItWorksS
 
 export const metadata: Metadata = {
   title: "Marina Management Software",
-  description: "Marina software with an interactive slip map for wet slips, lift slips and dry storage, online slip reservations, contracts with e-signature, fuel dock and ship store point of sale, dry stack launches and boater accounts.",
+  description: "Marina software with an interactive slip map for wet slips, lift slips and dry storage, online slip reservations, contracts with e-signature, fuel dock and ship store point of sale, dry stack launches, boater accounts, billing with autopay and Send to Collections.",
   alternates: { canonical: "/marina-software" },
 };
 
@@ -20,6 +20,9 @@ const items: [string, string][] = [
   ["Boater accounts", "Boats, slip, balance, invoices, contracts and messages in one place for every boat owner."],
   ["Waitlist & event rooms", "Waitlist with slip offers, meeting-room bookings, insurance and registration expirations."],
   ["Built for municipal marinas", "Shift close-out per employee and a record for every payment, ready for city and county audits."],
+  ["Billing & autopay", "Monthly dockage invoices, metered electric, late fees and statements, paid by card or bank (ACH) with autopay."],
+  ["Send to Collections", "Send a former boater's overdue account to a licensed collections agency, one at a time, and track the status and recoveries."],
+  ["Reports & QuickBooks", "Revenue, fuel and tax reports, with Export for QuickBooks Online and printable PDFs with your logo."],
 ];
 
 export default function Page() {

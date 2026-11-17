@@ -6,7 +6,7 @@ import { PageHero, CapabilityGrid, ServicesSection, HowItWorksSection, FaqSectio
 
 export const metadata: Metadata = {
   title: "Campground Reservation Software",
-  description: "Campground software with an interactive site map, online reservations and payments, seasonal rates, guest portal, propane sales, staff roles and an AI assistant that answers guests 24/7.",
+  description: "Campground software with an interactive site map, online reservations and payments, seasonal rates, guest portal, propane sales, staff roles, Send to Collections, QuickBooks export and an AI assistant that answers guests 24/7.",
   alternates: { canonical: "/campground-software" },
 };
 
@@ -17,6 +17,9 @@ const items: [string, string][] = [
   ["Guest and resident portal", "Guests and long-stay campers see their balance, pay online and download receipts."],
   ["Propane sales", "Sell propane at the office or online, with QR pickup codes."],
   ["Mely answers guests 24/7", "An AI assistant on your website that answers questions about sites, rates and availability in any language."],
+  ["Staff logins & shift close", "Each employee has their own login with roles, and closes their shift with a drawer count."],
+  ["Send to Collections", "Send a former camper's overdue account to a licensed collections agency, one at a time, and track the status and recoveries."],
+  ["Reports & QuickBooks", "Revenue and tax reports, with Export for QuickBooks Online and printable PDFs with your logo."],
 ];
 
 export default function Page() {
