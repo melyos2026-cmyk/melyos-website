@@ -347,7 +347,7 @@ const HOME_CARDS: { title: string; img: string; alt: string; text: string; ids: 
   { title: "Map & online reservations", img: "/hero-interactive-map.png", alt: "Interactive lot map with a site selected and dates being booked",
     text: "Every lot, site or slip on a real map of your property. Guests pick their exact space and dates and pay online, and the calendar blocks double bookings.",
     ids: ["map", "reservations"], href: "/interactive-property-map", more: "See the interactive map" },
-  { title: "Billing, contracts & screening", img: "/interactive-slips-2026.jpg", alt: "Interactive slip map with billing for each space",
+  { title: "Billing, contracts & screening", img: "/billing-contracts-screening-2026.jpg", alt: "MelyOS dashboard with payments, contracts to sign and applications to review, plus the resident portal on a phone",
     text: "Monthly invoices with pay ahead, utilities and late fees, paid by card or bank (ACH) with autopay to your own bank account. Leases and slip agreements signed online, and applications with background checks.",
     ids: ["payments", "contracts", "screening"], href: "/billing-payments-software", more: "See billing & payments" },
   { title: "Customer portal & Mely", img: "/marina-interactive-map-v2.png", alt: "Marina map with slip details a boater can reserve",
