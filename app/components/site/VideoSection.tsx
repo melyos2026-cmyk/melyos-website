@@ -10,8 +10,8 @@ export default function VideoSection({ compact = false }: { compact?: boolean })
           {!compact && <p className="mt-4 text-lg leading-8 text-slate-600">Reservations, applications and background checks, agreements, payments, electric billing, the resident portal and more, all in one place.</p>}
         </div>
         <div className="overflow-hidden rounded-3xl border border-slate-200 bg-[#071A33] shadow-xl">
-          <video className="block aspect-video w-full" controls playsInline preload="metadata" poster="/video/melyos-video-poster.jpg">
-            <source src="/video/melyos-video-2026.mp4" type="video/mp4" />
+          <video className="block aspect-video w-full" controls playsInline preload="metadata" poster="/video/melyos-video-poster.jpg?v=2">
+            <source src="/video/melyos-video-2026.mp4?v=2" type="video/mp4" />
           </video>
         </div>
         {!compact && (
