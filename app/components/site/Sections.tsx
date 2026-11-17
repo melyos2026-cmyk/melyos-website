@@ -350,10 +350,10 @@ const HOME_CARDS: { title: string; img: string; alt: string; text: string; ids: 
   { title: "Billing, contracts & screening", img: "/billing-contracts-screening-2026.jpg", alt: "MelyOS dashboard with payments, contracts to sign and applications to review, plus the resident portal on a phone",
     text: "Monthly invoices with pay ahead, utilities and late fees, paid by card or bank (ACH) with autopay to your own bank account. Leases and slip agreements signed online, and applications with background checks.",
     ids: ["payments", "contracts", "screening"], href: "/billing-payments-software", more: "See billing & payments" },
-  { title: "Customer portal & Mely", img: "/customer-portal-mely-2026.jpg", alt: "MelyOS team member showing a boater an available slip on the marina map",
+  { title: "Customer portal & Mely", img: "/marina-interactive-map-v2.png", alt: "Marina map with slip details a boater can reserve",
     text: "Residents and boat owners see their balance, pay, sign and send requests from their phone, 24/7, in English, Spanish, Portuguese and more languages. Mely answers your guests 24/7 in their own language.",
     ids: ["portal", "messages", "mely-ai"], href: "/customer-portal-software", more: "See the customer portal" },
-  { title: "Front office & daily operations", img: "/hero-marina-2026.jpg", alt: "Marina docks with boats at sunset",
+  { title: "Front office & daily operations", img: "/front-office-2026.jpg", alt: "Front office staff showing a boater an available slip on the MelyOS map",
     text: "Sell propane, fuel and store items at the counter, track maintenance, give every employee their own login, close each shift with a drawer count, and run revenue and tax reports with Export for QuickBooks Online.",
     ids: ["point-of-sale", "maintenance", "staff", "reports"], href: "/features", more: "See every feature" },
 ];
