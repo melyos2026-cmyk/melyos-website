@@ -6,7 +6,7 @@ import { PageHero, CapabilityGrid, RvMarinaSection, ServicesSection, HowItWorksS
 
 export const metadata: Metadata = {
   title: "RV Park Management Software",
-  description: "RV park software with a live interactive lot map, online reservations, lease applications with background checks, resident portal, rent and utility billing, propane sales and more. Set up for you by MelyOS.",
+  description: "RV park software with a live interactive lot map, online reservations, lease applications with background checks, resident portal, rent and utility billing, propane sales, Send to Collections and more. Set up for you by MelyOS.",
   alternates: { canonical: "/rv-park-software" },
 };
 
@@ -20,6 +20,9 @@ const items: [string, string][] = [
   ["Propane sales", "Sell propane at the office or online with QR pickup codes and per-product tax settings."],
   ["Rent-to-own & real estate", "Payment plans with progress tracking and a bill of sale on payoff, plus listings for homes for sale."],
   ["Storage lots & events", "RV and boat storage lots, park events calendar, and notices to every resident."],
+  ["Send to Collections", "Send a former resident's overdue account to a licensed collections agency, one at a time, and track the status and recoveries."],
+  ["Waitlist", "When the park is full, people join the waitlist online and you contact them in order when a lot opens."],
+  ["Staff, reports & QuickBooks", "Each employee has their own login and closes their shift. Revenue and tax reports with Export for QuickBooks Online."],
 ];
 
 export default function Page() {
