@@ -49,8 +49,8 @@ export default function Home() {
       <SeeItLiveSection />
       <TrustSection />
       <HomePricingBand />
-      <FaqSection items={HOME_FAQ} />
       <DemoSection />
+      <FaqSection items={HOME_FAQ} />
       <SiteFooter />
     </main>
   );
