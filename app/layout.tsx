@@ -5,6 +5,7 @@ import "./globals.css";
 import MelyChat from "./components/MelyChat"; // Oct 20: Mely chat for future clients
 import CookieBanner from "./components/CookieBanner";
 import SiteTracker from "./components/SiteTracker";
+import GoogleTag from "./components/GoogleTag";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -127,6 +128,7 @@ export default function RootLayout({
         <MelyChat />
         <CookieBanner />
         <SiteTracker />
+        <GoogleTag />
       </body>
     </html>
   );

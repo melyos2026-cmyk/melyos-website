@@ -32,6 +32,7 @@ export default function QuestionnaireForm({ type, name, sections }: { type: QTyp
     }).catch(() => null);
     setBusy(false);
     if (!r || !r.ok) { const j = await r?.json().catch(() => ({})); setErr(j?.error || "We couldn't send it. Please try again."); return; }
+    try { (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag?.("event", "generate_lead", { form: "questionnaire" }); } catch {}
     setSent(true); window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
