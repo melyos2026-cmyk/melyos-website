@@ -32,7 +32,8 @@ export default function QuestionnaireForm({ type, name, sections }: { type: QTyp
     }).catch(() => null);
     setBusy(false);
     if (!r || !r.ok) { const j = await r?.json().catch(() => ({})); setErr(j?.error || "We couldn't send it. Please try again."); return; }
-    try { (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag?.("event", "generate_lead", { form: "questionnaire" }); } catch {}
+    // Google Ads conversion "Questionnaire" (account 685-233-9123) + a GA-style lead event
+    try { const g = (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag; g?.("event", "conversion", { send_to: "AW-18581446165/wF3_CJSZsLodEJW8qZxF" }); g?.("event", "generate_lead", { form: "questionnaire" }); } catch {}
     setSent(true); window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
