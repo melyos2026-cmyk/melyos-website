@@ -5,6 +5,7 @@
 import SiteHeader from "./components/site/Header";
 import SiteFooter from "./components/site/Footer";
 import DemoSection from "./components/site/DemoSection";
+import VideoSection from "./components/site/VideoSection";
 import { HomeAudienceSection, HomePlatformSection, SeeItLiveSection, HowItWorksSection, TrustSection, ServicesSection, HomePricingBand, FaqSection, HOME_FAQ } from "./components/site/Sections";
 import { cta } from "./components/site/data";
 
@@ -34,7 +35,7 @@ export default function Home() {
               <a href="/features" className="rounded-xl border border-white/30 bg-white/10 whitespace-nowrap px-6 py-3.5 text-center font-black text-white xl:px-5 xl:py-3 xl:text-sm backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/20">Explore the Platform</a>
             </div>
             <div className="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-[13px] font-bold text-slate-200 xl:mt-4 xl:text-xs">
-              <span>✓ Your own website & map</span><span>✓ Online payments</span><span>✓ Done-for-you setup</span>
+              <a href="#video" className="underline decoration-cyan-300/60 underline-offset-4 hover:text-white">▶ Watch the 2-min video</a><span>✓ Your own website & map</span><span>✓ Online payments</span><span>✓ Done-for-you setup</span>
             </div>
           </div>
         </div>
@@ -42,6 +43,7 @@ export default function Home() {
 
       {/* Oct 29 (per Mely): reorganized home. Full feature lists moved to the detail pages
           (/features, /rv-park-software, /marina-software, /pricing); nothing was removed. */}
+      <VideoSection />
       <HomeAudienceSection />
       <HomePlatformSection />
       <ServicesSection />

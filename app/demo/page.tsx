@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import SiteHeader from "../components/site/Header";
 import SiteFooter from "../components/site/Footer";
 import DemoSection from "../components/site/DemoSection";
+import VideoSection from "../components/site/VideoSection";
 import { SeeItLiveSection } from "../components/site/Sections";
 
 export const metadata: Metadata = {
@@ -15,6 +16,7 @@ export default function Page() {
     <main className="min-h-screen overflow-x-hidden bg-white text-[#071A33]">
       <SiteHeader />
       <div className="pt-28 md:pt-32" />
+      <VideoSection compact />
       <DemoSection />
       <SeeItLiveSection />
       <SiteFooter />
