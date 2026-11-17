@@ -344,7 +344,7 @@ export function HomeAudienceSection() {
 const featureTitle = (id: string) => features.find((f) => f.id === id)?.title ?? id;
 
 const HOME_CARDS: { title: string; img: string; alt: string; text: string; ids: string[]; href: string; more: string }[] = [
-  { title: "Map & online reservations", img: "/hero-interactive-map.png", alt: "Interactive lot map with a site selected and dates being booked",
+  { title: "Map & online reservations", img: "/map-reservations-2026.jpg", alt: "MelyOS interactive map on laptop, tablet and phone: pick a site, choose dates and reserve online",
     text: "Every lot, site or slip on a real map of your property. Guests pick their exact space and dates and pay online, and the calendar blocks double bookings.",
     ids: ["map", "reservations"], href: "/interactive-property-map", more: "See the interactive map" },
   { title: "Billing, contracts & screening", img: "/billing-contracts-screening-2026.jpg", alt: "MelyOS dashboard with payments, contracts to sign and applications to review, plus the resident portal on a phone",
