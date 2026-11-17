@@ -280,22 +280,23 @@ export function PricingSection() {
             <p className="mt-5 text-lg leading-8 text-slate-600">Every property is different, so we price each one after a short call: a one-time setup plus a simple monthly platform fee, month to month.</p>
           </div>
           <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-2">
-            <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm md:p-9">
+            <article className="flex flex-col rounded-3xl border border-slate-200 bg-white p-7 shadow-sm md:p-9">
               <p className="text-sm font-black uppercase tracking-[0.16em] text-[#08B8D8]">Setup & implementation</p>
               <h3 className="mt-4 text-3xl font-black">Done for you</h3>
               <div className="mt-7 space-y-3">
                 {["Your own website on your domain", "Your property map drawn and connected", "Spaces, rates, fees and contracts configured", "Help moving your current customers in", "Staff training and launch-day support"].map((i) => <div key={i} className="flex gap-3 font-semibold text-slate-700"><span className="text-[#08B8D8]">✓</span><span>{i}</span></div>)}
               </div>
-              <a href="/demo" className="mt-8 block rounded-xl border-2 border-[#08B8D8] px-6 py-4 text-center font-black text-[#079db9] transition hover:bg-cyan-50">Request a custom quote</a>
+              <div className="mt-auto pt-8"><a href="/demo" className="block rounded-xl border-2 border-[#08B8D8] px-6 py-4 text-center font-black text-[#079db9] transition hover:bg-cyan-50">Request a custom quote</a>
+              <p className="mt-4 text-center text-xs text-slate-500">Quoted after a short call about your property.</p></div>
             </article>
-            <article className="rounded-3xl bg-[#071A33] p-7 text-white shadow-2xl md:p-9">
+            <article className="flex flex-col rounded-3xl bg-[#071A33] p-7 text-white shadow-2xl md:p-9">
               <p className="text-sm font-black uppercase tracking-[0.16em] text-cyan-300">MelyOS platform</p>
               <h3 className="mt-4 text-3xl font-black">Contact us for pricing</h3>
               <div className="mt-7 space-y-3">
                 {["Every feature your property needs", "Staff accounts with roles and permissions", "Customer portal and online payments", "Mely AI assistant for guests and staff", "Updates and support included", "No long-term contract"].map((i) => <div key={i} className="flex gap-3 font-semibold text-slate-100"><span className="text-[#39d5ee]">✓</span><span>{i}</span></div>)}
               </div>
-              <a href="/demo" className="mt-8 block rounded-xl bg-[#08B8D8] px-6 py-4 text-center font-black text-white transition hover:bg-[#079db9]">Book a demo</a>
-              <p className="mt-4 text-center text-xs text-slate-400">Card and bank processing fees may apply.</p>
+              <div className="mt-auto pt-8"><a href="/demo" className="block rounded-xl border-2 border-[#08B8D8] bg-[#08B8D8] px-6 py-4 text-center font-black text-white transition hover:bg-[#079db9]">Book a demo</a>
+              <p className="mt-4 text-center text-xs text-slate-400">Card and bank processing fees may apply.</p></div>
             </article>
           </div>
         </div>
