@@ -19,7 +19,7 @@ async function load(stateParam: string, slug: string) {
   const row = await findListing(st, keyFromSlug(slug));
   if (!row) return null;
   const extra = await exploreApi<any>("listing", { listing_key: row[7] });
-  return { st, row, info: (extra.ok && extra.data.info) || {}, verified: !!extra.data?.verified, client: !!extra.data?.client, avg: extra.data?.avg ?? null, count: extra.data?.count || 0 };
+  return { st, row, info: (extra.ok && extra.data.info) || {}, verified: !!extra.data?.verified, client: !!extra.data?.client, avg: extra.data?.avg ?? null, count: extra.data?.count || 0, slipmap: !!extra.data?.slipmap };
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ state: string; slug: string }> }): Promise<Metadata> {
@@ -90,6 +90,7 @@ export default async function Page({ params }: { params: Promise<{ state: string
             <div id="request" className="rounded-3xl border-2 border-[#08B8D8] p-6 shadow-sm lg:sticky lg:top-24">
               <h2 className="text-2xl font-black">Request a {unit}</h2>
               <p className="mb-4 mt-1 text-slate-600">Tell {name} your dates and {row[0] === "m" ? "boat" : "rig"}. Free, no account needed.</p>
+              {d.slipmap && <a href={`${canonical}/slips`} className="mb-4 block rounded-xl bg-[#071A33] px-4 py-3 text-center font-black text-white">Pick your {unit} on the map →</a>}
               <RequestForm {...L} />
             </div>
             {!feat && !d.verified && <div className="mt-6 rounded-3xl bg-[#071A33] p-6 text-white">

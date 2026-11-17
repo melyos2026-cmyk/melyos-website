@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useBoater, post } from "./useBoater";
 
 // Nov 17 (per Mely): on every Explore listing — ♡ Save, Request a slip / site, reviews (read + write).
-type L = { state: string; listing_key: string; listing_name: string; kind: string };
+type L = { state: string; listing_key: string; listing_name: string; kind: string; slip?: string };
 const inp = "w-full rounded-xl border border-slate-300 px-3 py-2.5 text-[15px] outline-none focus:border-[#08B8D8]";
 const Stars = ({ n, size = "text-base" }: { n: number; size?: string }) => <span className={`${size} text-amber-500`} aria-label={`${n} of 5 stars`}>{"★★★★★".slice(0, Math.round(n))}<span className="text-slate-300">{"★★★★★".slice(Math.round(n))}</span></span>;
 
@@ -32,7 +32,7 @@ export function RequestForm(l: L) {
   const setV = (k: string, v: any) => setF((x: any) => ({ ...x, vessel: { ...x.vessel, [k]: v } }));
   async function send(e: React.FormEvent) {
     e.preventDefault(); setSt({ busy: true });
-    try { const r = await post("/api/explore/request", { ...f, state: l.state, listing_key: l.listing_key }); setSt({ done: true, forwarded: r.forwarded }); }
+    try { const r = await post("/api/explore/request", { ...f, state: l.state, listing_key: l.listing_key, slip: l.slip }); setSt({ done: true, forwarded: r.forwarded }); }
     catch (er: any) { setSt({ err: er.message }); }
   }
   if (st.done) return <div className="rounded-2xl border-2 border-emerald-300 bg-emerald-50 p-6"><p className="text-xl font-black text-emerald-800">✓ Request sent</p>
@@ -69,7 +69,7 @@ export function RequestForm(l: L) {
       </div>
       <textarea className={inp} rows={3} placeholder="Anything they should know? (optional)" value={f.message || ""} onChange={(e) => set("message", e.target.value)} />
       {st.err && <p className="text-sm font-bold text-red-600">{st.err}</p>}
-      <button disabled={st.busy} className="w-full rounded-xl bg-[#08B8D8] px-6 py-3.5 text-lg font-black text-white transition hover:bg-[#079db9] disabled:opacity-60">{st.busy ? "Sending…" : `Request a ${unit}`}</button>
+      <button disabled={st.busy} className="w-full rounded-xl bg-[#08B8D8] px-6 py-3.5 text-lg font-black text-white transition hover:bg-[#079db9] disabled:opacity-60">{st.busy ? "Sending…" : l.slip ? `Request ${unit} ${l.slip}` : `Request a ${unit}`}</button>
       <p className="text-xs text-slate-500">Free. Your request goes to the property; they confirm availability and price with you.</p>
     </form>
   );
