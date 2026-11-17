@@ -5,6 +5,7 @@ import SiteFooter from "../../components/site/Footer";
 import ExploreMap from "../../components/explore/ExploreMap";
 import StatePicker from "../../components/explore/StatePicker";
 import OwnerCta from "../../components/explore/OwnerCta";
+import AccountPill from "../../components/explore/AccountPill";
 import { STATES } from "../../components/explore/states";
 
 export function generateStaticParams() {
@@ -36,7 +37,7 @@ export default async function Page({ params }: { params: Promise<{ state: string
             <p className="mb-3 text-sm font-black uppercase tracking-[0.18em] text-[#39d5ee]"><a href="/explore" className="hover:underline">MelyOS Explore</a> · {s[0]}</p>
             <h1 className="text-3xl font-black tracking-tight sm:text-4xl">Marinas, RV parks & campgrounds in {s[0]}</h1>
           </div>
-          <StatePicker current={st} />
+          <div className="flex flex-wrap gap-2"><StatePicker current={st} /><AccountPill /></div>
         </div>
       </section>
       <section className="py-8">

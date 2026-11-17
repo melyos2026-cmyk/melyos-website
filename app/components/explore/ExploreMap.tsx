@@ -7,13 +7,14 @@ import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { STATES, KIND, type Row } from "./states";
 import StatePicker from "./StatePicker";
 import { FEATURED, FEATURED_PHOTO, isFeatured } from "./featured";
+import { listingPath } from "./slug";
 
 // Oct 21 (per Mely): MelyOS Explore search — every marina, RV park and campground of
 // a state as a pin on the map, with a list, filters and "Claim it free".
 const esc = (s: string) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string));
 // Names typed all in lowercase on the public map ("west delancy") show as "West Delancy".
 const nice = (n: string) => (n === n.toLowerCase() ? n.replace(/\b\w/g, (c) => c.toUpperCase()) : n);
-const claimUrl = (r: Row) => `/demo?claim=${encodeURIComponent(nice(r[1]))}&type=${encodeURIComponent(KIND[r[0]].label)}`;
+const claimUrl = (state: string, r: Row) => `/explore/claim?state=${state}&key=${encodeURIComponent(r[7])}`;
 
 export default function ExploreMap({ state, initialKinds }: { state: string; initialKinds?: string[] }) {
   const [rows, setRows] = useState<Row[] | null>(null);
@@ -29,6 +30,9 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
   const fitted = useRef<string | null>(null);
   const featRef = useRef<any>(null);
   const meta = STATES[state];
+  // Nov 17: owner info (approved claims) + star averages from MelyOS Explore
+  const [extra, setExtra] = useState<{ overrides: Record<string, any>; stars: Record<string, [number, number]> }>({ overrides: {}, stars: {} });
+  useEffect(() => { let off = false; fetch(`/api/explore/state?state=${state}`).then((r) => r.json()).then((j) => !off && setExtra({ overrides: j.overrides || {}, stars: j.stars || {} })).catch(() => {}); return () => { off = true; }; }, [state]);
 
   useEffect(() => {
     let off = false;
@@ -95,21 +99,26 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
         : Lm.divIcon({ className: "", html: `<span style="display:block;width:16px;height:16px;border-radius:50%;background:${k.color};border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45)"></span>`, iconSize: [16, 16], iconAnchor: [8, 8] });
       const m = Lm.marker([r[2], r[3]], { icon, title: nice(r[1]), zIndexOffset: feat ? 1000 : 0 });
       const photo = feat ? FEATURED_PHOTO[r[7]] : "";
+      const ov = extra.overrides[r[7]] || {};
+      const phone = ov.phone || r[5], site = ov.website || r[6];
+      const star = extra.stars[r[7]];
+      const page = listingPath(state, r), unit = r[0] === "m" ? "slip" : "site";
       m.bindPopup(`<div style="font-family:system-ui,sans-serif;min-width:210px;max-width:250px">
         ${photo ? `<img src="${photo}" alt="${esc(nice(r[1]))}" style="display:block;width:100%;height:110px;object-fit:cover;border-radius:10px;margin-bottom:8px" />` : ""}
-        <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:${k.color}">${k.label}</div>
-        <div style="font-size:15px;font-weight:800;color:#071A33;margin:2px 0 4px">${esc(nice(r[1]))}</div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:${k.color}">${k.label}${ov.verified || ov.client ? ` <span style="color:#059669">&#10003; verified</span>` : ""}</div>
+        <a href="${page}" style="display:block;font-size:15px;font-weight:800;color:#071A33;margin:2px 0 4px;text-decoration:none">${esc(nice(r[1]))}</a>
+        ${star ? `<div style="color:#f59e0b;font-weight:800">&#9733; ${star[0].toFixed(1)} <span style="color:#64748b;font-weight:600">(${star[1]} review${star[1] === 1 ? "" : "s"})</span></div>` : ""}
         <div style="color:#475569">${r[4] ? `${esc(r[4])}, ` : ""}${esc(meta[0])}</div>
-        ${r[5] ? `<div style="margin-top:4px">&#9742; <a href="tel:${esc(r[5].replace(/[^\d+]/g, ""))}">${esc(r[5])}</a></div>` : ""}
-        ${r[6] ? `<div style="margin-top:2px">&#127760; <a href="${esc(r[6])}" target="_blank" rel="noopener nofollow">Website</a></div>` : ""}
+        ${phone ? `<div style="margin-top:4px">&#9742; <a href="tel:${esc(phone.replace(/[^\d+]/g, ""))}">${esc(phone)}</a></div>` : ""}
+        ${site ? `<div style="margin-top:2px">&#127760; <a href="${esc(site)}" target="_blank" rel="noopener nofollow">Website</a></div>` : ""}
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+          <a href="${page}#request" style="background:#08B8D8;color:#fff;padding:6px 10px;border-radius:8px;font-weight:800;text-decoration:none;font-size:12px">Request a ${unit}</a>
+          <a href="${page}" style="border:1px solid #cbd5e1;color:#071A33;padding:5px 9px;border-radius:8px;font-weight:700;text-decoration:none;font-size:12px">Details &amp; reviews</a>
           <a href="https://www.google.com/maps/dir/?api=1&destination=${r[2]},${r[3]}" target="_blank" rel="noopener" style="border:1px solid #cbd5e1;color:#071A33;padding:5px 9px;border-radius:8px;font-weight:700;text-decoration:none;font-size:12px">Directions</a>
-          ${!feat && (!r[5] || !r[6]) ? `<a href="https://www.google.com/search?q=${encodeURIComponent(r[1] + " " + meta[0])}" target="_blank" rel="noopener nofollow" style="border:1px solid #cbd5e1;color:#071A33;padding:5px 9px;border-radius:8px;font-weight:700;text-decoration:none;font-size:12px">Phone &amp; hours</a>` : ""}
         </div>
-        ${!feat && !r[5] && !r[6] ? `<div style="color:#64748b;font-size:12px;margin-top:8px">Contact details not listed yet. Owners can add them by claiming this page.</div>` : ""}
         ${feat
-          ? `<a href="${esc(r[6])}" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;background:#08B8D8;color:#fff;padding:7px 12px;border-radius:8px;font-weight:800;text-decoration:none">Book online</a><div style="color:#079db9;font-size:11px;font-weight:700;margin-top:6px">&#9733; Runs on MelyOS</div>`
-          : `<a href="${claimUrl(r)}" style="display:inline-block;margin-top:8px;background:#071A33;color:#fff;padding:7px 10px;border-radius:8px;font-weight:700;text-decoration:none">Is this your property? Claim it free</a>`}
+          ? `<a href="${esc(site)}" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;background:#071A33;color:#fff;padding:7px 12px;border-radius:8px;font-weight:800;text-decoration:none">Book online</a><div style="color:#079db9;font-size:11px;font-weight:700;margin-top:6px">&#9733; Runs on MelyOS</div>`
+          : ov.verified ? "" : `<a href="${claimUrl(state, r)}" style="display:inline-block;margin-top:8px;color:#071A33;font-size:12px;font-weight:700">Is this your property? Claim it free</a>`}
       </div>`);
       m.on("click", () => setPicked(r[7]));
       markers.current[r[7]] = m;
@@ -132,7 +141,7 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
       const b = Lm.latLngBounds([[tight ? qt(lats, 0.02) : Math.min(...lats), tight ? qt(lons, 0.02) : Math.min(...lons)], [tight ? qt(lats, 0.98) : Math.max(...lats), tight ? qt(lons, 0.98) : Math.max(...lons)]]);
       map.current.fitBounds(b, { padding: [24, 24], maxZoom: 9 });
     }
-  }, [shown, ready, state, rows]);
+  }, [shown, ready, state, rows, extra]);
 
   function focus(r: Row) {
     setPicked(r[7]);

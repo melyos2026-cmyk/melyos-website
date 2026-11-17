@@ -1,5 +1,21 @@
 import type { MetadataRoute } from "next";
-import { STATES } from "./components/explore/states";
+import fs from "fs";
+import path from "path";
+import { STATES, type Row } from "./components/explore/states";
+import { FEATURED } from "./components/explore/featured";
+import { listingPath } from "./components/explore/slug";
+
+// Nov 17 (per Mely): every Explore listing page too (~24,000 — under the 50,000 limit of one sitemap).
+function listings(): string[] {
+  const out: string[] = [];
+  for (const st of Object.keys(STATES)) {
+    let rows: Row[] = [];
+    try { rows = JSON.parse(fs.readFileSync(path.join(process.cwd(), `public/explore/${st}.json`), "utf8")).rows || []; } catch {}
+    const feat = FEATURED[st] || [], names = new Set(feat.map((r) => r[1].toLowerCase()));
+    for (const r of [...feat, ...rows.filter((r) => !names.has(String(r[1]).toLowerCase()))]) out.push(`https://melyos.io${listingPath(st, r)}`);
+  }
+  return [...new Set(out)];
+}
 
 // Oct 21 (per Mely): pages Google should know about.
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -27,6 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: "https://melyos.io/about", lastModified: now, changeFrequency: "yearly", priority: 0.5 },
     { url: "https://melyos.io/explore", lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     ...Object.keys(STATES).map((s) => ({ url: `https://melyos.io/explore/${s.toLowerCase()}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.6 })),
+    ...listings().map((url) => ({ url, lastModified: now, changeFrequency: "monthly" as const, priority: 0.4 })),
     { url: "https://melyos.io/privacy", lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: "https://melyos.io/terms", lastModified: now, changeFrequency: "yearly", priority: 0.3 },
   ];

@@ -5,6 +5,7 @@ import SiteHeader from "../components/site/Header";
 import SiteFooter from "../components/site/Footer";
 import StatePicker from "../components/explore/StatePicker";
 import OwnerCta from "../components/explore/OwnerCta";
+import AccountPill from "../components/explore/AccountPill";
 import { STATES } from "../components/explore/states";
 
 // Oct 21 (per Mely): MelyOS Explore — marinas, RV parks and campgrounds in every state.
@@ -46,7 +47,8 @@ export default function Page() {
           <p className="mb-4 text-sm font-black uppercase tracking-[0.18em] text-[#39d5ee]">MelyOS Explore</p>
           <h1 className="max-w-3xl text-4xl font-black leading-tight tracking-tight sm:text-5xl">Find marinas, RV parks and campgrounds across the U.S.</h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">{total ? `${total.toLocaleString()} places on the map so far. ` : ""}Pick a state to see every marina, RV park and campground on an interactive map.</p>
-          <div className="mt-8 flex flex-wrap items-center gap-3"><StatePicker /><a href="/explore/fl" className="rounded-xl border border-white/30 bg-white/10 px-6 py-3 font-black text-white transition hover:bg-white/20">Start with Florida</a></div>
+          <div className="mt-8 flex flex-wrap items-center gap-3"><StatePicker /><a href="/explore/fl" className="rounded-xl border border-white/30 bg-white/10 px-6 py-3 font-black text-white transition hover:bg-white/20">Start with Florida</a><AccountPill /></div>
+          <p className="mt-5 max-w-2xl text-slate-300">Boaters, RVers and campers: create a free account to save places, keep your boat or RV on file, send slip and site requests in one tap, and leave reviews.</p>
           </div>
           <div className="relative hidden lg:block">
             <div className="absolute -inset-5 rounded-[36px] bg-cyan-400/20 blur-3xl" />

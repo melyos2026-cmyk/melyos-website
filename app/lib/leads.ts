@@ -11,7 +11,7 @@ export type Lead = {
   propertyType?: string;
   spaces?: string | number;
   message?: string;
-  source: "demo_form" | "mely_chat" | "questionnaire" | "referral";
+  source: "demo_form" | "mely_chat" | "questionnaire" | "referral" | "explore_claim";
   country?: string | null;   // Oct 24: visitor's country/region (from the request), for Insights
   region?: string | null;
 };
