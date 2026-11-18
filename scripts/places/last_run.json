@@ -1,38 +1,38 @@
 {
- "state": "FL",
- "added": 134,
+ "state": "PR",
+ "added": 69,
  "by_kind": {
-  "m": 29,
-  "r": 39,
-  "c": 66
+  "m": 17,
+  "r": 13,
+  "c": 39
  },
- "total": 1098,
+ "total": 110,
  "sample": [
-  "Ft. Desoto State Campground",
-  "Sarasota Marina",
-  "Royal Garden Estates",
-  "Lone Oak Park",
-  "Fiesta Grove RV Resort",
-  "MacDill Air Force Base Outdoor Recreation and Marina (6thFSS)",
-  "Glendale St- Public Beach Access",
-  "Port Sanibel Marina",
-  "Getaway Marina",
-  "Trader Todd's Marina",
-  "Sun Resorts and Residences Ft. Myers Beach",
-  "Siesta Bay RV Resort",
-  "Sun Retreats",
-  "Pier 41 Marine",
-  "Cocohatchee River Marina",
-  "Legacy Harbour Marina",
-  "Bermuda Lakes RV Resort",
-  "Lazy Days Rv Rally Park",
-  "Self's RV Park",
-  "Hillsborough River State Park Campground",
-  "San LAN RV Park",
-  "Blue Water Key Resort",
-  "Sunset Pier",
-  "Robbie's Marina",
-  "Keys RV Park"
+  "Carymar Resorts",
+  "Villa Nautica RV",
+  "Campers en Combate Alquiler",
+  "Bah\u00eda Azul",
+  "Villa Nautica RV",
+  "Adjuntas Camping Park",
+  "Hacienda del Holand\u00e9s",
+  "Finca Santiago 150r",
+  "Finca Santiago 150r",
+  "Malec\u00f3n De Ponce",
+  "Caribbean Images Marina",
+  "Campamento Alaya PB",
+  "Varadero Puerto Viejo",
+  "Sunset RV at Parguera",
+  "Villa Playita Col\u00f3n",
+  "Marina Sur Salinas PR",
+  "Bahia De Jobos - Guayama, PR",
+  "Villas Termales Motorhome and RV Park",
+  "Espadas View Aibonito Camping",
+  "Caba\u00f1a Recordando El Ayer",
+  "Malec\u00f3n De Arroyo",
+  "Hacienda El Porvenir",
+  "Hacienda Bosque Taino",
+  "Gozalandia Waterfalls Campground",
+  "Agro-Camping San Sebasti\u00e1n"
  ],
  "release": "2026-11-18.0",
  "error": null,
@@ -59,166 +59,166 @@
   },
   "category_values": [
    [
-    "real_estate_service|real_estate_agent",
-    49164
-   ],
-   [
-    "real_estate_service|real_estate_service",
-    27615
-   ],
-   [
-    "financial_service|insurance_agency",
-    19691
-   ],
-   [
-    "home_service|contractor",
-    18748
-   ],
-   [
     "personal_or_beauty_service|beauty_salon",
-    18161
-   ],
-   [
-    "automotive_service|automotive_repair",
-    15475
-   ],
-   [
-    "personal_or_beauty_service|hair_salon",
-    14687
-   ],
-   [
-    "professional_service|professional_service",
-    13505
+    3502
    ],
    [
     "diagnostics_imaging_or_lab_service|doctors_office",
-    12249
+    1977
    ],
    [
-    "social_or_community_service|social_or_community_service",
-    12157
+    "automotive_service|automotive_repair",
+    1534
    ],
    [
-    "legal_service|legal_service",
-    11562
-   ],
-   [
-    "financial_service|financial_service",
-    11538
-   ],
-   [
-    "financial_service|money_transfer_service",
-    9650
+    "professional_service|professional_service",
+    1329
    ],
    [
     "wellness_service|spa",
-    9308
+    1307
    ],
    [
-    "financial_service|accountant",
-    9028
-   ],
-   [
-    "personal_or_beauty_service|nail_salon",
-    8352
+    "social_or_community_service|social_or_community_service",
+    1241
    ],
    [
     "personal_or_beauty_service|barber",
-    8083
-   ],
-   [
-    "building_or_construction_service|building_or_construction_service",
-    7537
-   ],
-   [
-    "technical_service|software_development",
-    6855
-   ],
-   [
-    "professional_service|business_consulting",
-    6620
-   ],
-   [
-    "home_service|hvac_service",
-    6544
-   ],
-   [
-    "real_estate_service|property_management",
-    6128
-   ],
-   [
-    "wellness_service|massage_therapy",
-    5942
+    1229
    ],
    [
     "event_or_party_service|party_and_event_planning",
-    5594
+    939
    ],
    [
-    "home_service|roofing",
-    5515
+    "automotive_service|automotive_service",
+    690
    ],
    [
-    "medical_service|home_health_care",
-    5220
+    "diagnostics_imaging_or_lab_service|laboratory_testing",
+    644
    ],
    [
-    "professional_service|marketing_agency",
-    5184
+    "real_estate_service|real_estate_service",
+    620
+   ],
+   [
+    "financial_service|insurance_agency",
+    398
+   ],
+   [
+    "financial_service|accountant",
+    364
+   ],
+   [
+    "automotive_service|auto_detailing",
+    353
+   ],
+   [
+    "personal_or_beauty_service|tattoo_and_piercing",
+    348
+   ],
+   [
+    "automotive_service|tire_dealer_and_repair",
+    345
+   ],
+   [
+    "real_estate_service|real_estate_agent",
+    339
    ],
    [
     "travel_service|travel_service",
-    4613
+    315
    ],
    [
-    "building_or_construction_service|engineering_service",
-    4351
+    "personal_or_beauty_service|nail_salon",
+    313
    ],
    [
-    "technical_service|it_service_and_computer_repair",
-    4321
+    "automotive_service|car_wash",
+    288
    ],
    [
-    "financial_service|mortgage_broker",
-    4317
+    "family_service|funeral_service",
+    285
    ],
    [
-    "home_service|landscaping",
-    4315
+    "home_service|contractor",
+    255
    ],
    [
-    "home_service|interior_design",
-    4220
+    "shipping_or_delivery_service|post_office",
+    253
    ],
    [
-    "home_service|home_cleaning",
-    4142
+    "financial_service|financial_service",
+    247
    ],
    [
-    "b2b_service|b2b_service",
-    4098
+    "legal_service|legal_service",
+    241
    ],
    [
     "printing_service|printing_service",
-    4079
+    239
    ],
    [
-    "wellness_service|medical_spa",
-    3959
+    "animal_or_pet_service|pet_groomer",
+    205
+   ],
+   [
+    "building_or_construction_service|building_or_construction_service",
+    202
    ],
    [
     "animal_or_pet_service|veterinarian",
-    3860
+    199
    ],
    [
-    "home_service|plumbing",
-    3652
+    "animal_or_pet_service|animal_or_pet_service",
+    197
    ],
    [
-    "financial_service|trusts",
-    3498
+    "b2b_energy_and_utility_service|b2b_energy_and_utility_service",
+    189
+   ],
+   [
+    "personal_or_beauty_service|hair_salon",
+    188
+   ],
+   [
+    "rental_service|car_rental_service",
+    184
+   ],
+   [
+    "travel_service|tour_operator",
+    173
+   ],
+   [
+    "home_service|hvac_service",
+    168
+   ],
+   [
+    "medical_service|cannabis_clinic",
+    143
+   ],
+   [
+    "family_service|day_care_preschool",
+    140
+   ],
+   [
+    "real_estate_service|home_developer",
+    133
+   ],
+   [
+    "professional_service|marketing_agency",
+    131
+   ],
+   [
+    "laundry_service|laundromat",
+    130
    ]
   ],
-  "candidates": 2890
+  "candidates": 81
  }
 }
