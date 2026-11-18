@@ -24,7 +24,7 @@ const RED = "#e11d48";
 const okUrl = (u: any) => typeof u === "string" && /^https:\/\//.test(u);
 const claimUrl = (state: string, r: Row) => `/explore/claim?state=${state}&key=${encodeURIComponent(r[7])}`;
 
-export default function ExploreMap({ state, initialKinds }: { state: string; initialKinds?: string[] }) {
+export default function ExploreMap({ state, initialKinds, heading }: { state: string; initialKinds?: string[]; heading?: React.ReactNode }) {
   const [rows, setRows] = useState<Row[] | null>(null);
   const [kinds, setKinds] = useState<string[]>(initialKinds || ["m", "r", "c"]);
   const [q, setQ] = useState("");
@@ -201,52 +201,58 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
   const today = new Date().toISOString().slice(0, 10);
   const chip = (on: boolean) => `rounded-full border px-3 py-1.5 text-sm font-bold transition ${on ? "border-[#071A33] bg-[#071A33] text-white" : "border-slate-300 bg-white text-slate-600 hover:bg-slate-50"}`;
 
+  // Nov 18 (per Mely): Dockwa-style — the map fills the whole screen to the right, filters and list on the left
   return (
-    <div className="grid gap-4">
-    <div role="tablist" aria-label="Show" className="grid grid-cols-2 gap-1 rounded-2xl border border-slate-200 bg-white p-1.5 sm:flex">
-      {tabs.map(([id, label, ks]) => {
-        const on = activeTab === id;
-        const color = id === "all" ? "#071A33" : KIND[id].color;
-        return (
-          <button key={id} type="button" role="tab" aria-selected={on} onClick={() => setKinds(ks)}
-            className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-3 py-2.5 text-sm font-bold transition ${on ? "text-white shadow" : "text-slate-600 hover:bg-slate-50"}`}
-            style={on ? { background: color } : undefined}>
-            {id !== "all" && <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: on ? "#fff" : color }} />}
-            {label}
-            <span className={on ? "opacity-80" : "text-slate-400"}>{rows ? (id === "all" ? rows.length : count(id)).toLocaleString() : ""}</span>
-          </button>
-        );
-      })}
-    </div>
-    <div className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-3 md:grid-cols-[1fr_1fr_160px_160px]">
-      <div className="[&>select]:w-full [&>select]:h-full"><StatePicker current={state} /></div>
-      <input value={q} onChange={(e) => {
-          const v = e.target.value;
-          const hit = Object.entries(STATES).find(([k, m]) => k !== state && m[0].toLowerCase() === v.trim().toLowerCase());
-          if (hit) { window.location.href = `/explore/${hit[0].toLowerCase()}`; return; }
-          setQ(v);
-        }} placeholder="Search a name or city" aria-label={`Search places in ${meta[0]} by name or city`} className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-cyan-400" />
-      <label className="relative block"><span className="absolute left-3 top-1 text-[10px] font-black uppercase tracking-wider text-slate-500">Arrive</span>
-        <input type="date" min={today} value={arrive} onChange={(e) => { setArrive(e.target.value); if (depart && e.target.value > depart) setDepart(""); }} className="w-full rounded-xl border border-slate-200 px-3 pb-2 pt-5 text-sm outline-none focus:border-cyan-400" /></label>
-      <label className="relative block"><span className="absolute left-3 top-1 text-[10px] font-black uppercase tracking-wider text-slate-500">Depart</span>
-        <input type="date" min={arrive || today} value={depart} onChange={(e) => setDepart(e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 pb-2 pt-5 text-sm outline-none focus:border-cyan-400" /></label>
-    </div>
-    <div className="flex flex-wrap items-center gap-2">
-      <button type="button" onClick={() => setOnlyBook(!onlyBook)} className={chip(onlyBook)}><span className="mr-1 inline-block h-2.5 w-2.5 rounded-full" style={{ background: RED }} />Online booking</button>
-      {kinds.includes("m") && <button type="button" onClick={() => setOnlyFuel(!onlyFuel)} className={chip(onlyFuel)}>⛽ Fuel prices</button>}
-      <button type="button" onClick={() => setOnlyRated(!onlyRated)} className={chip(onlyRated)}>★ Has reviews</button>
-      <span className="ml-auto flex items-center gap-3 text-xs text-slate-500">
-        <span className="flex items-center gap-1"><svg width="11" height="15" viewBox="0 0 30 40"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 39 15 39s14-13.6 14-24.1C29 7.2 22.7 1 15 1z" fill={RED} /></svg> Book online</span>
-        <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-slate-400" /> Inquiry only</span>
-      </span>
-    </div>
-    <div className="grid gap-4 lg:grid-cols-[440px_1fr]">
-      <div className="order-2 flex min-h-0 flex-col rounded-2xl border border-slate-200 bg-white lg:order-1 lg:h-[720px]">
+    <div className="flex flex-col lg:h-[calc(100vh-6rem)] lg:flex-row">
+      <div className="relative order-1 h-[55vh] min-h-[320px] border-b border-slate-200 lg:order-2 lg:h-auto lg:flex-1 lg:border-b-0 lg:border-l">
+        <div ref={mapEl} className="absolute inset-0 z-0 isolate" />
+      </div>
+      <div className="order-2 flex min-h-0 flex-col bg-white lg:order-1 lg:w-[560px] xl:w-[620px]">
+        <div className="grid gap-3 border-b border-slate-200 p-4">
+          {heading}
+    <div role="tablist" aria-label="Show" className="grid grid-cols-2 gap-1 rounded-2xl border border-slate-200 bg-white p-1 sm:flex">
+            {tabs.map(([id, label, ks]) => {
+              const on = activeTab === id;
+              const color = id === "all" ? "#071A33" : KIND[id].color;
+              return (
+                <button key={id} type="button" role="tab" aria-selected={on} onClick={() => setKinds(ks)}
+                  className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-2 py-2 text-[13px] font-bold transition ${on ? "text-white shadow" : "text-slate-600 hover:bg-slate-50"}`}
+                  style={on ? { background: color } : undefined}>
+                  {id !== "all" && <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: on ? "#fff" : color }} />}
+                  {label}
+                  <span className={on ? "opacity-80" : "text-slate-400"}>{rows ? (id === "all" ? rows.length : count(id)).toLocaleString() : ""}</span>
+                </button>
+              );
+            })}
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="[&>select]:w-full [&>select]:h-full"><StatePicker current={state} /></div>
+            <input value={q} onChange={(e) => {
+                const v = e.target.value;
+                const hit = Object.entries(STATES).find(([k, m]) => k !== state && m[0].toLowerCase() === v.trim().toLowerCase());
+                if (hit) { window.location.href = `/explore/${hit[0].toLowerCase()}`; return; }
+                setQ(v);
+              }} placeholder="Search a name or city" aria-label={`Search places in ${meta[0]} by name or city`} className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-cyan-400" />
+            <label className="relative block"><span className="absolute left-3 top-1 text-[10px] font-black uppercase tracking-wider text-slate-500">Arrive</span>
+              <input type="date" min={today} value={arrive} onChange={(e) => { setArrive(e.target.value); if (depart && e.target.value > depart) setDepart(""); }} className="w-full rounded-xl border border-slate-200 px-3 pb-2 pt-5 text-sm outline-none focus:border-cyan-400" /></label>
+            <label className="relative block"><span className="absolute left-3 top-1 text-[10px] font-black uppercase tracking-wider text-slate-500">Depart</span>
+              <input type="date" min={arrive || today} value={depart} onChange={(e) => setDepart(e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 pb-2 pt-5 text-sm outline-none focus:border-cyan-400" /></label>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <button type="button" onClick={() => setOnlyBook(!onlyBook)} className={chip(onlyBook)}><span className="mr-1 inline-block h-2.5 w-2.5 rounded-full" style={{ background: RED }} />Online booking</button>
+            {kinds.includes("m") && <button type="button" onClick={() => setOnlyFuel(!onlyFuel)} className={chip(onlyFuel)}>⛽ Fuel prices</button>}
+            <button type="button" onClick={() => setOnlyRated(!onlyRated)} className={chip(onlyRated)}>★ Has reviews</button>
+            <span className="ml-auto flex items-center gap-3 text-xs text-slate-500">
+              <span className="flex items-center gap-1"><svg width="11" height="15" viewBox="0 0 30 40"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 39 15 39s14-13.6 14-24.1C29 7.2 22.7 1 15 1z" fill={RED} /></svg> Book online</span>
+              <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-slate-400" /> Inquiry only</span>
+            </span>
+          </div>
+        </div>
         <div className="flex items-center justify-between gap-2 border-b border-slate-200 px-4 py-3">
           <p className="text-sm font-bold text-[#071A33]">{rows ? `${listed.length.toLocaleString()} ${follow && bounds ? "in this area" : "places"}` : "Loading…"}</p>
           <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-600"><input type="checkbox" checked={follow} onChange={(e) => setFollow(e.target.checked)} className="h-4 w-4 accent-[#08B8D8]" />Search as I move the map</label>
         </div>
-        <div className="max-h-[520px] overflow-y-auto lg:max-h-none lg:flex-1">
+        <div className="max-h-[70vh] overflow-y-auto lg:max-h-none lg:min-h-0 lg:flex-1">
           {rows && !listed.length && <p className="p-5 text-sm text-slate-500">Nothing here. Zoom out or move the map, clear a filter, or choose another state above.</p>}
           {listed.slice(0, 150).map((r) => {
             const book = bookable(r), photo = photoOf(r), star = extra.stars[r[7]], fu = extra.fuel[r[7]], k = KIND[r[0]];
@@ -268,11 +274,8 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
           })}
           {listed.length > 150 && <p className="p-4 text-center text-xs text-slate-500">Showing 150 of {listed.length.toLocaleString()}. Zoom in on the map or search to narrow it down.</p>}
         </div>
+        <p className="border-t border-slate-100 px-4 py-2 text-[11px] text-slate-500">Map data © <a className="underline" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors. Listings are public information; owners can claim and correct theirs for free.</p>
       </div>
-      <div className="order-1 overflow-hidden rounded-2xl border border-slate-200 lg:order-2">
-        <div ref={mapEl} className="relative z-0 isolate h-[460px] w-full lg:h-[720px]" />
-      </div>
-    </div>
     </div>
   );
 }

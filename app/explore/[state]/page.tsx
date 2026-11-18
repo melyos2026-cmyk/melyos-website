@@ -31,20 +31,17 @@ export default async function Page({ params }: { params: Promise<{ state: string
   return (
     <main className="min-h-screen overflow-x-hidden bg-white text-[#071A33]">
       <SiteHeader />
-      <section className="bg-[#06182e] pt-20 text-white md:pt-24">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-6 px-5 py-10 lg:px-8">
-          <div>
-            <p className="mb-3 text-sm font-black uppercase tracking-[0.18em] text-[#39d5ee]"><a href="/explore" className="hover:underline">MelyOS Explore</a> · {s[0]}</p>
-            <h1 className="text-3xl font-black tracking-tight sm:text-4xl">Marinas, RV parks & campgrounds in {s[0]}</h1>
+      {/* Nov 18 (per Mely): Dockwa-style full-screen search — map fills the screen, list and filters on the left */}
+      <section className="pt-20 md:pt-24">
+        <ExploreMap state={st} heading={
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="min-w-0">
+              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#0891b2]"><a href="/explore" className="hover:underline">MelyOS Explore</a> · {s[0]}</p>
+              <h1 className="text-xl font-black tracking-tight">Marinas, RV parks & campgrounds in {s[0]}</h1>
+            </div>
+            <AccountPill dark={false} />
           </div>
-          <div className="flex flex-wrap gap-2"><StatePicker current={st} /><AccountPill /></div>
-        </div>
-      </section>
-      <section className="py-8">
-        <div className="mx-auto max-w-7xl px-5 lg:px-8">
-          <ExploreMap state={st} />
-          <p className="mt-4 text-xs text-slate-500">Map data © <a className="underline" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors (ODbL). Listings are public information and may be incomplete; owners can claim and correct theirs for free.</p>
-        </div>
+        } />
       </section>
       <OwnerCta />
       <SiteFooter />
