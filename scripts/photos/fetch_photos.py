@@ -75,5 +75,9 @@ with ThreadPoolExecutor(24) as ex:
             res.pop(k, None)
         if i % 100 == 0:
             print(i, "done,", len(res), "photos", flush=True)
+# hand-picked owner photos (scripts/photos/manual_{ST}.json) always win and are never dropped
+MAN = os.path.join(ROOT, "scripts", "photos", f"manual_{ST}.json")
+if os.path.exists(MAN):
+    res.update(json.load(open(MAN)))
 json.dump(dict(sorted(res.items())), open(OUT, "w"), separators=(",", ":"))
 print("photos:", len(res))
