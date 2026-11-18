@@ -28,8 +28,11 @@ export default function KindLanding({ kind }: { kind: Kind }) {
   return (
     <main className="min-h-screen overflow-x-hidden bg-white text-[#071A33]">
       <SiteHeader />
-      <section className="bg-[#06182e] pt-20 text-white md:pt-24">
-        <div className="mx-auto max-w-7xl px-5 py-14 md:py-20 lg:px-8">
+      <section className="overflow-hidden bg-[radial-gradient(ellipse_at_70%_40%,#0b3b6b_0%,#06182e_60%)] pt-20 text-white md:pt-24">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-5 py-14 md:py-20 lg:grid-cols-[1fr_520px] lg:px-8">
+          {/* Nov 18 (per Mely): glowing U.S. map with routes into Kissimmee, Florida (public/explore/us-glow.svg) */}
+          <img src="/explore/us-glow.svg" alt="" aria-hidden className="pointer-events-none order-first mx-auto w-full max-w-md opacity-90 lg:order-last lg:max-w-none" />
+          <div>
           <p className="mb-4 text-sm font-black uppercase tracking-[0.18em] text-[#39d5ee]"><a href="/explore" className="hover:underline">MelyOS Explore</a> · {k.plural}</p>
           <h1 className="max-w-3xl text-4xl font-black leading-tight tracking-tight sm:text-5xl">{k.title}</h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">{total ? `${total.toLocaleString()} ${k.plural.toLowerCase()} on the map. ` : ""}{k.lead}</p>
@@ -39,6 +42,7 @@ export default function KindLanding({ kind }: { kind: Kind }) {
           </div>
           <div className="mt-6 flex flex-wrap gap-2 text-sm font-bold">
             {other.map((o) => <a key={o} href={`/explore/${KINDS[o].slug}`} className="rounded-full border border-white/25 px-3 py-1.5 text-slate-200 hover:bg-white/10">Search {KINDS[o].plural}</a>)}
+          </div>
           </div>
         </div>
       </section>

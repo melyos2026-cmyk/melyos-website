@@ -9,6 +9,7 @@ import { FavoriteButton, Fuel, RequestForm, Reviews } from "../../../components/
 import { STATES, KIND } from "../../../components/explore/states";
 import { isFeatured, FEATURED_MAP } from "../../../components/explore/featured";
 import LiveMap from "../../../components/explore/LiveMap";
+import SpotMap from "../../../components/explore/SpotMap";
 import { exploreApi, findListing, keyFromSlug, listingPath, nice } from "../../../lib/explore";
 
 // Nov 17 (per Mely): one page per marina / RV park / campground on MelyOS Explore (≈24,000 pages):
@@ -93,10 +94,16 @@ export default async function Page({ params }: { params: Promise<{ state: string
       <section className="py-10">
         <div className="mx-auto grid max-w-6xl gap-8 px-5 lg:grid-cols-[1fr_420px] lg:px-8">
           <div className="space-y-8">
-            {(() => { const ph = typeof info.photo_url === "string" && /^https:\/\//.test(info.photo_url) ? info.photo_url : sitePhoto(st, row[7]); return ph ? <img src={ph} alt={name} referrerPolicy="no-referrer" className="h-72 w-full rounded-3xl object-cover" /> : null; })()}
-            <div className="overflow-hidden rounded-3xl border border-slate-200">
-              <iframe title={`Map of ${name}`} className="h-72 w-full" loading="lazy" src={`https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${row[2]},${row[3]}`} />
-            </div>
+            {/* Nov 18 (per Mely): photo (or a picture of the kind of place) + a big map with satellite, side by side */}
+            {(() => {
+              const ph = typeof info.photo_url === "string" && /^https:\/\//.test(info.photo_url) ? info.photo_url : sitePhoto(st, row[7]);
+              return (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <img src={ph || `/explore/ph-${row[0]}.svg`} alt={name} referrerPolicy="no-referrer" className="h-80 w-full rounded-3xl object-cover" />
+                  <div className="h-80"><SpotMap lat={row[2]} lon={row[3]} name={name} color={k.color} /></div>
+                </div>
+              );
+            })()}
             <div className="flex flex-wrap gap-2">
               {phone && <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className="rounded-xl border border-slate-300 px-4 py-2.5 font-black">☎ {phone}</a>}
               {website && <a href={website} target="_blank" rel="noopener nofollow" className="rounded-xl border border-slate-300 px-4 py-2.5 font-black">🌐 Website</a>}
@@ -120,11 +127,31 @@ export default async function Page({ params }: { params: Promise<{ state: string
               {!liveMap && d.slipmap && <a href={`${canonical}/slips`} className="mb-4 block rounded-xl bg-[#071A33] px-4 py-3 text-center font-black text-white">Pick your {unit} on the map →</a>}
               <RequestForm {...L} />
             </div>
-            {!feat && !d.verified && <div className="mt-6 rounded-3xl bg-[#071A33] p-6 text-white">
-              <p className="text-sm font-black uppercase tracking-[0.18em] text-[#39d5ee]">Own or manage it?</p>
-              <p className="mt-2 text-lg font-black">Claim {name} for free</p>
-              <p className="mt-2 text-slate-300">Correct your info, add photos and rates, and get {unit} requests straight to your email.</p>
-              <a href={`/explore/claim?state=${st}&key=${encodeURIComponent(row[7])}`} className="mt-4 inline-block rounded-xl bg-[#08B8D8] px-5 py-3 font-black text-white">Claim it free</a>
+            {/* Nov 18 (per Mely): the owner pitch — make them want to claim it */}
+            {!feat && !d.verified && <div className="mt-6 overflow-hidden rounded-3xl bg-[#071A33] text-white shadow-xl ring-1 ring-[#08B8D8]/30">
+              <div className="relative">
+                <img src={row[0] === "m" ? "/interactive-slips-2026.jpg" : "/map-reservations-2026.jpg"} alt={`A live ${unit} map with online booking, built by MelyOS`} className="h-40 w-full object-cover opacity-90" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#071A33] via-[#071A33]/30 to-transparent" />
+                <span className="absolute left-4 top-4 rounded-full bg-[#08B8D8] px-3 py-1 text-[11px] font-black uppercase tracking-wider">Free for owners</span>
+              </div>
+              <div className="p-6 pt-2">
+                <p className="text-sm font-black uppercase tracking-[0.18em] text-[#39d5ee]">Is this your {k.label.toLowerCase()}?</p>
+                <p className="mt-2 text-2xl font-black leading-tight">Turn this page into bookings for {name}</p>
+                <p className="mt-2 text-slate-300">Guests are already finding you here. Claim your listing free and make it work for you:</p>
+                <ul className="mt-4 space-y-2.5 text-[15px]">
+                  {[
+                    ["📸", "Your photos, rates and amenities", "Look your best next to everyone else on the map."],
+                    ["📩", `${unit[0].toUpperCase() + unit.slice(1)} requests straight to you`, "Straight to your email — no middleman, no commission."],
+                    ["✅", "Verified badge & reviews", "Stand out as the official, up-to-date listing."],
+                    ["🗺️", `Your live ${unit} map with online booking`, `Guests pick their ${unit} and pay online — powered by MelyOS.`],
+                  ].map(([i, t, d2]) => (
+                    <li key={t} className="flex gap-3"><span className="text-xl leading-6" aria-hidden>{i}</span><span><b className="block">{t}</b><span className="text-sm text-slate-400">{d2}</span></span></li>
+                  ))}
+                </ul>
+                <a href={`/explore/claim?state=${st}&key=${encodeURIComponent(row[7])}`} className="mt-5 block rounded-2xl bg-[#08B8D8] px-5 py-4 text-center text-lg font-black text-white shadow-lg shadow-cyan-500/30 transition hover:bg-[#06a3c0]">Claim {name} free →</a>
+                <p className="mt-2 text-center text-xs text-slate-400">Takes 2 minutes · No credit card · We confirm it with you in 1–2 business days</p>
+                <a href="/#demo" className="mt-3 block text-center text-sm font-bold text-[#39d5ee] hover:underline">Want the live {unit} map? Book a free demo</a>
+              </div>
             </div>}
           </aside>
         </div>

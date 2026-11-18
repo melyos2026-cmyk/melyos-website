@@ -260,7 +260,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
               <div key={r[7]} onClick={() => focus(r)} className={`flex cursor-pointer gap-3 border-b border-slate-100 p-3 transition hover:bg-slate-50 ${picked === r[7] ? "bg-cyan-50" : ""}`}>
                 <div className="relative h-24 w-28 shrink-0 overflow-hidden rounded-xl" style={{ background: `linear-gradient(135deg, ${k.color}, #071A33)` }}>
                   {photo ? <img src={photo} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setBroken((b) => ({ ...b, [r[7]]: true }))} className="h-full w-full object-cover" />
-                    : <span className="flex h-full w-full items-center justify-center text-3xl text-white/80">{r[0] === "m" ? "⚓" : r[0] === "r" ? "🚐" : "⛺"}</span>}
+                    : <img src={`/explore/ph-${r[0]}.svg`} alt="" className="h-full w-full object-cover" />}
                 </div>
                 <div className="min-w-0 flex-1">
                   <a href={`${listingPath(state, r)}${dates}`} onClick={(e) => e.stopPropagation()} className="line-clamp-2 font-black leading-snug text-[#071A33] hover:underline">{nice(r[1])}</a>

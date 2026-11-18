@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   const row = await findListing(st, String(b.listing_key || ""));
   if (!row) return done({ error: "We couldn't find that place." }, 404);
   const name = nice(row[1]);
-  const r = await exploreApi("claim", { listing_key: row[7], listing_name: name, listing_kind: row[0], state: st, name: b.name, role: b.role, email: b.email, phone: b.phone, edits: b.edits, ...geoOf(req.headers) });
+  const r = await exploreApi("claim", { listing_key: row[7], listing_name: name, listing_kind: row[0], state: st, name: b.name, role: b.role, email: b.email, phone: b.phone, edits: b.edits, files: b.files, map_consent: !!b.map_consent, ...geoOf(req.headers) });
   if (!r.ok) return done({ error: r.data.error }, r.status);
   await recordLead({ source: "explore_claim", name: String(b.name || "").slice(0, 120), business: name, email: String(b.email || ""), phone: String(b.phone || "").slice(0, 40) || undefined, propertyType: KIND[row[0]]?.label, message: `Explore claim (${st})`, ...geoOf(req.headers) });
   await sendMail(String(b.email), `We got your claim — ${name}`, mailWrap("Thanks — we're checking it",

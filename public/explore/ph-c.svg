@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+<defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fb923c"/><stop offset=".6" stop-color="#fdba74"/><stop offset="1" stop-color="#fef3c7"/></linearGradient></defs>
+<rect width="400" height="300" fill="url(#s)"/>
+<circle cx="200" cy="170" r="46" fill="#fde68a" opacity=".9"/>
+<path d="M0 200 Q120 170 220 190 T400 180 V300 H0Z" fill="#14532d"/>
+<g fill="#052e16"><path d="M40 210 l26 -90 26 90z"/><path d="M90 214 l20 -70 20 70z"/><path d="M300 206 l28 -100 28 100z"/><path d="M350 210 l20 -66 20 66z"/></g>
+<g transform="translate(150 196)"><path d="M0 70 L50 0 L100 70Z" fill="#08b8d8" stroke="#0f172a" stroke-width="3"/><path d="M50 0 L50 70" stroke="#0f172a" stroke-width="2"/><path d="M40 70 L50 40 L60 70Z" fill="#0f172a"/></g>
+<g transform="translate(280 250)"><path d="M0 20 h40" stroke="#78350f" stroke-width="6"/><path d="M20 18 q-14 -18 0 -34 q2 14 10 16 q4 10 -10 18z" fill="#f97316"/><path d="M20 18 q-6 -10 0 -18 q2 8 6 10 q0 6 -6 8z" fill="#fde047"/></g>
+</svg>
