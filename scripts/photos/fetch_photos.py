@@ -17,6 +17,8 @@ old = json.load(open(OUT)) if os.path.exists(OUT) else {}
 UA = {"User-Agent": "Mozilla/5.0 (compatible; MelyOSExplore/1.0; +https://melyos.io/explore)", "Accept": "text/html,*/*"}
 META = re.compile(r"<meta\b[^>]*>", re.I)
 BAD = re.compile(r"(?i)(logo|icon|favicon|sprite|placeholder|default|blank|avatar|wp-content/plugins|gravatar|facebook\.com|fbcdn|google|badge|seal)")
+# hacked sites sometimes show gambling spam as their preview picture — never use those
+SPAM = re.compile(r"(?i)(slot|gacor|togel|judi|casino|situs|spinhub|bansos|toto|poker|betting|\\.pics/)")
 SKIP_HOSTS = re.compile(r"(?i)(facebook\.com|instagram\.com|google\.|yelp\.|tripadvisor\.|thousandtrails|koa\.com|sunoutdoors|suncommunities|rvonthego|campspot|osceola\.org|\.gov\b|myfwc)")
 
 
@@ -44,7 +46,7 @@ def og(url):
     if not img:
         return None
     img = urllib.parse.urljoin(final, img)
-    if not img.startswith("https://") or BAD.search(img) or len(img) > 300:
+    if not img.startswith("https://") or BAD.search(img) or SPAM.search(img) or len(img) > 300:
         return None
     try:  # the image itself must load as a picture of a decent size
         _, ctype, data = get(img, n=2_000_000, timeout=10)
