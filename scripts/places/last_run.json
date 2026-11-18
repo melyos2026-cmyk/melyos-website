@@ -1,40 +1,40 @@
 {
  "state": "FL",
- "added": 1828,
+ "added": 134,
  "by_kind": {
-  "m": 545,
-  "r": 663,
-  "c": 620
+  "m": 29,
+  "r": 39,
+  "c": 66
  },
- "total": 2788,
+ "total": 1098,
  "sample": [
-  "Lands End Marina",
-  "The Dock On the Bay",
-  "Boathouse On Longboat",
-  "Bahia Mar West Marina",
-  "Sara Bay Marina",
-  "Vista Del Lago MH & RV Resort",
-  "Arbor Terrace",
-  "Safe Harbor Siesta Key",
-  "On Sarasota Bay",
-  "Sarasota Lakes RV Resort",
+  "Ft. Desoto State Campground",
   "Sarasota Marina",
-  "Keyes Marina",
-  "Bradenton Beach Marina",
-  "Cove Sound Marina",
-  "Buttonwood Inlet RV Resort",
-  "Safe Harbor Pier 77",
-  "Parrot Cove Marina",
-  "Cortez Village Marina",
-  "Cortez Cove Marina",
-  "N E Taylor Boat Works",
-  "Sarasota Bay RV Park",
-  "Blenker Boatworks & Marina",
-  "One Particular Harbour",
-  "Fort De Soto Park Campground",
-  "Ft. DeSoto Campground, Florida"
+  "Royal Garden Estates",
+  "Lone Oak Park",
+  "Fiesta Grove RV Resort",
+  "MacDill Air Force Base Outdoor Recreation and Marina (6thFSS)",
+  "Glendale St- Public Beach Access",
+  "Port Sanibel Marina",
+  "Getaway Marina",
+  "Trader Todd's Marina",
+  "Sun Resorts and Residences Ft. Myers Beach",
+  "Siesta Bay RV Resort",
+  "Sun Retreats",
+  "Pier 41 Marine",
+  "Cocohatchee River Marina",
+  "Legacy Harbour Marina",
+  "Bermuda Lakes RV Resort",
+  "Lazy Days Rv Rally Park",
+  "Self's RV Park",
+  "Hillsborough River State Park Campground",
+  "San LAN RV Park",
+  "Blue Water Key Resort",
+  "Sunset Pier",
+  "Robbie's Marina",
+  "Keys RV Park"
  ],
- "release": "2026-10-21.0",
+ "release": "2026-11-18.0",
  "error": null,
  "overture": {
   "columns": {
@@ -60,165 +60,165 @@
   "category_values": [
    [
     "real_estate_service|real_estate_agent",
-    49105
+    49164
    ],
    [
     "real_estate_service|real_estate_service",
-    27922
+    27615
    ],
    [
     "financial_service|insurance_agency",
-    19657
+    19691
    ],
    [
     "home_service|contractor",
-    17434
+    18748
    ],
    [
     "personal_or_beauty_service|beauty_salon",
-    17337
+    18161
    ],
    [
     "automotive_service|automotive_repair",
-    15055
+    15475
    ],
    [
     "personal_or_beauty_service|hair_salon",
-    14658
+    14687
    ],
    [
     "professional_service|professional_service",
-    13417
-   ],
-   [
-    "legal_service|legal_service",
-    13229
-   ],
-   [
-    "social_or_community_service|social_or_community_service",
-    12246
+    13505
    ],
    [
     "diagnostics_imaging_or_lab_service|doctors_office",
-    12162
+    12249
    ],
    [
-    "financial_service|money_transfer_service",
-    11395
+    "social_or_community_service|social_or_community_service",
+    12157
+   ],
+   [
+    "legal_service|legal_service",
+    11562
    ],
    [
     "financial_service|financial_service",
-    10893
+    11538
+   ],
+   [
+    "financial_service|money_transfer_service",
+    9650
    ],
    [
     "wellness_service|spa",
-    9200
+    9308
    ],
    [
     "financial_service|accountant",
-    9033
+    9028
    ],
    [
     "personal_or_beauty_service|nail_salon",
-    8219
-   ],
-   [
-    "building_or_construction_service|building_or_construction_service",
-    8085
+    8352
    ],
    [
     "personal_or_beauty_service|barber",
-    7899
+    8083
+   ],
+   [
+    "building_or_construction_service|building_or_construction_service",
+    7537
    ],
    [
     "technical_service|software_development",
-    6970
+    6855
    ],
    [
     "professional_service|business_consulting",
-    6678
-   ],
-   [
-    "real_estate_service|property_management",
-    6079
+    6620
    ],
    [
     "home_service|hvac_service",
-    6048
+    6544
+   ],
+   [
+    "real_estate_service|property_management",
+    6128
    ],
    [
     "wellness_service|massage_therapy",
-    5962
-   ],
-   [
-    "home_service|roofing",
-    5493
+    5942
    ],
    [
     "event_or_party_service|party_and_event_planning",
-    5418
+    5594
+   ],
+   [
+    "home_service|roofing",
+    5515
    ],
    [
     "medical_service|home_health_care",
-    5201
-   ],
-   [
-    "travel_service|travel_service",
-    4517
-   ],
-   [
-    "building_or_construction_service|engineering_service",
-    4471
+    5220
    ],
    [
     "professional_service|marketing_agency",
-    4431
+    5184
    ],
    [
-    "home_service|interior_design",
-    4360
+    "travel_service|travel_service",
+    4613
    ],
    [
-    "financial_service|mortgage_broker",
-    4307
+    "building_or_construction_service|engineering_service",
+    4351
    ],
    [
     "technical_service|it_service_and_computer_repair",
-    4289
+    4321
    ],
    [
-    "home_service|home_cleaning",
-    4221
-   ],
-   [
-    "b2b_service|b2b_service",
-    4094
-   ],
-   [
-    "wellness_service|medical_spa",
-    4023
+    "financial_service|mortgage_broker",
+    4317
    ],
    [
     "home_service|landscaping",
-    3856
+    4315
    ],
    [
-    "animal_or_pet_service|veterinarian",
-    3826
+    "home_service|interior_design",
+    4220
+   ],
+   [
+    "home_service|home_cleaning",
+    4142
+   ],
+   [
+    "b2b_service|b2b_service",
+    4098
    ],
    [
     "printing_service|printing_service",
-    3705
+    4079
+   ],
+   [
+    "wellness_service|medical_spa",
+    3959
+   ],
+   [
+    "animal_or_pet_service|veterinarian",
+    3860
    ],
    [
     "home_service|plumbing",
-    3637
+    3652
    ],
    [
-    "home_service|home_service",
-    3555
+    "financial_service|trusts",
+    3498
    ]
   ],
-  "candidates": 2864
+  "candidates": 2890
  }
 }
