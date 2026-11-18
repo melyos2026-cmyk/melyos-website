@@ -94,14 +94,14 @@ export default async function Page({ params }: { params: Promise<{ state: string
       <section className="py-10">
         <div className="mx-auto grid max-w-6xl gap-8 px-5 lg:grid-cols-[1fr_420px] lg:px-8">
           <div className="space-y-8">
-            {/* Nov 18 (per Mely): photo (or a picture of the kind of place) + a big map with satellite, side by side */}
+            {/* Nov 18 (per Mely): the real photo + a big map side by side; no photo → the big map full width */}
             {(() => {
               const ph = typeof info.photo_url === "string" && /^https:\/\//.test(info.photo_url) ? info.photo_url : sitePhoto(st, row[7]);
               return (
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <img src={ph || `/explore/ph-${row[0]}.svg`} alt={name} referrerPolicy="no-referrer" className="h-80 w-full rounded-3xl object-cover" />
+                ph ? <div className="grid gap-3 sm:grid-cols-2">
+                  <img src={ph} alt={name} referrerPolicy="no-referrer" className="h-80 w-full rounded-3xl object-cover" />
                   <div className="h-80"><SpotMap lat={row[2]} lon={row[3]} name={name} color={k.color} /></div>
-                </div>
+                </div> : <div className="h-[420px]"><SpotMap lat={row[2]} lon={row[3]} name={name} color={k.color} /></div>
               );
             })()}
             <div className="flex flex-wrap gap-2">

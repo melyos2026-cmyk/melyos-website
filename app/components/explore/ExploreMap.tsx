@@ -21,6 +21,12 @@ const ago = (iso?: string | null) => {
   return d <= 0 ? "today" : d === 1 ? "yesterday" : d < 30 ? `${d} days ago` : `${Math.round(d / 30)} mo ago`;
 };
 const RED = "#e11d48";
+// Nov 18 (per Mely): no photo yet → a real aerial view of the place (satellite tile around its pin)
+const aerial = (lat: number, lon: number, z = 17) => {
+  const n = 2 ** z, x = Math.floor(((lon + 180) / 360) * n);
+  const y = Math.floor(((1 - Math.log(Math.tan((lat * Math.PI) / 180) + 1 / Math.cos((lat * Math.PI) / 180)) / Math.PI) / 2) * n);
+  return `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}`;
+};
 const okUrl = (u: any) => typeof u === "string" && /^https:\/\//.test(u);
 const claimUrl = (state: string, r: Row) => `/explore/claim?state=${state}&key=${encodeURIComponent(r[7])}`;
 
@@ -260,7 +266,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
               <div key={r[7]} onClick={() => focus(r)} className={`flex cursor-pointer gap-3 border-b border-slate-100 p-3 transition hover:bg-slate-50 ${picked === r[7] ? "bg-cyan-50" : ""}`}>
                 <div className="relative h-24 w-28 shrink-0 overflow-hidden rounded-xl" style={{ background: `linear-gradient(135deg, ${k.color}, #071A33)` }}>
                   {photo ? <img src={photo} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setBroken((b) => ({ ...b, [r[7]]: true }))} className="h-full w-full object-cover" />
-                    : <img src={`/explore/ph-${r[0]}.svg`} alt="" className="h-full w-full object-cover" />}
+                    : <img src={aerial(r[2], r[3])} alt="" loading="lazy" className="h-full w-full object-cover" />}
                 </div>
                 <div className="min-w-0 flex-1">
                   <a href={`${listingPath(state, r)}${dates}`} onClick={(e) => e.stopPropagation()} className="line-clamp-2 font-black leading-snug text-[#071A33] hover:underline">{nice(r[1])}</a>
@@ -274,7 +280,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
           })}
           {listed.length > 150 && <p className="p-4 text-center text-xs text-slate-500">Showing 150 of {listed.length.toLocaleString()}. Zoom in on the map or search to narrow it down.</p>}
         </div>
-        <p className="border-t border-slate-100 px-4 py-2 text-[11px] text-slate-500">Map data © <a className="underline" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors. Listings are public information; owners can claim and correct theirs for free.</p>
+        <p className="border-t border-slate-100 px-4 py-2 text-[11px] text-slate-500">Map data © <a className="underline" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors · Aerial imagery © Esri, Maxar, Earthstar Geographics. Listings are public information; owners can claim and correct theirs for free.</p>
       </div>
     </div>
   );
