@@ -65,7 +65,7 @@ export default function SlipMap(p: Props) {
     import("leaflet").then((mod) => {
       if (off || !mapEl.current || map.current) return;
       const Lm: any = (mod as any).default || mod; L.current = Lm;
-      const m = Lm.map(mapEl.current, { zoomControl: true, maxZoom: 21 }).setView([p.map.center_lat, p.map.center_lon], p.map.zoom || 18);
+      const m = Lm.map(mapEl.current, { zoomControl: true, maxZoom: 21, zoomSnap: 0.25 }).setView([p.map.center_lat, p.map.center_lon], p.map.zoom || 18);
       sat.current = Lm.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
         maxNativeZoom: 19, maxZoom: 21, attribution: "Imagery &copy; Esri, Maxar, Earthstar Geographics" });
       m.on("zoomend", () => setZoom(m.getZoom()));
@@ -98,7 +98,9 @@ export default function SlipMap(p: Props) {
     // a dock is ~2.5 m wide: draw it at its real width for this zoom (pixels per metre)
     const ppm = Math.pow(2, zoom) * 256 / (40075016 * Math.cos((p.map.center_lat * Math.PI) / 180));
     const dockW = Math.max(3, Math.min(28, 2.6 * ppm));
-    if (drawn && outline.length > 3) layer.current.addLayer(Lm.polygon(outline, { color: "#4d7c0f", weight: 2, dashArray: "6 6", fillColor: "#a3d18a", fillOpacity: 0.55, interactive: false }));
+    if (drawn && outline.length > 3) layer.current.addLayer(Lm.polygon(outline, marina
+      ? { color: "#e0f2fe", weight: 2, dashArray: "6 6", fillColor: "#bae6fd", fillOpacity: 0.25, interactive: false }
+      : { color: "#4d7c0f", weight: 2, dashArray: "6 6", fillColor: "#a3d18a", fillOpacity: 0.55, interactive: false }));
     const roadW = Math.max(4, Math.min(40, 6 * ppm));
     for (const rd of roads) if (rd.length > 1) {
       layer.current.addLayer(Lm.polyline(rd, { color: drawn ? "#ffffff" : "#e5e7eb", weight: roadW + 3, opacity: drawn ? 1 : 0.5, lineCap: "round", lineJoin: "round", interactive: false }));
