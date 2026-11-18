@@ -47,6 +47,12 @@ export default function SlipMap(p: Props) {
   const addRef = useRef(adding); addRef.current = adding;
   const slipsRef = useRef(slips); slipsRef.current = slips;
   const [ready, setReady] = useState(false);
+  // Nov 17 (per Mely): "Map" = drawn style like the Aloha / marina maps (water, wooden docks, numbered tiles);
+  // "Satellite" = the photo (the editor starts there to place slips exactly).
+  const [view, setView] = useState<"map" | "sat">(editor ? "sat" : "map");
+  const [zoom, setZoom] = useState(p.map.zoom || 18);
+  const sat = useRef<any>(null);
+  const marina = p.kind === "m";
   const s = slips.find((x) => x.id === sel) || null;
   const boatFt = Number(boat) || 0;
 
@@ -59,8 +65,12 @@ export default function SlipMap(p: Props) {
       if (off || !mapEl.current || map.current) return;
       const Lm: any = (mod as any).default || mod; L.current = Lm;
       const m = Lm.map(mapEl.current, { zoomControl: true, maxZoom: 21 }).setView([p.map.center_lat, p.map.center_lon], p.map.zoom || 18);
-      Lm.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
-        maxNativeZoom: 19, maxZoom: 21, attribution: "Imagery &copy; Esri, Maxar, Earthstar Geographics" }).addTo(m);
+      sat.current = Lm.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+        maxNativeZoom: 19, maxZoom: 21, attribution: "Imagery &copy; Esri, Maxar, Earthstar Geographics" });
+      m.on("zoomend", () => setZoom(m.getZoom()));
+      // frame the whole property on open
+      const pts = (p.map.slips || []).map((x) => [x.lat, x.lon]).concat(...(p.map.docks || []));
+      if (pts.length > 1) { m.fitBounds(Lm.latLngBounds(pts), { padding: [24, 24], maxZoom: 20 }); setZoom(m.getZoom()); }
       layer.current = Lm.layerGroup().addTo(m);
       m.on("click", (e: any) => {
         if (!addRef.current) { setSel(null); setAsking(false); return; }
@@ -74,16 +84,33 @@ export default function SlipMap(p: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const m = map.current; if (!ready || !m || !sat.current) return;
+    if (view === "sat") sat.current.addTo(m); else sat.current.remove();
+  }, [view, ready]);
+
   // draw slips
   useEffect(() => {
     const Lm = L.current, m = map.current; if (!ready || !Lm || !m) return;
     layer.current.clearLayers();
-    for (const dk of docks) if (dk.length > 1) layer.current.addLayer(Lm.polyline(dk, { color: "#e2e8f0", weight: 4, opacity: 0.9, interactive: false }));
+    const drawn = view === "map";
+    // a dock is ~2.5 m wide: draw it at its real width for this zoom (pixels per metre)
+    const ppm = Math.pow(2, zoom) * 256 / (40075016 * Math.cos((p.map.center_lat * Math.PI) / 180));
+    const dockW = Math.max(3, Math.min(28, 2.6 * ppm));
+    for (const dk of docks) if (dk.length > 1) {
+      if (drawn) layer.current.addLayer(Lm.polyline(dk, { color: "#7c5a3a", weight: dockW + 2, opacity: 1, lineCap: "butt", interactive: false }));
+      layer.current.addLayer(Lm.polyline(dk, { color: drawn ? "#c8a27a" : "#e2e8f0", weight: drawn ? dockW : 4, opacity: drawn ? 1 : 0.9, lineCap: "butt", interactive: false }));
+    }
+    const labels = zoom >= 19 || (zoom >= 18 && slips.length < 150);
     for (const x of slips) {
       const fits = boatFt ? x.len >= boatFt : true, on = x.id === sel;
-      const poly = Lm.polygon(corners(x), { color: on ? "#facc15" : fits ? "#22d3ee" : "#94a3b8", weight: on ? 3 : 1.5, fillOpacity: on ? 0.45 : fits ? 0.28 : 0.08, bubblingMouseEvents: false });
+      const style = drawn
+        ? { color: on ? "#a16207" : "#ffffff", weight: on ? 3 : 1.5, fillColor: on ? "#facc15" : fits ? (marina ? "#16a34a" : "#16a34a") : "#9ca3af", fillOpacity: on ? 0.95 : fits ? 0.82 : 0.55 }
+        : { color: on ? "#facc15" : fits ? "#22d3ee" : "#94a3b8", weight: on ? 3 : 1.5, fillOpacity: on ? 0.45 : fits ? 0.28 : 0.08 };
+      const poly = Lm.polygon(corners(x), { ...style, bubblingMouseEvents: false });
       poly.on("click", () => { setSel(x.id); setAsking(false); });
-      poly.bindTooltip(x.n, { permanent: true, direction: "center", className: "slipnum" });
+      if (labels) poly.bindTooltip(x.n, { permanent: true, direction: "center", className: drawn ? "slipnum2" : "slipnum" });
+      else poly.bindTooltip(`${marina ? "Slip" : "Site"} ${x.n}`, { direction: "top" });
       layer.current.addLayer(poly);
     }
     handle.current?.remove(); handle.current = null;
@@ -94,7 +121,7 @@ export default function SlipMap(p: Props) {
       handle.current = h;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slips, sel, ready, boatFt, editor]);
+  }, [slips, sel, ready, boatFt, editor, view, zoom]);
 
   useEffect(() => { if (mapEl.current) mapEl.current.style.cursor = adding ? "crosshair" : ""; }, [adding]);
   useEffect(() => {
@@ -126,7 +153,9 @@ export default function SlipMap(p: Props) {
 
   return (
     <div className="grid gap-5 lg:grid-cols-[1fr_380px]">
-      <style>{`.slipnum{background:rgba(7,26,51,.78);color:#fff;border:0;box-shadow:none;font:700 10px/1 system-ui;padding:2px 4px;border-radius:4px}.slipnum:before{display:none}`}</style>
+      <style>{`.slipnum{background:rgba(7,26,51,.78);color:#fff;border:0;box-shadow:none;font:700 10px/1 system-ui;padding:2px 4px;border-radius:4px}.slipnum:before{display:none}.slipnum2{background:transparent;color:#fff;border:0;box-shadow:none;font:800 10px/1 system-ui;padding:0;text-shadow:0 1px 2px rgba(0,0,0,.55)}.slipnum2:before{display:none}
+.sm-water{background-color:#5fb3dc;background-image:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.28),transparent 60%),repeating-linear-gradient(135deg,rgba(255,255,255,.07) 0 2px,transparent 2px 14px)}
+.sm-grass{background-color:#cfe6c0;background-image:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.35),transparent 60%),repeating-linear-gradient(45deg,rgba(22,101,52,.05) 0 2px,transparent 2px 12px)}`}</style>
       <div>
         {editor && <div className="mb-3 flex flex-wrap items-center gap-2 rounded-xl bg-amber-50 p-3 text-sm ring-1 ring-amber-200">
           <b className="text-amber-900">Edit mode</b>
@@ -136,7 +165,24 @@ export default function SlipMap(p: Props) {
           {save.msg && <span className="w-full text-emerald-700">{save.msg}</span>}
           {save.err && <span className="w-full font-bold text-red-600">{save.err}</span>}
         </div>}
-        <div ref={mapEl} className="h-[62vh] min-h-[420px] w-full overflow-hidden rounded-2xl ring-1 ring-slate-200" />
+        <div className="overflow-hidden rounded-2xl ring-1 ring-slate-200">
+          <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 text-white" style={{ background: marina ? "linear-gradient(135deg,#0c4a6e,#0891b2)" : "linear-gradient(135deg,#14532d,#16a34a)" }}>
+            <div>
+              <p className="text-lg font-black leading-tight">{p.listing_name}</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">Interactive {unit} map</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3 text-[12.5px] font-semibold">
+              <span className="flex items-center gap-1.5"><i className="inline-block h-3.5 w-3.5 rounded bg-[#16a34a] ring-1 ring-white/70" /> Request it ({slips.length})</span>
+              {boatFt > 0 && <span className="flex items-center gap-1.5"><i className="inline-block h-3.5 w-3.5 rounded bg-[#9ca3af] ring-1 ring-white/70" /> Too short for your boat</span>}
+              <span className="flex items-center gap-1.5"><i className="inline-block h-3.5 w-3.5 rounded bg-[#facc15] ring-1 ring-white/70" /> Selected</span>
+              <span className="ml-1 inline-flex overflow-hidden rounded-lg bg-white/15 ring-1 ring-white/30">
+                <button type="button" onClick={() => setView("map")} className={`px-3 py-1.5 ${view === "map" ? "bg-white text-slate-900" : ""}`}>Map</button>
+                <button type="button" onClick={() => setView("sat")} className={`px-3 py-1.5 ${view === "sat" ? "bg-white text-slate-900" : ""}`}>Satellite</button>
+              </span>
+            </div>
+          </div>
+          <div ref={mapEl} className={`h-[62vh] min-h-[420px] w-full ${view === "map" ? (marina ? "sm-water" : "sm-grass") : "bg-slate-800"}`} />
+        </div>
         <p className="mt-2 text-xs text-slate-500">{Unit} layout drawn by MelyOS over satellite imagery as a guide{p.map.source ? <> (base data © OpenStreetMap contributors, ODbL)</> : null}. Availability and price are always confirmed by {p.listing_name}.</p>
       </div>
 
@@ -152,8 +198,10 @@ export default function SlipMap(p: Props) {
         {!s && <div className="rounded-2xl border border-slate-200 p-5">
           <p className="text-lg font-black">{slips.length ? `Tap a ${unit} on the map` : editor ? `Add your first ${unit}` : `No ${unit}s drawn yet`}</p>
           <p className="mt-1 text-sm text-slate-600">{editor ? `Tap “+ Add ${unit}”, then tap where it is on the photo. Then use “Next in row” to place its neighbors.` : `See its size and what makes it special, then request it — ${p.listing_name} confirms with you.`}</p>
-          {sorted.length > 0 && <div className="mt-3 flex max-h-56 flex-wrap gap-1.5 overflow-auto">{sorted.map((x) => (
-            <button key={x.id} onClick={() => { setSel(x.id); map.current?.panTo([x.lat, x.lon]); }} className={`rounded-md px-2 py-1 text-xs font-bold ring-1 ${boatFt && x.len < boatFt ? "text-slate-400 ring-slate-200" : "text-[#071A33] ring-[#08B8D8]"}`}>{x.n}</button>))}</div>}
+          {sorted.length > 0 && <form className="mt-3 flex gap-2" onSubmit={(e) => { e.preventDefault(); const q = String(new FormData(e.currentTarget).get("q") || "").trim().toLowerCase(); const f = slips.find((x) => x.n.toLowerCase() === q); if (f) { setSel(f.id); map.current?.setView([f.lat, f.lon], Math.max(map.current.getZoom(), 19)); } }}>
+            <input name="q" className={inp} placeholder={`Go to ${unit} #`} />
+            <button className="rounded-lg bg-[#071A33] px-4 text-sm font-bold text-white">Go</button>
+          </form>}
         </div>}
 
         {s && !editor && <div className="rounded-2xl border-2 border-[#08B8D8] p-5">
