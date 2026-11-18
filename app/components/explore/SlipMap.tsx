@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import { RequestForm } from "./ListingActions";
+import { tidySlips } from "./tidy";
 
 // Nov 17 (per Mely): a marina's slips (or a park's sites) drawn over its satellite photo. Boaters tap a slip, read
 // what makes it good (corner, near the fuel dock…) and "Request this slip" — the request carries the slip number.
@@ -116,7 +117,7 @@ export default function SlipMap(p: Props) {
     for (const x of slips) {
       const fits = boatFt ? x.len >= boatFt : true, on = x.id === sel;
       const style = drawn
-        ? { color: on ? "#a16207" : "#ffffff", weight: on ? 3 : 1.5, fillColor: on ? "#facc15" : fits ? (marina ? "#16a34a" : "#16a34a") : "#9ca3af", fillOpacity: on ? 0.95 : fits ? 0.82 : 0.55 }
+        ? { color: on ? "#a16207" : "#14532d", weight: on ? 2.5 : 0.8, fillColor: on ? "#facc15" : fits ? "#22c55e" : "#9ca3af", fillOpacity: on ? 1 : fits ? 0.92 : 0.6 }
         : { color: on ? "#facc15" : fits ? "#22d3ee" : "#94a3b8", weight: on ? 3 : 1.5, fillOpacity: on ? 0.45 : fits ? 0.28 : 0.08 };
       const poly = Lm.polygon(corners(x), { ...style, bubblingMouseEvents: false });
       poly.on("click", () => { setSel(x.id); setAsking(false); });
@@ -165,12 +166,14 @@ export default function SlipMap(p: Props) {
   return (
     <div className="grid gap-5 lg:grid-cols-[1fr_380px]">
       <style>{`.slipnum{background:rgba(7,26,51,.78);color:#fff;border:0;box-shadow:none;font:700 10px/1 system-ui;padding:2px 4px;border-radius:4px}.slipnum:before{display:none}.slipnum2{background:transparent;color:#fff;border:0;box-shadow:none;font:800 10px/1 system-ui;padding:0;text-shadow:0 1px 2px rgba(0,0,0,.55)}.slipnum2:before{display:none}
+.sm-map.leaflet-container{background:transparent}
 .sm-water{background-color:#5fb3dc;background-image:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.28),transparent 60%),repeating-linear-gradient(135deg,rgba(255,255,255,.07) 0 2px,transparent 2px 14px)}
 .sm-grass{background-color:#cfe6c0;background-image:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.35),transparent 60%),repeating-linear-gradient(45deg,rgba(22,101,52,.05) 0 2px,transparent 2px 12px)}`}</style>
       <div>
         {editor && <div className="mb-3 flex flex-wrap items-center gap-2 rounded-xl bg-amber-50 p-3 text-sm ring-1 ring-amber-200">
           <b className="text-amber-900">Edit mode</b>
           <button onClick={() => setAdding((a) => !a)} className={`rounded-lg px-3 py-2 font-bold ${adding ? "bg-amber-500 text-white" : "bg-white ring-1 ring-amber-300"}`}>{adding ? `Tap the map to place the ${unit}…` : `+ Add ${unit}`}</button>
+          {slips.length > 1 && <button onClick={() => { change(tidySlips(slipsRef.current, roads, docks)); setSel(null); }} title="Straight rows, each site touching its neighbours, from the road back" className="rounded-lg bg-white px-3 py-2 font-bold ring-1 ring-amber-300">Line up</button>}
           <label className="flex items-center gap-1.5 font-bold"><input type="checkbox" checked={published} onChange={(e) => { setPublished(e.target.checked); setSave((x) => ({ ...x, dirty: true })); }} /> Public</label>
           <button disabled={save.busy} onClick={doSave} className="ml-auto rounded-lg bg-[#071A33] px-4 py-2 font-bold text-white disabled:opacity-60">{save.busy ? "Saving…" : save.dirty ? "Save changes" : "Save"}</button>
           {save.msg && <span className="w-full text-emerald-700">{save.msg}</span>}
@@ -192,7 +195,10 @@ export default function SlipMap(p: Props) {
               </span>
             </div>
           </div>
-          <div ref={mapEl} className={`h-[62vh] min-h-[420px] w-full ${view === "map" ? (marina ? "sm-water" : "sm-grass") : "bg-slate-800"}`} />
+          {/* the background lives on a wrapper: Leaflet owns the classes of the map element itself */}
+          <div className={`relative h-[62vh] min-h-[420px] w-full overflow-hidden ${view === "map" ? (marina ? "sm-water" : "sm-grass") : "bg-slate-800"}`}>
+            <div ref={mapEl} className="sm-map absolute inset-0" />
+          </div>
         </div>
         <p className="mt-2 text-xs text-slate-500">{Unit} layout drawn by MelyOS over satellite imagery as a guide{p.map.source ? <> (base data © OpenStreetMap contributors, ODbL)</> : null}. Availability and price are always confirmed by {p.listing_name}.</p>
       </div>

@@ -4,6 +4,7 @@ import SiteHeader from "../../../../components/site/Header";
 import SiteFooter from "../../../../components/site/Footer";
 import AccountPill from "../../../../components/explore/AccountPill";
 import SlipMap from "../../../../components/explore/SlipMap";
+import { tidySlips } from "../../../../components/explore/tidy";
 import { STATES, KIND } from "../../../../components/explore/states";
 import { exploreApi, findListing, keyFromSlug, listingPath, nice, draftMap } from "../../../../lib/explore";
 
@@ -24,6 +25,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   if (!r.data?.map && !editor) notFound();
   // Nov 17: no saved map yet -> start the editor from the OpenStreetMap draft (scripts/osm/build_drafts.py), if any
   const draft = !r.data?.map && editor ? await draftMap(st, row[7]) : null;
+  if (draft?.slips?.length) draft.slips = tidySlips(draft.slips, draft.roads || [], draft.docks || []); // Aloha-style rows
   const saved = r.data?.map ? { ...r.data.map, ...(r.data.map.layers || {}) } : null;
   const m = saved || (draft ? { ...draft, intro: "", published: false } : { center_lat: row[2], center_lon: row[3], zoom: 19, slips: [], intro: "", published: false });
   const name = nice(row[1]), k = KIND[row[0]], unit = row[0] === "m" ? "slip" : "site";
