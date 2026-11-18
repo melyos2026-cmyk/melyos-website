@@ -5,7 +5,7 @@ on:
     inputs:
       urls: { description: "URLs separated by spaces", required: true }
 permissions:
-  contents: read
+  contents: write
 jobs:
   fetch:
     runs-on: ubuntu-latest
@@ -17,5 +17,8 @@ jobs:
           mkdir out; i=0
           for u in $URLS; do i=$((i+1)); curl -sL -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124" --max-time 30 -o "out/$i" -w "$i %{http_code} %{content_type} %{size_download} $u\n" "$u" >> out/index.txt || echo "$i FAIL $u" >> out/index.txt; done
           cat out/index.txt
-      - uses: actions/upload-artifact@v4
-        with: { name: fetched, path: out }
+      - name: Push to branch fetched (not main)
+        run: |
+          cd out && git init -q -b fetched && git config user.name fetch-agent && git config user.email noreply@melyos.io
+          git add -A && git commit -qm fetched
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" fetched
