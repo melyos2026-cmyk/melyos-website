@@ -112,6 +112,32 @@ export default async function Page({ params }: { params: Promise<{ state: string
                 : typeof info.booking_url === "string" && /^https:\/\//.test(info.booking_url) ? <a href={info.booking_url} target="_blank" rel="noopener" className="rounded-xl bg-[#08B8D8] px-4 py-2.5 font-black text-white">Book online</a>
                 : feat && website && <a href={website} target="_blank" rel="noopener" className="rounded-xl bg-[#08B8D8] px-4 py-2.5 font-black text-white">Book online</a>}
             </div>
+              {/* Nov 18 (per Mely): the owner pitch — make them want to claim it (left column, right under the photo/map, so the page reads full) */}
+              {!feat && !d.verified && <div className="overflow-hidden rounded-3xl bg-[#071A33] text-white shadow-xl ring-1 ring-[#08B8D8]/30">
+                <div className="relative">
+                  <img src={row[0] === "m" ? "/interactive-slips-2026.jpg" : "/map-reservations-2026.jpg"} alt={`A live ${unit} map with online booking, built by MelyOS`} className="h-52 w-full object-cover opacity-90" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#071A33] via-[#071A33]/30 to-transparent" />
+                  <span className="absolute left-4 top-4 rounded-full bg-[#08B8D8] px-3 py-1 text-[11px] font-black uppercase tracking-wider">Free for owners</span>
+                </div>
+                <div className="p-6 pt-2">
+                  <p className="text-sm font-black uppercase tracking-[0.18em] text-[#39d5ee]">Is this your {k.label.toLowerCase()}?</p>
+                  <p className="mt-2 text-2xl font-black leading-tight">Turn this page into bookings for {name}</p>
+                  <p className="mt-2 text-slate-300">Guests are already finding you here. Claim your listing free and make it work for you:</p>
+                  <ul className="mt-4 grid gap-3 text-[15px] sm:grid-cols-2">
+                    {[
+                      ["📸", "Your photos, rates and amenities", "Look your best next to everyone else on the map."],
+                      ["📩", `${unit[0].toUpperCase() + unit.slice(1)} requests straight to you`, "Straight to your email — no middleman, no commission."],
+                      ["✅", "Verified badge & reviews", "Stand out as the official, up-to-date listing."],
+                      ["🗺️", `Your live ${unit} map with online booking`, `Guests pick their ${unit} and pay online — powered by MelyOS.`],
+                    ].map(([i, t, d2]) => (
+                      <li key={t} className="flex gap-3"><span className="text-xl leading-6" aria-hidden>{i}</span><span><b className="block">{t}</b><span className="text-sm text-slate-400">{d2}</span></span></li>
+                    ))}
+                  </ul>
+                  <a href={`/explore/claim?state=${st}&key=${encodeURIComponent(row[7])}`} className="mt-5 block rounded-2xl bg-[#08B8D8] px-5 py-4 text-center text-lg font-black text-white shadow-lg shadow-cyan-500/30 transition hover:bg-[#06a3c0]">Claim {name} free →</a>
+                  <p className="mt-2 text-center text-xs text-slate-400">Takes 2 minutes · No credit card · We confirm it with you in 1–2 business days</p>
+                  <a href="/#demo" className="mt-3 block text-center text-sm font-bold text-[#39d5ee] hover:underline">Want the live {unit} map? Book a free demo</a>
+                </div>
+              </div>}
             {(info.description || facts.length > 0) && <div className="rounded-3xl border border-slate-200 p-6">
               {info.description && <p className="whitespace-pre-line text-lg leading-8 text-slate-700">{info.description}</p>}
               {facts.length > 0 && <dl className="mt-4 grid gap-3 sm:grid-cols-2">{facts.map(([a, b]) => <div key={a} className="rounded-xl bg-slate-50 p-3"><dt className="text-xs font-black uppercase tracking-wider text-slate-500">{a}</dt><dd className="mt-1 font-bold">{b}</dd></div>)}</dl>}
@@ -127,32 +153,6 @@ export default async function Page({ params }: { params: Promise<{ state: string
               {!liveMap && d.slipmap && <a href={`${canonical}/slips`} className="mb-4 block rounded-xl bg-[#071A33] px-4 py-3 text-center font-black text-white">Pick your {unit} on the map →</a>}
               <RequestForm {...L} />
             </div>
-            {/* Nov 18 (per Mely): the owner pitch — make them want to claim it */}
-            {!feat && !d.verified && <div className="mt-6 overflow-hidden rounded-3xl bg-[#071A33] text-white shadow-xl ring-1 ring-[#08B8D8]/30">
-              <div className="relative">
-                <img src={row[0] === "m" ? "/interactive-slips-2026.jpg" : "/map-reservations-2026.jpg"} alt={`A live ${unit} map with online booking, built by MelyOS`} className="h-40 w-full object-cover opacity-90" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#071A33] via-[#071A33]/30 to-transparent" />
-                <span className="absolute left-4 top-4 rounded-full bg-[#08B8D8] px-3 py-1 text-[11px] font-black uppercase tracking-wider">Free for owners</span>
-              </div>
-              <div className="p-6 pt-2">
-                <p className="text-sm font-black uppercase tracking-[0.18em] text-[#39d5ee]">Is this your {k.label.toLowerCase()}?</p>
-                <p className="mt-2 text-2xl font-black leading-tight">Turn this page into bookings for {name}</p>
-                <p className="mt-2 text-slate-300">Guests are already finding you here. Claim your listing free and make it work for you:</p>
-                <ul className="mt-4 space-y-2.5 text-[15px]">
-                  {[
-                    ["📸", "Your photos, rates and amenities", "Look your best next to everyone else on the map."],
-                    ["📩", `${unit[0].toUpperCase() + unit.slice(1)} requests straight to you`, "Straight to your email — no middleman, no commission."],
-                    ["✅", "Verified badge & reviews", "Stand out as the official, up-to-date listing."],
-                    ["🗺️", `Your live ${unit} map with online booking`, `Guests pick their ${unit} and pay online — powered by MelyOS.`],
-                  ].map(([i, t, d2]) => (
-                    <li key={t} className="flex gap-3"><span className="text-xl leading-6" aria-hidden>{i}</span><span><b className="block">{t}</b><span className="text-sm text-slate-400">{d2}</span></span></li>
-                  ))}
-                </ul>
-                <a href={`/explore/claim?state=${st}&key=${encodeURIComponent(row[7])}`} className="mt-5 block rounded-2xl bg-[#08B8D8] px-5 py-4 text-center text-lg font-black text-white shadow-lg shadow-cyan-500/30 transition hover:bg-[#06a3c0]">Claim {name} free →</a>
-                <p className="mt-2 text-center text-xs text-slate-400">Takes 2 minutes · No credit card · We confirm it with you in 1–2 business days</p>
-                <a href="/#demo" className="mt-3 block text-center text-sm font-bold text-[#39d5ee] hover:underline">Want the live {unit} map? Book a free demo</a>
-              </div>
-            </div>}
           </aside>
         </div>
       </section>

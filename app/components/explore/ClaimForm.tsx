@@ -36,13 +36,30 @@ export default function ClaimForm({ state, listingKey, phone, website, kind }: {
   return (
     <form onSubmit={go} className="mt-6 space-y-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
       <input type="text" className="hidden" tabIndex={-1} autoComplete="off" onChange={(e) => set("website_hp", e.target.value)} />
-      <div><p className="mb-2 font-black">About you</p><div className="grid gap-2 sm:grid-cols-2">
+      <div><p className="mb-2 font-black">1 · About you</p><div className="grid gap-2 sm:grid-cols-2">
         <input required className={inp} placeholder="Your name" value={f.name || ""} onChange={(e) => set("name", e.target.value)} />
         <select className={inp} value={f.role || ""} onChange={(e) => set("role", e.target.value)}><option value="">Your role</option><option>Owner</option><option>General manager</option><option>Dockmaster / office manager</option><option>Other staff</option></select>
         <input required type="email" className={inp} placeholder="Work email" value={f.email || ""} onChange={(e) => set("email", e.target.value)} />
         <input type="tel" className={inp} placeholder="Phone" value={f.phone || ""} onChange={(e) => set("phone", e.target.value)} />
       </div></div>
-      <div><p className="mb-2 font-black">The correct info for your listing</p><div className="grid gap-2 sm:grid-cols-2">
+      {/* Nov 18 (per Mely): the map upload goes right after "About you" and looks like a big button — that's what we want them to do */}
+      <div className="rounded-2xl border-2 border-dashed border-[#08B8D8] bg-cyan-50 p-5">
+        <p className="text-lg font-black">🗺️ 2 · Upload the map of your {kind === "m" ? "marina" : "property"}</p>
+        <p className="mt-1 text-sm text-slate-600">Your site plan, brochure map or even a phone photo of the map in your office. We turn it into your <b>live {unit} map</b> — guests see which {unit}s are open and request (or book) the exact one.</p>
+        <label className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#071A33] px-4 py-3.5 text-center font-black text-white shadow-md transition hover:bg-[#0b2a50]">
+          <span aria-hidden>⬆</span> {maps.length ? `${maps.length} map file${maps.length > 1 ? "s" : ""} ready — change` : "Upload your map (photo or PDF)"}
+          <input type="file" multiple accept="image/*,application/pdf" className="sr-only" onChange={(e) => setMaps(Array.from(e.target.files || []).slice(0, 4))} aria-label="Your property map" />
+        </label>
+        {maps.length > 0 && <p className="mt-2 truncate text-xs text-slate-600">{maps.map((m) => m.name).join(" · ")}</p>}
+        {maps.length > 0 && <label className="mt-3 flex items-start gap-2 text-[13px] text-slate-700"><input type="checkbox" className="mt-0.5 h-4 w-4 accent-[#08B8D8]" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
+          <span>I own this map or have the right to share it, and I give MelyOS LLC permission to use it to build my property&apos;s interactive map and show it on MelyOS Explore and my MelyOS pages.</span></label>}
+        <label className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-center font-bold text-slate-800 ring-1 ring-slate-300 transition hover:bg-slate-50">
+          <span aria-hidden>📸</span> {photos.length ? `${photos.length} photo${photos.length > 1 ? "s" : ""} ready — change` : "Add photos of your property (up to 6)"}
+          <input type="file" multiple accept="image/*" className="sr-only" onChange={(e) => setPhotos(Array.from(e.target.files || []).slice(0, 6))} aria-label="Photos of your property" />
+        </label>
+        <p className="mt-1 text-center text-xs text-slate-500">The first photo becomes your listing photo.</p>
+      </div>
+      <div><p className="mb-2 font-black">3 · The correct info for your listing</p><div className="grid gap-2 sm:grid-cols-2">
         <input className={inp} placeholder="Public phone" value={f.edits.phone || ""} onChange={(e) => setE("phone", e.target.value)} />
         <input className={inp} placeholder="Website" value={f.edits.website || ""} onChange={(e) => setE("website", e.target.value)} />
         <input className={inp} placeholder={kind === "m" ? "Number of slips" : "Number of sites"} value={f.edits.spaces || ""} onChange={(e) => setE("spaces", e.target.value)} />
@@ -53,18 +70,6 @@ export default function ClaimForm({ state, listingKey, phone, website, kind }: {
           <input className={inp} inputMode="decimal" placeholder="Diesel price today ($/gal)" value={f.edits.fuel_diesel || ""} onChange={(e) => setE("fuel_diesel", e.target.value)} /></>}
         <textarea className={`${inp} sm:col-span-2`} rows={4} placeholder="Short description of your property" value={f.edits.description || ""} onChange={(e) => setE("description", e.target.value)} />
       </div></div>
-      <div className="rounded-2xl border-2 border-dashed border-[#08B8D8]/60 bg-cyan-50/50 p-4">
-        <p className="font-black">🗺️ Have a map of your {kind === "m" ? "marina" : "property"}? Upload it</p>
-        <p className="mt-1 text-sm text-slate-600">Your site plan, brochure map or even a photo of the map in your office. We use it to build your <b>live {unit} map</b> — guests see which {unit}s are open and request (or book) the exact one.</p>
-        <input type="file" multiple accept="image/*,application/pdf" className="mt-3 block w-full text-sm" onChange={(e) => setMaps(Array.from(e.target.files || []).slice(0, 4))} aria-label="Your property map" />
-        {maps.length > 0 && <label className="mt-3 flex items-start gap-2 text-[13px] text-slate-700"><input type="checkbox" className="mt-0.5 h-4 w-4 accent-[#08B8D8]" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-          <span>I own this map or have the right to share it, and I give MelyOS LLC permission to use it to build my property&apos;s interactive map and show it on MelyOS Explore and my MelyOS pages.</span></label>}
-      </div>
-      <div className="rounded-2xl border border-slate-200 p-4">
-        <p className="font-black">📸 Photos of your property</p>
-        <p className="mt-1 text-sm text-slate-600">Up to 6. The first one becomes your listing photo.</p>
-        <input type="file" multiple accept="image/*" className="mt-3 block w-full text-sm" onChange={(e) => setPhotos(Array.from(e.target.files || []).slice(0, 6))} aria-label="Photos of your property" />
-      </div>
       {st.err && <p className="text-sm font-bold text-red-600">{st.err}</p>}
       <button disabled={st.busy} className="w-full rounded-xl bg-[#08B8D8] py-3.5 text-lg font-black text-white disabled:opacity-60">{st.busy ? (maps.length || photos.length ? "Uploading…" : "Sending…") : "Claim it free"}</button>
     </form>
