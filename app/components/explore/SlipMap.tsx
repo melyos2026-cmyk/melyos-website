@@ -8,7 +8,7 @@ import { RequestForm } from "./ListingActions";
 // what makes it good (corner, near the fuel dock…) and "Request this slip" — the request carries the slip number.
 // With ?edit=TOKEN (link made in Insights → Explore → Slip maps) Mely places and describes the slips herself.
 export type Slip = { id: string; n: string; lat: number; lon: number; len: number; wid: number; ang: number; desc?: string | null; tags?: string[] };
-export type SlipMapData = { center_lat: number; center_lon: number; zoom: number; intro?: string | null; slips: Slip[]; published?: boolean; docks?: [number, number][][]; source?: string };
+export type SlipMapData = { center_lat: number; center_lon: number; zoom: number; intro?: string | null; slips: Slip[]; published?: boolean; docks?: [number, number][][]; source?: string; outline?: [number, number][]; roads?: [number, number][][]; pois?: { t: string; lat: number; lon: number }[] };
 type Props = { state: string; listing_key: string; listing_name: string; kind: string; phone?: string | null; map: SlipMapData; edit?: string | null };
 
 const TAGS = ["Corner / T-head", "End tie", "Easy in & out", "Near fuel dock", "Near restrooms & showers", "Near parking", "Near the office", "Water view", "Shade", "Covered", "Water", "30 amp", "50 amp", "100 amp", "Pull-through", "Back-in"];
@@ -36,6 +36,7 @@ export default function SlipMap(p: Props) {
   const [slips, setSlips] = useState<Slip[]>(p.map.slips || []);
   const [intro, setIntro] = useState(p.map.intro || "");
   const docks = p.map.docks || [];
+  const roads = p.map.roads || [], outline = p.map.outline || [], pois = p.map.pois || [];
   const [published, setPublished] = useState(!!p.map.published);
   const [sel, setSel] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
@@ -69,7 +70,7 @@ export default function SlipMap(p: Props) {
         maxNativeZoom: 19, maxZoom: 21, attribution: "Imagery &copy; Esri, Maxar, Earthstar Geographics" });
       m.on("zoomend", () => setZoom(m.getZoom()));
       // frame the whole property on open
-      const pts = (p.map.slips || []).map((x) => [x.lat, x.lon]).concat(...(p.map.docks || []));
+      const pts = (p.map.slips || []).map((x) => [x.lat, x.lon]).concat(...(p.map.docks || []), p.map.outline || []);
       if (pts.length > 1) { m.fitBounds(Lm.latLngBounds(pts), { padding: [24, 24], maxZoom: 20 }); setZoom(m.getZoom()); }
       layer.current = Lm.layerGroup().addTo(m);
       m.on("click", (e: any) => {
@@ -97,6 +98,14 @@ export default function SlipMap(p: Props) {
     // a dock is ~2.5 m wide: draw it at its real width for this zoom (pixels per metre)
     const ppm = Math.pow(2, zoom) * 256 / (40075016 * Math.cos((p.map.center_lat * Math.PI) / 180));
     const dockW = Math.max(3, Math.min(28, 2.6 * ppm));
+    if (drawn && outline.length > 3) layer.current.addLayer(Lm.polygon(outline, { color: "#4d7c0f", weight: 2, dashArray: "6 6", fillColor: "#a3d18a", fillOpacity: 0.55, interactive: false }));
+    const roadW = Math.max(4, Math.min(40, 6 * ppm));
+    for (const rd of roads) if (rd.length > 1) {
+      layer.current.addLayer(Lm.polyline(rd, { color: drawn ? "#ffffff" : "#e5e7eb", weight: roadW + 3, opacity: drawn ? 1 : 0.5, lineCap: "round", lineJoin: "round", interactive: false }));
+      layer.current.addLayer(Lm.polyline(rd, { color: drawn ? "#9ca3af" : "#f8fafc", weight: roadW, opacity: drawn ? 1 : 0.6, lineCap: "round", lineJoin: "round", interactive: false }));
+    }
+    for (const pt of pois) layer.current.addLayer(Lm.marker([pt.lat, pt.lon], { interactive: false, icon: Lm.divIcon({ className: "", iconSize: [0, 0],
+      html: `<span style="position:absolute;transform:translate(-50%,-50%);white-space:nowrap;background:#fff;color:#0f172a;font:700 10.5px/1 system-ui;padding:4px 7px;border-radius:999px;box-shadow:0 1px 4px rgba(0,0,0,.25);border:1.5px solid #0e7490">${pt.t}</span>` }) }));
     for (const dk of docks) if (dk.length > 1) {
       if (drawn) layer.current.addLayer(Lm.polyline(dk, { color: "#7c5a3a", weight: dockW + 2, opacity: 1, lineCap: "butt", interactive: false }));
       layer.current.addLayer(Lm.polyline(dk, { color: drawn ? "#c8a27a" : "#e2e8f0", weight: drawn ? dockW : 4, opacity: drawn ? 1 : 0.9, lineCap: "butt", interactive: false }));
@@ -144,7 +153,7 @@ export default function SlipMap(p: Props) {
     const m = map.current; setSave({ busy: true, dirty: true });
     const c = m?.getCenter();
     const r = await fetch("/api/explore/slipmap", { method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ state: p.state, listing_key: p.listing_key, edit: p.edit, map: { center_lat: c?.lat ?? p.map.center_lat, center_lon: c?.lng ?? p.map.center_lon, zoom: m?.getZoom() ?? 18, intro, slips, published, docks, source: p.map.source || null } }) })
+      body: JSON.stringify({ state: p.state, listing_key: p.listing_key, edit: p.edit, map: { center_lat: c?.lat ?? p.map.center_lat, center_lon: c?.lng ?? p.map.center_lon, zoom: m?.getZoom() ?? 18, intro, slips, published, docks, source: p.map.source || null, layers: { outline, roads, pois } } }) })
       .then((x) => x.json()).catch(() => ({ error: "Couldn't reach the server." }));
     setSave(r.ok ? { msg: `Saved · ${r.count} ${unit}s${published ? " · public" : " · draft (only you see it)"}` } : { err: r.error || "Couldn't save.", dirty: true });
   }

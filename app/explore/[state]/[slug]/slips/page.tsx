@@ -24,7 +24,8 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   if (!r.data?.map && !editor) notFound();
   // Nov 17: no saved map yet -> start the editor from the OpenStreetMap draft (scripts/osm/build_drafts.py), if any
   const draft = !r.data?.map && editor ? await draftMap(st, row[7]) : null;
-  const m = r.data?.map || (draft ? { ...draft, intro: "", published: false } : { center_lat: row[2], center_lon: row[3], zoom: 19, slips: [], intro: "", published: false });
+  const saved = r.data?.map ? { ...r.data.map, ...(r.data.map.layers || {}) } : null;
+  const m = saved || (draft ? { ...draft, intro: "", published: false } : { center_lat: row[2], center_lon: row[3], zoom: 19, slips: [], intro: "", published: false });
   const name = nice(row[1]), k = KIND[row[0]], unit = row[0] === "m" ? "slip" : "site";
   const info = (await exploreApi<any>("listing", { listing_key: row[7] })).data?.info || {};
   return (

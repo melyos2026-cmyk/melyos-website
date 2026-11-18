@@ -298,6 +298,28 @@ for key, (row, els) in by_marina.items():
     segs_all = [(l[i], l[i + 1]) for l, _ in lines for i in range(len(l) - 1)]
     placed = []
     step = SLIP_WID * FT
+    # Finger-pier marina (many short piers off a main dock): boats sit BETWEEN the fingers, parallel to them
+    plen = lambda l: sum(math.hypot(l[i + 1][0] - l[i][0], l[i + 1][1] - l[i][1]) for i in range(len(l) - 1))
+    fingers = [(l, hw) for l, hw in lines if 4 <= plen(l) <= 22]
+    if len(fingers) >= 5:
+        for l, hw in fingers:
+            a, b = l[0], l[-1]
+            L = math.hypot(b[0] - a[0], b[1] - a[1])
+            if L < 3:
+                continue
+            ux, uy = (b[0] - a[0]) / L, (b[1] - a[1]) / L
+            px, py = -uy, ux
+            mx, my = (a[0] + b[0]) / 2, (a[1] + b[1]) / 2
+            for side in (1, -1):
+                off = hw + step / 2
+                cx, cy = mx + px * off * side, my + py * off * side
+                if any(math.hypot(cx - qx, cy - qy) < step * 0.8 for qx, qy in placed):
+                    continue
+                placed.append((cx, cy))
+                lat, lon = to_ll(lat0, lon0, cx, cy)
+                d["slips"].append({"n": "", "lat": round(lat, 7), "lon": round(lon, 7), "len": max(16, round(L / FT)), "wid": SLIP_WID,
+                                   "ang": round(bearing(a, b)) % 360, "tags": [], "desc": None})
+        continue
     for l, halfw in lines:
         for i in range(len(l) - 1):
             a, b = l[i], l[i + 1]
@@ -325,6 +347,52 @@ for key, (row, els) in by_marina.items():
                 k += step
             if len(d["slips"]) > 500:
                 break
+        if len(d["slips"]) > 500:
+            break
+
+# Campgrounds / RV parks: what makes the drawing readable - the property outline, its roads and its amenities
+POI = {"toilets": "Restrooms", "shower": "Showers", "swimming_pool": "Pool", "playground": "Playground",
+       "sanitary_dump_station": "Dump station", "reception": "Office", "laundry": "Laundry", "water_point": "Water",
+       "drinking_water": "Water", "picnic_shelter": "Pavilion", "boat_ramp": "Boat ramp", "slipway": "Boat ramp", "dog_park": "Dog park"}
+camp_drafts = [d["row"] for d in drafts.values() if d["row"][0] in ("r", "c") and d["slips"]]
+extras = {}
+for part in chunks(camp_drafts, 60):
+    q = "[out:json][timeout:900];(" + "".join(
+        f'way["highway"~"^(service|track|residential|unclassified|living_street|footway|path)$"](around:600,{r[2]:.6f},{r[3]:.6f});'
+        f'nwr["amenity"~"^(toilets|shower|sanitary_dump_station|drinking_water|water_point|reception|dog_park)$"](around:600,{r[2]:.6f},{r[3]:.6f});'
+        f'nwr["leisure"~"^(swimming_pool|playground|picnic_table|slipway|dog_park)$"](around:600,{r[2]:.6f},{r[3]:.6f});'
+        f'nwr["shop"="laundry"](around:600,{r[2]:.6f},{r[3]:.6f});nwr["camp_site"="reception"](around:600,{r[2]:.6f},{r[3]:.6f});'
+        f'nwr["tourism"="picnic_site"]["shelter"="yes"](around:600,{r[2]:.6f},{r[3]:.6f});'
+        for r in part) + ");out tags geom;"
+    for el in dedupe(overpass(q)["elements"]):
+        g = geom_ll(el)
+        if not g:
+            continue
+        t = el.get("tags", {})
+        c = (sum(p[0] for p in g) / len(g), sum(p[1] for p in g) / len(g))
+        if "highway" in t:
+            # a road belongs to the property it crosses (any point inside / near the outline or near its sites)
+            for r in part:
+                d = drafts[r[7]]
+                ring = outlines.get(r[7])
+                if ring:
+                    poly = [to_xy(r[2], r[3], a, b) for a, b in ring]
+                    hit = any(point_in_poly(*to_xy(r[2], r[3], a, b), poly) for a, b in g)
+                else:
+                    hit = any(min(dist_m((a, b), (s["lat"], s["lon"])) for s in d["slips"]) < 40 for a, b in g[:: max(1, len(g) // 12)])
+                if hit:
+                    extras.setdefault(r[7], {"roads": [], "pois": []})["roads"].append([[round(a, 7), round(b, 7)] for a, b in g])
+                    break
+        else:
+            kind = t.get("amenity") or t.get("leisure") or ("laundry" if t.get("shop") == "laundry" else None) or ("reception" if t.get("camp_site") == "reception" else None) or ("picnic_shelter" if t.get("tourism") == "picnic_site" else None)
+            label = POI.get(kind or "")
+            if not label:
+                continue
+            row = owner_of(c, near(camp_drafts, c), 450, 30)
+            if row:
+                extras.setdefault(row[7], {"roads": [], "pois": []})["pois"].append({"t": label, "lat": round(c[0], 7), "lon": round(c[1], 7)})
+    time.sleep(5)
+print(f"campground extras: {len(extras)}", flush=True)
 
 # Number, size the view, write
 os.makedirs(os.path.join(OUT, ST), exist_ok=True)
@@ -355,6 +423,18 @@ for key, d in drafts.items():
         clat, clon, span = lat0, lon0, 200
     draft = {"center_lat": round(clat, 7), "center_lon": round(clon, 7), "zoom": zoom_for(span), "slips": slips,
              "docks": d["docks"][:400], "quality": d["quality"], "source": "OpenStreetMap contributors (ODbL)"}
+    ex = extras.get(key)
+    ring = outlines.get(key)
+    if ring and len(ring) <= 400:
+        draft["outline"] = [[round(a, 7), round(b, 7)] for a, b in ring]
+    if ex:
+        draft["roads"] = ex["roads"][:300]
+        seen = set(); pois = []
+        for p in ex["pois"]:
+            k2 = (p["t"], round(p["lat"], 4), round(p["lon"], 4))
+            if k2 not in seen:
+                seen.add(k2); pois.append(p)
+        draft["pois"] = pois[:60]
     with open(os.path.join(OUT, ST, f"{key}.json"), "w") as fh:
         json.dump(draft, fh, separators=(",", ":"))
     index[key] = {"name": row[1], "kind": row[0], "city": row[4], "n": len(slips), "docks": len(d["docks"]), "quality": d["quality"]}
