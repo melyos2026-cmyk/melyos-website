@@ -22,7 +22,9 @@ export async function POST(req: NextRequest) {
       propertyType: String(b.propertyType || "").slice(0, 60),
       spaces: String(b.spaces || "").slice(0, 10),
       // Oct 21 (per Mely): MelyOS Explore "Claim it free" requests.
-      message: b.claim ? `Claim request from MelyOS Explore: ${String(b.claim).slice(0, 160)}` : undefined,
+      message: [b.claim ? `Claim request from MelyOS Explore: ${String(b.claim).slice(0, 160)}` : "",
+        // Nov 18: booked from a Sales Partner's digital card (melyos.io/card/<slug>) — the lead is that partner's
+        /^[a-z0-9-]{3,60}$/.test(String(b.partner || "")) ? `From Sales Partner card: https://melyos.io/card/${b.partner}` : ""].filter(Boolean).join("\n") || undefined,
     });
   } catch (e: any) {
     console.error("demo-request:", e?.message);

@@ -9,9 +9,12 @@ export default function DemoSection() {
   const [demoState, setDemoState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [demoError, setDemoError] = useState("");
   const [claim, setClaim] = useState<string | null>(null);
+  const [partner, setPartner] = useState<string | null>(null);   // Nov 18: came from a Sales Partner's digital card
   // Oct 21 (per Mely): coming from MelyOS Explore "Claim it free" (/demo?claim=Name&type=Marina).
   useEffect(() => {
     const sp = new URLSearchParams(window.location.search);
+    const pt = (sp.get("partner") || "").toLowerCase();
+    if (/^[a-z0-9-]{3,60}$/.test(pt)) setPartner(pt);
     if (!sp.has("claim")) return;
     const name = (sp.get("claim") || "").slice(0, 160);
     const t = (sp.get("type") || "").toLowerCase();
@@ -24,7 +27,7 @@ export default function DemoSection() {
     setDemoState("sending");
     setDemoError("");
     try {
-      const r = await fetch("/api/demo-request", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(claim ? { ...demo, claim } : demo) });
+      const r = await fetch("/api/demo-request", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...demo, ...(claim ? { claim } : {}), ...(partner ? { partner } : {}) }) });
       const j = await r.json();
       if (!r.ok) throw new Error(j.error || "Something went wrong.");
       setDemoState("sent");
