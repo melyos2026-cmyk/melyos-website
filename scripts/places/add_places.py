@@ -15,9 +15,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 PATH = os.path.join(ROOT, "public", "explore", f"{ST}.json")
 BBOX = {"FL": (-87.7, 24.4, -79.8, 31.1)}[ST]  # xmin, ymin, xmax, ymax
 KINDS = {"rv_park": "r", "campground": "c", "marina": "m"}
-BAD = re.compile(r"(?i)\b(storage|sales|dealer|dealership|repair|service center|rentals?|insurance|parts|wash|mobile home park|manufactured|apartments?|condo|hoa)\b")
+BAD = re.compile(r"(?i)\b(storage|sales|dealers?|dealership|repair|service|rentals?|insurance|parts|wash|mobile|mhc|mhp|manufactured|homes?|apartments?|condos?|hoa|hotel|motel|inn|suites|hyatt|marriott|hilton|plant|factory|powersports|store|shop|outlet|club|yacht sales|brokerage|vans?|trailers?|towing|mechanic|church|school|llc office)\b")
 
 data = json.load(open(PATH))
+data["rows"] = [r for r in data["rows"] if not str(r[7]).startswith("ov-")]  # re-runs start clean
 rows = data["rows"]
 have = {r[7] for r in rows}
 
@@ -98,9 +99,12 @@ if release:
                  {web} AS web, {phone} AS phone, {city} AS city, {region} AS region
           FROM {src}
           WHERE bbox.xmin BETWEEN {x0} AND {x1} AND bbox.ymin BETWEEN {y0} AND {y1}
-            AND regexp_matches({cat}, '(rv_park|campground|camping|caravan|marina|recreational_vehicle)')
-            AND {conf} >= 0.55
+            AND regexp_matches({cat}, '(^|\\|)(rv_park|campground|marina|caravan_site|camp_site|rv_and_campground)(\\||$)')
+            AND {conf} >= 0.7
         """
+        top = con.execute(f"""SELECT {cat} AS c, count(*) n FROM {src} WHERE bbox.xmin BETWEEN {x0} AND {x1} AND bbox.ymin BETWEEN {y0} AND {y1}
+            AND regexp_matches({cat}, '(rv|camp|marina|caravan)') GROUP BY 1 ORDER BY 2 DESC LIMIT 40""").fetchall()
+        info["category_values"] = [[c, n] for c, n in top]
         res = con.execute(q).fetchall()
         info["candidates"] = len(res)
         print("overture candidates:", len(res), flush=True)
@@ -110,7 +114,7 @@ if release:
             name = name.strip()
             if len(name) < 4 or BAD.search(name):
                 continue
-            k = "m" if "marina" in c else "r" if re.search(r"rv_park|caravan|recreational_vehicle", c) else "c"
+            k = "m" if "marina" in c else "r" if re.search(r"rv_park|caravan", c) else "c"
             w = w or ""
             if w and not w.startswith("http"):
                 w = "https://" + w
