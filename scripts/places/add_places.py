@@ -130,6 +130,19 @@ NEW_OV = sum(1 for r in rows if str(r[7]).startswith("ov-"))
 if err or NEW_OV < PREV_OV * 0.9:
     print(f"ABORT: Overture gave {NEW_OV} places (before: {PREV_OV}); error: {bool(err)} — nothing written", flush=True)
     sys.exit(1)
+# Nov 18: names that are not places to stay (piers, tour shops, single campsites inside a forest…) and
+# the same name listed twice within 5 km.
+skp = os.path.join(ROOT, "scripts", "places", f"skip_{ST}.json")
+SKIP = {n.lower() for n in json.load(open(skp))} if os.path.exists(skp) else set()
+keep = []
+for r in rows:
+    if r[1].lower() in SKIP: continue
+    if any(k[1].lower() == r[1].lower() and dist((k[2], k[3]), (r[2], r[3])) < 5000 for k in keep): continue
+    keep.append(r)
+rows[:] = keep
+if ST == "PR":
+    for r in rows:
+        if r[1] == "Playa Flamenco Area A": r[1] = "Playa Flamenco Campground"
 rows.sort(key=lambda r: (r[0], r[1].lower()))
 json.dump(data, open(PATH, "w"), separators=(",", ":"))
 ip = os.path.join(ROOT, "public", "explore", "index.json")
