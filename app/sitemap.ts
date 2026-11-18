@@ -42,6 +42,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: "https://melyos.io/careers", lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: "https://melyos.io/about", lastModified: now, changeFrequency: "yearly", priority: 0.5 },
     { url: "https://melyos.io/explore", lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    ...["marinas", "rv-parks", "campgrounds"].map((k) => ({ url: `https://melyos.io/explore/${k}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.9 })),
     ...Object.keys(STATES).map((s) => ({ url: `https://melyos.io/explore/${s.toLowerCase()}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.6 })),
     ...listings().map((url) => ({ url, lastModified: now, changeFrequency: "monthly" as const, priority: 0.4 })),
     { url: "https://melyos.io/privacy", lastModified: now, changeFrequency: "yearly", priority: 0.3 },

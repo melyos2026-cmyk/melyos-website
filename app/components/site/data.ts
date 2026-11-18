@@ -118,7 +118,12 @@ export const MENU: MenuItem[] = [
     { href: "/features#reports", label: "Reports & QuickBooks", note: "Revenue, tax, export", icon: BarChart3 },
     { href: "/ai-assistant-for-rv-parks-and-marinas", label: "Mely AI Assistant", note: "Answers guests 24/7", icon: Bot },
   ] },
-  { label: "Explore", href: "/explore" },
+  { label: "Explore", links: [
+    { href: "/explore/marinas", label: "Search Marinas", note: "Slips & moorings by state", icon: Anchor },
+    { href: "/explore/rv-parks", label: "Search RV Parks", note: "Sites for every rig", icon: Caravan },
+    { href: "/explore/campgrounds", label: "Search Campgrounds", note: "Tent, cabin & RV camping", icon: Tent },
+    { href: "/explore", label: "Explore the map", note: "All states, all places", icon: Map },
+  ] },
   { label: "Resources", links: [
     { href: "/pricing#faq", label: "Questions & Answers", icon: HelpCircle },
     { href: "/demo", label: "Book a Demo", icon: CalendarCheck },

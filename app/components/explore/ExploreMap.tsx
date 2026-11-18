@@ -20,6 +20,11 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
   const [rows, setRows] = useState<Row[] | null>(null);
   const [kinds, setKinds] = useState<string[]>(initialKinds || ["m", "r", "c"]);
   const [q, setQ] = useState("");
+  // Nov 18: /explore/fl?type=r (from "Search RV parks") opens with that kind only
+  useEffect(() => {
+    const t = new URLSearchParams(window.location.search).get("type");
+    if (t && ["m", "r", "c"].includes(t)) setKinds([t]);
+  }, []);
   const [picked, setPicked] = useState<string | null>(null);
   const mapEl = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
