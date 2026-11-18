@@ -18,7 +18,7 @@ UA = {"User-Agent": "Mozilla/5.0 (compatible; MelyOSExplore/1.0; +https://melyos
 META = re.compile(r"<meta\b[^>]*>", re.I)
 BAD = re.compile(r"(?i)(logo|icon|favicon|sprite|placeholder|default|blank|avatar|wp-content/plugins|gravatar|facebook\.com|fbcdn|google|badge|seal)")
 # hacked sites sometimes show gambling spam as their preview picture — never use those
-SPAM = re.compile(r"(?i)(slot|gacor|togel|judi|casino|situs|spinhub|bansos|toto|poker|betting|\\.pics/)")
+SPAM = re.compile(r"(?i)(slot|gacor|togel|judi|casino|situs|spinhub|bansos|toto|poker|betting|\.pics/)")
 SKIP_HOSTS = re.compile(r"(?i)(facebook\.com|instagram\.com|google\.|yelp\.|tripadvisor\.|thousandtrails|koa\.com|sunoutdoors|suncommunities|rvonthego|campspot|osceola\.org|\.gov\b|myfwc)")
 
 
