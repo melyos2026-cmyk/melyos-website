@@ -8,7 +8,7 @@ import { RequestForm } from "./ListingActions";
 // what makes it good (corner, near the fuel dock…) and "Request this slip" — the request carries the slip number.
 // With ?edit=TOKEN (link made in Insights → Explore → Slip maps) Mely places and describes the slips herself.
 export type Slip = { id: string; n: string; lat: number; lon: number; len: number; wid: number; ang: number; desc?: string | null; tags?: string[] };
-export type SlipMapData = { center_lat: number; center_lon: number; zoom: number; intro?: string | null; slips: Slip[]; published?: boolean };
+export type SlipMapData = { center_lat: number; center_lon: number; zoom: number; intro?: string | null; slips: Slip[]; published?: boolean; docks?: [number, number][][]; source?: string };
 type Props = { state: string; listing_key: string; listing_name: string; kind: string; phone?: string | null; map: SlipMapData; edit?: string | null };
 
 const TAGS = ["Corner / T-head", "End tie", "Easy in & out", "Near fuel dock", "Near restrooms & showers", "Near parking", "Near the office", "Water view", "Shade", "Covered", "Water", "30 amp", "50 amp", "100 amp", "Pull-through", "Back-in"];
@@ -35,6 +35,7 @@ export default function SlipMap(p: Props) {
   const Unit = unit[0].toUpperCase() + unit.slice(1);
   const [slips, setSlips] = useState<Slip[]>(p.map.slips || []);
   const [intro, setIntro] = useState(p.map.intro || "");
+  const docks = p.map.docks || [];
   const [published, setPublished] = useState(!!p.map.published);
   const [sel, setSel] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
@@ -77,6 +78,7 @@ export default function SlipMap(p: Props) {
   useEffect(() => {
     const Lm = L.current, m = map.current; if (!ready || !Lm || !m) return;
     layer.current.clearLayers();
+    for (const dk of docks) if (dk.length > 1) layer.current.addLayer(Lm.polyline(dk, { color: "#e2e8f0", weight: 4, opacity: 0.9, interactive: false }));
     for (const x of slips) {
       const fits = boatFt ? x.len >= boatFt : true, on = x.id === sel;
       const poly = Lm.polygon(corners(x), { color: on ? "#facc15" : fits ? "#22d3ee" : "#94a3b8", weight: on ? 3 : 1.5, fillOpacity: on ? 0.45 : fits ? 0.28 : 0.08, bubblingMouseEvents: false });
@@ -115,7 +117,7 @@ export default function SlipMap(p: Props) {
     const m = map.current; setSave({ busy: true, dirty: true });
     const c = m?.getCenter();
     const r = await fetch("/api/explore/slipmap", { method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ state: p.state, listing_key: p.listing_key, edit: p.edit, map: { center_lat: c?.lat ?? p.map.center_lat, center_lon: c?.lng ?? p.map.center_lon, zoom: m?.getZoom() ?? 18, intro, slips, published } }) })
+      body: JSON.stringify({ state: p.state, listing_key: p.listing_key, edit: p.edit, map: { center_lat: c?.lat ?? p.map.center_lat, center_lon: c?.lng ?? p.map.center_lon, zoom: m?.getZoom() ?? 18, intro, slips, published, docks, source: p.map.source || null } }) })
       .then((x) => x.json()).catch(() => ({ error: "Couldn't reach the server." }));
     setSave(r.ok ? { msg: `Saved · ${r.count} ${unit}s${published ? " · public" : " · draft (only you see it)"}` } : { err: r.error || "Couldn't save.", dirty: true });
   }
@@ -135,7 +137,7 @@ export default function SlipMap(p: Props) {
           {save.err && <span className="w-full font-bold text-red-600">{save.err}</span>}
         </div>}
         <div ref={mapEl} className="h-[62vh] min-h-[420px] w-full overflow-hidden rounded-2xl ring-1 ring-slate-200" />
-        <p className="mt-2 text-xs text-slate-500">{Unit} layout drawn by MelyOS over satellite imagery as a guide. Availability and price are always confirmed by {p.listing_name}.</p>
+        <p className="mt-2 text-xs text-slate-500">{Unit} layout drawn by MelyOS over satellite imagery as a guide{p.map.source ? <> (base data © OpenStreetMap contributors, ODbL)</> : null}. Availability and price are always confirmed by {p.listing_name}.</p>
       </div>
 
       <aside className="space-y-4">

@@ -62,6 +62,11 @@ export async function stateRows(st: string): Promise<Row[]> {
   if (rows.length) cache.set(st, { at: Date.now(), rows: all });
   return all;
 }
+// Nov 17: OpenStreetMap draft slip/site map for a listing (public/explore/drafts/{ST}/{key}.json), if the agent made one.
+export async function draftMap(st: string, key: string): Promise<any | null> {
+  if (!/^[A-Za-z0-9_-]{2,40}$/.test(key)) return null;
+  try { const r = await fetch(`${await siteOrigin()}/explore/drafts/${st.toUpperCase()}/${key}.json`, { cache: "no-store" }); return r.ok ? await r.json() : null; } catch { return null; }
+}
 export async function findListing(st: string, key: string): Promise<Row | null> {
   return (await stateRows(st)).find((r) => r[7] === key) || null;
 }

@@ -5,7 +5,7 @@ import SiteFooter from "../../../../components/site/Footer";
 import AccountPill from "../../../../components/explore/AccountPill";
 import SlipMap from "../../../../components/explore/SlipMap";
 import { STATES, KIND } from "../../../../components/explore/states";
-import { exploreApi, findListing, keyFromSlug, listingPath, nice } from "../../../../lib/explore";
+import { exploreApi, findListing, keyFromSlug, listingPath, nice, draftMap } from "../../../../lib/explore";
 
 // Nov 17 (per Mely): /explore/{st}/{place}/slips — the place's slips/sites over its satellite photo; boaters tap one
 // and request it. ?edit=TOKEN opens the editor (link from Insights → Explore → Slip maps). Not indexed yet.
@@ -22,7 +22,9 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   const r = await exploreApi<any>("slipmap", { listing_key: row[7], edit: edit || "" });
   const editor = !!r.data?.editor;
   if (!r.data?.map && !editor) notFound();
-  const m = r.data?.map || { center_lat: row[2], center_lon: row[3], zoom: 19, slips: [], intro: "", published: false };
+  // Nov 17: no saved map yet -> start the editor from the OpenStreetMap draft (scripts/osm/build_drafts.py), if any
+  const draft = !r.data?.map && editor ? await draftMap(st, row[7]) : null;
+  const m = r.data?.map || (draft ? { ...draft, intro: "", published: false } : { center_lat: row[2], center_lon: row[3], zoom: 19, slips: [], intro: "", published: false });
   const name = nice(row[1]), k = KIND[row[0]], unit = row[0] === "m" ? "slip" : "site";
   const info = (await exploreApi<any>("listing", { listing_key: row[7] })).data?.info || {};
   return (
@@ -38,6 +40,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
             </div>
             <div className="flex gap-2"><a href={listingPath(st, row)} className="rounded-xl border border-white/30 bg-white/10 px-4 py-2.5 text-sm font-black">← Details & reviews</a><AccountPill /></div>
           </div>
+          {draft && <p className="mt-4 rounded-lg bg-sky-400/15 px-3 py-2 text-sm font-bold text-sky-200">Auto draft from OpenStreetMap — {draft.quality === "mapped" ? `${draft.slips.length} ${unit}s mapped by the community` : `${draft.slips.length} ${unit}s ESTIMATED along the docks`}. Check every one against the photo, fix numbers and sizes, delete what's wrong, then save.</p>}
           {editor && !m.published && <p className="mt-4 inline-block rounded-lg bg-amber-400/20 px-3 py-1.5 text-sm font-bold text-amber-200">Draft — only people with your edit link see it. Check “Public” and save to publish.</p>}
         </div>
       </section>
