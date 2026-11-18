@@ -1,1 +1,15 @@
-{}
+{
+ "state": "FL",
+ "generated_at": "2026-11-18T04:19:16Z",
+ "listings": 959,
+ "drafts": 287,
+ "mapped": 59,
+ "estimated": 228,
+ "slips": 41743,
+ "inputs": {
+  "pitches": 2759,
+  "piers": 3823,
+  "berths": 19,
+  "outlines": 534
+ }
+}
