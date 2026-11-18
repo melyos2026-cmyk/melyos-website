@@ -14,3 +14,9 @@ export const isFeatured = (r: Row) => String(r[7]).startsWith("melyos-");
 export const FEATURED_PHOTO: Record<string, string> = {
   "melyos-aloha": "/explore/featured/aloha.jpg",
 };
+
+// Nov 17 (per Mely): the property's own live MelyOS lot/slip map (book online right there),
+// shown on its Explore page instead of only a street map.
+export const FEATURED_MAP: Record<string, string> = {
+  "melyos-aloha": "https://aloha-rv-park-lilac.vercel.app/?park_id=aloha",
+};

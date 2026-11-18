@@ -5,7 +5,8 @@ import SiteFooter from "../../../components/site/Footer";
 import AccountPill from "../../../components/explore/AccountPill";
 import { FavoriteButton, RequestForm, Reviews } from "../../../components/explore/ListingActions";
 import { STATES, KIND } from "../../../components/explore/states";
-import { isFeatured } from "../../../components/explore/featured";
+import { isFeatured, FEATURED_MAP } from "../../../components/explore/featured";
+import LiveMap from "../../../components/explore/LiveMap";
 import { exploreApi, findListing, keyFromSlug, listingPath, nice } from "../../../lib/explore";
 
 // Nov 17 (per Mely): one page per marina / RV park / campground on MelyOS Explore (≈24,000 pages):
@@ -44,6 +45,7 @@ export default async function Page({ params }: { params: Promise<{ state: string
   const name = nice(row[1]), k = KIND[row[0]], unit = row[0] === "m" ? "slip" : "site";
   const phone = info.phone || row[5], website = info.website || row[6];
   const feat = isFeatured(row);
+  const liveMap = FEATURED_MAP[row[7]] || (d.client && typeof info.map_url === "string" && /^https:\/\//.test(info.map_url) ? info.map_url : "");
   const L = { state: st, listing_key: row[7], listing_name: name, kind: row[0] };
   const facts: [string, string][] = ([["Spaces", info.spaces], ["Max length", info.max_length], ["Rates", info.rates], ["Amenities", info.amenities]] as [string, string][]).filter(([, v]) => v);
   const ld = { "@context": "https://schema.org", "@type": row[0] === "c" ? "Campground" : row[0] === "r" ? "RVPark" : "LocalBusiness", name,
@@ -68,6 +70,19 @@ export default async function Page({ params }: { params: Promise<{ state: string
           </div>
         </div>
       </section>
+      {liveMap && <section id="live-map" className="border-b border-slate-200 bg-slate-50 py-10">
+        <div className="mx-auto max-w-6xl px-5 lg:px-8">
+          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-[#0891b2]">Live {unit} map</p>
+              <h2 className="text-2xl font-black md:text-3xl">Pick your {unit} and book online</h2>
+              <p className="mt-1 text-slate-600">Tap any available {unit} to see its details, dates and price — then book it right here.</p>
+            </div>
+            <a href={liveMap} target="_blank" rel="noopener" className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-black">Open full screen ↗</a>
+          </div>
+          <LiveMap src={liveMap} title={`${name} — live ${unit} map`} />
+        </div>
+      </section>}
       <section className="py-10">
         <div className="mx-auto grid max-w-6xl gap-8 px-5 lg:grid-cols-[1fr_420px] lg:px-8">
           <div className="space-y-8">
@@ -78,7 +93,8 @@ export default async function Page({ params }: { params: Promise<{ state: string
               {phone && <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className="rounded-xl border border-slate-300 px-4 py-2.5 font-black">☎ {phone}</a>}
               {website && <a href={website} target="_blank" rel="noopener nofollow" className="rounded-xl border border-slate-300 px-4 py-2.5 font-black">🌐 Website</a>}
               <a href={`https://www.google.com/maps/dir/?api=1&destination=${row[2]},${row[3]}`} target="_blank" rel="noopener" className="rounded-xl border border-slate-300 px-4 py-2.5 font-black">🧭 Directions</a>
-              {feat && website && <a href={website} target="_blank" rel="noopener" className="rounded-xl bg-[#08B8D8] px-4 py-2.5 font-black text-white">Book online</a>}
+              {liveMap ? <a href="#live-map" className="rounded-xl bg-[#08B8D8] px-4 py-2.5 font-black text-white">Book online</a>
+                : feat && website && <a href={website} target="_blank" rel="noopener" className="rounded-xl bg-[#08B8D8] px-4 py-2.5 font-black text-white">Book online</a>}
             </div>
             {(info.description || facts.length > 0) && <div className="rounded-3xl border border-slate-200 p-6">
               {info.description && <p className="whitespace-pre-line text-lg leading-8 text-slate-700">{info.description}</p>}
@@ -90,7 +106,8 @@ export default async function Page({ params }: { params: Promise<{ state: string
             <div id="request" className="rounded-3xl border-2 border-[#08B8D8] p-6 shadow-sm lg:sticky lg:top-24">
               <h2 className="text-2xl font-black">Request a {unit}</h2>
               <p className="mb-4 mt-1 text-slate-600">Tell {name} your dates and {row[0] === "m" ? "boat" : "rig"}. Free, no account needed.</p>
-              {d.slipmap && <a href={`${canonical}/slips`} className="mb-4 block rounded-xl bg-[#071A33] px-4 py-3 text-center font-black text-white">Pick your {unit} on the map →</a>}
+              {liveMap && <a href="#live-map" className="mb-4 block rounded-xl bg-[#071A33] px-4 py-3 text-center font-black text-white">Book instantly on the live map ↑</a>}
+              {!liveMap && d.slipmap && <a href={`${canonical}/slips`} className="mb-4 block rounded-xl bg-[#071A33] px-4 py-3 text-center font-black text-white">Pick your {unit} on the map →</a>}
               <RequestForm {...L} />
             </div>
             {!feat && !d.verified && <div className="mt-6 rounded-3xl bg-[#071A33] p-6 text-white">
