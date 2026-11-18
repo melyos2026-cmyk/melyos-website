@@ -1,3 +1,52 @@
 [
-  ["r", "21 Palms RV Resort", 28.2614, -81.5629, "Davenport", "+1-407-397-9110", "", "x-21-palms"]
+  [
+    "r",
+    "21 Palms RV Resort",
+    28.2614,
+    -81.5629,
+    "Davenport",
+    "+1-407-397-9110",
+    "",
+    "x-21-palms"
+  ],
+  [
+    "r",
+    "East Toho RV Resort & Marina",
+    28.32718,
+    -81.2929,
+    "Kissimmee",
+    "(407) 348-2040",
+    "",
+    "x-east-toho"
+  ],
+  [
+    "c",
+    "Orlando / Kissimmee KOA Holiday",
+    28.32456,
+    -81.46903,
+    "Kissimmee",
+    "(407) 396-2400",
+    "https://koa.com/campgrounds/kissimmee/",
+    "x-kissimmee-koa"
+  ],
+  [
+    "r",
+    "Lake Toho RV Resort",
+    28.2023,
+    -81.3754,
+    "Saint Cloud",
+    "(407) 892-8795",
+    "https://laketohoresort.com",
+    "x-lake-toho-rv"
+  ],
+  [
+    "c",
+    "Southport Park Campground",
+    28.1395,
+    -81.3622,
+    "Kissimmee",
+    "(407) 742-0200",
+    "https://www.osceola.org/Community/Parks-and-Public-Lands/Find-a-Park-or-Facility/Southport-Regional-Park",
+    "x-southport-park"
+  ]
 ]
