@@ -18,6 +18,7 @@ KINDS = {"rv_park": "r", "campground": "c", "marina": "m"}
 BAD = re.compile(r"(?i)\b(storage|sales|dealers?|dealership|repair|service|rentals?|insurance|parts|wash|mobile|mhc|mhp|manufactured|homes?|apartments?|condos?|hoa|hotel|motel|inn|suites|hyatt|marriott|hilton|plant|factory|powersports|store|shop|outlet|club|yacht sales|brokerage|vans?|trailers?|towing|mechanic|church|school|llc office)\b")
 
 data = json.load(open(PATH))
+PREV_OV = sum(1 for r in data["rows"] if str(r[7]).startswith("ov-"))
 data["rows"] = [r for r in data["rows"] if not str(r[7]).startswith("ov-")]  # re-runs start clean
 rows = data["rows"]
 have = {r[7] for r in rows}
@@ -124,6 +125,11 @@ if release:
         err = traceback.format_exc()[-1500:]
         print(err, flush=True)
 
+# Nov 18: never shrink the map — if Overture failed or returned far fewer places, keep the files as they are
+NEW_OV = sum(1 for r in rows if str(r[7]).startswith("ov-"))
+if err or NEW_OV < PREV_OV * 0.9:
+    print(f"ABORT: Overture gave {NEW_OV} places (before: {PREV_OV}); error: {bool(err)} — nothing written", flush=True)
+    sys.exit(1)
 rows.sort(key=lambda r: (r[0], r[1].lower()))
 json.dump(data, open(PATH, "w"), separators=(",", ":"))
 ip = os.path.join(ROOT, "public", "explore", "index.json")
