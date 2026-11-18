@@ -1,38 +1,38 @@
 {
  "state": "FL",
- "added": 2475,
+ "added": 1828,
  "by_kind": {
-  "m": 678,
-  "r": 1091,
-  "c": 706
+  "m": 545,
+  "r": 663,
+  "c": 620
  },
- "total": 3434,
+ "total": 2788,
  "sample": [
-  "21 Palms RV Resort",
   "Lands End Marina",
   "The Dock On the Bay",
-  "Seaside Gardens Retreat",
-  "Harbourside Mooring",
   "Boathouse On Longboat",
   "Bahia Mar West Marina",
   "Sara Bay Marina",
-  "Luxor Mobile Park",
   "Vista Del Lago MH & RV Resort",
   "Arbor Terrace",
-  "Plantation Village Mobile",
   "Safe Harbor Siesta Key",
-  "Phillippi Harbor Club",
-  "Hyatt Regency Sarasota",
   "On Sarasota Bay",
-  "Suncoast Vans",
-  "Lippert Plant 113-A in Bradenton, FL",
-  "Bradenton Powersports",
-  "The Motorcoach Store",
   "Sarasota Lakes RV Resort",
-  "Orange Avenue MHC",
-  "Helmsmen Marina",
-  "Freedom Boat Club",
-  "Sarasota Marina"
+  "Sarasota Marina",
+  "Keyes Marina",
+  "Bradenton Beach Marina",
+  "Cove Sound Marina",
+  "Buttonwood Inlet RV Resort",
+  "Safe Harbor Pier 77",
+  "Parrot Cove Marina",
+  "Cortez Village Marina",
+  "Cortez Cove Marina",
+  "N E Taylor Boat Works",
+  "Sarasota Bay RV Park",
+  "Blenker Boatworks & Marina",
+  "One Particular Harbour",
+  "Fort De Soto Park Campground",
+  "Ft. DeSoto Campground, Florida"
  ],
  "release": "2026-10-21.0",
  "error": null,
@@ -57,6 +57,168 @@
    "theme": "VARCHAR",
    "type": "VARCHAR"
   },
-  "candidates": 3588
+  "category_values": [
+   [
+    "real_estate_service|real_estate_agent",
+    49105
+   ],
+   [
+    "real_estate_service|real_estate_service",
+    27922
+   ],
+   [
+    "financial_service|insurance_agency",
+    19657
+   ],
+   [
+    "home_service|contractor",
+    17434
+   ],
+   [
+    "personal_or_beauty_service|beauty_salon",
+    17337
+   ],
+   [
+    "automotive_service|automotive_repair",
+    15055
+   ],
+   [
+    "personal_or_beauty_service|hair_salon",
+    14658
+   ],
+   [
+    "professional_service|professional_service",
+    13417
+   ],
+   [
+    "legal_service|legal_service",
+    13229
+   ],
+   [
+    "social_or_community_service|social_or_community_service",
+    12246
+   ],
+   [
+    "diagnostics_imaging_or_lab_service|doctors_office",
+    12162
+   ],
+   [
+    "financial_service|money_transfer_service",
+    11395
+   ],
+   [
+    "financial_service|financial_service",
+    10893
+   ],
+   [
+    "wellness_service|spa",
+    9200
+   ],
+   [
+    "financial_service|accountant",
+    9033
+   ],
+   [
+    "personal_or_beauty_service|nail_salon",
+    8219
+   ],
+   [
+    "building_or_construction_service|building_or_construction_service",
+    8085
+   ],
+   [
+    "personal_or_beauty_service|barber",
+    7899
+   ],
+   [
+    "technical_service|software_development",
+    6970
+   ],
+   [
+    "professional_service|business_consulting",
+    6678
+   ],
+   [
+    "real_estate_service|property_management",
+    6079
+   ],
+   [
+    "home_service|hvac_service",
+    6048
+   ],
+   [
+    "wellness_service|massage_therapy",
+    5962
+   ],
+   [
+    "home_service|roofing",
+    5493
+   ],
+   [
+    "event_or_party_service|party_and_event_planning",
+    5418
+   ],
+   [
+    "medical_service|home_health_care",
+    5201
+   ],
+   [
+    "travel_service|travel_service",
+    4517
+   ],
+   [
+    "building_or_construction_service|engineering_service",
+    4471
+   ],
+   [
+    "professional_service|marketing_agency",
+    4431
+   ],
+   [
+    "home_service|interior_design",
+    4360
+   ],
+   [
+    "financial_service|mortgage_broker",
+    4307
+   ],
+   [
+    "technical_service|it_service_and_computer_repair",
+    4289
+   ],
+   [
+    "home_service|home_cleaning",
+    4221
+   ],
+   [
+    "b2b_service|b2b_service",
+    4094
+   ],
+   [
+    "wellness_service|medical_spa",
+    4023
+   ],
+   [
+    "home_service|landscaping",
+    3856
+   ],
+   [
+    "animal_or_pet_service|veterinarian",
+    3826
+   ],
+   [
+    "printing_service|printing_service",
+    3705
+   ],
+   [
+    "home_service|plumbing",
+    3637
+   ],
+   [
+    "home_service|home_service",
+    3555
+   ]
+  ],
+  "candidates": 2864
  }
 }
