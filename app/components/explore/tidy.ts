@@ -8,6 +8,7 @@ type V = [number, number];
 
 export function tidySlips(slips: Slip[], roads: [number, number][][] = [], docks: [number, number][][] = []): Slip[] {
   if (slips.length < 2) return slips;
+  if (roads.length) return tidyByRoads(slips, roads);
   const lat0 = slips.reduce((a, s) => a + s.lat, 0) / slips.length;
   const lon0 = slips.reduce((a, s) => a + s.lon, 0) / slips.length;
   const kx = 111320 * Math.cos((lat0 * Math.PI) / 180), ky = 111320;
@@ -106,4 +107,109 @@ export function tidySlips(slips: Slip[], roads: [number, number][][] = [], docks
     const [lat, lon] = ll(c);
     return { ...s, lat: Math.round(lat * 1e7) / 1e7, lon: Math.round(lon * 1e7) / 1e7, ang: Math.round(ang) % 360, len: Math.round(len / FT), wid: Math.round((wid / FT) * 10) / 10 };
   });
+}
+
+
+// Nov 18 (per Mely): parks with roads — every site faces its road square-on, sites on the same side of the
+// same road touch edge to edge (no gaps), front edge at the road, back edge halfway to the next road / row.
+function tidyByRoads(slips: Slip[], roads: [number, number][][]): Slip[] {
+  const lat0 = slips.reduce((a, s) => a + s.lat, 0) / slips.length;
+  const lon0 = slips.reduce((a, s) => a + s.lon, 0) / slips.length;
+  const kx = 111320 * Math.cos((lat0 * Math.PI) / 180), ky = 111320;
+  const xy = (lat: number, lon: number): V => [(lon - lon0) * kx, (lat - lat0) * ky];
+  const ll = (p: V): [number, number] => [lat0 + p[1] / ky, lon0 + p[0] / kx];
+  const HALF = 3; // road half width (m)
+  // road segments with their running distance along their road (to order sites along it)
+  const segs: { a: V; b: V; road: number; t0: number; len: number; u: V }[] = [];
+  roads.forEach((r, ri) => {
+    let t = 0;
+    for (let i = 0; i < r.length - 1; i++) {
+      const a = xy(r[i][0], r[i][1]), b = xy(r[i + 1][0], r[i + 1][1]);
+      const L = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      if (L > 0.5) segs.push({ a, b, road: ri, t0: t, len: L, u: [(b[0] - a[0]) / L, (b[1] - a[1]) / L] });
+      t += L;
+    }
+  });
+  // the road a site faces: near, AND square to the site's long side (so corner sites don't jump to the cross street)
+  const nearest = (c: V, s: Slip) => {
+    let best: any = null;
+    const elongated = s.len / Math.max(1, s.wid) > 1.15;
+    const sa = (s.ang * Math.PI) / 180;
+    for (const sg of segs) {
+      const w: V = [c[0] - sg.a[0], c[1] - sg.a[1]];
+      const tt = Math.max(0, Math.min(sg.len, w[0] * sg.u[0] + w[1] * sg.u[1]));
+      const p: V = [sg.a[0] + sg.u[0] * tt, sg.a[1] + sg.u[1] * tt];
+      const dist = Math.hypot(c[0] - p[0], c[1] - p[1]);
+      // |cos| between the site's long axis and the road direction: 0 = square on (good), 1 = parallel (bad)
+      const par = Math.abs(Math.sin(sa) * sg.u[0] + Math.cos(sa) * sg.u[1]);
+      const d = dist + (elongated ? par * 30 : 0);
+      if (!best || d < best.score) {
+        const cross = sg.u[0] * w[1] - sg.u[1] * w[0];
+        best = { score: d, d: dist, sg, t: sg.t0 + tt, tt, side: cross >= 0 ? 1 : -1 };
+      }
+    }
+    return best;
+  };
+  // ray from a point to the first road crossing (m), ignoring the road we start from
+  const ray = (c: V, n: V, skipRoad: number, maxD: number) => {
+    let best = Infinity;
+    for (const sg of segs) {
+      if (sg.road === skipRoad) continue;
+      const e: V = [sg.b[0] - sg.a[0], sg.b[1] - sg.a[1]];
+      const den = n[0] * e[1] - n[1] * e[0];
+      if (Math.abs(den) < 1e-9) continue;
+      const w: V = [sg.a[0] - c[0], sg.a[1] - c[1]];
+      const t = (w[0] * e[1] - w[1] * e[0]) / den, s = (w[0] * n[1] - w[1] * n[0]) / den;
+      if (t > 0.5 && t < maxD && s >= 0 && s <= 1) best = Math.min(best, t);
+    }
+    return best;
+  };
+
+  type R = { i: number; s: Slip; c: V; n: any };
+  const placed: Slip[] = slips.map((s) => ({ ...s }));
+  const groups = new Map<string, R[]>();
+  slips.forEach((s, i) => {
+    const c = xy(s.lat, s.lon);
+    const n = nearest(c, s);
+    if (!n || n.d > 35) return; // no road near: leave it as drawn
+    // row = same road, same side, similar distance (a second row behind would be farther)
+    const band = Math.floor(Math.max(0, n.d - HALF) / 16);
+    const k = `${n.sg.road}|${n.side}|${band}`;
+    groups.set(k, [...(groups.get(k) || []), { i, s, c, n }]);
+  });
+
+  for (const [, row] of groups) {
+    row.sort((a, b) => a.n.t - b.n.t);
+    const ws = row.map((r) => Math.max(2.5, r.s.wid * FT));
+    const medW = [...ws].sort((a, b) => a - b)[Math.floor(ws.length / 2)];
+    // boundaries along the road: halfway between neighbours (gap closed when it's < ~2.2 sites)
+    const lo: number[] = [], hi: number[] = [];
+    for (let k = 0; k < row.length; k++) {
+      const t = row[k].n.t;
+      const prev = k > 0 ? row[k - 1].n.t : null, next = k < row.length - 1 ? row[k + 1].n.t : null;
+      lo[k] = prev !== null && t - prev < Math.max(medW * 3.6, 16) ? (t + prev) / 2 : t - medW / 2;
+      hi[k] = next !== null && next - t < Math.max(medW * 3.6, 16) ? (t + next) / 2 : t + medW / 2;
+    }
+    for (let k = 0; k < row.length; k++) {
+      const { i, s, n } = row[k];
+      const sg = n.sg;
+      const nrm: V = [-sg.u[1] * n.side, sg.u[0] * n.side]; // from the road towards the site
+      const tMid = (lo[k] + hi[k]) / 2;
+      const width = Math.max(2.5, Math.min(hi[k] - lo[k], 20));
+      // the point on the road at tMid (stay on this segment's line; roads are near-straight between nodes)
+      const tt = tMid - sg.t0;
+      const base: V = [sg.a[0] + sg.u[0] * tt, sg.a[1] + sg.u[1] * tt];
+      const front = HALF + 0.4;
+      const toNext = ray([base[0] + nrm[0] * front, base[1] + nrm[1] * front], nrm, sg.road, 80);
+      const orig = Math.max(s.len * FT, 9);
+      let depth = toNext < Infinity ? Math.min((toNext - HALF) / 2 - 0.2, 26) : Math.min(Math.max(orig, 12), 26);
+      depth = Math.max(6, depth);
+      const c: V = [base[0] + nrm[0] * (front + depth / 2), base[1] + nrm[1] * (front + depth / 2)];
+      const [lat, lon] = ll(c);
+      const ang = ((Math.atan2(nrm[0], nrm[1]) * 180) / Math.PI + 360) % 360;
+      placed[i] = { ...s, lat: Math.round(lat * 1e7) / 1e7, lon: Math.round(lon * 1e7) / 1e7, ang: Math.round(ang) % 360,
+        len: Math.round(depth / FT), wid: Math.round((width / FT) * 10) / 10 };
+    }
+  }
+  return placed;
 }
