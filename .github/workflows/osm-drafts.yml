@@ -1,0 +1,26 @@
+# Nov 17 (per Mely): agent that builds draft slip / site maps from OpenStreetMap (ODbL) for Explore.
+name: OSM slip-map drafts
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/osm-drafts.yml", "scripts/osm/**"]
+permissions:
+  contents: write
+concurrency: { group: osm-drafts, cancel-in-progress: true }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: python scripts/osm/build_drafts.py FL
+      - name: Commit drafts
+        run: |
+          git config user.name "melyos-osm-agent"
+          git config user.email "noreply@melyos.io"
+          git add public/explore/drafts scripts/osm/last_run.json
+          git diff --cached --quiet || git commit -m "OSM slip-map drafts (auto)"
+          git pull --rebase -q origin main && git push origin HEAD:main
