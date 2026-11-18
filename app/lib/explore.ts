@@ -89,3 +89,40 @@ export function mailWrap(title: string, inner: string) {
   <p style="color:#64748b;font-size:12px;margin-top:24px">MelyOS · Kissimmee, Florida · <a href="https://melyos.io/explore" style="color:#0284c7">melyos.io/explore</a></p></div></div>`;
 }
 export const btn = (href: string, label: string) => `<a href="${href}" style="display:inline-block;background:#08B8D8;color:#fff;padding:12px 20px;border-radius:10px;font-weight:bold;text-decoration:none">${label}</a>`;
+
+// ---------- Nov 18 (per Mely): a request for an UNCLAIMED listing goes straight to the property too ----------
+// We read the property's own website (home page, then its contact page) and take the public email it shows
+// (mailto: first). Cached for the life of the server. Never a personal guess — only what their site publishes.
+const contactCache = new Map<string, { email: string | null; at: number }>();
+const BAD_MAIL = /(example\.|sentry|wixpress|godaddy|squarespace|domain\.com|yourdomain|email\.com|@2x|\.png|\.jpe?g|\.gif|\.webp|\.svg|noreply|no-reply|privacy@|abuse@|webmaster@|support@wix|ingest)/i;
+async function pageText(url: string): Promise<string> {
+  const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 6000);
+  try {
+    const r = await fetch(url, { signal: ctl.signal, redirect: "follow", headers: { "User-Agent": "Mozilla/5.0 (compatible; MelyOSExplore/1.0; +https://melyos.io/explore)", Accept: "text/html" } });
+    if (!r.ok || !String(r.headers.get("content-type") || "").includes("html")) return "";
+    return (await r.text()).slice(0, 600_000);
+  } catch { return ""; } finally { clearTimeout(t); }
+}
+function emailsIn(html: string, host: string): string[] {
+  const dec = html.replace(/&#64;|&#x40;|\[at\]|\(at\)/gi, "@");
+  const mailto = [...dec.matchAll(/mailto:([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/gi)].map((m) => m[1]);
+  const plain = [...dec.matchAll(/\b([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})\b/gi)].map((m) => m[1]);
+  const all = [...new Set([...mailto, ...plain].map((e) => e.toLowerCase()))].filter((e) => !BAD_MAIL.test(e) && e.length < 80);
+  const base = host.replace(/^www\./, "").split(".").slice(-2).join(".");
+  return all.sort((a, b) => Number(b.endsWith(base)) - Number(a.endsWith(base)) || Number(mailto.map((x) => x.toLowerCase()).includes(b)) - Number(mailto.map((x) => x.toLowerCase()).includes(a)));
+}
+export async function propertyEmail(website: string): Promise<string | null> {
+  if (!/^https?:\/\//i.test(website || "")) return null;
+  let u: URL; try { u = new URL(website); } catch { return null; }
+  if (/facebook|instagram|google|yelp|tripadvisor|koa\.com|thousandtrails|sunoutdoors|suncommunities|campspot|\.gov$/i.test(u.hostname)) return null;
+  const hit = contactCache.get(u.hostname);
+  if (hit && Date.now() - hit.at < 7 * 864e5) return hit.email;
+  let email: string | null = null;
+  for (const path of ["", "/contact", "/contact-us", "/contactus"]) {
+    const html = await pageText(path ? `${u.protocol}//${u.host}${path}` : u.toString());
+    const found = html ? emailsIn(html, u.hostname) : [];
+    if (found.length) { email = found[0]; break; }
+  }
+  contactCache.set(u.hostname, { email, at: Date.now() });
+  return email;
+}
