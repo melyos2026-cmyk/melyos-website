@@ -1,0 +1,21 @@
+# Helper (Nov 18): download a list of public URLs (photos/pages) as an artifact, to check listing photos.
+name: Fetch URLs
+on:
+  workflow_dispatch:
+    inputs:
+      urls: { description: "URLs separated by spaces", required: true }
+permissions:
+  contents: read
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Download
+        env: { URLS: "${{ inputs.urls }}" }
+        run: |
+          mkdir out; i=0
+          for u in $URLS; do i=$((i+1)); curl -sL -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124" --max-time 30 -o "out/$i" -w "$i %{http_code} %{content_type} %{size_download} $u\n" "$u" >> out/index.txt || echo "$i FAIL $u" >> out/index.txt; done
+          cat out/index.txt
+      - uses: actions/upload-artifact@v4
+        with: { name: fetched, path: out }
