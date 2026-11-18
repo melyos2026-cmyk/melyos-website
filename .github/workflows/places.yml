@@ -1,0 +1,27 @@
+# Nov 18 (per Mely): add the RV parks, campgrounds and marinas OpenStreetMap is missing (Overture Maps, open data).
+name: Explore missing places
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/places.yml", "scripts/places/**"]
+permissions:
+  contents: write
+concurrency: { group: places, cancel-in-progress: true }
+jobs:
+  add:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install duckdb==1.1.3
+      - run: python scripts/places/add_places.py FL
+      - name: Commit
+        run: |
+          git config user.name "melyos-places-agent"
+          git config user.email "noreply@melyos.io"
+          git add public/explore/FL.json public/explore/index.json scripts/places/last_run.json
+          git diff --cached --quiet || git commit -m "Explore: missing places added (auto)"
+          git pull --rebase -q origin main && git push origin HEAD:main

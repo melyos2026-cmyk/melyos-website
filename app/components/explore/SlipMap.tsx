@@ -118,10 +118,10 @@ export default function SlipMap(p: Props) {
       const fits = boatFt ? x.len >= boatFt : true, on = x.id === sel;
       const style = drawn
         ? { color: on ? "#a16207" : "#14532d", weight: on ? 2.5 : 0.8, fillColor: on ? "#facc15" : fits ? "#22c55e" : "#9ca3af", fillOpacity: on ? 1 : fits ? 0.92 : 0.6 }
-        : { color: on ? "#facc15" : fits ? "#22d3ee" : "#94a3b8", weight: on ? 3 : 1.5, fillOpacity: on ? 0.45 : fits ? 0.28 : 0.08 };
+        : { color: on ? "#facc15" : "#ffffff", weight: on ? 3 : 1.2, fillOpacity: on ? 0.25 : 0, opacity: 0.95 }; // satellite (editor only): outlines to align with the photo
       const poly = Lm.polygon(corners(x), { ...style, bubblingMouseEvents: false });
       poly.on("click", () => { setSel(x.id); setAsking(false); });
-      if (labels) poly.bindTooltip(x.n, { permanent: true, direction: "center", className: drawn ? "slipnum2" : "slipnum" });
+      if (labels && drawn) poly.bindTooltip(x.n, { permanent: true, direction: "center", className: drawn ? "slipnum2" : "slipnum" });
       else poly.bindTooltip(`${marina ? "Slip" : "Site"} ${x.n}`, { direction: "top" });
       layer.current.addLayer(poly);
     }
@@ -189,10 +189,10 @@ export default function SlipMap(p: Props) {
               <span className="flex items-center gap-1.5"><i className="inline-block h-3.5 w-3.5 rounded bg-[#16a34a] ring-1 ring-white/70" /> Request it ({slips.length})</span>
               {boatFt > 0 && <span className="flex items-center gap-1.5"><i className="inline-block h-3.5 w-3.5 rounded bg-[#9ca3af] ring-1 ring-white/70" /> Too short for your boat</span>}
               <span className="flex items-center gap-1.5"><i className="inline-block h-3.5 w-3.5 rounded bg-[#facc15] ring-1 ring-white/70" /> Selected</span>
-              <span className="ml-1 inline-flex overflow-hidden rounded-lg bg-white/15 ring-1 ring-white/30">
+              {editor && <span className="ml-1 inline-flex overflow-hidden rounded-lg bg-white/15 ring-1 ring-white/30">
                 <button type="button" onClick={() => setView("map")} className={`px-3 py-1.5 ${view === "map" ? "bg-white text-slate-900" : ""}`}>Map</button>
                 <button type="button" onClick={() => setView("sat")} className={`px-3 py-1.5 ${view === "sat" ? "bg-white text-slate-900" : ""}`}>Satellite</button>
-              </span>
+              </span>}
             </div>
           </div>
           {/* the background lives on a wrapper: Leaflet owns the classes of the map element itself */}
@@ -200,7 +200,7 @@ export default function SlipMap(p: Props) {
             <div ref={mapEl} className="sm-map absolute inset-0" />
           </div>
         </div>
-        <p className="mt-2 text-xs text-slate-500">{Unit} layout drawn by MelyOS over satellite imagery as a guide{p.map.source ? <> (base data © OpenStreetMap contributors, ODbL)</> : null}. Availability and price are always confirmed by {p.listing_name}.</p>
+        <p className="mt-2 text-xs text-slate-500">{Unit} layout drawn by MelyOS as a guide{p.map.source ? <> (base data © OpenStreetMap contributors, ODbL)</> : null}. Availability and price are always confirmed by {p.listing_name}.</p>
       </div>
 
       <aside className="space-y-4">
