@@ -1,1 +1,62 @@
-{}
+{
+ "state": "FL",
+ "added": 2475,
+ "by_kind": {
+  "m": 678,
+  "r": 1091,
+  "c": 706
+ },
+ "total": 3434,
+ "sample": [
+  "21 Palms RV Resort",
+  "Lands End Marina",
+  "The Dock On the Bay",
+  "Seaside Gardens Retreat",
+  "Harbourside Mooring",
+  "Boathouse On Longboat",
+  "Bahia Mar West Marina",
+  "Sara Bay Marina",
+  "Luxor Mobile Park",
+  "Vista Del Lago MH & RV Resort",
+  "Arbor Terrace",
+  "Plantation Village Mobile",
+  "Safe Harbor Siesta Key",
+  "Phillippi Harbor Club",
+  "Hyatt Regency Sarasota",
+  "On Sarasota Bay",
+  "Suncoast Vans",
+  "Lippert Plant 113-A in Bradenton, FL",
+  "Bradenton Powersports",
+  "The Motorcoach Store",
+  "Sarasota Lakes RV Resort",
+  "Orange Avenue MHC",
+  "Helmsmen Marina",
+  "Freedom Boat Club",
+  "Sarasota Marina"
+ ],
+ "release": "2026-10-21.0",
+ "error": null,
+ "overture": {
+  "columns": {
+   "id": "VARCHAR",
+   "geometry": "GEOMETRY('OGC:CRS84')",
+   "confidence": "DOUBLE",
+   "websites": "VARCHAR[]",
+   "emails": "VARCHAR[]",
+   "socials": "VARCHAR[]",
+   "phones": "VARCHAR[]",
+   "brand": "STRUCT(wikidata VARCHAR, \"names\" STRUCT(\"primary\" VARCHAR, common MAP(VARCHAR, VARCHAR), rules STRUCT(variant VARCHAR, \"",
+   "addresses": "STRUCT(freeform VARCHAR, locality VARCHAR, postcode VARCHAR, region VARCHAR, country VARCHAR)[]",
+   "names": "STRUCT(\"primary\" VARCHAR, common MAP(VARCHAR, VARCHAR), rules STRUCT(variant VARCHAR, \"language\" VARCHAR, perspectives S",
+   "sources": "STRUCT(property VARCHAR, dataset VARCHAR, license VARCHAR, record_id VARCHAR, update_time VARCHAR, confidence DOUBLE, \"b",
+   "operating_status": "VARCHAR",
+   "basic_category": "VARCHAR",
+   "taxonomy": "STRUCT(\"primary\" VARCHAR, hierarchy VARCHAR[], alternates VARCHAR[])",
+   "version": "INTEGER",
+   "bbox": "STRUCT(xmin DOUBLE, xmax DOUBLE, ymin DOUBLE, ymax DOUBLE)",
+   "theme": "VARCHAR",
+   "type": "VARCHAR"
+  },
+  "candidates": 3588
+ }
+}
