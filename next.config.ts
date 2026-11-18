@@ -11,6 +11,10 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Nov 18 (per Mely): one address for Google — www.melyos.io always goes to melyos.io (same page)
+  async redirects() {
+    return [{ source: "/:path*", has: [{ type: "host", value: "www.melyos.io" }], destination: "https://melyos.io/:path*", permanent: true }];
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
