@@ -70,10 +70,11 @@ const jsonLd = {
       url: "https://melyos.io",
       logo: "https://melyos.io/icon.png",
       email: "info@melyos.io",
+      telephone: "+14075646640",
       description: DESCRIPTION,
       address: { "@type": "PostalAddress", addressLocality: "Kissimmee", addressRegion: "FL", addressCountry: "US" },
       areaServed: "US",
-      contactPoint: [{ "@type": "ContactPoint", contactType: "sales", email: "info@melyos.io", availableLanguage: ["English", "Spanish"] }],
+      contactPoint: [{ "@type": "ContactPoint", contactType: "sales", telephone: "+14075646640", email: "info@melyos.io", availableLanguage: ["English", "Spanish"] }],
     },
     {
       "@type": "WebSite",

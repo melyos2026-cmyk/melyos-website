@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Mail, MessageCircle, h2 } from "./data";
+import { Phone } from "lucide-react";
 
 export default function DemoSection() {
   const [demo, setDemo] = useState({ name: "", business: "", email: "", phone: "", propertyType: "", spaces: "" });
@@ -44,6 +45,7 @@ export default function DemoSection() {
               <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">Tell us about your property. We will show you the tools that matter to you and send you a custom quote, with no obligation.</p>
               <div className="mt-8 space-y-2 text-slate-200">
                 <p className="flex items-center gap-2"><Mail className="h-5 w-5 text-[#39d5ee]" aria-hidden /><a className="font-bold underline" href="mailto:info@melyos.io">info@melyos.io</a></p>
+                <p className="flex items-center gap-2"><Phone className="h-5 w-5 text-[#39d5ee]" aria-hidden /><a className="font-bold underline" href="tel:+14075646640">(407) 564-6640</a></p>
                 <p className="flex items-center gap-2"><MessageCircle className="h-5 w-5 text-[#39d5ee]" aria-hidden />Or chat with Mely, bottom right, any time.</p>
               </div>
             </div>

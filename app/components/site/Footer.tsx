@@ -1,5 +1,5 @@
 import { NAV } from "./data";
-import { Mail } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 
 export default function SiteFooter() {
   return (
@@ -15,6 +15,7 @@ export default function SiteFooter() {
               <img src="/quickbooks-logo.png" alt="Intuit QuickBooks" className="h-6 w-auto object-contain" />
             </div>
             <p className="mt-3 flex items-center gap-2 text-slate-600"><Mail className="h-4 w-4 text-[#079db9]" aria-hidden /><a className="underline" href="mailto:info@melyos.io">info@melyos.io</a></p>
+            <p className="mt-2 flex items-center gap-2 text-slate-600"><Phone className="h-4 w-4 text-[#079db9]" aria-hidden /><a className="underline" href="tel:+14075646640">(407) 564-6640</a></p>
           </div>
           <div>
             <p className="font-black">Platform</p>
