@@ -70,36 +70,55 @@ try:
 except Exception as e:
     print("release list failed:", e)
 print("overture release:", release, flush=True)
+err = None
+info = {}
 if release:
-    import duckdb
-    con = duckdb.connect()
-    con.execute("INSTALL httpfs; LOAD httpfs; INSTALL spatial; LOAD spatial; SET s3_region='us-west-2';")
-    x0, y0, x1, y1 = BBOX
-    src = f"read_parquet('s3://overturemaps-us-west-2/release/{release}/theme=places/type=place/*', hive_partitioning=1)"
-    cols = {r[0] for r in con.execute(f"DESCRIBE SELECT * FROM {src} LIMIT 1").fetchall()}
-    print("columns:", sorted(cols), flush=True)
-    cat = "categories.primary"
-    q = f"""
-      SELECT id, names.primary AS name, {cat} AS cat, confidence,
-             ST_Y(geometry) AS lat, ST_X(geometry) AS lon,
-             websites[1] AS web, phones[1] AS phone, addresses[1].locality AS city, addresses[1].region AS region
-      FROM {src}
-      WHERE bbox.xmin BETWEEN {x0} AND {x1} AND bbox.ymin BETWEEN {y0} AND {y1}
-        AND {cat} IN ('rv_park', 'campground', 'marina')
-        AND confidence >= 0.55
-    """
-    res = con.execute(q).fetchall()
-    print("overture candidates:", len(res), flush=True)
-    for oid, name, c, conf, lat, lon, web, phone, city, region in res:
-        if not name or lat is None or (region and str(region).upper() not in (ST, "FLORIDA")):
-            continue
-        name = name.strip()
-        if len(name) < 4 or BAD.search(name):
-            continue
-        web = web or ""
-        if web and not web.startswith("http"):
-            web = "https://" + web
-        add([KINDS[c], name[:90], round(lat, 5), round(lon, 5), (city or "")[:40], (phone or "")[:30], web[:160], "ov-" + oid.replace("-", "")[:16]])
+    try:
+        import duckdb
+        con = duckdb.connect()
+        con.execute("INSTALL httpfs; LOAD httpfs; SET s3_region='us-west-2';")
+        x0, y0, x1, y1 = BBOX
+        src = f"read_parquet('s3://overturemaps-us-west-2/release/{release}/theme=places/type=place/*', hive_partitioning=1, union_by_name=1)"
+        desc = con.execute(f"DESCRIBE SELECT * FROM {src}").fetchall()
+        cols = {r[0]: r[1] for r in desc}
+        info["columns"] = {k: v[:120] for k, v in cols.items()}
+        cat_exprs = []
+        if "categories" in cols: cat_exprs.append("categories.primary")
+        if "basic_category" in cols: cat_exprs.append("basic_category")
+        if "taxonomy" in cols: cat_exprs.append("taxonomy.primary")
+        cat = "concat_ws('|', " + ", ".join(f"coalesce(CAST({e} AS VARCHAR), '')" for e in cat_exprs) + ")" if cat_exprs else "''"
+        lat = "(bbox.ymin + bbox.ymax) / 2"; lon = "(bbox.xmin + bbox.xmax) / 2"
+        web = "websites[1]" if "websites" in cols else "NULL"
+        phone = "phones[1]" if "phones" in cols else "NULL"
+        city = "addresses[1].locality" if "addresses" in cols else "NULL"
+        region = "addresses[1].region" if "addresses" in cols else "NULL"
+        conf = "confidence" if "confidence" in cols else "1.0"
+        q = f"""
+          SELECT id, names.primary AS name, {cat} AS cat, {conf} AS conf, {lat} AS lat, {lon} AS lon,
+                 {web} AS web, {phone} AS phone, {city} AS city, {region} AS region
+          FROM {src}
+          WHERE bbox.xmin BETWEEN {x0} AND {x1} AND bbox.ymin BETWEEN {y0} AND {y1}
+            AND regexp_matches({cat}, '(rv_park|campground|camping|caravan|marina|recreational_vehicle)')
+            AND {conf} >= 0.55
+        """
+        res = con.execute(q).fetchall()
+        info["candidates"] = len(res)
+        print("overture candidates:", len(res), flush=True)
+        for oid, name, c, cf, la, lo, w, ph, ci, rg in res:
+            if not name or la is None or (rg and str(rg).upper() not in (ST, "FLORIDA")):
+                continue
+            name = name.strip()
+            if len(name) < 4 or BAD.search(name):
+                continue
+            k = "m" if "marina" in c else "r" if re.search(r"rv_park|caravan|recreational_vehicle", c) else "c"
+            w = w or ""
+            if w and not w.startswith("http"):
+                w = "https://" + w
+            add([k, name[:90], round(la, 5), round(lo, 5), (ci or "")[:40], (ph or "")[:30], w[:160], "ov-" + str(oid).replace("-", "")[:16]])
+    except Exception as e:
+        import traceback
+        err = traceback.format_exc()[-1500:]
+        print(err, flush=True)
 
 rows.sort(key=lambda r: (r[0], r[1].lower()))
 json.dump(data, open(PATH, "w"), separators=(",", ":"))
@@ -108,6 +127,6 @@ index = json.load(open(ip))
 index[ST] = {**index.get(ST, {}), **{k: sum(1 for r in rows if r[0] == k) for k in ("m", "r", "c")}}
 json.dump(index, open(ip, "w"), separators=(",", ":"), sort_keys=True)
 stats = {"state": ST, "added": len(added), "by_kind": {k: sum(1 for r in added if r[0] == k) for k in "mrc"}, "total": len(rows),
-         "sample": [r[1] for r in added[:25]]}
+         "sample": [r[1] for r in added[:25]], "release": release, "error": err, "overture": info}
 json.dump(stats, open(os.path.join(ROOT, "scripts", "places", "last_run.json"), "w"), indent=1)
 print(json.dumps(stats, indent=1))
