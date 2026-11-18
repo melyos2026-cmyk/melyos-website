@@ -13,6 +13,8 @@ export const STATES: Record<string, [string, number, number, number]> = {
   SC: ["South Carolina", 33.9, -80.9, 7], SD: ["South Dakota", 44.4, -100.2, 7], TN: ["Tennessee", 35.8, -86.4, 7], TX: ["Texas", 31.0, -99.3, 6],
   UT: ["Utah", 39.3, -111.7, 7], VT: ["Vermont", 44.0, -72.7, 8], VA: ["Virginia", 37.5, -78.8, 7], WA: ["Washington", 47.4, -120.5, 7],
   WV: ["West Virginia", 38.6, -80.6, 7], WI: ["Wisconsin", 44.6, -89.9, 7], WY: ["Wyoming", 43.0, -107.5, 7],
+  // Nov 18 (per Mely): Puerto Rico (a Sales Partner there)
+  PR: ["Puerto Rico", 18.22, -66.45, 9],
 };
 export const KIND: Record<string, { label: string; plural: string; color: string }> = {
   m: { label: "Marina", plural: "Marinas", color: "#0284c7" },

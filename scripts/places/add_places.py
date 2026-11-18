@@ -13,7 +13,7 @@ import json, math, os, re, subprocess, sys
 ST = (sys.argv[1] if len(sys.argv) > 1 else "FL").upper()
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PATH = os.path.join(ROOT, "public", "explore", f"{ST}.json")
-BBOX = {"FL": (-87.7, 24.4, -79.8, 31.1)}[ST]  # xmin, ymin, xmax, ymax
+BBOX = {"FL": (-87.7, 24.4, -79.8, 31.1), "PR": (-67.95, 17.85, -65.2, 18.55)}[ST]  # xmin, ymin, xmax, ymax
 KINDS = {"rv_park": "r", "campground": "c", "marina": "m"}
 BAD = re.compile(r"(?i)\b(storage|sales|dealers?|dealership|repair|service|rentals?|insurance|parts|wash|mobile|mhc|mhp|manufactured|homes?|apartments?|condos?|hoa|hotel|motel|inn|suites|hyatt|marriott|hilton|plant|factory|powersports|store|shop|outlet|club|yacht sales|brokerage|vans?|trailers?|towing|mechanic|church|school|llc office)\b")
 
@@ -110,7 +110,7 @@ if release:
         info["candidates"] = len(res)
         print("overture candidates:", len(res), flush=True)
         for oid, name, c, cf, la, lo, w, ph, ci, rg in res:
-            if not name or la is None or (rg and str(rg).upper() not in (ST, "FLORIDA")):
+            if not name or la is None or (rg and str(rg).upper() not in (ST, {"FL": "FLORIDA", "PR": "PUERTO RICO"}[ST])):
                 continue
             name = name.strip()
             if len(name) < 4 or BAD.search(name):

@@ -2,6 +2,8 @@
 name: Explore missing places
 on:
   workflow_dispatch:
+    inputs:
+      state: { description: "State (e.g. FL, PR)", default: "FL" }
 permissions:
   contents: write
 concurrency: { group: places, cancel-in-progress: true }
@@ -14,11 +16,11 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - run: pip install duckdb awscli
-      - run: python scripts/places/add_places.py FL
+      - run: python scripts/places/add_places.py ${{ inputs.state }}
       - name: Commit
         run: |
           git config user.name "melyos-places-agent"
           git config user.email "noreply@melyos.io"
-          git add public/explore/FL.json public/explore/index.json scripts/places/last_run.json
+          git add public/explore/${{ inputs.state }}.json public/explore/index.json scripts/places/last_run.json
           git diff --cached --quiet || git commit -m "Explore: missing places added (auto)"
           git pull --rebase -q origin main && git push origin HEAD:main
