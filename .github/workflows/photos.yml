@@ -1,0 +1,26 @@
+# Nov 18 (per Mely): Explore photos — each listing's own preview picture from its website (scripts/photos).
+name: Explore photos
+on:
+  workflow_dispatch:
+    inputs:
+      state: { description: "State (e.g. FL)", default: "FL" }
+      kinds: { description: "Kinds: m = marinas, r = RV parks, c = campgrounds", default: "m" }
+permissions:
+  contents: write
+concurrency: { group: photos, cancel-in-progress: false }
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: python scripts/photos/fetch_photos.py "${{ inputs.state }}" "${{ inputs.kinds }}"
+      - name: Commit
+        run: |
+          git config user.name "melyos-photos-agent"
+          git config user.email "noreply@melyos.io"
+          git add public/explore/photos_*.json
+          git diff --cached --quiet || git commit -m "Explore: listing photos (auto)"
+          git pull --rebase -q origin main && git push origin HEAD:main

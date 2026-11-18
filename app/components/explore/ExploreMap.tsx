@@ -53,6 +53,10 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
   const meta = STATES[state];
   // Nov 17: owner info (approved claims) + star averages from MelyOS Explore
   const [extra, setExtra] = useState<{ overrides: Record<string, any>; stars: Record<string, [number, number]>; fuel: Record<string, Fuel> }>({ overrides: {}, stars: {}, fuel: {} });
+  // Nov 18 (per Mely): each place's own preview picture from its website (scripts/photos → photos_{ST}.json)
+  const [photos, setPhotos] = useState<Record<string, string>>({});
+  const [broken, setBroken] = useState<Record<string, true>>({});
+  useEffect(() => { let off = false; setPhotos({}); fetch(`/explore/photos_${state}.json`).then((r) => (r.ok ? r.json() : {})).then((j) => !off && setPhotos(j || {})).catch(() => {}); return () => { off = true; }; }, [state]);
   useEffect(() => { let off = false; fetch(`/api/explore/state?state=${state}`).then((r) => r.json()).then((j) => !off && setExtra({ overrides: j.overrides || {}, stars: j.stars || {}, fuel: j.fuel || {} })).catch(() => {}); return () => { off = true; }; }, [state]);
 
   useEffect(() => {
@@ -97,7 +101,7 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
 
   // A place is "bookable" (Online Booking + red pin) when it runs on MelyOS or has its own booking page.
   const bookable = (r: Row) => isFeatured(r) || !!extra.overrides[r[7]]?.client || okUrl(extra.overrides[r[7]]?.booking_url);
-  const photoOf = (r: Row) => (isFeatured(r) ? FEATURED_PHOTO[r[7]] : "") || (okUrl(extra.overrides[r[7]]?.photo_url) ? extra.overrides[r[7]].photo_url : "");
+  const photoOf = (r: Row) => (isFeatured(r) ? FEATURED_PHOTO[r[7]] : "") || (okUrl(extra.overrides[r[7]]?.photo_url) ? extra.overrides[r[7]].photo_url : "") || (!broken[r[7]] && okUrl(photos[r[7]]) ? photos[r[7]] : "");
   const dates = arrive || depart ? `?${new URLSearchParams({ ...(arrive ? { arrive } : {}), ...(depart ? { depart } : {}) })}` : "";
 
   const shown = useMemo(() => {
@@ -249,7 +253,7 @@ export default function ExploreMap({ state, initialKinds }: { state: string; ini
             return (
               <div key={r[7]} onClick={() => focus(r)} className={`flex cursor-pointer gap-3 border-b border-slate-100 p-3 transition hover:bg-slate-50 ${picked === r[7] ? "bg-cyan-50" : ""}`}>
                 <div className="relative h-24 w-28 shrink-0 overflow-hidden rounded-xl" style={{ background: `linear-gradient(135deg, ${k.color}, #071A33)` }}>
-                  {photo ? <img src={photo} alt="" loading="lazy" className="h-full w-full object-cover" />
+                  {photo ? <img src={photo} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setBroken((b) => ({ ...b, [r[7]]: true }))} className="h-full w-full object-cover" />
                     : <span className="flex h-full w-full items-center justify-center text-3xl text-white/80">{r[0] === "m" ? "⚓" : r[0] === "r" ? "🚐" : "⛺"}</span>}
                 </div>
                 <div className="min-w-0 flex-1">

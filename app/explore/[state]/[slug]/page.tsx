@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import fs from "fs";
+import path from "path";
 import { notFound, permanentRedirect } from "next/navigation";
 import SiteHeader from "../../../components/site/Header";
 import SiteFooter from "../../../components/site/Footer";
@@ -13,6 +15,11 @@ import { exploreApi, findListing, keyFromSlug, listingPath, nice } from "../../.
 // details, ♡ Save, Request a slip / site, reviews, and "Is this yours? Claim it". Owner info (approved claims)
 // comes from admin.melyos.io and wins over the public map data.
 export const revalidate = 3600;
+
+// Nov 18 (per Mely): the place's own website preview picture when the owner hasn't added one (scripts/photos)
+function sitePhoto(st: string, key: string): string {
+  try { const u = JSON.parse(fs.readFileSync(path.join(process.cwd(), `public/explore/photos_${st}.json`), "utf8"))[key]; return typeof u === "string" && /^https:\/\//.test(u) ? u : ""; } catch { return ""; }
+}
 
 async function load(stateParam: string, slug: string) {
   const st = stateParam.toUpperCase();
@@ -86,7 +93,7 @@ export default async function Page({ params }: { params: Promise<{ state: string
       <section className="py-10">
         <div className="mx-auto grid max-w-6xl gap-8 px-5 lg:grid-cols-[1fr_420px] lg:px-8">
           <div className="space-y-8">
-            {typeof info.photo_url === "string" && /^https:\/\//.test(info.photo_url) && <img src={info.photo_url} alt={name} className="h-72 w-full rounded-3xl object-cover" />}
+            {(() => { const ph = typeof info.photo_url === "string" && /^https:\/\//.test(info.photo_url) ? info.photo_url : sitePhoto(st, row[7]); return ph ? <img src={ph} alt={name} referrerPolicy="no-referrer" className="h-72 w-full rounded-3xl object-cover" /> : null; })()}
             <div className="overflow-hidden rounded-3xl border border-slate-200">
               <iframe title={`Map of ${name}`} className="h-72 w-full" loading="lazy" src={`https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${row[2]},${row[3]}`} />
             </div>
