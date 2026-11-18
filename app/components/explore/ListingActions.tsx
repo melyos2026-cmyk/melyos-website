@@ -23,6 +23,12 @@ export function RequestForm(l: L) {
   const unit = l.kind === "m" ? "slip" : "site";
   const [f, setF] = useState<any>({ stay_type: "night", vessel: { kind: l.kind === "m" ? "boat" : "rv" } });
   const [st, setSt] = useState<{ busy?: boolean; err?: string; done?: boolean; forwarded?: boolean }>({});
+  // Nov 18: dates picked on the Explore search (?arrive=&depart=) fill the form
+  useEffect(() => {
+    const p = new URLSearchParams(location.search), ok = (v: string | null) => (v && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : "");
+    const a = ok(p.get("arrive")), dd = ok(p.get("depart"));
+    if (a || dd) setF((x: any) => ({ ...x, arrive: x.arrive || a, depart: x.depart || dd }));
+  }, []);
   useEffect(() => {
     if (!me?.boater) return;
     const v = me.vessels?.[0];
@@ -80,7 +86,7 @@ export function Reviews(l: L) {
   const [d, setD] = useState<{ reviews: any[]; avg: number | null; count: number } | null>(null);
   const [f, setF] = useState<any>({ rating: 0 });
   const [st, setSt] = useState<{ busy?: boolean; err?: string; done?: boolean }>({});
-  useEffect(() => { fetch(`/api/explore/listing?key=${encodeURIComponent(l.listing_key)}`).then((r) => r.json()).then(setD).catch(() => setD({ reviews: [], avg: null, count: 0 })); }, [l.listing_key]);
+  useEffect(() => { fetch(`/api/explore/listing?key=${encodeURIComponent(l.listing_key)}`).then((r) => r.json()).then((x) => setD({ reviews: x.reviews || [], avg: x.avg ?? null, count: x.count || 0 })).catch(() => setD({ reviews: [], avg: null, count: 0 })); }, [l.listing_key]);
   const mine = me?.reviews?.find((r: any) => r.listing_key === l.listing_key);
   async function send(e: React.FormEvent) {
     e.preventDefault();
@@ -102,7 +108,7 @@ export function Reviews(l: L) {
           {r.owner_reply && <div className="mt-3 rounded-xl bg-sky-50 p-3 text-sm"><b>Response from the owner:</b> {r.owner_reply}</div>}
         </li>)}</ul>}
       <div className="mt-6 rounded-2xl bg-slate-50 p-4">
-        {!me?.boater ? <p className="text-slate-700"><a className="font-black text-[#0284c7] underline" href={`/explore/account?next=${typeof window !== "undefined" ? encodeURIComponent(location.pathname) : ""}`}>Sign in</a> to write a review.</p>
+        {!me?.boater ? <p className="text-slate-700"><a className="font-black text-[#0284c7] underline" href="/explore/account" onClick={(e) => { e.preventDefault(); location.href = `/explore/account?next=${encodeURIComponent(location.pathname)}`; }}>Sign in</a> to write a review.</p>
           : st.done || mine ? <p className="font-bold text-emerald-700">✓ Thanks! {mine?.status === "approved" ? "Your review is live." : "Your review shows after a quick check."}</p>
           : !me.boater.email_verified ? <p className="text-slate-700">Confirm your email to write a review — check your inbox, or <a className="font-bold underline" href="/explore/account">resend the link</a>.</p>
           : <form onSubmit={send} className="space-y-3">
@@ -113,6 +119,44 @@ export function Reviews(l: L) {
             <label className="block text-sm font-bold">When did you stay? (optional)<input type="month" className={inp} onChange={(e) => setF((x: any) => ({ ...x, stayed_on: e.target.value ? `${e.target.value}-01` : "" }))} /></label>
             {st.err && <p className="text-sm font-bold text-red-600">{st.err}</p>}
             <button disabled={st.busy} className="rounded-xl bg-[#071A33] px-6 py-3 font-black text-white disabled:opacity-60">{st.busy ? "Sending…" : "Post review"}</button>
+          </form>}
+      </div>
+    </div>
+  );
+}
+
+// Nov 18 (per Mely): fuel prices at a marina — the marina's own or the latest a boater reported, with how old it is.
+export const ago = (iso?: string | null) => {
+  if (!iso) return "";
+  const d = Math.floor((Date.now() - new Date(iso).getTime()) / 864e5);
+  return d <= 0 ? "today" : d === 1 ? "yesterday" : d < 30 ? `${d} days ago` : `${Math.round(d / 30)} month${Math.round(d / 30) === 1 ? "" : "s"} ago`;
+};
+export function Fuel(l: L & { fuel: { gas: number | null; diesel: number | null; at: string | null; by: string } | null }) {
+  const { me } = useBoater();
+  const [open, setOpen] = useState(false);
+  const [f, setF] = useState<any>({});
+  const [st, setSt] = useState<{ busy?: boolean; err?: string; done?: boolean }>({});
+  async function send(e: React.FormEvent) {
+    e.preventDefault(); setSt({ busy: true });
+    try { await post("/api/explore/fuel", { ...f, state: l.state, listing_key: l.listing_key }); setSt({ done: true }); } catch (er: any) { setSt({ err: er.message }); }
+  }
+  const fu = l.fuel;
+  return (
+    <div className="rounded-3xl border border-slate-200 p-6">
+      <div className="flex flex-wrap items-baseline justify-between gap-2"><h2 className="text-2xl font-black">⛽ Fuel prices</h2>
+        {fu?.at && <span className="text-sm text-slate-500">Updated {ago(fu.at)}{fu.by === "boater" ? " by a boater" : " by the marina"}</span>}</div>
+      {fu && (fu.gas || fu.diesel) ? <div className="mt-3 grid grid-cols-2 gap-3">
+        <div className="rounded-xl bg-slate-50 p-3"><p className="text-xs font-black uppercase tracking-wider text-slate-500">Gas</p><p className="mt-1 text-2xl font-black">{fu.gas ? `$${fu.gas.toFixed(2)}` : "—"}</p></div>
+        <div className="rounded-xl bg-slate-50 p-3"><p className="text-xs font-black uppercase tracking-wider text-slate-500">Diesel</p><p className="mt-1 text-2xl font-black">{fu.diesel ? `$${fu.diesel.toFixed(2)}` : "—"}</p></div>
+      </div> : <p className="mt-2 text-slate-500">No fuel price yet. Fueled up here? Share today&apos;s price.</p>}
+      <div className="mt-3">
+        {st.done ? <p className="font-bold text-emerald-700">✓ Thanks! Your price is on the map.</p>
+          : !open ? <button type="button" onClick={() => { if (!me?.boater) { location.href = `/explore/account?next=${encodeURIComponent(location.pathname)}`; return; } setOpen(true); }} className="text-sm font-black text-[#0284c7] underline">Report a fuel price</button>
+          : <form onSubmit={send} className="grid grid-cols-2 gap-3">
+            <label className="text-sm font-bold">Gas $/gal<input type="number" step="0.01" min="1" max="20" className={inp} value={f.gas || ""} onChange={(e) => setF((x: any) => ({ ...x, gas: e.target.value }))} /></label>
+            <label className="text-sm font-bold">Diesel $/gal<input type="number" step="0.01" min="1" max="20" className={inp} value={f.diesel || ""} onChange={(e) => setF((x: any) => ({ ...x, diesel: e.target.value }))} /></label>
+            {st.err && <p className="col-span-2 text-sm font-bold text-red-600">{st.err}</p>}
+            <button disabled={st.busy} className="col-span-2 rounded-xl bg-[#071A33] px-6 py-3 font-black text-white disabled:opacity-60">{st.busy ? "Sending…" : "Share price"}</button>
           </form>}
       </div>
     </div>

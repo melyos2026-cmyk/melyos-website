@@ -3,7 +3,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import SiteHeader from "../../../components/site/Header";
 import SiteFooter from "../../../components/site/Footer";
 import AccountPill from "../../../components/explore/AccountPill";
-import { FavoriteButton, RequestForm, Reviews } from "../../../components/explore/ListingActions";
+import { FavoriteButton, Fuel, RequestForm, Reviews } from "../../../components/explore/ListingActions";
 import { STATES, KIND } from "../../../components/explore/states";
 import { isFeatured, FEATURED_MAP } from "../../../components/explore/featured";
 import LiveMap from "../../../components/explore/LiveMap";
@@ -20,7 +20,7 @@ async function load(stateParam: string, slug: string) {
   const row = await findListing(st, keyFromSlug(slug));
   if (!row) return null;
   const extra = await exploreApi<any>("listing", { listing_key: row[7] });
-  return { st, row, info: (extra.ok && extra.data.info) || {}, verified: !!extra.data?.verified, client: !!extra.data?.client, avg: extra.data?.avg ?? null, count: extra.data?.count || 0, slipmap: !!extra.data?.slipmap };
+  return { st, row, info: (extra.ok && extra.data.info) || {}, verified: !!extra.data?.verified, client: !!extra.data?.client, avg: extra.data?.avg ?? null, count: extra.data?.count || 0, slipmap: !!extra.data?.slipmap, fuel: extra.data?.fuel || null };
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ state: string; slug: string }> }): Promise<Metadata> {
@@ -86,6 +86,7 @@ export default async function Page({ params }: { params: Promise<{ state: string
       <section className="py-10">
         <div className="mx-auto grid max-w-6xl gap-8 px-5 lg:grid-cols-[1fr_420px] lg:px-8">
           <div className="space-y-8">
+            {typeof info.photo_url === "string" && /^https:\/\//.test(info.photo_url) && <img src={info.photo_url} alt={name} className="h-72 w-full rounded-3xl object-cover" />}
             <div className="overflow-hidden rounded-3xl border border-slate-200">
               <iframe title={`Map of ${name}`} className="h-72 w-full" loading="lazy" src={`https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${row[2]},${row[3]}`} />
             </div>
@@ -94,12 +95,14 @@ export default async function Page({ params }: { params: Promise<{ state: string
               {website && <a href={website} target="_blank" rel="noopener nofollow" className="rounded-xl border border-slate-300 px-4 py-2.5 font-black">🌐 Website</a>}
               <a href={`https://www.google.com/maps/dir/?api=1&destination=${row[2]},${row[3]}`} target="_blank" rel="noopener" className="rounded-xl border border-slate-300 px-4 py-2.5 font-black">🧭 Directions</a>
               {liveMap ? <a href="#live-map" className="rounded-xl bg-[#08B8D8] px-4 py-2.5 font-black text-white">Book online</a>
+                : typeof info.booking_url === "string" && /^https:\/\//.test(info.booking_url) ? <a href={info.booking_url} target="_blank" rel="noopener" className="rounded-xl bg-[#08B8D8] px-4 py-2.5 font-black text-white">Book online</a>
                 : feat && website && <a href={website} target="_blank" rel="noopener" className="rounded-xl bg-[#08B8D8] px-4 py-2.5 font-black text-white">Book online</a>}
             </div>
             {(info.description || facts.length > 0) && <div className="rounded-3xl border border-slate-200 p-6">
               {info.description && <p className="whitespace-pre-line text-lg leading-8 text-slate-700">{info.description}</p>}
               {facts.length > 0 && <dl className="mt-4 grid gap-3 sm:grid-cols-2">{facts.map(([a, b]) => <div key={a} className="rounded-xl bg-slate-50 p-3"><dt className="text-xs font-black uppercase tracking-wider text-slate-500">{a}</dt><dd className="mt-1 font-bold">{b}</dd></div>)}</dl>}
             </div>}
+            {row[0] === "m" && <Fuel {...L} fuel={d.fuel} />}
             <Reviews {...L} />
           </div>
           <aside>

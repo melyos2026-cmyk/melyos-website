@@ -29,6 +29,9 @@ export default function ClaimForm({ state, listingKey, phone, website, kind }: {
         <input className={inp} placeholder={kind === "m" ? "Max boat length (ft)" : "Max RV length (ft)"} value={f.edits.max_length || ""} onChange={(e) => setE("max_length", e.target.value)} />
         <input className={`${inp} sm:col-span-2`} placeholder="Rates (e.g. $2.50/ft per night · monthly from $650)" value={f.edits.rates || ""} onChange={(e) => setE("rates", e.target.value)} />
         <input className={`${inp} sm:col-span-2`} placeholder={kind === "m" ? "Amenities (fuel, pump-out, 30/50/100 amp, showers…)" : "Amenities (full hookups, Wi-Fi, pool, laundry…)"} value={f.edits.amenities || ""} onChange={(e) => setE("amenities", e.target.value)} />
+        <input className={`${inp} sm:col-span-2`} placeholder="Photo link (https://… a photo of your property)" value={f.edits.photo_url || ""} onChange={(e) => setE("photo_url", e.target.value)} />
+        {kind === "m" && <><input className={inp} inputMode="decimal" placeholder="Gas price today ($/gal)" value={f.edits.fuel_gas || ""} onChange={(e) => setE("fuel_gas", e.target.value)} />
+          <input className={inp} inputMode="decimal" placeholder="Diesel price today ($/gal)" value={f.edits.fuel_diesel || ""} onChange={(e) => setE("fuel_diesel", e.target.value)} /></>}
         <textarea className={`${inp} sm:col-span-2`} rows={4} placeholder="Short description of your property" value={f.edits.description || ""} onChange={(e) => setE("description", e.target.value)} />
       </div></div>
       {st.err && <p className="text-sm font-bold text-red-600">{st.err}</p>}
