@@ -1,0 +1,23 @@
+# Nov 18: real screenshots of public pages for marketing videos (results pushed to branch "shots").
+name: Shots
+on:
+  workflow_dispatch:
+    inputs:
+      shots:
+        description: JSON array of shots
+        required: true
+permissions:
+  contents: write
+jobs:
+  shoot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          mkdir -p /tmp/s && cp scripts/shots/shoot.mjs /tmp/s/ && cd /tmp/s
+          npm init -y >/dev/null && npm i playwright@1 >/dev/null && npx playwright install --with-deps chromium >/dev/null
+          SHOTS='${{ inputs.shots }}' node shoot.mjs
+      - run: |
+          cd /tmp/s/out && git init -q && git checkout -q -b shots && git add -A
+          git -c user.name=bot -c user.email=bot@melyos.io commit -qm shots
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" shots
