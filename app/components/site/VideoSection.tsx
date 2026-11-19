@@ -9,7 +9,7 @@ export default function VideoSection({ compact = false }: { compact?: boolean })
         <div className="mx-auto mb-8 max-w-3xl text-center">
           <p className="text-sm font-black uppercase tracking-[0.18em] text-[#079db9]">Watch</p>
           <h2 className={`mt-2 font-black ${compact ? "text-2xl sm:text-3xl" : "text-3xl sm:text-4xl"}`}>See how your property can run itself</h2>
-          {!compact && <p className="mt-4 text-lg leading-8 text-slate-600">From the chaos of the first of the month to evenings off — in 40 seconds.</p>}
+          {!compact && <p className="mt-4 text-lg leading-8 text-slate-600">From the chaos of the first of the month to evenings off — in 42 seconds.</p>}
         </div>
         <div className="overflow-hidden rounded-3xl border border-slate-200 bg-[#071A33] shadow-xl">
           <video className="block aspect-video w-full" controls playsInline preload="metadata" poster="/video/melyos-story-poster.jpg">
