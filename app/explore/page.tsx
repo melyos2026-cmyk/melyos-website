@@ -42,7 +42,7 @@ export default function Page() {
     <main className="min-h-screen overflow-x-hidden bg-white text-[#071A33]">
       <SiteHeader />
       <section className="bg-[#06182e] pt-20 text-white md:pt-24">
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 py-14 md:py-20 lg:grid-cols-[1.1fr_1fr] lg:px-8">
+        <div className="mx-auto grid max-w-7xl items-center gap-8 px-5 py-8 md:py-20 lg:grid-cols-[1.1fr_1fr] lg:gap-10 lg:px-8">
           <div>
           <p className="mb-4 text-sm font-black uppercase tracking-[0.18em] text-[#39d5ee]">MelyOS Explore</p>
           <h1 className="max-w-3xl text-4xl font-black leading-tight tracking-tight sm:text-5xl">Find marinas, RV parks and campgrounds across the U.S.</h1>
@@ -51,7 +51,7 @@ export default function Page() {
           <p className="mt-5 max-w-2xl text-slate-300">Boaters, RVers and campers: create a free account to save places, keep your boat or RV on file, send slip and site requests in one tap, and leave reviews.</p>
           </div>
           {/* Nov 19 (per Mely): the travelers video (Aloha RV Park live map) instead of a still photo */}
-          <div className="relative mx-auto w-full max-w-[300px] lg:max-w-[330px]">
+          <div className="relative order-first mx-auto w-full max-w-[230px] sm:max-w-[280px] lg:order-last lg:max-w-[330px]">
             <div className="absolute -inset-5 rounded-[36px] bg-cyan-400/20 blur-3xl" />
             <video className="relative aspect-[9/16] w-full rounded-[28px] border border-white/15 bg-[#06182e] object-cover shadow-2xl" src="/video/melyos-explore-travelers.mp4" poster="/video/melyos-explore-travelers.jpg" controls playsInline preload="metadata" aria-label="How MelyOS Explore works: find a place, pick your exact site and request it" />
           </div>
