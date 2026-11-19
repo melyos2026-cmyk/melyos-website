@@ -103,8 +103,8 @@ export function SeeItLiveSection() {
           </div>
           <div className="grid gap-6 md:grid-cols-2">
             {[
-              ["RV park demo", "A full RV resort: interactive lot map, online booking, lease applications, resident portal and Mely.", "/hero-interactive-map.png"],
-              ["Marina demo", "A full marina: slip map, boater accounts, contracts, fuel dock, ship store, dry stack and an office tour.", "/interactive-slips-2026.jpg"],
+              ["RV park demo", "See an RV park run the MelyOS way, focused on what your park needs.", "/hero-interactive-map.png"],
+              ["Marina demo", "See a marina run the MelyOS way, focused on what your marina needs.", "/interactive-slips-2026.jpg"],
             ].map(([kind, text, img]) => (
               <article key={kind} className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
                 <img src={img} alt="" className="h-48 w-full object-cover" />
