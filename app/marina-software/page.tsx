@@ -39,7 +39,7 @@ export default function Page() {
         ["Do you support dry storage and lift slips?", "Yes. Wet slips, lift slips and dry storage are all supported, each with its own rates and on the same map."],
         ["Can boaters sign their slip contract online?", "Yes. The office sends the contract, the boater signs from their phone, and the invoices are created automatically."],
         ["Does it work for city or county marinas?", "Yes. Every payment is tied to an employee and a shift close, with resident and non-resident pricing and fee schedules with effective dates."],
-        ["How much does it cost?", "Each marina gets a custom quote after a short call: a one-time setup and a monthly platform fee, month to month."],
+        ["How much does it cost?", "Each marina gets a custom quote after a short call: a one-time setup and a monthly platform fee — month to month, or locked for 2 years with a 24-month agreement."],
       ]} />
       <DemoSection />
       <SiteFooter />

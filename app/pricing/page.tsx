@@ -19,7 +19,7 @@ export default function Page() {
       <OnePlanSection />
       <HowItWorksSection />
       <FaqSection items={[
-        ["Is there a long-term contract?", "No. The platform is month to month."],
+        ["Is there a long-term contract?", "You choose: month to month at the regular price, or a 24-month agreement that locks your price for 2 years and includes your first month free."],
         ["Do you charge per module?", "No. One plan includes every tool: the map, reservations, contracts, billing, the customer portal, point of sale, fuel dock, dry stack, reports, QuickBooks export and the Mely AI assistant."],
         ["What is included in the setup?", "Your website on your domain, your property map, spaces, rates, fees and contracts configured, help bringing in your current customers, and staff training."],
         ["Are there card processing fees?", "Card and bank processing fees may apply to online payments. We explain them in your quote."],

@@ -293,7 +293,7 @@ export function PricingSection() {
               <p className="text-sm font-black uppercase tracking-[0.16em] text-cyan-300">MelyOS platform</p>
               <h3 className="mt-4 text-3xl font-black">Contact us for pricing</h3>
               <div className="mt-7 space-y-3">
-                {["Every feature your property needs", "Staff accounts with roles and permissions", "Customer portal and online payments", "Mely AI assistant for guests and staff", "Updates and support included", "No long-term contract"].map((i) => <div key={i} className="flex gap-3 font-semibold text-slate-100"><span className="text-[#39d5ee]">✓</span><span>{i}</span></div>)}
+                {["Every feature your property needs", "Staff accounts with roles and permissions", "Customer portal and online payments", "Mely AI assistant for guests and staff", "Updates and support included", "Month to month or a 2-year price lock"].map((i) => <div key={i} className="flex gap-3 font-semibold text-slate-100"><span className="text-[#39d5ee]">✓</span><span>{i}</span></div>)}
               </div>
               <div className="mt-auto pt-8"><a href="/demo" className="block rounded-xl border-2 border-[#08B8D8] bg-[#08B8D8] px-6 py-4 text-center font-black text-white transition hover:bg-[#079db9]">Book a demo</a>
               <p className="mt-4 text-center text-xs text-slate-400">Card and bank processing fees may apply.</p></div>
@@ -400,7 +400,7 @@ export function HomePricingBand() {
           <h2 className={h2}>A quote built around your property</h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">Every property is different, so we price each one after a short call: a one-time setup plus a simple monthly platform fee, month to month.</p>
           <div className="mx-auto mt-7 flex max-w-2xl flex-wrap justify-center gap-x-6 gap-y-2 font-semibold text-slate-700">
-            {["Done for you", "Updates and support included", "No long-term contract"].map((i) => <span key={i} className="flex items-center gap-2"><span className="text-[#08B8D8]">✓</span>{i}</span>)}
+            {["Done for you", "Updates and support included", "Month to month or a 2-year price lock"].map((i) => <span key={i} className="flex items-center gap-2"><span className="text-[#08B8D8]">✓</span>{i}</span>)}
           </div>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <a href="/demo" className={`${cta} text-center`}>Request a custom quote</a>
@@ -420,7 +420,7 @@ export const HOME_FAQ: [string, string][] = [
   ["Does it work for city or county marinas?", "Yes. Every payment is tied to an employee and a shift close, with resident and non-resident pricing and fee schedules with effective dates."],
   ["Do you move our current residents into the system?", "We help bring your current residents, lots and balances into MelyOS during setup."],
   ["Do you charge per module?", "No. One plan includes every tool: the map, reservations, contracts, billing, the customer portal, point of sale, fuel dock, dry stack, reports, QuickBooks export and the Mely AI assistant."],
-  ["Is there a long-term contract?", "No. The platform is month to month."],
+  ["Is there a long-term contract?", "You choose: month to month at the regular price, or a 24-month agreement that locks your price for 2 years and includes your first month free."],
   ["Are there card processing fees?", "Card and bank processing fees may apply to online payments. We explain them in your quote."],
   ["How do I get a price?", "Book a free demo or email info@melyos.io. We answer with a custom quote for your property."],
 ];
@@ -541,7 +541,7 @@ export function OnePlanSection() {
           </table>
         </div>
         <div className="mt-8 flex flex-col items-center gap-3 text-center">
-          <p className="max-w-2xl text-slate-600">One monthly fee, month to month. One setup done by our team. Card and bank processing fees may apply to online payments.</p>
+          <p className="max-w-2xl text-slate-600">One monthly fee: month to month, or locked for 2 years with a 24-month agreement. One setup done by our team. Card and bank processing fees may apply to online payments.</p>
           <a href="/demo" className={cta}>Get your custom quote</a>
         </div>
       </div>

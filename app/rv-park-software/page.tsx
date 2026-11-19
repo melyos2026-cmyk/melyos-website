@@ -39,7 +39,7 @@ export default function Page() {
         ["Does it work for both short stays and long-term residents?", "Yes. Nightly, weekly and monthly reservations live on the same map as your long-term residents and their leases."],
         ["Can residents pay online?", "Yes. Residents pay rent and other charges by card from the portal, can set up autopay, and the money goes to your own bank account."],
         ["Do you move our current residents into the system?", "We help bring your current residents, lots and balances into MelyOS during setup."],
-        ["How much does it cost?", "Each park gets a custom quote after a short call: a one-time setup and a monthly platform fee, month to month."],
+        ["How much does it cost?", "Each park gets a custom quote after a short call: a one-time setup and a monthly platform fee — month to month, or locked for 2 years with a 24-month agreement."],
       ]} />
       <DemoSection />
       <SiteFooter />

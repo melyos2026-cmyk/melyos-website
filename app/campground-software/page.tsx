@@ -33,7 +33,7 @@ export default function Page() {
       <FaqSection items={[
         ["Can guests book a specific site?", "Yes. Guests choose the exact site on your map, see its photo and hookups, and pay online."],
         ["Do I need a new website?", "No extra work: MelyOS includes your campground's own website with the booking map, on your domain."],
-        ["How much does it cost?", "Each campground gets a custom quote after a short call: a one-time setup and a monthly platform fee, month to month."],
+        ["How much does it cost?", "Each campground gets a custom quote after a short call: a one-time setup and a monthly platform fee — month to month, or locked for 2 years with a 24-month agreement."],
       ]} />
       <DemoSection />
       <SiteFooter />
