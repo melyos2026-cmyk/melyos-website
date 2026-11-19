@@ -277,7 +277,7 @@ export function PricingSection() {
           <div className="mx-auto mb-12 max-w-3xl text-center">
             <p className={eyebrow}>Pricing</p>
             <h2 className={h2}>A quote built around your property</h2>
-            <p className="mt-5 text-lg leading-8 text-slate-600">Every property is different, so we price each one after a short call: a one-time setup plus a simple monthly platform fee, month to month.</p>
+            <p className="mt-5 text-lg leading-8 text-slate-600">Every property is different, so we price each one after a short call: a one-time setup plus a simple monthly platform fee — month to month or locked for 2 years.</p>
           </div>
           <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-2">
             <article className="flex flex-col rounded-3xl border border-slate-200 bg-white p-7 shadow-sm md:p-9">
@@ -293,7 +293,7 @@ export function PricingSection() {
               <p className="text-sm font-black uppercase tracking-[0.16em] text-cyan-300">MelyOS platform</p>
               <h3 className="mt-4 text-3xl font-black">Contact us for pricing</h3>
               <div className="mt-7 space-y-3">
-                {["Every feature your property needs", "Staff accounts with roles and permissions", "Customer portal and online payments", "Mely AI assistant for guests and staff", "Updates and support included", "Month to month or a 2-year price lock"].map((i) => <div key={i} className="flex gap-3 font-semibold text-slate-100"><span className="text-[#39d5ee]">✓</span><span>{i}</span></div>)}
+                {["Everything your property runs today", "Set up and run for you", "Online payments to your own bank", "New things quoted only when you want them", "Updates and support included", "Month to month or a 2-year price lock"].map((i) => <div key={i} className="flex gap-3 font-semibold text-slate-100"><span className="text-[#39d5ee]">✓</span><span>{i}</span></div>)}
               </div>
               <div className="mt-auto pt-8"><a href="/demo" className="block rounded-xl border-2 border-[#08B8D8] bg-[#08B8D8] px-6 py-4 text-center font-black text-white transition hover:bg-[#079db9]">Book a demo</a>
               <p className="mt-4 text-center text-xs text-slate-400">Card and bank processing fees may apply.</p></div>
@@ -394,7 +394,7 @@ export function HomePricingBand() {
         <div className="rounded-[32px] border border-slate-200 bg-white p-7 text-center shadow-sm md:p-12">
           <p className={eyebrow}>Pricing</p>
           <h2 className={h2}>A quote built around your property</h2>
-          <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">Every property is different, so we price each one after a short call: a one-time setup plus a simple monthly platform fee, month to month.</p>
+          <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">Every property is different, so we price each one after a short call: a one-time setup plus a simple monthly platform fee — month to month or locked for 2 years.</p>
           <div className="mx-auto mt-7 flex max-w-2xl flex-wrap justify-center gap-x-6 gap-y-2 font-semibold text-slate-700">
             {["Done for you", "Updates and support included", "Month to month or a 2-year price lock"].map((i) => <span key={i} className="flex items-center gap-2"><span className="text-[#08B8D8]">✓</span>{i}</span>)}
           </div>

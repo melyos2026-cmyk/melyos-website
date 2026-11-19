@@ -6,7 +6,7 @@ import { PageHero, PricingSection, OnePlanSection, HowItWorksSection, FaqSection
 
 export const metadata: Metadata = {
   title: "Pricing",
-  description: "MelyOS pricing is built around your property: a one-time done-for-you setup and a simple monthly platform fee, month to month with no long-term contract. Request a custom quote.",
+  description: "MelyOS pricing is built around your property: a one-time done-for-you setup and a simple monthly platform fee, month to month or locked for 2 years. Request a custom quote.",
   alternates: { canonical: "/pricing" },
 };
 
