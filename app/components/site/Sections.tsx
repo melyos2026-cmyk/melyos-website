@@ -342,7 +342,6 @@ export function HomeAudienceSection() {
   );
 }
 
-const featureTitle = (id: string) => features.find((f) => f.id === id)?.title ?? id;
 
 const HOME_CARDS: { title: string; img: string; alt: string; text: string; ids: string[]; href: string; more: string }[] = [
   { title: "Map & online reservations", img: "/map-reservations-2026.jpg", alt: "MelyOS interactive map on laptop, tablet and phone: pick a site, choose dates and reserve online",
@@ -375,9 +374,6 @@ export function HomePlatformSection() {
               <div className="flex flex-1 flex-col p-6 md:p-7">
                 <h3 className="text-2xl font-black">{c.title}</h3>
                 <p className="mt-3 leading-7 text-slate-600">{c.text}</p>
-                <ul className="mt-5 flex flex-wrap gap-2">
-                  {c.ids.map((id) => <li key={id}><a href={`/features#${id}`} className="inline-block rounded-full bg-cyan-50 px-3 py-1 text-sm font-bold text-[#075e73] transition hover:bg-cyan-100">{featureTitle(id)}</a></li>)}
-                </ul>
                 <a href={c.href} className="mt-auto inline-flex items-center gap-1.5 pt-6 font-black text-[#079db9] hover:underline">{c.more}<ArrowRight className="h-4 w-4" aria-hidden /></a>
               </div>
             </article>
@@ -436,7 +432,7 @@ export function PageHero({ kicker, title, text, image, imageAlt, featuresHref = 
           <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">{text}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <a href="/demo" className={`${cta} text-center`}>Book a Free Demo</a>
-            <a href={featuresHref} className="rounded-xl border border-white/30 bg-white/10 px-7 py-3.5 text-center font-black text-white transition hover:bg-white/20">See all features</a>
+            <a href={featuresHref} className="rounded-xl border border-white/30 bg-white/10 px-7 py-3.5 text-center font-black text-white transition hover:bg-white/20">See how it works</a>
           </div>
         </div>
         {image && (

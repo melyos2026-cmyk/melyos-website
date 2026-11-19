@@ -96,10 +96,10 @@ export const MENU: MenuItem[] = [
       { href: "/features#industries", label: "Multi-property Owners", icon: Building2 },
     ] },
     { label: "By goal", links: [
-      { href: "/features#reservations", label: "Fill more spaces", icon: Target },
-      { href: "/features#payments", label: "Get paid faster", icon: Wallet },
-      { href: "/features#staff", label: "Simplify operations", icon: Zap },
-      { href: "/features#screening", label: "Reduce risk", icon: ShieldCheck },
+      { href: "/online-reservation-software", label: "Fill more spaces", icon: Target },
+      { href: "/billing-payments-software", label: "Get paid faster", icon: Wallet },
+      { href: "/features#how-it-works", label: "Simplify operations", icon: Zap },
+      { href: "/tenant-screening-software", label: "Reduce risk", icon: ShieldCheck },
     ] },
   ] },
   // Nov 18 (per Mely — "no enseñar todo lo que tenemos"): Solutions shows 5 needs in plain words, not the
@@ -108,7 +108,7 @@ export const MENU: MenuItem[] = [
     { href: "/billing-payments-software", label: "Get paid on time", note: "Rent, reminders, autopay", icon: Wallet },
     { href: "/online-reservation-software", label: "Fill your spaces", note: "Your live map, booked 24/7", icon: CalendarCheck },
     { href: "/tenant-screening-software", label: "Know who moves in", note: "Applications you can trust", icon: ShieldCheck },
-    { href: "/features#staff", label: "Run the office", note: "Less paper, fewer calls", icon: Zap },
+    { href: "/features#how-it-works", label: "Run the office", note: "Less paper, fewer calls", icon: Zap },
     { href: "/marina-software", label: "Marinas", note: "Slips, fuel dock, dry stack", icon: Anchor },
   ] },
   { label: "Explore", links: [
