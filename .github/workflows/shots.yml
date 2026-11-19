@@ -5,7 +5,12 @@ on:
     inputs:
       shots:
         description: JSON array of shots
-        required: true
+        required: false
+        default: '[]'
+      script:
+        description: script in scripts/shots to run instead (e.g. probe.mjs)
+        required: false
+        default: ''
 permissions:
   contents: write
 jobs:
@@ -14,9 +19,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          mkdir -p /tmp/s && cp scripts/shots/shoot.mjs /tmp/s/ && cd /tmp/s
+          mkdir -p /tmp/s && cp scripts/shots/*.mjs /tmp/s/ && cd /tmp/s
           npm init -y >/dev/null && npm i playwright@1 >/dev/null && npx playwright install --with-deps chromium >/dev/null
-          SHOTS='${{ inputs.shots }}' node shoot.mjs
+          if [ -n "${{ inputs.script }}" ]; then node "${{ inputs.script }}"; else SHOTS='${{ inputs.shots }}' node shoot.mjs; fi
       - run: |
           cd /tmp/s/out && git init -q && git checkout -q -b shots && git add -A
           git -c user.name=bot -c user.email=bot@melyos.io commit -qm shots
