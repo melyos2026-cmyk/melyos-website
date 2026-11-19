@@ -18,7 +18,8 @@ export async function POST(req: NextRequest) {
   await recordLead({ source: "questionnaire", name: String(b.name).slice(0, 120), business: String(b.business || b.company || "").slice(0, 160) || undefined, email, phone: String(b.phone || "").slice(0, 40) || undefined, propertyType: NAMES[b.type], ...geoOf(req.headers) });
   if (!process.env.RESEND_API_KEY) return NextResponse.json({ error: "We couldn't send it. Please email us." }, { status: 500 });
   const sections = (Array.isArray(b.answers) ? b.answers : []).slice(0, 20);
-  const html = `<div style="font-family:Arial,sans-serif;max-width:720px"><h2>Questionnaire — ${NAMES[b.type]}</h2>${sections.map((s: any) =>
+  const partner = /^[a-z0-9-]{3,60}$/.test(String(b.partner || "")) ? String(b.partner) : "";
+  const html = `<div style="font-family:Arial,sans-serif;max-width:720px"><h2>Questionnaire — ${NAMES[b.type]}</h2>${partner ? `<p><b>From Sales Partner:</b> https://melyos.io/card/${partner}</p>` : ""}<p style="color:#0369a1"><b>Show only what they checked under “What do you need help with?” in the demo; anything else is quoted as an extra.</b></p>${sections.map((s: any) =>
     `<h3 style="margin:18px 0 6px;color:#0369a1">${esc(s.title)}</h3><table cellpadding="6" style="border-collapse:collapse;width:100%">${(Array.isArray(s.rows) ? s.rows : []).slice(0, 40).map((r: any) =>
       `<tr style="border-top:1px solid #e2e8f0"><td style="width:45%;vertical-align:top"><b>${esc(r?.[0])}</b></td><td>${esc(r?.[1]) || '<span style="color:#94a3b8">—</span>'}</td></tr>`).join("")}</table>`).join("")}</div>`;
   const res = await fetch("https://api.resend.com/emails", {

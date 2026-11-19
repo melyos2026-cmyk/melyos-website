@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { QType, Section } from "./questions";
 
 export default function QuestionnaireForm({ type, name, sections }: { type: QType; name: string; sections: Section[] }) {
@@ -8,6 +8,9 @@ export default function QuestionnaireForm({ type, name, sections }: { type: QTyp
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [sent, setSent] = useState(false);
+  // Nov 18: sent by a Sales Partner (melyos.io/questionnaire/rv?partner=<card slug>) — the answers carry their name.
+  const [partner, setPartner] = useState("");
+  useEffect(() => { const pt = (new URLSearchParams(window.location.search).get("partner") || "").toLowerCase(); if (/^[a-z0-9-]{3,60}$/.test(pt)) setPartner(pt); }, []);
 
   const set = (id: string, v: string | string[]) => setVals((p) => ({ ...p, [id]: v }));
   const toggle = (id: string, o: string) => {
@@ -28,7 +31,7 @@ export default function QuestionnaireForm({ type, name, sections }: { type: QTyp
     }));
     const r = await fetch("/api/questionnaire", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type, name: vals.name, business: vals.business, email: vals.email, phone: vals.phone, answers, website_hp: vals.website_hp }),
+      body: JSON.stringify({ type, name: vals.name, business: vals.business, email: vals.email, phone: vals.phone, answers, website_hp: vals.website_hp, ...(partner ? { partner } : {}) }),
     }).catch(() => null);
     setBusy(false);
     if (!r || !r.ok) { const j = await r?.json().catch(() => ({})); setErr(j?.error || "We couldn't send it. Please try again."); return; }
