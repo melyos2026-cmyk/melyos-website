@@ -1,13 +1,23 @@
 {
  "state": "PR",
- "added": 187,
+ "added": 197,
  "by_kind": {
-  "m": 88,
+  "m": 90,
   "r": 16,
-  "c": 83
+  "c": 91
  },
- "total": 99,
+ "total": 109,
  "sample": [
+  "Club N\u00e1utico de Guayama",
+  "Marina de Culebra (Dewey)",
+  "Bosque Estatal de Cambalache \u2013 \u00c1rea de acampar",
+  "Bosque Estatal de Maricao \u2013 \u00c1rea de acampar",
+  "Bosque Estatal de Guilarte \u2013 \u00c1rea de acampar",
+  "Bosque Estatal de Toro Negro \u2013 \u00c1rea de acampar",
+  "Balneario Punta Guilarte (Arroyo)",
+  "Balneario de Boquer\u00f3n \u2013 \u00c1rea de acampar",
+  "Balneario Cerro Gordo (Vega Alta)",
+  "Isla de Mona \u2013 \u00c1rea de acampar (DRNA)",
   "El Tinglar Camping",
   "Villa Arenas Camping",
   "Carymar Resorts",
@@ -22,18 +32,80 @@
   "Marina Bar",
   "Villa Nautica RV",
   "Finca Virginia",
-  "Adjuntas Camping Park",
-  "Campamento Camino Verdad y Vida | Adjuntas, Puerto Rico",
-  "Hacienda del Holand\u00e9s",
-  "Casita Vieja Camping & Pool",
-  "Finca Santiago 150r",
-  "Finca Santiago 150r",
-  "Hacienda Barreto",
-  "Campamento Jerusalen",
-  "Malec\u00f3n De Ponce",
-  "Nautico Ponce",
-  "Caribbean Images Marina"
+  "Adjuntas Camping Park"
  ],
+ "names": {
+  "found": [
+   [
+    "Club N\u00e1utico de Guayama",
+    17.94071,
+    -66.19921,
+    "added"
+   ],
+   [
+    "Marina de Culebra (Dewey)",
+    18.22788,
+    -65.6198,
+    "added"
+   ],
+   [
+    "Bosque Estatal de Cambalache \u2013 \u00c1rea de acampar",
+    18.44587,
+    -66.59599,
+    "added"
+   ],
+   [
+    "Bosque Estatal de Maricao \u2013 \u00c1rea de acampar",
+    18.13846,
+    -66.97922,
+    "added"
+   ],
+   [
+    "Bosque Estatal de Guilarte \u2013 \u00c1rea de acampar",
+    18.14713,
+    -66.79863,
+    "added"
+   ],
+   [
+    "Bosque Estatal de Toro Negro \u2013 \u00c1rea de acampar",
+    18.16332,
+    -66.57066,
+    "added"
+   ],
+   [
+    "Balneario Punta Guilarte (Arroyo)",
+    17.96052,
+    -66.04139,
+    "added"
+   ],
+   [
+    "Balneario de Boquer\u00f3n \u2013 \u00c1rea de acampar",
+    18.01683,
+    -67.17239,
+    "added"
+   ],
+   [
+    "Balneario Cerro Gordo (Vega Alta)",
+    18.48187,
+    -66.33931,
+    "added"
+   ],
+   [
+    "Isla de Mona \u2013 \u00c1rea de acampar (DRNA)",
+    18.07961,
+    -67.93714,
+    "added"
+   ]
+  ],
+  "not_found": [
+   "Ponce Yacht and Fishing Club",
+   "Club Nautico de Arecibo",
+   "Villa Pesquera, Ponce",
+   "Puerto Real marina Cabo Rojo",
+   "Club Nautico Mayaguez",
+   "Monte del Estado Maricao"
+  ]
+ },
  "release": "2026-11-18.0",
  "error": null,
  "overture": {
