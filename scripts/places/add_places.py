@@ -103,6 +103,8 @@ if release:
             AND regexp_matches({cat}, '(^|\\|)(rv_park|campground|marina|caravan_site|camp_site|rv_and_campground)(\\||$)')
             AND {conf} >= 0.7
         """
+        if ST == "PR":  # Nov 19 (per Mely — "si faltan añade todo lo que hay"): also places whose NAME says marina/camping, any category
+            q = q.replace("AND regexp_matches(" + cat, "AND (regexp_matches(lower(names.primary), '(marina|n[aá]utico|yacht|camping|campground|acampar|campamento|glamping|rv park|motorhome|casetas)') OR regexp_matches(" + cat, 1).replace(f"AND {conf} >= 0.7", f") AND {conf} >= 0.6", 1)
         top = con.execute(f"""SELECT {cat} AS c, count(*) n FROM {src} WHERE bbox.xmin BETWEEN {x0} AND {x1} AND bbox.ymin BETWEEN {y0} AND {y1}
             AND regexp_matches({cat}, '(rv|camp|marina|caravan)') GROUP BY 1 ORDER BY 2 DESC LIMIT 40""").fetchall()
         info["category_values"] = [[c, n] for c, n in top]
@@ -115,7 +117,7 @@ if release:
             name = name.strip()
             if len(name) < 4 or BAD.search(name):
                 continue
-            k = "m" if "marina" in c else "r" if re.search(r"rv_park|caravan", c) else "c"
+            k = "m" if ("marina" in c or re.search(r"(?i)marina|n[aá]utico|yacht", name)) else "r" if re.search(r"rv_park|caravan", c) or re.search(r"(?i)rv park|motorhome", name) else "c"
             w = w or ""
             if w and not w.startswith("http"):
                 w = "https://" + w
