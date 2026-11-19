@@ -1,4 +1,4 @@
-import { NAV } from "./data";
+import { NAV, SOLUTION_PAGES } from "./data";
 import { Mail, Phone } from "lucide-react";
 
 export default function SiteFooter() {
@@ -6,7 +6,7 @@ export default function SiteFooter() {
     <>
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-slate-50">
-        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-4 lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-5 lg:px-8">
           <div className="md:col-span-2">
             <img src="/melyos-logo-trimmed.png" alt="MelyOS" className="h-14 w-auto" />
             <p className="mt-4 max-w-md leading-7 text-slate-600">Property management software for RV parks, marinas, campgrounds, communities and storage properties. MelyOS LLC, Kissimmee, Florida.</p>
@@ -21,6 +21,12 @@ export default function SiteFooter() {
             <p className="font-black">Platform</p>
             <div className="mt-4 flex flex-col gap-3 text-sm text-slate-600">
               {NAV.map(([h, l]) => <a key={h} href={h}>{l === "Platform" ? "Features" : l}</a>)}
+            </div>
+          </div>
+          <div>
+            <p className="font-black">Solutions</p>
+            <div className="mt-4 flex flex-col gap-3 text-sm text-slate-600">
+              {SOLUTION_PAGES.map(([h, l]) => <a key={h} href={h}>{l}</a>)}
             </div>
           </div>
           <div>

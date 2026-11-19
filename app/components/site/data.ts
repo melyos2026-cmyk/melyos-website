@@ -1,6 +1,6 @@
 // Oct 21 (per Mely): shared content for melyos.io pages. Only features that exist; no prices.
 import type { LucideIcon } from "lucide-react";
-import { Fuel, Ship, Target, Wallet, Zap, HelpCircle, Info, LifeBuoy, Building2, Map, CalendarCheck, CreditCard, UserRound, PenLine, ShieldCheck, ScanBarcode, MessagesSquare, Wrench, Users, BarChart3, Bot, Caravan, Anchor, Tent, Home as HomeIcon, Warehouse, Landmark, Lock, Banknote, FileCheck2, MapPin, Mail, MessageCircle, BadgeCheck, Receipt, Scale, Gift } from "lucide-react";
+import { Target, Wallet, Zap, HelpCircle, LifeBuoy, Building2, Map, CalendarCheck, CreditCard, UserRound, PenLine, ShieldCheck, ScanBarcode, MessagesSquare, Wrench, Users, BarChart3, Bot, Caravan, Anchor, Tent, Home as HomeIcon, Warehouse, Landmark, Lock, Banknote, FileCheck2, MapPin, Mail, MessageCircle, BadgeCheck, Receipt, Scale, Gift } from "lucide-react";
 export { Map, CalendarCheck, CreditCard, UserRound, PenLine, ShieldCheck, ScanBarcode, MessagesSquare, Wrench, Users, BarChart3, Bot, Caravan, Anchor, Tent, HomeIcon, Warehouse, Landmark, Lock, Banknote, FileCheck2, MapPin, Mail, MessageCircle, BadgeCheck, Receipt, Scale };
 export type { LucideIcon };
 export const eyebrow = "mb-3 text-sm font-black uppercase tracking-[0.18em] text-[#08B8D8]";
@@ -102,21 +102,14 @@ export const MENU: MenuItem[] = [
       { href: "/features#screening", label: "Reduce risk", icon: ShieldCheck },
     ] },
   ] },
-  { label: "Solutions", wide: true, links: [
-    { href: "/interactive-property-map", label: "Interactive Map", note: "Every space, live", icon: Map },
-    { href: "/online-reservation-software", label: "Online Reservations", note: "Book and pay 24/7", icon: CalendarCheck },
-    { href: "/billing-payments-software", label: "Billing & Payments", note: "Rent, invoices, utilities", icon: CreditCard },
-    { href: "/contract-e-signature-software", label: "Contracts & E-signature", note: "Signed online, on file", icon: PenLine },
-    { href: "/customer-portal-software", label: "Customer Portal", note: "Balance, pay, documents", icon: UserRound },
-    { href: "/tenant-screening-software", label: "Applications & Screening", note: "Background checks", icon: BadgeCheck },
-    { href: "/point-of-sale-software", label: "Point of Sale", note: "Store, propane, barcodes", icon: ScanBarcode },
-    { href: "/marina-fuel-dock-software", label: "Fuel Dock", note: "Pumps, tanks, sales", icon: Fuel },
-    { href: "/dry-stack-software", label: "Dry Stack", note: "Launch requests", icon: Ship },
-    { href: "/features#messages", label: "Messages & Notices", note: "One or a whole group", icon: MessagesSquare },
-    { href: "/features#maintenance", label: "Maintenance", note: "Requests with photos", icon: Wrench },
-    { href: "/features#staff", label: "Staff & Daily Close", note: "Roles, shifts, drawer", icon: Users },
-    { href: "/features#reports", label: "Reports & QuickBooks", note: "Revenue, tax, export", icon: BarChart3 },
-    { href: "/ai-assistant-for-rv-parks-and-marinas", label: "Mely AI Assistant", note: "Answers guests 24/7", icon: Bot },
+  // Nov 18 (per Mely — "no enseñar todo lo que tenemos"): Solutions shows 5 needs in plain words, not the
+  // full list of tools. The tool pages stay (Google brings visitors to them) and are linked in the footer.
+  { label: "Solutions", links: [
+    { href: "/billing-payments-software", label: "Get paid on time", note: "Rent, reminders, autopay", icon: Wallet },
+    { href: "/online-reservation-software", label: "Fill your spaces", note: "Your live map, booked 24/7", icon: CalendarCheck },
+    { href: "/tenant-screening-software", label: "Know who moves in", note: "Applications you can trust", icon: ShieldCheck },
+    { href: "/features#staff", label: "Run the office", note: "Less paper, fewer calls", icon: Zap },
+    { href: "/marina-software", label: "Marinas", note: "Slips, fuel dock, dry stack", icon: Anchor },
   ] },
   { label: "Explore", links: [
     { href: "/explore/marinas", label: "Search Marinas", note: "Slips & moorings by state", icon: Anchor },
@@ -132,4 +125,12 @@ export const MENU: MenuItem[] = [
   ] },
   { label: "Pricing", href: "/pricing" },
   { label: "About", href: "/about" },
+];
+
+// Nov 18: the tool pages, linked only from the footer (for Google), not from the menu.
+export const SOLUTION_PAGES: [string, string][] = [
+  ["/interactive-property-map", "Interactive map"], ["/online-reservation-software", "Online reservations"], ["/billing-payments-software", "Billing & payments"],
+  ["/contract-e-signature-software", "Contracts & e-signature"], ["/customer-portal-software", "Customer portal"], ["/tenant-screening-software", "Tenant screening"],
+  ["/point-of-sale-software", "Point of sale"], ["/marina-fuel-dock-software", "Marina fuel dock"], ["/dry-stack-software", "Dry stack"],
+  ["/ai-assistant-for-rv-parks-and-marinas", "AI assistant"],
 ];
