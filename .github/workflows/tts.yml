@@ -1,0 +1,24 @@
+# Nov 19 (per Mely): Puerto Rico voice (es-PR-KarinaNeural) for the PR promo video. Results to branch "tts".
+name: TTS
+on:
+  workflow_dispatch:
+    inputs:
+      lines: { description: "lines file in scripts/tts", default: "lines_pr.json" }
+      voice: { description: "voice", default: "es-PR-KarinaNeural" }
+permissions: { contents: write }
+jobs:
+  tts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install edge-tts
+      - run: |
+          mkdir -p /tmp/o && python3 - <<'PY'
+          import json, subprocess
+          for sid, t in json.load(open("scripts/tts/${{ inputs.lines }}")):
+              subprocess.run(["edge-tts", "--voice", "${{ inputs.voice }}", "--rate=-4%", "--text", t, "--write-media", f"/tmp/o/{sid}.mp3"], check=True)
+          PY
+      - run: |
+          cd /tmp/o && git init -q && git checkout -q -b tts && git add -A
+          git -c user.name=bot -c user.email=bot@melyos.io commit -qm tts
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" tts
