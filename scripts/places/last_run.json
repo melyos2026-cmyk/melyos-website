@@ -1,38 +1,38 @@
 {
  "state": "PR",
- "added": 69,
+ "added": 187,
  "by_kind": {
-  "m": 17,
-  "r": 13,
-  "c": 39
+  "m": 88,
+  "r": 16,
+  "c": 83
  },
- "total": 75,
+ "total": 191,
  "sample": [
+  "El Tinglar Camping",
+  "Villa Arenas Camping",
   "Carymar Resorts",
   "Villa Nautica RV",
   "Campers en Combate Alquiler",
+  "Brisa Marina Beach House",
   "Bah\u00eda Azul",
+  "Posada Fantas\u00eda Marina Boquer\u00f3n",
+  "Posada Fantasia Marina",
+  "Marina Boqueron",
+  "Madre Tierra Glamping",
+  "Marina Bar",
   "Villa Nautica RV",
+  "Finca Virginia",
   "Adjuntas Camping Park",
+  "Campamento Camino Verdad y Vida | Adjuntas, Puerto Rico",
   "Hacienda del Holand\u00e9s",
+  "Casita Vieja Camping & Pool",
   "Finca Santiago 150r",
   "Finca Santiago 150r",
+  "Hacienda Barreto",
+  "Campamento Jerusalen",
   "Malec\u00f3n De Ponce",
-  "Caribbean Images Marina",
-  "Campamento Alaya PB",
-  "Varadero Puerto Viejo",
-  "Sunset RV at Parguera",
-  "Villa Playita Col\u00f3n",
-  "Marina Sur Salinas PR",
-  "Bahia De Jobos - Guayama, PR",
-  "Villas Termales Motorhome and RV Park",
-  "Espadas View Aibonito Camping",
-  "Caba\u00f1a Recordando El Ayer",
-  "Malec\u00f3n De Arroyo",
-  "Hacienda El Porvenir",
-  "Hacienda Bosque Taino",
-  "Gozalandia Waterfalls Campground",
-  "Agro-Camping San Sebasti\u00e1n"
+  "Nautico Ponce",
+  "Caribbean Images Marina"
  ],
  "release": "2026-11-18.0",
  "error": null,
@@ -219,6 +219,6 @@
     130
    ]
   ],
-  "candidates": 81
+  "candidates": 254
  }
 }
