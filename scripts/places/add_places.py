@@ -63,6 +63,30 @@ if os.path.exists(man):
     for r in json.load(open(man)):
         add(r)
 
+# 1b) Nov 19 (per Mely — "añade todos los que hay"): known places Overture misses, looked up by NAME on
+# OpenStreetMap's Nominatim (1 request a second, first hit inside the state's box). File: names_{ST}.json =
+# [[kind, name shown on Explore, search text], ...]. A name that isn't found is just skipped (see last_run.json).
+nm = os.path.join(ROOT, "scripts", "places", f"names_{ST}.json")
+info_names = {"found": [], "not_found": []}
+if os.path.exists(nm):
+    import time, urllib.parse, urllib.request
+    x0, y0, x1, y1 = BBOX
+    for k, shown, qtext in json.load(open(nm)):
+        url = "https://nominatim.openstreetmap.org/search?" + urllib.parse.urlencode({"q": qtext, "format": "json", "limit": 3, "viewbox": f"{x0},{y1},{x1},{y0}", "bounded": 1})
+        try:
+            hits = json.load(urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "MelyOS-Explore/1.0 (info@melyos.io)"}), timeout=30))
+        except Exception as e:
+            hits = []; print("nominatim failed:", qtext, e, flush=True)
+        time.sleep(1.1)
+        if not hits:
+            info_names["not_found"].append(qtext); continue
+        h = hits[0]; la, lo = round(float(h["lat"]), 5), round(float(h["lon"]), 5)
+        slug = re.sub(r"[^a-z0-9]+", "-", shown.lower()).strip("-")[:40]
+        before = len(added)
+        add([k, shown, la, lo, "", "", "", "nm-" + slug])
+        info_names["found"].append([shown, la, lo, "added" if len(added) > before else "already listed"])
+    print("names:", json.dumps(info_names), flush=True)
+
 # 2) Overture Maps places
 release = None
 try:
@@ -152,6 +176,6 @@ index = json.load(open(ip))
 index[ST] = {**index.get(ST, {}), **{k: sum(1 for r in rows if r[0] == k) for k in ("m", "r", "c")}}
 json.dump(index, open(ip, "w"), separators=(",", ":"), sort_keys=True)
 stats = {"state": ST, "added": len(added), "by_kind": {k: sum(1 for r in added if r[0] == k) for k in "mrc"}, "total": len(rows),
-         "sample": [r[1] for r in added[:25]], "release": release, "error": err, "overture": info}
+         "sample": [r[1] for r in added[:25]], "names": info_names, "release": release, "error": err, "overture": info}
 json.dump(stats, open(os.path.join(ROOT, "scripts", "places", "last_run.json"), "w"), indent=1)
 print(json.dumps(stats, indent=1))
