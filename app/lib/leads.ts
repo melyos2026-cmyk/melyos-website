@@ -95,7 +95,7 @@ export async function sendLead(lead: Lead) {
       subject: `New MelyOS lead (${lead.source === "mely_chat" ? "Mely chat" : lead.source === "questionnaire" ? "questionnaire" : lead.source === "referral" ? "referral" : "demo form"}): ${String(lead.business || lead.name || "").slice(0, 80)}`,
       html: `<div style="font-family:Arial,sans-serif"><h2>New lead from melyos.io</h2><table cellpadding="6">${rows
         .filter(([, v]) => v !== undefined && v !== null && String(v).trim() !== "")
-        .map(([k, v]) => `<tr><td><b>${k}</b></td><td>${esc(v)}</td></tr>`)
+        .map(([k, v]) => `<tr><td style="vertical-align:top"><b>${k}</b></td><td>${esc(v).replace(/\n/g, "<br>")}</td></tr>`)
         .join("")}</table></div>`,
     }),
   });

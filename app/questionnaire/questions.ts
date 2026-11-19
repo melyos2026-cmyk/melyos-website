@@ -1,3 +1,4 @@
+import { NEEDS } from "../lib/needs";
 // Oct 22 (per Mely): MelyOS onboarding questionnaire — what we need to know to set up a
 // property and send an estimate. One shared part + questions for each type of property.
 // "What system do you use today?" is an open, blank answer (no names suggested).
@@ -154,34 +155,13 @@ const shared = (t: QType): Section[] => [
   {
     title: "What would you like?",
     fields: [
+      // Nov 18 (per Mely): needs in plain words, not our module list — we quote and show only what they need.
       {
-        id: "features", label: "Check everything you'd like to have", kind: "multi",
-        hint: "Every module is included in your MelyOS plan at no extra cost. Turn on what you need now; add the rest whenever you're ready.",
-        options: [
-          "Interactive map of the property",
-          "Online reservations and payments",
-          "Automatic invoices and late fees",
-          "Autopay",
-          "Contracts or leases signed online",
-          "Customer portal (pay, documents, requests)",
-          "Receipts and statements customers can print (by month, year or day)",
-          ...(t === "marina" ? ["Fuel dock sales and tank levels", "Ship store point of sale", "Ship store online (cart, pickup or delivery to the slip)", "Dry stack launch requests"] : ["Point of sale (store, propane)", "Store online (cart, pickup or delivery to the site)"]),
-          ...(t === "rv" ? ["Applications with background checks", "Meter readings and utility billing"] : []),
-          "Rentals & experiences (golf carts, boats, kayaks, tours, charters) booked online",
-          `Concierge requests (ice, provisions, catering, cleaning, crew${t === "marina" ? ", airport rides" : ""}) charged to the account`,
-          "Careers page for crew / staff applicants (with optional background checks)",
-          "Restaurant: menu, delivery links (Uber Eats, DoorDash, Grubhub) and table reservations",
-          `Marketplace where ${t === "marina" ? "boaters" : t === "campground" ? "guests" : "residents"} can post items for sale (AI-moderated)`,
-          "Messages and notices to customers",
-          "Maintenance requests",
-          "Staff logins with permissions",
-          "Shift and daily close, collections reports",
-          "Reports and QuickBooks export",
-          "Keep my current website: buttons, links or an embedded map",
-          "AI assistant (Mely) for customers and staff",
-        ],
+        id: "features", label: "What do you need help with?", kind: "multi",
+        hint: "Your quote covers what you check here. Anything extra later is quoted separately.",
+        options: NEEDS.filter((n) => t === "marina" ? n.id !== "screen" : true).map((n) => n.label),
       },
-      { id: "features_other", label: "Anything else you need that isn't on the list?", kind: "textarea", placeholder: "Tell us how your business works and we'll fit MelyOS to it." },
+      { id: "features_other", label: "Anything else you need?", kind: "textarea", placeholder: "Tell us how your business works and we'll fit MelyOS to it." },
     ],
   },
   {

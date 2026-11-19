@@ -3,9 +3,12 @@
 import { useEffect, useState } from "react";
 import { Mail, MessageCircle, h2 } from "./data";
 import { Phone } from "lucide-react";
+import { NEEDS } from "../../lib/needs";
 
 export default function DemoSection() {
-  const [demo, setDemo] = useState({ name: "", business: "", email: "", phone: "", propertyType: "", spaces: "" });
+  const [demo, setDemo] = useState({ name: "", business: "", email: "", phone: "", propertyType: "", spaces: "", other: "" });
+  // Nov 18 (per Mely): the prospect tells us what they need first — the demo shows only that.
+  const [needs, setNeeds] = useState<string[]>([]);
   const [demoState, setDemoState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [demoError, setDemoError] = useState("");
   const [claim, setClaim] = useState<string | null>(null);
@@ -24,10 +27,11 @@ export default function DemoSection() {
   }, []);
   async function submitDemo(event: React.FormEvent) {
     event.preventDefault();
+    if (!needs.length && !demo.other.trim()) { setDemoError("Please check at least one thing you need help with."); setDemoState("error"); return; }
     setDemoState("sending");
     setDemoError("");
     try {
-      const r = await fetch("/api/demo-request", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...demo, ...(claim ? { claim } : {}), ...(partner ? { partner } : {}) }) });
+      const r = await fetch("/api/demo-request", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...demo, needs, ...(claim ? { claim } : {}), ...(partner ? { partner } : {}) }) });
       const j = await r.json();
       if (!r.ok) throw new Error(j.error || "Something went wrong.");
       setDemoState("sent");
@@ -45,7 +49,7 @@ export default function DemoSection() {
             <div>
               <p className="mb-3 text-sm font-black uppercase tracking-[0.18em] text-[#39d5ee]">Book a free demo</p>
               <h2 className={h2}>See MelyOS working for your property</h2>
-              <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">Tell us about your property. We will show you the tools that matter to you and send you a custom quote, with no obligation.</p>
+              <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">Tell us what you need. Your demo is built around your property and shows only what solves it. Then you get a custom quote, with no obligation.</p>
               <div className="mt-8 space-y-2 text-slate-200">
                 <p className="flex items-center gap-2"><Mail className="h-5 w-5 text-[#39d5ee]" aria-hidden /><a className="font-bold underline" href="mailto:info@melyos.io">info@melyos.io</a></p>
                 <p className="flex items-center gap-2"><Phone className="h-5 w-5 text-[#39d5ee]" aria-hidden /><a className="font-bold underline" href="tel:+14075646640">(407) 564-6640</a></p>
@@ -67,6 +71,18 @@ export default function DemoSection() {
                     <option>RV Park</option><option>Marina</option><option>Campground</option><option>Mobile Home Community</option><option>RV / Boat Storage</option><option>Government property</option><option>Other</option>
                   </select>
                   <input type="number" value={demo.spaces} onChange={(e) => setDemo({ ...demo, spaces: e.target.value })} placeholder="Number of lots, sites or slips" className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-400" />
+                  <fieldset className="rounded-xl border border-slate-200 px-4 py-3">
+                    <legend className="px-1 text-sm font-black">What do you need help with?</legend>
+                    <div className="mt-1 grid max-h-64 gap-1.5 overflow-y-auto pr-1">
+                      {NEEDS.map((n) => (
+                        <label key={n.id} className="flex cursor-pointer items-start gap-2 text-sm leading-5">
+                          <input type="checkbox" className="mt-0.5 h-4 w-4 accent-[#08B8D8]" checked={needs.includes(n.id)} onChange={() => setNeeds((v) => (v.includes(n.id) ? v.filter((x) => x !== n.id) : [...v, n.id]))} />
+                          <span>{n.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <input type="text" value={demo.other} onChange={(e) => setDemo({ ...demo, other: e.target.value })} placeholder="Something else? (optional)" className="mt-2 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-cyan-400" />
+                  </fieldset>
                   <button type="submit" disabled={demoState === "sending"} className="rounded-xl bg-[#08B8D8] px-6 py-4 font-black text-white transition hover:bg-[#079db9] disabled:opacity-60">{demoState === "sending" ? "Sending…" : "Request my demo"}</button>
                   {demoState === "error" && <p className="text-center text-sm text-red-600">{demoError}</p>}
                 </div>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendLead, tooMany, geoOf } from "@/app/lib/leads";
+import { needLabel } from "@/app/lib/needs";
 
 // Oct 20 (per Mely): the "Request My Demo" form used to go nowhere — it now
 // emails the lead to MelyOS.
@@ -22,7 +23,9 @@ export async function POST(req: NextRequest) {
       propertyType: String(b.propertyType || "").slice(0, 60),
       spaces: String(b.spaces || "").slice(0, 10),
       // Oct 21 (per Mely): MelyOS Explore "Claim it free" requests.
-      message: [b.claim ? `Claim request from MelyOS Explore: ${String(b.claim).slice(0, 160)}` : "",
+      // Nov 18 (per Mely): what they need — the demo shows only this; anything more is quoted as extra.
+      message: [(Array.isArray(b.needs) && b.needs.length) || String(b.other || "").trim() ? `NEEDS (show only this in the demo):\n${(Array.isArray(b.needs) ? b.needs : []).slice(0, 15).map((n: any) => needLabel(String(n))).filter(Boolean).map((l: string) => "• " + l).join("\n")}${String(b.other || "").trim() ? "\n• Other: " + String(b.other).slice(0, 300) : ""}` : "",
+        b.claim ? `Claim request from MelyOS Explore: ${String(b.claim).slice(0, 160)}` : "",
         // Nov 18: booked from a Sales Partner's digital card (melyos.io/card/<slug>) — the lead is that partner's
         /^[a-z0-9-]{3,60}$/.test(String(b.partner || "")) ? `From Sales Partner card: https://melyos.io/card/${b.partner}` : ""].filter(Boolean).join("\n") || undefined,
     });

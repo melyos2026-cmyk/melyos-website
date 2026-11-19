@@ -6,6 +6,7 @@ import SiteHeader from "./components/site/Header";
 import SiteFooter from "./components/site/Footer";
 import DemoSection from "./components/site/DemoSection";
 import VideoSection from "./components/site/VideoSection";
+import ExperienceSection from "./components/site/ExperienceSection";
 import { HomeAudienceSection, HomePlatformSection, SeeItLiveSection, HowItWorksSection, TrustSection, ServicesSection, HomePricingBand, FaqSection, HOME_FAQ } from "./components/site/Sections";
 import { cta } from "./components/site/data";
 
@@ -44,6 +45,7 @@ export default function Home() {
       {/* Oct 29 (per Mely): reorganized home. Full feature lists moved to the detail pages
           (/features, /rv-park-software, /marina-software, /pricing); nothing was removed. */}
       <VideoSection />
+      <ExperienceSection />
       <HomeAudienceSection />
       <HomePlatformSection />
       <ServicesSection />
