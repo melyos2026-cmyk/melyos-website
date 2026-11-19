@@ -53,7 +53,7 @@ export default function Page() {
           {/* Nov 19 (per Mely): the travelers video (Aloha RV Park live map) instead of a still photo */}
           <div className="relative order-first mx-auto w-full max-w-[230px] sm:max-w-[280px] lg:order-last lg:max-w-[330px]">
             <div className="absolute -inset-5 rounded-[36px] bg-cyan-400/20 blur-3xl" />
-            <video className="relative aspect-[9/16] w-full rounded-[28px] border border-white/15 bg-[#06182e] object-cover shadow-2xl" src="/video/melyos-explore-travelers.mp4" poster="/video/melyos-explore-travelers.jpg" controls playsInline preload="metadata" aria-label="How MelyOS Explore works: find a place, pick your exact site and request it" />
+            <video className="relative aspect-[9/16] w-full rounded-[28px] border border-white/15 bg-[#06182e] object-cover shadow-2xl" src="/video/melyos-explore-travelers.mp4?v=2" poster="/video/melyos-explore-travelers.jpg" controls playsInline preload="metadata" aria-label="How MelyOS Explore works: find a place, pick your exact site and request it" />
           </div>
         </div>
       </section>
