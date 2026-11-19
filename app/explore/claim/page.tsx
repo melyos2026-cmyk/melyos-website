@@ -19,6 +19,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ s
         {!row ? <><h1 className="mt-1 text-3xl font-black">Find your property first</h1><p className="mt-3 text-slate-600">Open your state on the <a className="font-bold text-[#0284c7] underline" href="/explore">Explore map</a>, tap your marina, RV park or campground and choose "Claim it free".</p></>
           : <><h1 className="mt-1 text-3xl font-black">Claim {nice(row[1])}</h1>
             <p className="mt-2 text-slate-600">{KIND[row[0]].label} · {row[4] ? `${row[4]}, ` : ""}{STATES[st][0]}. Free. After we confirm it with you (1–2 business days), your info shows on the map and {row[0] === "m" ? "slip" : "site"} requests come straight to your email.</p>
+            {/* Nov 19 (per Mely): the owners video, so they see what claiming does for them */}
+            <details className="mt-4 rounded-2xl bg-white p-4 ring-1 ring-slate-200" open>
+              <summary className="cursor-pointer text-sm font-black text-[#0F2A4A]">See how it works (40 seconds)</summary>
+              <video className="mx-auto mt-3 aspect-[9/16] w-full max-w-[260px] rounded-2xl bg-black" src="/video/melyos-explore-owners.mp4" poster="/video/melyos-explore-owners.jpg" controls playsInline preload="metadata" />
+            </details>
             <ClaimForm state={st} listingKey={row[7]} phone={row[5]} website={row[6]} kind={row[0]} /></>}
       </div></section>
       <SiteFooter />

@@ -50,9 +50,10 @@ export default function Page() {
           <div className="mt-8 flex flex-wrap items-center gap-3"><StatePicker /><a href="/explore/us" className="rounded-xl bg-[#08B8D8] px-6 py-3 font-black text-white transition hover:bg-[#079db9]">See the whole U.S. map</a><AccountPill /></div>
           <p className="mt-5 max-w-2xl text-slate-300">Boaters, RVers and campers: create a free account to save places, keep your boat or RV on file, send slip and site requests in one tap, and leave reviews.</p>
           </div>
-          <div className="relative hidden lg:block">
+          {/* Nov 19 (per Mely): the travelers video (Aloha RV Park live map) instead of a still photo */}
+          <div className="relative mx-auto w-full max-w-[300px] lg:max-w-[330px]">
             <div className="absolute -inset-5 rounded-[36px] bg-cyan-400/20 blur-3xl" />
-            <img src="/hero-marina-2026.jpg" alt="" className="relative aspect-[16/10] w-full rounded-[28px] border border-white/15 object-cover shadow-2xl" />
+            <video className="relative aspect-[9/16] w-full rounded-[28px] border border-white/15 bg-[#06182e] object-cover shadow-2xl" src="/video/melyos-explore-travelers.mp4" poster="/video/melyos-explore-travelers.jpg" controls playsInline preload="metadata" aria-label="How MelyOS Explore works: find a place, pick your exact site and request it" />
           </div>
         </div>
       </section>
