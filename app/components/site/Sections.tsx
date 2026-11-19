@@ -99,7 +99,7 @@ export function SeeItLiveSection() {
           <div className="mx-auto mb-12 max-w-3xl text-center">
             <p className={eyebrow}>See it live</p>
             <h2 className={h2}>A private live demo for your property type</h2>
-            <p className="mt-5 text-lg leading-8 text-slate-600">After a short call, we give you access to a working MelyOS website and office with sample data: pick a space on the map, sign in as a customer, sign a contract, and see the admin your staff would use.</p>
+            <p className="mt-5 text-lg leading-8 text-slate-600">Tell us what your property needs, and we show you a live demo of exactly that, with your kind of property and sample data.</p>
           </div>
           <div className="grid gap-6 md:grid-cols-2">
             {[
@@ -333,7 +333,7 @@ export function HomeAudienceSection() {
           Also for {industries.slice(3).map(([, t]) => t).join(" · ")}. <a href="/features#industries" className="font-bold text-[#079db9] hover:underline">See all →</a>
         </p>
         <div className="mt-10 grid grid-cols-2 gap-5 border-t border-slate-200 pt-8 text-center md:grid-cols-4">
-          {[["All in one place", "Map, bookings, billing and portal"], ["24/7 online", "Customers book and pay anytime"], ["Any language", "Mely answers your guests in theirs"], ["Built for growth", "One property or many"]].map(([t, s]) => (
+          {[["Built around you", "Only what your property needs"], ["24/7 online", "Customers book and pay anytime"], ["Any language", "Mely answers your guests in theirs"], ["Built for growth", "One property or many"]].map(([t, s]) => (
             <div key={t}><p className="font-black">{t}</p><p className="mt-1 text-sm text-slate-500">{s}</p></div>
           ))}
         </div>

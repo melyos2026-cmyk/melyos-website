@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import SiteHeader from "../components/site/Header";
 import SiteFooter from "../components/site/Footer";
 import DemoSection from "../components/site/DemoSection";
-import { PageHero, CapabilityGrid, RvMarinaSection, ServicesSection, HowItWorksSection, PortalSection, FaqSection } from "../components/site/Sections";
+import {PageHero, CapabilityGrid, HowItWorksSection, FaqSection, OnePlanSection } from "../components/site/Sections";
+import ExperienceSection from "../components/site/ExperienceSection";
 
 export const metadata: Metadata = {
   title: "RV Park Management Software",
@@ -10,19 +11,12 @@ export const metadata: Metadata = {
   alternates: { canonical: "/rv-park-software" },
 };
 
+// Nov 18 (per Mely — "no enseñar todo lo que hacemos"): outcomes, not the list of modules.
 const items: [string, string][] = [
-  ["Interactive lot map", "Your real park drawn as a live map. Guests pick their exact lot and dates; your office sees who is where."],
-  ["Online reservations", "Nightly, weekly and monthly stays with seasonal pricing. The calendar never double-books a lot."],
-  ["Applications & background checks", "Long-term residents apply online with occupants, vehicles and pets, and screening is ordered from the application."],
-  ["Resident portal", "Residents pay rent, set up autopay, download documents, send maintenance and move-out requests."],
-  ["Rent & utility billing", "Recurring rent, electric meter readings (any meter type), laundry, late fees and statements."],
-  ["Leases & e-signature", "Lease documents generated from your terms and signed online, saved to the resident's file."],
-  ["Propane sales", "Sell propane at the office or online with QR pickup codes and per-product tax settings."],
-  ["Rent-to-own & real estate", "Payment plans with progress tracking and a bill of sale on payoff, plus listings for homes for sale."],
-  ["Storage lots & events", "RV and boat storage lots, park events calendar, and notices to every resident."],
-  ["Send to Collections", "Send a former resident's overdue account to a licensed collections agency, one at a time, and track the status and recoveries."],
-  ["Waitlist", "When the park is full, people join the waitlist online and you contact them in order when a lot opens."],
-  ["Staff, reports & QuickBooks", "Each employee has their own login and closes their shift. Revenue and tax reports with Export for QuickBooks Online."],
+  ["Rent arrives on time", "Reminders, autopay and receipts go out on their own. You stop chasing."],
+  ["Your lots stay full", "Guests find you and book their exact spot, day and night."],
+  ["You know who moves in", "Every new resident is checked before they move in."],
+  ["Less office, more life", "Fewer calls, no paper, and your whole park clear at a glance."],
 ];
 
 export default function Page() {
@@ -30,11 +24,10 @@ export default function Page() {
     <main className="min-h-screen overflow-x-hidden bg-white text-[#071A33]">
       <SiteHeader />
       <PageHero kicker="RV park management software" title="Run your RV park from one live map" text="Reservations, long-term residents, billing and the front office in one platform, built around a map of your own park and set up for you by our team." image="/hero-interactive-map.png" imageAlt="Interactive RV park lot map on a tablet" />
-      <CapabilityGrid kicker="Built for RV parks" title="Everything your park office handles" items={items} />
-      <RvMarinaSection only="rv-parks" />
-      <PortalSection />
-      <ServicesSection />
+      <ExperienceSection />
+      <CapabilityGrid kicker="What changes for you" title="Your park, running smoother" items={items} />
       <HowItWorksSection />
+      <OnePlanSection />
       <FaqSection items={[
         ["Does it work for both short stays and long-term residents?", "Yes. Nightly, weekly and monthly reservations live on the same map as your long-term residents and their leases."],
         ["Can residents pay online?", "Yes. Residents pay rent and other charges by card from the portal, can set up autopay, and the money goes to your own bank account."],

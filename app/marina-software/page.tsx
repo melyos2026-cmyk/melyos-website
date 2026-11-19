@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import SiteHeader from "../components/site/Header";
 import SiteFooter from "../components/site/Footer";
 import DemoSection from "../components/site/DemoSection";
-import { PageHero, CapabilityGrid, RvMarinaSection, ServicesSection, HowItWorksSection, PortalSection, FaqSection } from "../components/site/Sections";
+import {PageHero, CapabilityGrid, HowItWorksSection, FaqSection, OnePlanSection } from "../components/site/Sections";
+import ExperienceSection from "../components/site/ExperienceSection";
 
 export const metadata: Metadata = {
   title: "Marina Management Software",
@@ -10,19 +11,12 @@ export const metadata: Metadata = {
   alternates: { canonical: "/marina-software" },
 };
 
+// Nov 18 (per Mely — "no enseñar todo lo que hacemos"): outcomes, not the list of modules.
 const items: [string, string][] = [
-  ["Interactive slip map", "Wet slips, lift slips and dry storage on a live map. Boaters filter by length and reserve online."],
-  ["Rates per slip or per foot", "Annual, seasonal, monthly, weekly and daily rates, with resident and non-resident pricing."],
-  ["Contracts & renewals", "Slip agreements signed online with the price from your rates, and annual renewals sent in one click."],
-  ["Fuel dock", "Sell fuel by gallon or dollar amount, track pumps and tank levels, deliveries and low-fuel alerts."],
-  ["Ship store", "Point of sale with barcode scanning, inventory, low-stock alerts and charge-to-account."],
-  ["Dry stack launches", "Boaters ask for their boat in the water from their phone; your team works from a launch board."],
-  ["Boater accounts", "Boats, slip, balance, invoices, contracts and messages in one place for every boat owner."],
-  ["Waitlist & event rooms", "Waitlist with slip offers, meeting-room bookings, insurance and registration expirations."],
-  ["Built for municipal marinas", "Shift close-out per employee and a record for every payment, ready for city and county audits."],
-  ["Billing & autopay", "Monthly dockage invoices, metered electric, late fees and statements, paid by card or bank (ACH) with autopay."],
-  ["Send to Collections", "Send a former boater's overdue account to a licensed collections agency, one at a time, and track the status and recoveries."],
-  ["Reports & QuickBooks", "Revenue, fuel and tax reports, with Export for QuickBooks Online and printable PDFs with your logo."],
+  ["Slips that book themselves", "Boaters pick their slip and pay online, at any hour."],
+  ["Payments without chasing", "Slip fees, reminders and receipts run on their own."],
+  ["Your docks at a glance", "Know who is in every slip and what is owed, anytime."],
+  ["Ready for public marinas", "Clear records and reports for city and county marinas."],
 ];
 
 export default function Page() {
@@ -30,11 +24,10 @@ export default function Page() {
     <main className="min-h-screen overflow-x-hidden bg-white text-[#071A33]">
       <SiteHeader />
       <PageHero kicker="Marina management software" title="A marina office that runs itself" text="Slips, boaters, contracts, the fuel dock and the ship store in one platform, built around a live map of your docks and set up for you by our team." image="/interactive-slips-2026.jpg" imageAlt="Interactive marina slip map with an available slip selected" />
-      <CapabilityGrid kicker="Built for marinas, private & municipal" title="Everything from the dock to the office" items={items} />
-      <RvMarinaSection only="marinas" />
-      <PortalSection />
-      <ServicesSection />
+      <ExperienceSection />
+      <CapabilityGrid kicker="What changes for you" title="Your marina, running smoother" items={items} />
       <HowItWorksSection />
+      <OnePlanSection />
       <FaqSection items={[
         ["Do you support dry storage and lift slips?", "Yes. Wet slips, lift slips and dry storage are all supported, each with its own rates and on the same map."],
         ["Can boaters sign their slip contract online?", "Yes. The office sends the contract, the boater signs from their phone, and the invoices are created automatically."],

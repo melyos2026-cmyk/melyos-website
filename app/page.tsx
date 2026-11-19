@@ -7,7 +7,7 @@ import SiteFooter from "./components/site/Footer";
 import DemoSection from "./components/site/DemoSection";
 import VideoSection from "./components/site/VideoSection";
 import ExperienceSection from "./components/site/ExperienceSection";
-import { HomeAudienceSection, HomePlatformSection, SeeItLiveSection, HowItWorksSection, TrustSection, ServicesSection, HomePricingBand, FaqSection, HOME_FAQ } from "./components/site/Sections";
+import {HomeAudienceSection, SeeItLiveSection, HowItWorksSection, TrustSection, HomePricingBand, FaqSection, HOME_FAQ } from "./components/site/Sections";
 import { cta } from "./components/site/data";
 
 export default function Home() {
@@ -42,13 +42,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Oct 29 (per Mely): reorganized home. Full feature lists moved to the detail pages
+      {/* Nov 19 (per Mely): no module lists on the home page (HomePlatformSection and ServicesSection removed).
+          Oct 29 (per Mely): reorganized home. Full feature lists moved to the detail pages
           (/features, /rv-park-software, /marina-software, /pricing); nothing was removed. */}
       <VideoSection />
       <ExperienceSection />
       <HomeAudienceSection />
-      <HomePlatformSection />
-      <ServicesSection />
       <HowItWorksSection />
       <SeeItLiveSection />
       <TrustSection />

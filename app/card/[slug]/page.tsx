@@ -58,7 +58,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         </div>
         <div className="border-t border-[#e3e6eb] bg-white px-8 py-7">
           <p className="text-[13px] font-semibold tracking-[0.2em]" style={{ color: TEAL }}>SEE MELYOS IN ONE MINUTE</p>
-          <video className="mt-3 w-full rounded-xl bg-black" controls playsInline preload="none" poster="/video/melyos-video-poster.jpg"><source src="/video/melyos-video-2026.mp4?v=2" type="video/mp4" /></video>
+          <video className="mt-3 w-full rounded-xl bg-black" controls playsInline preload="none" poster="/video/melyos-story-poster.jpg"><source src="/video/melyos-story-2026.mp4?v=2" type="video/mp4" /></video>
           <p className="mt-4 text-[14px] leading-6 text-[#46566b]">A live map of your property with online reservations and payments, contracts, billing and a resident portal, all in one place. One plan, every tool included. Month-to-month.</p>
         </div>
         <div className="h-[6px]" style={{ background: `linear-gradient(${TEAL} 0 33%, ${NAVY} 33% 100%)` }} />
