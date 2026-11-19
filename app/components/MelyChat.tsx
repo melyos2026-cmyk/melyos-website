@@ -109,10 +109,11 @@ export default function MelyChat() {
         <button
           onClick={() => { dismissTease(); setOpen(true); }}
           aria-label={t.title}
-          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full bg-[#071A33] py-2 pl-2 pr-4 text-white shadow-2xl transition hover:scale-105"
+          className="fixed bottom-2 right-2 z-50 flex items-center gap-2 rounded-full bg-[#071A33] p-1 text-white shadow-2xl transition hover:scale-105 sm:bottom-5 sm:right-5 sm:py-2 sm:pl-2 sm:pr-4"
         >
-          <img src="/mely-avatar-v2.jpg" alt="" className="h-10 w-10 rounded-full object-cover" />
-          <span className="text-sm font-bold">{t.title}</span>
+          {/* Nov 19 (per Mely): on phones only the round photo, lower, so it never covers the page buttons */}
+          <img src="/mely-avatar-v2.jpg" alt="" className="h-11 w-11 rounded-full object-cover sm:h-10 sm:w-10" />
+          <span className="hidden text-sm font-bold sm:inline">{t.title}</span>
         </button>
       )}
       {open && (
