@@ -22,7 +22,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ s
             {/* Nov 19 (per Mely): the owners video, so they see what claiming does for them */}
             <details className="mt-4 rounded-2xl bg-white p-4 ring-1 ring-slate-200" open>
               <summary className="cursor-pointer text-sm font-black text-[#0F2A4A]">See how it works (40 seconds)</summary>
-              <video className="mx-auto mt-3 aspect-[9/16] w-full max-w-[260px] rounded-2xl bg-black" src="/video/melyos-explore-owners.mp4?v=2" poster="/video/melyos-explore-owners.jpg" controls playsInline preload="metadata" />
+              <video className="mx-auto mt-3 aspect-[9/16] w-full max-w-[260px] rounded-2xl bg-black" src="/video/melyos-explore-owners.mp4?v=3" poster="/video/melyos-explore-owners.jpg" controls playsInline preload="metadata" />
             </details>
             <ClaimForm state={st} listingKey={row[7]} phone={row[5]} website={row[6]} kind={row[0]} /></>}
       </div></section>
