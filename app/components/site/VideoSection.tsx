@@ -13,7 +13,7 @@ export default function VideoSection({ compact = false }: { compact?: boolean })
         </div>
         <div className="overflow-hidden rounded-3xl border border-slate-200 bg-[#071A33] shadow-xl">
           <video className="block aspect-video w-full" controls playsInline preload="metadata" poster="/video/melyos-story-poster.jpg">
-            <source src="/video/melyos-story-2026.mp4?v=4" type="video/mp4" />
+            <source src="/video/melyos-story-2026.mp4?v=5" type="video/mp4" />
           </video>
         </div>
         {!compact && (
