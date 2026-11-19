@@ -14,7 +14,7 @@ const top = await pg.evaluate(() => { const m = document.querySelector(".mr-map"
 await pg.evaluate((y) => window.scrollTo(0, y - 12), top);
 await pg.addStyleTag({ content: `
   @keyframes melyGlow { 0%,100% { filter: drop-shadow(0 0 0 rgba(74,222,128,0)) brightness(1); } 50% { filter: drop-shadow(0 0 7px rgba(74,222,128,1)) drop-shadow(0 0 3px rgba(134,239,172,1)) brightness(1.3); } }
-  .cky-consent-container, [class*=cookie], [id*=cookie] { display: none !important; }
+  .cky-consent-container, [class*=cookie], [id*=cookie], .mr-map-tap-hand, .mr-map-tap-ring { display: none !important; }
   .mely-glow { animation: melyGlow 1.4s ease-in-out infinite; z-index: 2; }
   #mely-hand { position: fixed; left: 0; top: 0; width: 46px; height: 46px; pointer-events: none; z-index: 2147483647; transform: translate(-14px,-4px); transition: transform .12s; filter: drop-shadow(0 3px 4px rgba(0,0,0,.45)); }
   #mely-hand.down { transform: translate(-14px,-4px) scale(.85); }
