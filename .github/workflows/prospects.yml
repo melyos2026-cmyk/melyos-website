@@ -1,0 +1,20 @@
+# Nov 19 (per Mely): find phones/websites for Sales Partner prospects (Overture Maps open data).
+name: Prospects enrich
+on: { workflow_dispatch: {} }
+permissions: { contents: write }
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install duckdb awscli
+      - run: python scripts/prospects/enrich.py
+      - run: |
+          git config user.name "melyos-places-agent"; git config user.email "noreply@melyos.io"
+          git checkout -B prospects
+          git add -f scripts/prospects/found_FL.json
+          git commit -m "Prospects: contacts found (auto)"
+          git push -f origin prospects
