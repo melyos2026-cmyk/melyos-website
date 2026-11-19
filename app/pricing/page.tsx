@@ -20,7 +20,7 @@ export default function Page() {
       <HowItWorksSection />
       <FaqSection items={[
         ["Is there a long-term contract?", "You choose: month to month at the regular price, or a 24-month agreement that locks your price for 2 years and includes your first month free."],
-        ["Do you charge per module?", "No. One plan includes every tool: the map, reservations, contracts, billing, the customer portal, point of sale, fuel dock, dry stack, reports, QuickBooks export and the Mely AI assistant."],
+        ["Do you charge per module?", "No. Your quote covers everything your property runs today in one monthly price. If you want to add something new later, we quote it for you."],
         ["What is included in the setup?", "Your website on your domain, your property map, spaces, rates, fees and contracts configured, help bringing in your current customers, and staff training."],
         ["Are there card processing fees?", "Card and bank processing fees may apply to online payments. We explain them in your quote."],
         ["How do I get a price?", "Book a free demo or email info@melyos.io. We answer with a custom quote for your property."],

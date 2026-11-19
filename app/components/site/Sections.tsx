@@ -1,6 +1,6 @@
 import { eyebrow, h2, cta, features, rvParks, marinas, industries, steps, trust, CreditCard, BadgeCheck, Receipt, Scale, Caravan, Anchor } from "./data";
 import type { LucideIcon } from "./data";
-import { ArrowRight, Check, Plus } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 
 export function FeaturesSection() {
   return (
@@ -419,7 +419,7 @@ export const HOME_FAQ: [string, string][] = [
   ["Do you support dry storage and lift slips?", "Yes. Wet slips, lift slips and dry storage are all supported, each with its own rates and on the same map."],
   ["Does it work for city or county marinas?", "Yes. Every payment is tied to an employee and a shift close, with resident and non-resident pricing and fee schedules with effective dates."],
   ["Do you move our current residents into the system?", "We help bring your current residents, lots and balances into MelyOS during setup."],
-  ["Do you charge per module?", "No. One plan includes every tool: the map, reservations, contracts, billing, the customer portal, point of sale, fuel dock, dry stack, reports, QuickBooks export and the Mely AI assistant."],
+  ["Do you charge per module?", "No. Your quote covers everything your property runs today in one monthly price. If you want to add something new later, we quote it for you."],
   ["Is there a long-term contract?", "You choose: month to month at the regular price, or a 24-month agreement that locks your price for 2 years and includes your first month free."],
   ["Are there card processing fees?", "Card and bank processing fees may apply to online payments. We explain them in your quote."],
   ["How do I get a price?", "Book a free demo or email info@melyos.io. We answer with a custom quote for your property."],
@@ -493,21 +493,12 @@ export function FaqSection({ items }: { items: [string, string][] }) {
   );
 }
 
-// Oct 21 (per Mely): "One plan, everything included" — MelyOS vs. platforms that sell
-// each tool as a separate monthly module. No prices and no competitor names.
-const ONE_PLAN: [string, string][] = [
-  ["Interactive map & occupancy", "Every lot, site or slip, live"],
-  ["Online reservations", "Book and pay 24/7"],
-  ["Contracts & e-signature", "Signed online, invoices created on signing"],
-  ["Billing, autopay & utilities", "Card and bank payments, meter readings, late fees"],
-  ["Customer portal", "Balance, payments, documents, in 3 languages"],
-  ["Point of sale & inventory", "Store, propane, barcode scanning"],
-  ["Fuel dock", "Pumps, tank levels, sales"],
-  ["Dry stack launch requests", "From the boater's phone"],
-  ["QuickBooks export & reports", "Revenue, tax, statements"],
-  ["Mely AI assistant", "Answers guests 24/7 in their language"],
-  ["Your own website", "On your domain, with your map"],
-  ["Updates & support", "New features at no extra cost"],
+// Nov 18 (per Mely — option A): the quote covers everything the property runs today, in one monthly price;
+// anything added later is quoted separately. No public list of every tool (so nobody can copy the menu).
+const ONE_PRICE: [string, string][] = [
+  ["Everything you run today", "Your quote covers how your property works now — in one monthly price, not a stack of modules."],
+  ["Set up for you", "Our team builds your map, loads your data and trains your staff. You don't configure anything."],
+  ["Grow when you're ready", "Want something new later? We quote it for you. You only pay for what you actually use."],
 ];
 
 export function OnePlanSection() {
@@ -515,34 +506,22 @@ export function OnePlanSection() {
     <section id="one-plan" className="scroll-mt-24 bg-slate-50 py-16 md:py-24">
       <div className="mx-auto max-w-6xl px-5 lg:px-8">
         <div className="mx-auto mb-10 max-w-3xl text-center">
-          <p className={eyebrow}>One plan</p>
-          <h2 className={h2}>Everything included. No modules to add.</h2>
-          <p className="mt-5 text-lg leading-8 text-slate-600">Many platforms sell each tool as its own monthly module, so the bill grows every time you need something new. With MelyOS every tool comes in one plan.</p>
+          <p className={eyebrow}>One price</p>
+          <h2 className={h2}>Built around what your property needs.</h2>
+          <p className="mt-5 text-lg leading-8 text-slate-600">Many platforms charge every tool as its own monthly module, so the bill keeps growing. Your MelyOS quote puts everything you run today into one monthly price.</p>
         </div>
-        <p className="mb-4 text-center text-sm font-semibold text-slate-500 sm:hidden">On many other platforms, each of these is an extra monthly module.</p>
-        <div className="overflow-x-auto rounded-3xl border border-slate-200 bg-white shadow-sm">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-slate-200">
-                <th className="px-5 py-4 text-sm font-black uppercase tracking-[0.12em] text-slate-500 md:px-7">What you get</th>
-                <th className="bg-[#071A33] px-5 py-4 text-center text-sm font-black uppercase tracking-[0.12em] text-cyan-300">MelyOS</th>
-                <th className="hidden px-5 py-4 text-center text-sm font-black uppercase tracking-[0.12em] text-slate-500 sm:table-cell">Module-based platforms</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ONE_PLAN.map(([t, s]) => (
-                <tr key={t} className="border-b border-slate-100 last:border-0">
-                  <td className="px-5 py-3.5 md:px-7"><p className="font-bold">{t}</p><p className="text-sm text-slate-500">{s}</p></td>
-                  <td className="bg-[#071A33]/[0.04] px-5 py-3.5 text-center"><span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-sm font-bold text-emerald-700"><Check className="h-4 w-4" strokeWidth={2.5} aria-hidden />Included</span></td>
-                  <td className="hidden px-5 py-3.5 text-center sm:table-cell"><span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-500"><Plus className="h-4 w-4" strokeWidth={2.5} aria-hidden />Often an extra module</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="grid gap-5 md:grid-cols-3">
+          {ONE_PRICE.map(([t, d]) => (
+            <article key={t} className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+              <span className="grid h-10 w-10 place-items-center rounded-full bg-emerald-50 text-emerald-700"><Check className="h-5 w-5" strokeWidth={2.5} aria-hidden /></span>
+              <h3 className="mt-4 text-xl font-black">{t}</h3>
+              <p className="mt-2 text-[15px] leading-6 text-slate-600">{d}</p>
+            </article>
+          ))}
         </div>
         <div className="mt-8 flex flex-col items-center gap-3 text-center">
           <p className="max-w-2xl text-slate-600">One monthly fee: month to month, or locked for 2 years with a 24-month agreement. One setup done by our team. Card and bank processing fees may apply to online payments.</p>
-          <a href="/demo" className={cta}>Get your custom quote</a>
+          <a href="/demo" className={cta}>Tell us what you need</a>
         </div>
       </div>
     </section>

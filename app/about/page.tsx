@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 const values: [string, string][] = [
-  ["Honest pricing", "One plan with everything included, month to month. No add-on modules and no long contracts."],
+  ["Honest pricing", "One monthly price for everything you run today — month to month or locked for 2 years. New things later are quoted for you."],
   ["Your data stays yours", "Your customers' information is never shared or sold, and every property only sees its own."],
   ["Clear records", "Every payment, contract and change is tracked, ready for your accountant or a city audit."],
   ["Easy to learn", "Software your staff can pick up in an afternoon, with Mely, our AI assistant, there to help."],
@@ -54,7 +54,7 @@ export default function Page() {
           <div>
             <p className={eyebrow}>Our mission</p>
             <h2 className="text-3xl font-black tracking-tight">The tools the big operators have, without the complexity</h2>
-            <p className="mt-4 text-lg leading-8 text-slate-600">We give independent RV parks, marinas and campgrounds one connected platform, without add-on modules or long contracts.</p>
+            <p className="mt-4 text-lg leading-8 text-slate-600">We give independent RV parks, marinas and campgrounds one connected platform, priced around what each property actually runs.</p>
           </div>
           <div>
             <p className={eyebrow}>How we work</p>
