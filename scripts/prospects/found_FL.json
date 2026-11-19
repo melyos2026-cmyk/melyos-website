@@ -1,0 +1,728 @@
+{
+"31-54-00030": {
+"phone": "",
+"web": "http://high-ridge-mobile-park.jany.io",
+"match": "High Ridge Mobile Park",
+"city": "vero beach"
+},
+"57-54-1890247": {
+"phone": "+18506238453",
+"web": "",
+"match": "Cozy Cottages",
+"city": "milton"
+},
+"67-54-00015": {
+"phone": "+18506386130",
+"web": "http://www.floridastateparks.org/fallingwaters",
+"match": "Falling Waters State Park",
+"city": "chipley"
+},
+"dep-largo-intercoastal-marina-llc-southwest": {
+"phone": "+17275953592",
+"web": "https://www.largomarina.com",
+"match": "Largo Intercoastal Marina",
+"city": "largo"
+},
+"dep-17th-street-yacht-basin-southeast": {
+"phone": "+19545276766",
+"web": "http://www.17thstreetyachtbasin.com/",
+"match": "17th Street Yacht Basin",
+"city": "fort lauderdale"
+},
+"dep-a-j-boat-works-southeast": {
+"phone": "+17722865339",
+"web": "http://www.ajboatworks.com",
+"match": "A & J Boatworks",
+"city": "stuart"
+},
+"dep-loggerhead-hi-lift-marina-southeast": {
+"phone": "+13059312550",
+"web": "https://www.loggerheadmarinas.com/marinas/hi-lift-marina/?utm_source=BirdEye&utm_medium=directory&utm_campaign=BirdEye+Directory+Listing",
+"match": "Loggerhead Hi-Lift Marina",
+"city": "aventura"
+},
+"dep-loggerhead-marina-stuart-southeast": {
+"phone": "+17726924000",
+"web": "http://www.loggerheadmarina.com/",
+"match": "Loggerhead Marina Stuart",
+"city": "stuart"
+},
+"dep-pirates-cove-resort-marina-southeast": {
+"phone": "+17722872500",
+"web": "https://www.piratescoveresort.com/",
+"match": "Pirate's Cove Resort and Marina",
+"city": "stuart"
+},
+"dep-riverbend-at-lmc-southeast": {
+"phone": "+19547130333",
+"web": "lauderdalemarinecenter.com",
+"match": "Riverbend At Lmc",
+"city": "fort lauderdale"
+},
+"dep-riviera-beach-city-marina-southeast": {
+"phone": "+15618427806",
+"web": "https://www.instagram.com/rivierabeachcitymarina/",
+"match": "Riviera Beach City Marina",
+"city": "riviera beach"
+},
+"dep-safe-harbor-rybovich-southeast": {
+"phone": "+15618408190",
+"web": "https://safeharbor.com/locations/safe-harbor-rybovich/",
+"match": "Safe Harbor Rybovich",
+"city": "west palm beach"
+},
+"dep-fernandina-harbor-marina-oasis-northeast": {
+"phone": "+19043103300",
+"web": "https://www.fernandinaharbormarina.com/",
+"match": "Fernandina Harbor Marina",
+"city": "fernandina beach"
+},
+"dep-jim-king-park-and-boat-ramp-at-sisters-creek-northeast": {
+"phone": "+19042557900",
+"web": "jaxparks.com",
+"match": "Jim King Park And Boat Ramp At Sisters Creek",
+"city": "jacksonville"
+},
+"dep-lakeshore-marine-center-northeast": {
+"phone": "+19043846447",
+"web": "https://www.lakeshoremarinecenter.com/",
+"match": "Lakeshore Marine Center",
+"city": "jacksonville"
+},
+"dep-lamb-s-yacht-center-northeast": {
+"phone": "+19043845577",
+"web": "http://www.lambsyachtcenter.com/",
+"match": "Lamb's Yacht Center Inc",
+"city": "jacksonville"
+},
+"dep-harbour-marine-services-central": {
+"phone": "+14073240911",
+"web": "http://www.harbourmarineservicesfl.net",
+"match": "Harbour Marine Services",
+"city": "sanford"
+},
+"dep-hontoon-island-state-park-central": {
+"phone": "+13867365309",
+"web": "http://www.floridastateparks.org/hontoonisland/default.cfm",
+"match": "Hontoon Island State Park",
+"city": "deland"
+},
+"dep-monroe-harbour-marina-central": {
+"phone": "+14073222910",
+"web": "",
+"match": "Monroe Harbour Marina",
+"city": "sanford"
+},
+"dep-regal-and-nautique-of-orlando-central": {
+"phone": "+14074252628",
+"web": "http://orlandonautiques.com/",
+"match": "Regal and Nautique of Orlando",
+"city": "orlando"
+},
+"dep-tracker-boat-center-central": {
+"phone": "+19549297710",
+"web": "http://basspro.com",
+"match": "TRACKER BOAT Center",
+"city": "dania beach"
+},
+"dep-bluewater-bay-marina-complex-northwest": {
+"phone": "+18508972821",
+"web": "http://bluewaterbaymarina.com/",
+"match": "Bluewater Bay Marina Complex",
+"city": "niceville"
+},
+"dep-bristol-harbor-marina-northwest": {
+"phone": "+18506284595",
+"web": "http://www.bristolharbormarina.com/",
+"match": "Bristol Harbor Marina - A Madison Marinas Property",
+"city": "panama city"
+},
+"dep-florida-state-university-coastal-and-marine-laboratory-northwest": {
+"phone": "+18506453474",
+"web": "http://www.marinelab.fsu.edu/",
+"match": "Florida State University Coastal & Marine Laboratory",
+"city": "sopchoppy"
+},
+"dep-marbella-yacht-club-northwest": {
+"phone": "+18504245531",
+"web": "http://www.marbellayachtclub.com/",
+"match": "Marbella Yacht Club",
+"city": "destin"
+},
+"dep-marinemax-pensacola-northwest": {
+"phone": "+18504771112",
+"web": "https://www.marinemax.com/stores/pensacola",
+"match": "MarineMax Pensacola",
+"city": "pensacola"
+},
+"dep-loggerhead-palm-harbour-marina-south": {
+"phone": "+19416974356",
+"web": "https://www.loggerheadmarinas.com/marinas/palm-harbour-marina/?utm_source=BirdEye&utm_medium=directory&utm_campaign=BirdEye+Directory+Listing",
+"match": "Loggerhead Palm Harbour Marina",
+"city": "cape haze"
+},
+"dep-marlin-bay-resort-marina-south": {
+"phone": "+13057312207",
+"web": "http://www.marlinbay.com/",
+"match": "Marlin Bay Resort & Marina",
+"city": "marathon"
+},
+"dep-ocean-key-resort-spa-south": {
+"phone": "+13058098072",
+"web": "",
+"match": "Ocean Key Resort & Spa",
+"city": "key west"
+},
+"dep-old-naples-seaport-south": {
+"phone": "+12396430042",
+"web": "http://onbc.net",
+"match": "Old Naples Seaport",
+"city": "naples"
+},
+"dep-safe-harbor-burnt-store-south": {
+"phone": "+19416370083",
+"web": "https://safeharbor.com/locations/safe-harbor-burnt-store/",
+"match": "Safe Harbor Burnt Store",
+"city": "punta gorda"
+},
+"dep-safe-harbor-cape-harbour-south": {
+"phone": "+12399454330",
+"web": "https://safeharbor.com/locations/safe-harbor-cape-harbour/",
+"match": "Safe Harbor Cape Harbour",
+"city": "cape coral"
+},
+"dep-safe-harbor-marathon-south": {
+"phone": "+13057436575",
+"web": "https://safeharbor.com/locations/safe-harbor-marathon/",
+"match": "Safe Harbor Marathon",
+"city": "marathon"
+},
+"fwc-FWC-13": {
+"phone": "+18005373708",
+"web": "",
+"match": "Fisher Island Club",
+"city": "miami beach"
+},
+"fwc-FWC-14": {
+"phone": "+18005373708",
+"web": "",
+"match": "Fisher Island Club",
+"city": "miami beach"
+},
+"fwc-FWC-91": {
+"phone": "+17275952374",
+"web": "http://www.calvaryirb.org/",
+"match": "Calvary Episcopal Church",
+"city": "indian rocks beach"
+},
+"fwc-FWC-105": {
+"phone": "+13053759453",
+"web": "http://www.BBpilots.com/",
+"match": "Biscayne Bay Pilots",
+"city": "miami"
+},
+"fwc-FWC-329": {
+"phone": "+13056633500",
+"web": "http://www.conciergerealtybrokers.com/",
+"match": "Gables Waterway Executive Center",
+"city": "coral gables"
+},
+"fwc-FWC-336": {
+"phone": "",
+"web": "http://www.hurlburt.af.mil/",
+"match": "Hurlburt Field AFB",
+"city": "hurlburt field"
+},
+"fwc-FWC-394": {
+"phone": "+13059314292",
+"web": "http://magnummarine.com/",
+"match": "Magnum Marine",
+"city": "aventura"
+},
+"fwc-FWC-444": {
+"phone": "+19413497969",
+"web": "http://mysanderlingclub.com",
+"match": "Sanderling Club",
+"city": "sarasota"
+},
+"fwc-FWC-490": {
+"phone": "+17273673835",
+"web": "http://www.marlinsdockside.com",
+"match": "John's Pass Marina",
+"city": "treasure island"
+},
+"fwc-FWC-707": {
+"phone": "+18133102393",
+"web": "http://www.TampaBayMarina.com/",
+"match": "Tampa Bay Marina",
+"city": "tampa"
+},
+"fwc-FWC-951": {
+"phone": "+19544279747",
+"web": "",
+"match": "Cove Marina",
+"city": "deerfield beach"
+},
+"fwc-FWC-975": {
+"phone": "+17274667115",
+"web": "http://clearwaterbasinmarina.com/",
+"match": "Clearwater Basin Marina",
+"city": "clearwater"
+},
+"fwc-FWC-1345": {
+"phone": "+19419664237",
+"web": "http://www.southbaycommunity.com",
+"match": "Southbay Yacht & Racquet Club",
+"city": "osprey"
+},
+"fwc-FWC-1422": {
+"phone": "+13056643636",
+"web": "http://www.islamarina.net/",
+"match": "IslaMarina",
+"city": "islamorada"
+},
+"fwc-FWC-1555": {
+"phone": "+15614062210",
+"web": "http://www.jupiterwatertours.com/",
+"match": "Jupiter Inlet Marina",
+"city": "jupiter"
+},
+"fwc-FWC-1561": {
+"phone": "+15617468757",
+"web": "https://www.eventseeker.com/venue/346189-baron-s-landing-motel-apartments-jupiter",
+"match": "Barons Landing",
+"city": "jupiter"
+},
+"fwc-FWC-1575": {
+"phone": "+15617448200",
+"web": "http://www.jonathanslanding.com",
+"match": "Jonathan's Landing",
+"city": "jupiter"
+},
+"fwc-FWC-1675": {
+"phone": "+18138848381",
+"web": "",
+"match": "Egypt Shriners",
+"city": "tampa"
+},
+"fwc-FWC-1692": {
+"phone": "+19417942802",
+"web": "",
+"match": "N E Taylor Boat Works",
+"city": "cortez"
+},
+"fwc-FWC-1782": {
+"phone": "+19414860500",
+"web": "http://www.fishermanswharffl.com/",
+"match": "Fisherman's Wharf Marina",
+"city": "venice"
+},
+"fwc-FWC-1792": {
+"phone": "+19414887708",
+"web": "http://www.veniceyachtclub.com",
+"match": "Venice Yacht Club",
+"city": "venice"
+},
+"fwc-FWC-1945": {
+"phone": "+19419274800",
+"web": "www.hhmarina.net",
+"match": "Hidden Harbor Marina",
+"city": "sarasota"
+},
+"fwc-FWC-2186": {
+"phone": "+12399315665",
+"web": "",
+"match": "Caloosa Yacht and Racquet club",
+"city": "fort myers"
+},
+"fwc-FWC-2195": {
+"phone": "+17277878961",
+"web": "http://www.speckledtroutmarina.com",
+"match": "Speckled Trout Marina",
+"city": "palm harbor"
+},
+"fwc-FWC-2259": {
+"phone": "+17277712633",
+"web": "",
+"match": "Prior Marina",
+"city": "palm harbor"
+},
+"fwc-FWC-2517": {
+"phone": "+13214529220",
+"web": "http://www.lincoln.com/help/contact/",
+"match": "Island Lincoln Mercury",
+"city": "merritt island"
+},
+"fwc-FWC-2663": {
+"phone": "+12394986112",
+"web": "http://www.barefootboatclub.us",
+"match": "Barefoot Boat Club",
+"city": "bonita springs"
+},
+"fwc-FWC-2671": {
+"phone": "+12394982455",
+"web": "http://Www.hickorybayboathouse.com/",
+"match": "Hickory Bay Boat House",
+"city": "bonita springs"
+},
+"fwc-FWC-2741": {
+"phone": "+17724644391",
+"web": "",
+"match": "Village Marina",
+"city": "fort pierce"
+},
+"fwc-FWC-2748": {
+"phone": "+12392832548",
+"web": "",
+"match": "St James Marina",
+"city": "st james city"
+},
+"fwc-FWC-2795": {
+"phone": "+14072015008",
+"web": "http://www.bigtoho.com/",
+"match": "Big Toho Marina",
+"city": "kissimmee"
+},
+"fwc-FWC-2858": {
+"phone": "+12392341999",
+"web": "http://www.naplesboatyard.com/",
+"match": "Naples Boat Yard",
+"city": "naples"
+},
+"fwc-FWC-2895": {
+"phone": "+13864274514",
+"web": "http://newsmyrnamarina.com",
+"match": "New Smyrna Marina",
+"city": "new smyrna beach"
+},
+"fwc-FWC-3294": {
+"phone": "+19416392911",
+"web": "http://www.windmillvillage.org",
+"match": "Windmill Village",
+"city": "punta gorda"
+},
+"fwc-FWC-3302": {
+"phone": "+19412344321",
+"web": "http://www.marinemax.com/stores/southeast/cape-haze",
+"match": "Marine Max",
+"city": "placida"
+},
+"fwc-FWC-3327": {
+"phone": "+17723980888",
+"web": "http://www.santaluciariverclub.net/",
+"match": "Santa Lucia River Club",
+"city": "port saint lucie"
+},
+"fwc-FWC-3449": {
+"phone": "+13525964830",
+"web": "https://www.pr.com/press-release/971126",
+"match": "Hernando Beach Yacht Club",
+"city": "spring hill"
+},
+"fwc-FWC-3460": {
+"phone": "+13525964010",
+"web": "http://www.angieslist.com/companylist/us/fl/spring-hill/sterling-marina-reviews-4412259.htm",
+"match": "Sterling Marina",
+"city": "hernando beach"
+},
+"fwc-FWC-3478": {
+"phone": "+13525973474",
+"web": "https://www.marysfishcampflorida.com/",
+"match": "Mary's Fish Camp",
+"city": "spring hill"
+},
+"fwc-FWC-3573": {
+"phone": "+18504520111",
+"web": "http://www.cnic.navy.mil/regions/cnrse/installations/nas_pensacola.html",
+"match": "NAS Pensacola",
+"city": "pensacola"
+},
+"fwc-FWC-3677": {
+"phone": "+13053672382",
+"web": "https://www.klac.org",
+"match": "Key Largo Angler's Club",
+"city": "key largo"
+},
+"fwc-FWC-3951": {
+"phone": "+17722865300",
+"web": "http://www.ruppmarine.com/",
+"match": "Rupp Marine Inc.",
+"city": "stuart"
+},
+"fwc-FWC-3957": {
+"phone": "+17722236303",
+"web": "http://www.fishhouseartcenter.com",
+"match": "Fish House Art Center & Gallery",
+"city": "stuart"
+},
+"fwc-FWC-4016": {
+"phone": "+18508422151",
+"web": "http://www.littlehouseonthebayou.com/",
+"match": "Little House On The Bayou",
+"city": "niceville"
+},
+"fwc-FWC-4095": {
+"phone": "+17725461000",
+"web": "http://www.jupiterislandclub.com",
+"match": "Jupiter Island Club",
+"city": "hobe sound"
+},
+"fwc-FWC-4449": {
+"phone": "+17722875605",
+"web": "http://www.palmcovegolf.com",
+"match": "Palm Cove Golf & Yacht Club",
+"city": "palm city"
+},
+"fwc-FWC-4647": {
+"phone": "+18508357700",
+"web": "",
+"match": "G & S Boats Inc",
+"city": "freeport"
+},
+"fwc-FWC-4858": {
+"phone": "+18509267775",
+"web": "http://abyconline.org/",
+"match": "Apalachee Bay Yacht Club",
+"city": "crawfordville"
+},
+"fwc-FWC-4877": {
+"phone": "+18508382035",
+"web": "http://springwarriorfishcamp.com/",
+"match": "Spring Warrior Fish Camp",
+"city": "perry"
+},
+"fwc-FWC-4994": {
+"phone": "+18505286766",
+"web": "",
+"match": "Lanark Village Boat Club and Marina",
+"city": "carrabelle"
+},
+"fwc-FWC-5092": {
+"phone": "+17722292739",
+"web": "http://islanddunescc.blogspot.com",
+"match": "Island Dunes Country Club",
+"city": "jensen beach"
+},
+"fwc-FWC-5756": {
+"phone": "+13056385300",
+"web": "",
+"match": "Florida Detroit Diesel Allison",
+"city": "miami"
+},
+"fwc-FWC-5907": {
+"phone": "+19544212500",
+"web": "https://marinaone.com/",
+"match": "Marina One",
+"city": "deerfield beach"
+},
+"fwc-FWC-6110": {
+"phone": "+17862347271",
+"web": "https://miami-international-marina.business.site",
+"match": "Miami International Marina",
+"city": "miami"
+},
+"fwc-FWC-6428": {
+"phone": "+15618422444",
+"web": "http://www.winshipspharmacy.com/",
+"match": "Winships Prescription Center",
+"city": "north palm beach"
+},
+"fwc-FWC-6429": {
+"phone": "+15618440844",
+"web": "http://northpalmbeachanimalclinic.com",
+"match": "North Palm Beach Animal Clinic",
+"city": "north palm beach"
+},
+"fwc-FWC-6430": {
+"phone": "+15618633116",
+"web": "http://www.northlakeautospa.net/",
+"match": "Northlake Auto Spa",
+"city": "north palm beach"
+},
+"fwc-FWC-6768": {
+"phone": "+17722321090",
+"web": "",
+"match": "Sea Turtle Marina",
+"city": "jensen beach"
+},
+"fwc-FWC-6782": {
+"phone": "+13862397166",
+"web": "",
+"match": "Marina Point Marina",
+"city": "daytona beach"
+},
+"fwc-FWC-6923": {
+"phone": "+19042640121",
+"web": "http://www.echockotee.org",
+"match": "Camp Echockotee",
+"city": "orange park"
+},
+"fwc-FWC-6934": {
+"phone": "+19418824654",
+"web": "http://www.aplacetobecaseykey.com",
+"match": "A Place To Be",
+"city": "nokomis"
+},
+"fwc-FWC-7180": {
+"phone": "+19414742371",
+"web": "http://www.surfsidestylingsalon.com",
+"match": "Surfside Styling Salon",
+"city": "englewood"
+},
+"fwc-FWC-7273": {
+"phone": "+13054513018",
+"web": "http://www.floridabayoutfitters.com/",
+"match": "Florida Bay Outfitters",
+"city": "key largo"
+},
+"fwc-FWC-7575": {
+"phone": "+17725461000",
+"web": "http://www.jupiterislandclub.com",
+"match": "Jupiter Island Club",
+"city": "hobe sound"
+},
+"fwc-FWC-10178": {
+"phone": "+13524812114",
+"web": "http://www.lochloosaharbor.com/",
+"match": "Lochloosa Harbor Fish Camp",
+"city": "hawthorne"
+},
+"fwc-FWC-10191": {
+"phone": "+13525910465",
+"web": "",
+"match": "McIntosh Fish Camp",
+"city": "mcintosh"
+},
+"fwc-FWC-10300": {
+"phone": "+13527875151",
+"web": "",
+"match": "Holiday Travel Resort",
+"city": "leesburg"
+},
+"fwc-FWC-11978": {
+"phone": "+13524095137",
+"web": "https://lake-eustis-marina-inc-fl.hub.biz/",
+"match": "Lake Eustis Marina Inc",
+"city": "eustis"
+},
+"fwc-FWC-12645": {
+"phone": "+18632931156",
+"web": "",
+"match": "Marine Supply the Boating Center",
+"city": "winter haven"
+},
+"fwc-FWC-12748": {
+"phone": "+18638770039",
+"web": "http://www.WorldBarefootCenter.com/",
+"match": "World Barefoot Center",
+"city": "winter haven"
+},
+"fwc-FWC-12845": {
+"phone": "",
+"web": "https://uncle-joe-s-fish-camp.hub.biz/",
+"match": "Uncle Joes Fish Camp",
+"city": "lake wales"
+},
+"fwc-FWC-13202": {
+"phone": "+18634652101",
+"web": "https://hendersonsfishcampfl.com",
+"match": "Henderson's Fish Camp",
+"city": "lake placid"
+},
+"fwc-FWC-13206": {
+"phone": "+18636550119",
+"web": "http://mossycovefishcamp.cityfos.com/",
+"match": "Mossy Cove Fish Camp",
+"city": "lorida"
+},
+"fwc-FWC-13208": {
+"phone": "+18636550134",
+"web": "https://trailsendfishingresort.com/",
+"match": "Trails End Fishing Resort LLC",
+"city": "lorida"
+},
+"fwc-FWC-13216": {
+"phone": "+18636999585",
+"web": "http://www.istokpogamarina.com/",
+"match": "Lake Istokpoga Marina",
+"city": "lake placid"
+},
+"fwc-FWC-13217": {
+"phone": "+18636999585",
+"web": "http://www.istokpogamarina.com/",
+"match": "Lake Istokpoga Marina",
+"city": "lake placid"
+},
+"fwc-FWC-14259": {
+"phone": "+19547643975",
+"web": "http://halloffamemarina.net",
+"match": "Hall Of Fame Marina",
+"city": "fort lauderdale"
+},
+"fwc-FWC-14319": {
+"phone": "",
+"web": "srvinvestments.com",
+"match": "Dwv Investments",
+"city": "fort lauderdale"
+},
+"fwc-FWC-14800": {
+"phone": "+14074845525",
+"web": "http://www.theboardingschool.com/",
+"match": "The Boarding School",
+"city": "orlando"
+},
+"fwc-FWC-15457": {
+"phone": "+12392832494",
+"web": "http://www.realestatedockside.com",
+"match": "Two Seas Marina",
+"city": "st james city"
+},
+"fwc-FWC-16209": {
+"phone": "+19416392911",
+"web": "http://www.windmillvillage.org",
+"match": "Windmill Village",
+"city": "punta gorda"
+},
+"fwc-FWC-16240": {
+"phone": "+18138281110",
+"web": "",
+"match": "MacDill AFB",
+"city": "tampa"
+},
+"fwc-FWC-16401": {
+"phone": "+12397037279",
+"web": "http://www.stickylickyicecreamftmyers.com",
+"match": "Sticky Licky Ice Cream",
+"city": "fort myers beach"
+},
+"fwc-FWC-16553": {
+"phone": "+19416981110",
+"web": "http://www.capehazemarina.com/",
+"match": "Cape Haze Marina",
+"city": "englewood"
+},
+"fwc-FWC-16607": {
+"phone": "+19042040718",
+"web": "http://blackcreekmarina.com/",
+"match": "Black Creek Marina",
+"city": "green cove springs"
+},
+"fwc-FWC-16913": {
+"phone": "+16313323302",
+"web": "",
+"match": "Marina Del Palma",
+"city": "flagler beach"
+},
+"fwc-FWC-16991": {
+"phone": "+18639839421",
+"web": "https://uncle-joes-motel-campground-fl.hub.biz",
+"match": "Uncle Joe's Motel & Campground",
+"city": "moore haven"
+},
+"fwc-FWC-17298": {
+"phone": "+17726922261",
+"web": "",
+"match": "Stuart Harbor Marina",
+"city": "stuart"
+}
+}
