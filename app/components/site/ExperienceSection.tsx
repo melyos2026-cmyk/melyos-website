@@ -15,8 +15,8 @@ export default function ExperienceSection() {
         <div className="grid items-center gap-10 lg:grid-cols-[1fr_440px]">
           <div className="max-w-3xl">
             <p className="mb-3 text-sm font-black uppercase tracking-[0.18em] text-[#079db9]">What you get</p>
-            <h2 className={h2}>Not more software. A property that runs smoother.</h2>
-            <p className="mt-5 text-lg leading-8 text-slate-600">Tell us what you need and we show you exactly that — built around your property, set up by us.</p>
+            <h2 className={h2}>Not another program to learn. Just a property that runs smoother.</h2>
+            <p className="mt-5 text-lg leading-8 text-slate-600">You don't have to learn or set up anything. Tell us what you need, we set it up for you, and you enjoy the result.</p>
           </div>
           {/* Nov 18 (per Mely): the MelyOS bee juggling everything a property runs — sells the feeling, not the screens */}
           <video className="mx-auto w-full max-w-[440px] rounded-3xl shadow-xl ring-1 ring-slate-200" src="/video/melyos-bee-2026.mp4" poster="/video/melyos-bee-2026-poster.jpg"
