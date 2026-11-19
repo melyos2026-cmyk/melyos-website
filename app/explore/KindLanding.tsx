@@ -37,7 +37,7 @@ export default function KindLanding({ kind }: { kind: Kind }) {
           <h1 className="max-w-3xl text-4xl font-black leading-tight tracking-tight sm:text-5xl">{k.title}</h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">{total ? `${total.toLocaleString()} ${k.plural.toLowerCase()} on the map. ` : ""}{k.lead}</p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <a href={`/explore/fl?type=${kind}`} className="rounded-xl bg-[#08B8D8] px-6 py-3 font-black text-white">Search {k.plural} in Florida</a>
+            <a href={`/explore/us?type=${kind}`} className="rounded-xl bg-[#08B8D8] px-6 py-3 font-black text-white">Search {k.plural} across the U.S.</a>
             <AccountPill />
           </div>
           <div className="mt-6 flex flex-wrap gap-2 text-sm font-bold">

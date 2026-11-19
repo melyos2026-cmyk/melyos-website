@@ -9,12 +9,13 @@ import AccountPill from "../../components/explore/AccountPill";
 import { STATES } from "../../components/explore/states";
 
 export function generateStaticParams() {
-  return Object.keys(STATES).map((s) => ({ state: s.toLowerCase() }));
+  return [...Object.keys(STATES).map((s) => ({ state: s.toLowerCase() })), { state: "us" }];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ state: string }> }): Promise<Metadata> {
   const { state } = await params;
-  const s = STATES[state.toUpperCase()];
+  // Nov 18 (per Mely): /explore/us = every state's pins on one map
+  const s = state.toUpperCase() === "US" ? (["the U.S."] as unknown as (typeof STATES)[string]) : STATES[state.toUpperCase()];
   if (!s) return {};
   return {
     title: `Marinas, RV Parks & Campgrounds in ${s[0]}`,
@@ -26,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ state: st
 export default async function Page({ params }: { params: Promise<{ state: string }> }) {
   const { state } = await params;
   const st = state.toUpperCase();
-  const s = STATES[st];
+  const s = st === "US" ? (["the U.S."] as unknown as (typeof STATES)[string]) : STATES[st];
   if (!s) notFound();
   return (
     <main className="min-h-screen overflow-x-hidden bg-white text-[#071A33]">
@@ -36,7 +37,7 @@ export default async function Page({ params }: { params: Promise<{ state: string
         <ExploreMap state={st} heading={
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="min-w-0">
-              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#0891b2]"><a href="/explore" className="hover:underline">MelyOS Explore</a> · {s[0]}</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#0891b2]"><a href="/explore" className="hover:underline">MelyOS Explore</a> · {st === "US" ? "United States" : s[0]}</p>
               <h1 className="text-xl font-black tracking-tight">Marinas, RV parks & campgrounds in {s[0]}</h1>
             </div>
             <AccountPill dark={false} />

@@ -56,25 +56,43 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
   const [ready, setReady] = useState(false);
   const fitted = useRef<string | null>(null);
   const featRef = useRef<any>(null);
-  const meta = STATES[state];
+  // Nov 18 (per Mely): state "US" = the whole United States on one map, every state's pins.
+  const isUS = state === "US";
+  const meta: [string, number, number, number] = isUS ? ["the U.S.", 39.5, -98.35, 4] : STATES[state];
+  const stateOf = useRef<Record<string, string>>({});
+  const stOf = (r: Row) => (isUS ? stateOf.current[r[7]] || "FL" : state);
   // Nov 17: owner info (approved claims) + star averages from MelyOS Explore
   const [extra, setExtra] = useState<{ overrides: Record<string, any>; stars: Record<string, [number, number]>; fuel: Record<string, Fuel> }>({ overrides: {}, stars: {}, fuel: {} });
   // Nov 18 (per Mely): each place's own preview picture from its website (scripts/photos → photos_{ST}.json)
   const [photos, setPhotos] = useState<Record<string, string>>({});
   const [broken, setBroken] = useState<Record<string, true>>({});
-  useEffect(() => { let off = false; setPhotos({}); fetch(`/explore/photos_${state}.json`).then((r) => (r.ok ? r.json() : {})).then((j) => !off && setPhotos(j || {})).catch(() => {}); return () => { off = true; }; }, [state]);
-  useEffect(() => { let off = false; fetch(`/api/explore/state?state=${state}`).then((r) => r.json()).then((j) => !off && setExtra({ overrides: j.overrides || {}, stars: j.stars || {}, fuel: j.fuel || {} })).catch(() => {}); return () => { off = true; }; }, [state]);
+  const sts = isUS ? Object.keys(STATES) : [state];
+  useEffect(() => {
+    let off = false; setPhotos({});
+    Promise.all(sts.map((st) => fetch(`/explore/photos_${st}.json`).then((r) => (r.ok ? r.json() : {})).catch(() => ({}))))
+      .then((all) => !off && setPhotos(Object.assign({}, ...all)));
+    return () => { off = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state]);
+  useEffect(() => {
+    let off = false;
+    Promise.all(sts.map((st) => fetch(`/api/explore/state?state=${st}`).then((r) => r.json()).catch(() => ({}))))
+      .then((all) => !off && setExtra({ overrides: Object.assign({}, ...all.map((j: any) => j.overrides || {})), stars: Object.assign({}, ...all.map((j: any) => j.stars || {})), fuel: Object.assign({}, ...all.map((j: any) => j.fuel || {})) }));
+    return () => { off = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state]);
 
   useEffect(() => {
     let off = false;
     setRows(null);
-    fetch(`/explore/${state}.json`).then((r) => (r.ok ? r.json() : { rows: [] })).then((j) => {
-      if (off) return;
+    Promise.all(sts.map((st) => fetch(`/explore/${st}.json`).then((r) => (r.ok ? r.json() : { rows: [] })).catch(() => ({ rows: [] })).then((j) => {
       // MelyOS properties first; drop the public-map copy of the same place if there is one.
-      const feat = FEATURED[state] || [];
+      const feat = FEATURED[st] || [];
       const names = new Set(feat.map((r) => r[1].toLowerCase()));
-      setRows([...feat, ...((j.rows || []) as Row[]).filter((r) => !names.has(String(r[1]).toLowerCase()))]);
-    }).catch(() => !off && setRows([...(FEATURED[state] || [])]));
+      const list = [...feat, ...((j.rows || []) as Row[]).filter((r) => !names.has(String(r[1]).toLowerCase()))];
+      for (const r of list) stateOf.current[r[7]] = st;
+      return list;
+    }))).then((all) => { if (!off) setRows(all.flat().sort((a, b) => (isFeatured(b) ? 1 : 0) - (isFeatured(a) ? 1 : 0))); });
     return () => { off = true; };
   }, [state]);
 
@@ -103,7 +121,8 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
     return () => { off = true; };
   }, [meta]);
 
-  useEffect(() => { if (map.current) map.current.setView([meta[1], meta[2]], meta[3]); }, [meta]);
+  useEffect(() => { if (map.current) map.current.setView([meta[1], meta[2]], meta[3]);   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state]);
 
   // A place is "bookable" (Online Booking + red pin) when it runs on MelyOS or has its own booking page.
   const bookable = (r: Row) => isFeatured(r) || !!extra.overrides[r[7]]?.client || okUrl(extra.overrides[r[7]]?.booking_url);
@@ -152,7 +171,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
       const phone = ov.phone || r[5], site = ov.website || r[6];
       const star = extra.stars[r[7]];
       const fu = extra.fuel[r[7]];
-      const page = listingPath(state, r), unit = r[0] === "m" ? "slip" : "site";
+      const page = listingPath(stOf(r), r), unit = r[0] === "m" ? "slip" : "site";
       const bookUrl = feat ? site : okUrl(ov.booking_url) ? ov.booking_url : `${page}${dates}#request`;
       m.bindPopup(`<div style="font-family:system-ui,sans-serif;min-width:210px;max-width:250px">
         ${photo ? `<img src="${esc(photo)}" alt="${esc(nice(r[1]))}" style="display:block;width:100%;height:110px;object-fit:cover;border-radius:10px;margin-bottom:8px" />` : ""}
@@ -170,7 +189,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
           <a href="https://www.google.com/maps/dir/?api=1&destination=${r[2]},${r[3]}" target="_blank" rel="noopener" style="border:1px solid #cbd5e1;color:#071A33;padding:5px 9px;border-radius:8px;font-weight:700;text-decoration:none;font-size:12px">Directions</a>
         </div>
         ${feat ? `<div style="color:#079db9;font-size:11px;font-weight:700;margin-top:6px">&#9733; Runs on MelyOS</div>`
-          : ov.verified ? "" : `<a href="${claimUrl(state, r)}" style="display:inline-block;margin-top:8px;color:#071A33;font-size:12px;font-weight:700">Is this your property? Claim it free</a>`}
+          : ov.verified ? "" : `<a href="${claimUrl(stOf(r), r)}" style="display:inline-block;margin-top:8px;color:#071A33;font-size:12px;font-weight:700">Is this your property? Claim it free</a>`}
       </div>`);
       m.on("click", () => setPicked(r[7]));
       markers.current[r[7]] = m;
@@ -184,6 +203,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
     if (fitted.current !== state && rows && rows.length) {
       fitted.current = state;
       map.current.invalidateSize();
+      if (isUS) { map.current.fitBounds([[24.5, -124.8], [49.4, -66.9]], { padding: [10, 10] }); return; }
       const qt = (a: number[], p: number) => { const v = [...a].sort((x, y) => x - y); return v[Math.min(v.length - 1, Math.max(0, Math.floor(p * (v.length - 1))))]; };
       const lats = rows.map((r: Row) => r[2]), lons = rows.map((r: Row) => r[3]);
       const tight = rows.length > 30;
@@ -269,7 +289,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
                     : <img src={aerial(r[2], r[3])} alt="" loading="lazy" className="h-full w-full object-cover" />}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <a href={`${listingPath(state, r)}${dates}`} onClick={(e) => e.stopPropagation()} className="line-clamp-2 font-black leading-snug text-[#071A33] hover:underline">{nice(r[1])}</a>
+                  <a href={`${listingPath(stOf(r), r)}${dates}`} onClick={(e) => e.stopPropagation()} className="line-clamp-2 font-black leading-snug text-[#071A33] hover:underline">{nice(r[1])}</a>
                   <p className="truncate text-sm text-slate-500">{k.label}{r[4] ? ` · ${r[4]}` : ""}</p>
                   {star && <p className="text-sm"><span className="text-amber-500">★</span> <b>{star[0].toFixed(1)}</b> <span className="text-slate-500">({star[1]})</span></p>}
                   {fu && <p className="text-[13px] font-semibold text-slate-700">⛽ {fu.gas ? `Gas $${fu.gas.toFixed(2)}` : ""}{fu.gas && fu.diesel ? " · " : ""}{fu.diesel ? `Diesel $${fu.diesel.toFixed(2)}` : ""} <span className="font-normal text-slate-500">· {ago(fu.at)}</span></p>}
