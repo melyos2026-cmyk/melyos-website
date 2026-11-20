@@ -1,0 +1,16 @@
+1 200 image/jpeg 31878 https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/109598/71678
+2 200 image/jpeg 33249 https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/109598/71679
+3 200 image/jpeg 13674 https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/109598/71680
+4 200 image/jpeg 16307 https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/109598/71681
+5 200 image/jpeg 31867 https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/109599/71678
+6 200 image/jpeg 32163 https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/109599/71679
+7 200 image/jpeg 16343 https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/109599/71680
+8 200 image/jpeg 13332 https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/109599/71681
+9 200 image/jpeg 30940 https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/109600/71678
+10 200 image/jpeg 28798 https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/109600/71679
+11 200 image/jpeg 16178 https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/109600/71680
+12 200 image/jpeg 15164 https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/109600/71681
+13 200 image/jpeg 24917 https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/109601/71678
+14 200 image/jpeg 29815 https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/109601/71679
+15 200 image/jpeg 18478 https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/109601/71680
+16 200 image/jpeg 16562 https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/109601/71681
