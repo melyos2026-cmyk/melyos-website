@@ -167,7 +167,7 @@ function info(i){const n=NUM[i]|0,k=kind(i),es=L=="es",st=ST[i];
  const pad=k=="rv"?(n%2?(es?"Concreto":"Concrete"):(es?"Grava":"Gravel")):null;
  const base=es?["Agua","Alcantarillado","Wi-Fi"]:["Water","Sewer","Wi-Fi"];
  const extra=k=="rv"?(n%2?[es?"Pull-through":"Pull-through"]:[es?"Back-in":"Back-in"]):[es?"Mascotas OK":"Pets OK"];
- return{amp,size:len,pad,chips:[...(CORNER.has(n)?[es?"Lote de esquina":"Corner lot"]:[]),amp,...base,...extra,...(n%5==0?[es?"Mesa de picnic":"Picnic table"]:[])]}}
+ return{amp,size:len,pad,chips:[...(maxSO(i)!=null?[es?`Slide-outs: hasta ${maxSO(i)} por lado`:`Slide-outs: up to ${maxSO(i)} per side`]:[]),...(CORNER.has(n)?[es?"Lote de esquina":"Corner lot"]:[]),amp,...base,...extra,...(n%5==0?[es?"Mesa de picnic":"Picnic table"]:[])]}}
 const map=document.getElementById("map");
 const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.setAttribute("viewBox","0 0 100 100");svg.setAttribute("preserveAspectRatio","none");
 svg.style.cssText="position:absolute;inset:0;width:100%;height:100%;pointer-events:none";map.appendChild(svg);
@@ -265,7 +265,7 @@ function render(){svg.innerHTML="";over.innerHTML="";const W=map.clientWidth;
    // Nov 20 (per Mely): All = every lot in its real color; Available = only green; For rent = only violet; Maintenance = only those.
    // With dates: only the lots free for those dates (green / violet), the rest gray.
    if(R&&filt!="maint"){const catOk=filt=="all"||(filt=="rent"?ST[i]=="rent":ST[i]!="rent"),
-     okG=freeFor(i,R.a,R.d)&&(filt=="all"?fitsNeed(i):(ST[i]=="rent"||((!NEED.len||(kind(i)=="rv"&&(parseInt(info(i).size)||0)>=NEED.len))&&(NEED.amp!="50"||/50/.test(info(i).amp))))),
+     okG=freeFor(i,R.a,R.d)&&(filt=="all"?fitsNeed(i):(ST[i]=="rent"||fitsRig(i))),
      pkOk=PICKED>=0&&freeFor(PICKED,R.a,R.d);srch=true;hit=okG&&catOk&&(!pkOk||i==PICKED);dim=!hit}
    else if(filt!="all"){srch=true;hit=ST[i]==filt;dim=!hit;if(hit)col=COLOR[ST[i]]}
    else{srch=false;hit=false;dim=false}}
@@ -311,7 +311,7 @@ function say(t){const m=document.getElementById("msg");m.textContent=t;setTimeou
 function bar(){const c={all:SH.length,free:0,occ:0,res:0,rent:0,maint:0};ST.forEach(x=>c[x]=(c[x]||0)+1);
  if(GUEST){const R=typeof RANGE!=="undefined"&&RANGE;c.free=0;c.rent=0;SH.forEach((_,i)=>{const g=gcat(i)=="na"&&!R?null:ST[i]=="rent"?"rent":"free";if(ST[i]=="maint")return;if(R?freeFor(i,R.a,R.d):g)c[ST[i]=="rent"?"rent":"free"]++});
   if(!["all","free","rent","maint"].includes(filt))filt="all";c.maint=ST.filter(x=>x=="maint").length;
-  document.getElementById("bar").innerHTML=["all","free","rent","maint"].filter(k=>k!="maint"||c.maint).map(k=>`<button class="chip ${filt==k?"on":""}" data-k="${k}">${k!="all"?`<span class="dot ${k}"></span>`:""}${k=="free"?(L=="es"?"Disponible":"Available"):T[L][k]}${k=="all"?"":` · ${c[k]}`}</button>`).join("");
+  document.getElementById("bar").innerHTML=["all","free","rent","maint"].filter(k=>k!="maint"||c.maint).map(k=>`<button class="chip ${filt==k?"on":""}" data-k="${k}">${k!="all"?`<span class="dot ${k}"></span>`:""}${k=="free"?(R?(L=="es"?"Disponible":"Available"):(L=="es"?"Disponible hoy":"Available today")):k=="rent"&&!R?(L=="es"?"En renta hoy":"For rent today"):T[L][k]}${k=="all"?"":` · ${c[k]}`}</button>`).join("");
   document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{filt=b.dataset.k;render()});return}
  document.getElementById("bar").innerHTML=["all","free","occ","res","rent","maint"].filter(k=>k=="all"||c[k]).map(k=>`<button class="chip ${filt==k?"on":""}" data-k="${k}">${k!="all"?`<span class="dot ${k}"></span>`:""}${T[L][k]} · ${c[k]}</button>`).join("");
  document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{filt=b.dataset.k;render()})}
@@ -422,12 +422,13 @@ function tell(m){if(INFRAME)try{parent.postMessage(Object.assign({source:"melyos
 function sendAvail(){if(!RANGE)return;let n=0;const lots=[];SH.forEach((_,i)=>{if(okLot(i)){n++;lots.push({lot:NUM[i],rent:ST[i]=="rent",maxLen:maxLen(i)})}});lots.sort((a,b)=>String(a.lot).localeCompare(String(b.lot),undefined,{numeric:true}));tell({type:"melyos-avail",available:n,lots,total:SH.length,arrive:iso(RANGE.a),depart:iso(RANGE.d)})}
 // Nov 20 (per Mely): RV length and power from the form narrow it too — only lots that fit and are free show
 let NEED={len:0,amp:""};
-function fitsNeed(i){if(NEED.rental)return ST[i]=="rent";if(ST[i]=="rent")return false;const k=kind(i),f=info(i);
- if(NEED.len){if(k!="rv")return false;if((parseInt(f.size)||0)<NEED.len)return false}
- if(NEED.amp=="50"&&!/50/.test(f.amp))return false;return true}
+function maxSO(i){const n=+NUM[i]||0;return kind(i)!="rv"||ST[i]=="rent"?null:n%4==0?2:n%3==0?3:null}   // demo: some sites limit slide-outs per side
+function fitsRig(i){if(NEED.len&&(kind(i)!="rv"||(parseInt(info(i).size)||0)<NEED.len))return false;if(NEED.amp=="50"&&!/50/.test(info(i).amp))return false;
+ const m=maxSO(i);if(m!=null&&((NEED.ds||0)>m||(NEED.ps||0)>m))return false;return true}
+function fitsNeed(i){if(NEED.rental)return ST[i]=="rent";if(ST[i]=="rent")return false;return fitsRig(i)}
 function okLot(i){return !!RANGE&&freeFor(i,RANGE.a,RANGE.d)&&fitsNeed(i)}
 addEventListener("message",e=>{const m=e.data||{};if(m.type!=="melyos-dates")return;HINTDONE=true;const a=dOf(m.arrive),d=dOf(m.depart);
- const L0=+m.length;NEED={len:L0>0&&L0<100?Math.round(L0):0,amp:(String(m.power||"").match(/\d+/)||[""])[0],rental:!!m.rental};RANGE=a&&d&&d>a?{a,d}:null;render();if(RANGE)sendAvail();else tell({type:"melyos-avail",available:null})});
+ const L0=+m.length;NEED={len:L0>0&&L0<100?Math.round(L0):0,amp:(String(m.power||"").match(/\d+/)||[""])[0],rental:!!m.rental,ds:parseInt(m.driverSlideOuts)||0,ps:parseInt(m.passengerSlideOuts)||0};RANGE=a&&d&&d>a?{a,d}:null;render();if(RANGE)sendAvail();else tell({type:"melyos-avail",available:null})});
 addEventListener("message",e=>{const m=e.data||{};if(m.type!=="melyos-book")return;const i=NUM.indexOf(String(m.lot));const a=dOf(m.arrive),d=dOf(m.depart);if(i<0||!a||!d||d<=a)return;open(i);arr=a;dep=d;calM=new Date(a.getFullYear(),a.getMonth(),1);drawLot(i);if(freeFor(i,a,d))checkout(i)});
 addEventListener("message",e=>{const m=e.data||{};if(m.type!=="melyos-pick")return;if(!m.lot){PICKED=-1;render();return}const i=NUM.indexOf(String(m.lot));if(i>=0)open(i)});
 tell({type:"melyos-ready"});

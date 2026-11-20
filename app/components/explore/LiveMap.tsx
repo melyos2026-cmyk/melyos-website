@@ -13,7 +13,7 @@ export default function LiveMap({ src, title, fixed }: { src: string; title: str
   const last = useRef<{ arrive?: string; depart?: string } | null>(null);
   useEffect(() => {
     const origin = new URL(src, window.location.href).origin;
-    const post = (d: any) => { try { frame.current?.contentWindow?.postMessage({ type: "melyos-dates", arrive: d?.arrive || "", depart: d?.depart || "", length: String(d?.length || "").slice(0, 6), power: String(d?.power || "").slice(0, 12), rental: !!d?.rental }, origin); } catch {} };
+    const post = (d: any) => { try { frame.current?.contentWindow?.postMessage({ type: "melyos-dates", arrive: d?.arrive || "", depart: d?.depart || "", length: String(d?.length || "").slice(0, 6), power: String(d?.power || "").slice(0, 12), rental: !!d?.rental, driverSlideOuts: String(d?.driverSlideOuts || "").slice(0, 2), passengerSlideOuts: String(d?.passengerSlideOuts || "").slice(0, 2) }, origin); } catch {} };
     const on = (e: MessageEvent) => {
       if (e.origin !== origin) return;
       if (e.data?.type === "aloha-map-height" && typeof e.data.height === "number") setH(Math.max(420, Math.min(4000, e.data.height)));
@@ -28,7 +28,7 @@ export default function LiveMap({ src, title, fixed }: { src: string; title: str
     window.addEventListener("message", on);
     window.addEventListener("melyos-dates", dates);
     // Nov 20 (per Mely): "Book & pay" in the form opens the park's own booking on the map
-    const book = (e: Event) => { const d = (e as CustomEvent).detail || {}; try { frame.current?.contentWindow?.postMessage({ type: "melyos-book", lot: String(d.lot || "").slice(0, 20), arrive: String(d.arrive || "").slice(0, 10), depart: String(d.depart || "").slice(0, 10), length: String(d.length || "").slice(0, 6) }, origin); } catch {} frame.current?.scrollIntoView({ behavior: "smooth", block: "start" }); };
+    const book = (e: Event) => { const d = (e as CustomEvent).detail || {}; try { frame.current?.contentWindow?.postMessage({ type: "melyos-book", lot: String(d.lot || "").slice(0, 20), arrive: String(d.arrive || "").slice(0, 10), depart: String(d.depart || "").slice(0, 10), length: String(d.length || "").slice(0, 6), driverSlideOuts: String(d.driverSlideOuts || "").slice(0, 2), passengerSlideOuts: String(d.passengerSlideOuts || "").slice(0, 2) }, origin); } catch {} frame.current?.scrollIntoView({ behavior: "smooth", block: "start" }); };
     window.addEventListener("melyos-pick", pick);
     window.addEventListener("melyos-book", book);
     return () => { window.removeEventListener("message", on); window.removeEventListener("melyos-dates", dates); window.removeEventListener("melyos-pick", pick); window.removeEventListener("melyos-book", book); };

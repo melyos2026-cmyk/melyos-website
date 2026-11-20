@@ -45,8 +45,8 @@ export function RequestForm(l: L) {
   const [booked, setBooked] = useState("");
   useEffect(() => {
     if (!l.live) return;
-    window.dispatchEvent(new CustomEvent("melyos-dates", { detail: { arrive: f.arrive || "", depart: f.depart || "", length: f.vessel?.length_ft || "", power: f.vessel?.power_amp || "", rental: f.vessel?.kind === "rental" } }));
-  }, [l.live, f.arrive, f.depart, f.vessel?.length_ft, f.vessel?.power_amp, f.vessel?.kind]);
+    window.dispatchEvent(new CustomEvent("melyos-dates", { detail: { arrive: f.arrive || "", depart: f.depart || "", length: f.vessel?.length_ft || "", power: f.vessel?.power_amp || "", rental: f.vessel?.kind === "rental", driverSlideOuts: f.vessel?.slide_driver || "", passengerSlideOuts: f.vessel?.slide_passenger || "" } }));
+  }, [l.live, f.arrive, f.depart, f.vessel?.length_ft, f.vessel?.power_amp, f.vessel?.kind, f.vessel?.slide_driver, f.vessel?.slide_passenger]);
   useEffect(() => {
     if (!l.live) return;
     const on = (e: Event) => {
@@ -83,7 +83,7 @@ export function RequestForm(l: L) {
         <label className="text-sm font-bold">Leave<input type="date" className={inp} value={f.depart || ""} onChange={(e) => set("depart", e.target.value)} /></label>
       </div>
       {l.live && (f.arrive && f.depart && avail ? <div className={`rounded-xl px-3 py-2 text-sm font-bold ${avail.available ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-700"}`}>
-          {avail.available ? `✓ ${avail.available} ${unit}s free for these dates${f.vessel?.length_ft || f.vessel?.power_amp ? " that fit your rig" : ""} — tap a ${f.vessel?.kind === "rental" ? "purple" : "green"} one on the map` : `No ${unit}s free for these dates${f.vessel?.length_ft || f.vessel?.power_amp ? " that fit your rig" : ""} — try other dates`}</div>
+          {avail.available ? `✓ ${avail.available} ${unit}s free for these dates${f.vessel?.length_ft || f.vessel?.power_amp || f.vessel?.slide_driver || f.vessel?.slide_passenger ? " that fit your RV" : ""} — tap a ${f.vessel?.kind === "rental" ? "purple" : "green"} one on the map` : `No ${unit}s free for these dates${f.vessel?.length_ft || f.vessel?.power_amp || f.vessel?.slide_driver || f.vessel?.slide_passenger ? " that fit your RV" : ""} — try other dates`}</div>
         : <div className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-600">{f.arrive && f.depart ? `Now tap a ${unit} on the map to see if it's free for your dates.` : `Pick your dates — the map shows which ${unit}s are free.`}</div>)}
       {l.live && f.arrive && f.depart && !!avail?.lots?.length && (
         <div className="relative">
@@ -97,7 +97,7 @@ export function RequestForm(l: L) {
                 <button type="button" key={x.lot} onClick={() => { setPicked({ lot: x.lot, available: true, status: x.rent ? "rent" : "free", maxLen: x.maxLen ?? null }); setBooked(""); setLotsOpen(false); window.dispatchEvent(new CustomEvent("melyos-pick", { detail: { lot: x.lot } })); }}
                   className={`rounded-lg px-1 py-2 text-sm font-black text-white shadow-sm ${x.rent ? "bg-violet-500 hover:bg-violet-600" : "bg-emerald-600 hover:bg-emerald-700"} ${picked?.lot === x.lot ? "ring-2 ring-offset-1 ring-slate-900" : ""}`}>{x.lot}</button>))}
             </div>
-            <p className="mt-2 px-1 text-xs text-slate-500">Only the {unit}s free for your dates{f.vessel?.length_ft || f.vessel?.power_amp ? " that fit your rig" : ""}.</p>
+            <p className="mt-2 px-1 text-xs text-slate-500">Only the {unit}s free for your dates{f.vessel?.length_ft || f.vessel?.power_amp || f.vessel?.slide_driver || f.vessel?.slide_passenger ? " that fit your RV" : ""}.</p>
           </div>}
         </div>)}
       {l.live && picked && <div className={`flex items-center justify-between gap-2 rounded-xl border-2 px-3 py-2.5 ${picked.available === false ? "border-rose-300 bg-rose-50" : picked.available ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white"}`}>
@@ -109,17 +109,31 @@ export function RequestForm(l: L) {
           {STAYS.map(([k, lab]) => <option key={k} value={k}>{lab}</option>)}
         </select></label>}
       <div className="rounded-xl bg-slate-50 p-3">
-        <p className="mb-2 text-sm font-black">{l.kind === "m" ? "Your boat" : "Your RV / camper"}</p>
-        <div className="grid grid-cols-2 gap-2">
-          <select className={inp} value={f.vessel.kind} onChange={(e) => setF((x: any) => ({ ...x, vessel: { ...x.vessel, kind: e.target.value, ...(e.target.value === "rental" ? { length_ft: "", power_amp: "" } : {}) } }))}>
-            {l.kind === "m" ? <><option value="boat">Boat</option><option value="other">Other</option></> : <><option value="rv">RV / motorhome</option><option value="trailer">Travel trailer</option>{!l.live && <option value="tent">Tent</option>}{l.live && <option value="rental">Rent a home / park model</option>}<option value="other">Other</option></>}
+        {l.live && l.kind !== "m" ? <>
+          {/* Nov 20 (per Mely): same search as the park's own map — RV length and slide-outs per side */}
+          <p className="mb-2 text-sm font-black">What are you booking?</p>
+          <select className={inp} value={f.vessel.kind === "rental" ? "rental" : "rv"} onChange={(e) => setF((x: any) => ({ ...x, vessel: { ...x.vessel, kind: e.target.value, ...(e.target.value === "rental" ? { length_ft: "", slide_driver: "", slide_passenger: "" } : {}) } }))}>
+            <option value="rv">A site for my RV / travel trailer</option><option value="rental">Rent a home / park model</option>
           </select>
-          {f.vessel.kind !== "rental" && <input className={inp} inputMode="decimal" placeholder="Length (ft)" value={f.vessel.length_ft || ""} onChange={(e) => setV("length_ft", e.target.value)} />}
-          {l.kind === "m" ? <><input className={inp} inputMode="decimal" placeholder="Beam (ft)" value={f.vessel.beam_ft || ""} onChange={(e) => setV("beam_ft", e.target.value)} />
-            <input className={inp} inputMode="decimal" placeholder="Draft (ft)" value={f.vessel.draft_ft || ""} onChange={(e) => setV("draft_ft", e.target.value)} /></>
-            : f.vessel.kind !== "rental" && <select className={inp} value={f.vessel.power_amp || ""} onChange={(e) => setV("power_amp", e.target.value)}><option value="">Power</option><option>30 amp</option><option>50 amp</option><option>No power</option></select>}
-        </div>
-        {l.kind === "m" && <select className={`${inp} mt-2`} value={f.vessel.power_amp || ""} onChange={(e) => setV("power_amp", e.target.value)}><option value="">Shore power</option><option>30 amp</option><option>50 amp</option><option>100 amp</option><option>None</option></select>}
+          {f.vessel.kind !== "rental" && <div className="mt-2 grid grid-cols-3 gap-2">
+            <label className="text-xs font-bold text-slate-600">RV length (ft)<input className={inp} inputMode="numeric" placeholder="e.g. 35" value={f.vessel.length_ft || ""} onChange={(e) => setV("length_ft", e.target.value)} /></label>
+            <label className="text-xs font-bold text-slate-600">Driver side<select className={inp} value={f.vessel.slide_driver || ""} onChange={(e) => setV("slide_driver", e.target.value)}><option value="">Any</option>{["0", "1", "2", "3", "4+"].map((n) => <option key={n} value={n}>{n}</option>)}</select></label>
+            <label className="text-xs font-bold text-slate-600">Passenger side<select className={inp} value={f.vessel.slide_passenger || ""} onChange={(e) => setV("slide_passenger", e.target.value)}><option value="">Any</option>{["0", "1", "2", "3", "4+"].map((n) => <option key={n} value={n}>{n}</option>)}</select></label>
+          </div>}
+          {f.vessel.kind !== "rental" && <p className="mt-2 text-xs text-slate-500">Driver / passenger side = slide-outs on each side. We'll only show sites with room for your RV.</p>}
+        </> : <>
+        <p className="mb-2 text-sm font-black">{l.kind === "m" ? "Your boat" : "Your RV / camper"}</p>
+          <div className="grid grid-cols-2 gap-2">
+            <select className={inp} value={f.vessel.kind} onChange={(e) => setF((x: any) => ({ ...x, vessel: { ...x.vessel, kind: e.target.value, ...(e.target.value === "rental" ? { length_ft: "", power_amp: "" } : {}) } }))}>
+              {l.kind === "m" ? <><option value="boat">Boat</option><option value="other">Other</option></> : <><option value="rv">RV / motorhome</option><option value="trailer">Travel trailer</option>{!l.live && <option value="tent">Tent</option>}{l.live && <option value="rental">Rent a home / park model</option>}<option value="other">Other</option></>}
+            </select>
+            {f.vessel.kind !== "rental" && <input className={inp} inputMode="decimal" placeholder="Length (ft)" value={f.vessel.length_ft || ""} onChange={(e) => setV("length_ft", e.target.value)} />}
+            {l.kind === "m" ? <><input className={inp} inputMode="decimal" placeholder="Beam (ft)" value={f.vessel.beam_ft || ""} onChange={(e) => setV("beam_ft", e.target.value)} />
+              <input className={inp} inputMode="decimal" placeholder="Draft (ft)" value={f.vessel.draft_ft || ""} onChange={(e) => setV("draft_ft", e.target.value)} /></>
+              : f.vessel.kind !== "rental" && <select className={inp} value={f.vessel.power_amp || ""} onChange={(e) => setV("power_amp", e.target.value)}><option value="">Power</option><option>30 amp</option><option>50 amp</option><option>No power</option></select>}
+          </div>
+          {l.kind === "m" && <select className={`${inp} mt-2`} value={f.vessel.power_amp || ""} onChange={(e) => setV("power_amp", e.target.value)}><option value="">Shore power</option><option>30 amp</option><option>50 amp</option><option>100 amp</option><option>None</option></select>}
+        </>}
       </div>
       {l.live ? (() => {
         // Nov 20 (per Mely — online sales, not requests): the guest books and pays on the park's own live map
@@ -127,7 +141,7 @@ export function RequestForm(l: L) {
         const nights = f.arrive && f.depart ? Math.round((Date.parse(f.depart) - Date.parse(f.arrive)) / 86400000) : 0;
         const len = Number(f.vessel?.length_ft) || 0, tooLong = !!(picked?.maxLen && len > picked.maxLen);
         const long = nights > 15, ready = nights > 0 && !!picked && picked.available !== false && !tooLong;
-        const go = () => { if (!ready || !picked) return; setBooked(picked.lot); window.dispatchEvent(new CustomEvent("melyos-book", { detail: { lot: picked.lot, arrive: f.arrive, depart: f.depart, length: f.vessel?.length_ft || "" } })); };
+        const go = () => { if (!ready || !picked) return; setBooked(picked.lot); window.dispatchEvent(new CustomEvent("melyos-book", { detail: { lot: picked.lot, arrive: f.arrive, depart: f.depart, length: f.vessel?.length_ft || "", driverSlideOuts: f.vessel?.slide_driver || "", passengerSlideOuts: f.vessel?.slide_passenger || "" } })); };
         return <>
           {picked?.maxLen && <div className={`rounded-xl px-3 py-2 text-sm ${tooLong ? "border-2 border-rose-300 bg-rose-50 font-bold text-rose-700" : "bg-slate-50 text-slate-700"}`}>
             {tooLong ? `⚠ Your RV is ${len} ft — ${unit} ${picked.lot} takes RVs up to ${picked.maxLen} ft. Pick another ${unit}.` : `${unit[0].toUpperCase() + unit.slice(1)} ${picked.lot} takes RVs up to ${picked.maxLen} ft${len ? ` — your ${len} ft RV fits ✓` : ". Enter your RV length below to check."}`}</div>}
