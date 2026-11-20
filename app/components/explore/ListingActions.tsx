@@ -43,8 +43,8 @@ export function RequestForm(l: L) {
   const [picked, setPicked] = useState<{ lot: string; available: boolean | null; status: string } | null>(null);
   useEffect(() => {
     if (!l.live) return;
-    window.dispatchEvent(new CustomEvent("melyos-dates", { detail: { arrive: f.arrive || "", depart: f.depart || "" } }));
-  }, [l.live, f.arrive, f.depart]);
+    window.dispatchEvent(new CustomEvent("melyos-dates", { detail: { arrive: f.arrive || "", depart: f.depart || "", length: f.vessel?.length_ft || "", power: f.vessel?.power_amp || "" } }));
+  }, [l.live, f.arrive, f.depart, f.vessel?.length_ft, f.vessel?.power_amp]);
   useEffect(() => {
     if (!l.live) return;
     const on = (e: Event) => {
@@ -81,7 +81,7 @@ export function RequestForm(l: L) {
         <label className="text-sm font-bold">Leave<input type="date" className={inp} value={f.depart || ""} onChange={(e) => set("depart", e.target.value)} /></label>
       </div>
       {l.live && (f.arrive && f.depart && avail ? <div className={`rounded-xl px-3 py-2 text-sm font-bold ${avail.available ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-700"}`}>
-          {avail.available ? `✓ ${avail.available} ${unit}s free for these dates — tap a green one on the map` : `No ${unit}s free for these dates — try other dates`}</div>
+          {avail.available ? `✓ ${avail.available} ${unit}s free for these dates${f.vessel?.length_ft || f.vessel?.power_amp ? " that fit your rig" : ""} — tap a green one on the map` : `No ${unit}s free for these dates${f.vessel?.length_ft || f.vessel?.power_amp ? " that fit your rig" : ""} — try other dates`}</div>
         : <div className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-600">{f.arrive && f.depart ? `Now tap a ${unit} on the map to see if it's free for your dates.` : `Pick your dates — the map shows which ${unit}s are free.`}</div>)}
       {l.live && picked && <div className={`flex items-center justify-between gap-2 rounded-xl border-2 px-3 py-2.5 ${picked.available === false ? "border-rose-300 bg-rose-50" : picked.available ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white"}`}>
           <span className="font-black">{unit[0].toUpperCase() + unit.slice(1)} {picked.lot}</span>
