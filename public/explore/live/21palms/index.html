@@ -261,7 +261,7 @@ document.getElementById("poiAdd").onclick=()=>{const v=document.getElementById("
 function render(){svg.innerHTML='<defs><pattern id="mst" patternUnits="userSpaceOnUse" width="1.6" height="1.6" patternTransform="rotate(45)"><rect width="1.6" height="1.6" fill="#1f2937" fill-opacity=".85"/><rect width=".8" height="1.6" fill="#facc15" fill-opacity="1"/></pattern></defs>';over.innerHTML="";const W=map.clientWidth;
  SH.forEach((pts,i)=>{let col=COLOR[ST[i]],srch=typeof RANGE!=="undefined"&&!!RANGE&&filt=="all",pk=srch&&PICKED>=0&&okLot(PICKED),hit=srch&&okLot(i)&&(!pk||i==PICKED),dim=(filt!="all"&&(ST[i]!=filt||(RANGE&&ST[i]!="maint"&&ST[i]!="occ"&&!freeFor(i,RANGE.a,RANGE.d))))||(srch&&!hit);   // a status chip shows that status in its own color (free for the dates when dates are set)
   const pg=document.createElementNS("http://www.w3.org/2000/svg","polygon");pg.setAttribute("points",pts.map(p=>p.join(",")).join(" "));
-  if(GUEST){const R=typeof RANGE!=="undefined"&&RANGE;
+  if(GUEST||filt!="all"){const R=typeof RANGE!=="undefined"&&RANGE;
    // Nov 20 (per Mely): All = every lot in its real color; Available = only green; For rent = only violet; Maintenance = only those.
    // With dates: only the lots free for those dates (green / violet), the rest gray.
    if(R&&(filt=="all"||filt=="free"||filt=="rent")){const catOk=filt=="all"||(filt=="rent"?ST[i]=="rent":ST[i]!="rent"),
