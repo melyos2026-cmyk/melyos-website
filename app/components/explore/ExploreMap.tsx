@@ -217,7 +217,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
         ? Lm.divIcon({ className: "", html: `<svg width="30" height="40" viewBox="0 0 30 40" style="filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 39 15 39s14-13.6 14-24.1C29 7.2 22.7 1 15 1z" fill="${RED}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="15" r="5.5" fill="#fff"/></svg>`, iconSize: [30, 40], iconAnchor: [15, 39], popupAnchor: [0, -34] })
         : Lm.divIcon({ className: "", html: `<span style="display:block;width:16px;height:16px;border-radius:50%;background:${k.color};border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45)"></span>`, iconSize: [16, 16], iconAnchor: [8, 8] });
       const m = Lm.marker([r[2], r[3]], { icon, title: nice(r[1]), zIndexOffset: pt ? 3000 : book ? 1000 : 0 });
-      if (pt) m.bindTooltip(`<span style="color:#fbbf24">&#9733;</span> ${esc(nice(r[1]))}`, { direction: "top", offset: [0, -38], className: "mx-tip" });
+      if (pt) m.bindTooltip(`<span style="color:#fbbf24">&#9733;</span> ${esc(nice(r[1]))}`, { permanent: true, direction: "top", offset: [0, -38], className: "mx-tip" });
       const photo = photoOf(r);
       const ov = extra.overrides[r[7]] || {};
       const phone = ov.phone || r[5], site = ov.website || r[6];
@@ -305,7 +305,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
     <div className="flex flex-col lg:h-[calc(100vh-6rem)] lg:flex-row">
       <div className="relative order-1 h-[55vh] min-h-[320px] border-b border-slate-200 lg:order-2 lg:h-auto lg:flex-1 lg:border-b-0 lg:border-l">
         <div ref={mapEl} className="absolute inset-0 z-0 isolate" />
-        <style>{`.mx-partner{position:relative}.mx-halo{position:absolute;left:50%;top:40%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(57,213,238,.45);animation:mxpulse 1.8s ease-out infinite}@keyframes mxpulse{0%{transform:scale(.5);opacity:.9}100%{transform:scale(1.9);opacity:0}}.mx-tip{background:#fff;color:#071A33;border:1px solid #e2e8f0;border-radius:8px;padding:3px 8px;font:700 12px system-ui,sans-serif;box-shadow:0 2px 6px rgba(7,26,51,.15)}.mx-tip:before{border-top-color:#fff!important}`}</style>
+        <style>{`.mx-partner{position:relative}.mx-halo{position:absolute;left:50%;top:40%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(57,213,238,.45);animation:mxpulse 1.8s ease-out infinite}@keyframes mxpulse{0%{transform:scale(.5);opacity:.9}100%{transform:scale(1.9);opacity:0}}.mx-tip{background:rgba(255,255,255,.95);color:#071A33;border:1px solid #e2e8f0;border-radius:6px;padding:1px 6px;font:700 10.5px/1.4 system-ui,sans-serif;box-shadow:0 1px 4px rgba(7,26,51,.15)}.mx-tip:before{border-top-color:#fff!important}`}</style>
         <div className="absolute right-3 top-3 z-[500] flex rounded-xl bg-white p-1 text-[13px] font-bold shadow-md">
           {([["Map", false], ["Satellite", true]] as [string, boolean][]).map(([lab, v]) => <button key={lab} type="button" onClick={() => setSat(v)} className={`rounded-lg px-3 py-1.5 ${sat === v ? "bg-[#071A33] text-white" : "text-slate-600 hover:bg-slate-50"}`}>{lab}</button>)}
         </div>
