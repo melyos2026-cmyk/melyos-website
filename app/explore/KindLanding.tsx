@@ -37,7 +37,7 @@ export default function KindLanding({ kind }: { kind: Kind }) {
           <h1 className="max-w-3xl text-4xl font-black leading-tight tracking-tight sm:text-5xl">{k.title}</h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">{total ? `${total.toLocaleString()} ${k.plural.toLowerCase()} on the map. ` : ""}{k.lead}</p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <a href={`/explore/us?type=${kind}`} className="rounded-xl bg-[#08B8D8] px-6 py-3 font-black text-white">Search {k.plural} across the U.S.</a>
+            <a href="/explore/us" className="rounded-xl bg-[#08B8D8] px-6 py-3 font-black text-white">Search {k.plural} across the U.S.</a>
             <AccountPill />
           </div>
           <div className="mt-6 flex flex-wrap gap-2 text-sm font-bold">
@@ -51,7 +51,7 @@ export default function KindLanding({ kind }: { kind: Kind }) {
           <h2 className="text-3xl font-black tracking-tight">{k.plural} by state</h2>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {states.map((s) => (
-              <a key={s} href={`/explore/${s.toLowerCase()}?type=${kind}`} className="group rounded-2xl border border-slate-200 p-5 transition hover:-translate-y-0.5 hover:border-cyan-300 hover:shadow-lg">
+              <a key={s} href={`/explore/${s.toLowerCase()}`} className="group rounded-2xl border border-slate-200 p-5 transition hover:-translate-y-0.5 hover:border-cyan-300 hover:shadow-lg">
                 <div className="text-xs font-black tracking-[0.2em] text-[#0891b2]">{s}</div>
                 <div className="mt-1 text-xl font-black">{STATES[s][0]}</div>
                 <div className="mt-2 text-sm text-slate-600">{idx[s][kind].toLocaleString()} {k.plural.toLowerCase()}</div>

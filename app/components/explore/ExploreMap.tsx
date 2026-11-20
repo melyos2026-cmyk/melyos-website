@@ -39,7 +39,8 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
   // Nov 18: /explore/fl?type=r (from "Search RV parks") opens with that kind only
   useEffect(() => {
     const t = new URLSearchParams(window.location.search).get("type");
-    if (t && ["m", "r", "c"].includes(t)) setKinds([t]);
+    // Nov 20 (per Mely): the map always opens on "All"; ?type= is ignored.
+    void t;
   }, []);
   const [picked, setPicked] = useState<string | null>(null);
   // Nov 18 (per Mely): Dockwa-style search — dates, filters, list of cards, "search as I move the map"
