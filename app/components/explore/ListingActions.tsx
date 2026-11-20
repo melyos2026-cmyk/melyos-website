@@ -39,9 +39,10 @@ export function RequestForm(l: L) {
   const set = (k: string, v: any) => setF((x: any) => ({ ...x, [k]: v }));
   // Nov 20 (per Mely): next to a live map — dates go to the map (it fades what's taken and says how many are free),
   // and the site picked on the map comes back here with its availability.
-  const [avail, setAvail] = useState<{ available: number | null; total?: number; lots?: { lot: string; rent?: boolean }[] } | null>(null);
+  const [avail, setAvail] = useState<{ available: number | null; total?: number; lots?: { lot: string; rent?: boolean; maxLen?: number | null }[] } | null>(null);
   const [lotsOpen, setLotsOpen] = useState(false);
-  const [picked, setPicked] = useState<{ lot: string; available: boolean | null; status: string } | null>(null);
+  const [picked, setPicked] = useState<{ lot: string; available: boolean | null; status: string; maxLen?: number | null } | null>(null);
+  const [booked, setBooked] = useState("");
   useEffect(() => {
     if (!l.live) return;
     window.dispatchEvent(new CustomEvent("melyos-dates", { detail: { arrive: f.arrive || "", depart: f.depart || "", length: f.vessel?.length_ft || "", power: f.vessel?.power_amp || "", rental: f.vessel?.kind === "rental" } }));
@@ -50,9 +51,9 @@ export function RequestForm(l: L) {
     if (!l.live) return;
     const on = (e: Event) => {
       const m = (e as CustomEvent).detail || {};
-      if (m.type === "melyos-avail") setAvail(m.available == null ? null : { available: m.available, total: m.total, lots: Array.isArray(m.lots) ? m.lots.slice(0, 500).map((x: any) => ({ lot: String(x?.lot ?? "").slice(0, 20), rent: !!x?.rent })).filter((x: any) => x.lot) : undefined });
+      if (m.type === "melyos-avail") setAvail(m.available == null ? null : { available: m.available, total: m.total, lots: Array.isArray(m.lots) ? m.lots.slice(0, 500).map((x: any) => ({ lot: String(x?.lot ?? "").slice(0, 20), rent: !!x?.rent, maxLen: Number(x?.maxLen) > 0 ? Number(x.maxLen) : null })).filter((x: any) => x.lot) : undefined });
       if (m.type === "melyos-lot" && m.lot) {
-        setPicked({ lot: String(m.lot).slice(0, 20), available: typeof m.available === "boolean" ? m.available : null, status: String(m.status || "") });
+        setPicked({ lot: String(m.lot).slice(0, 20), available: typeof m.available === "boolean" ? m.available : null, status: String(m.status || ""), maxLen: Number(m.maxLen) > 0 ? Number(m.maxLen) : null });
         if (m.arrive && m.depart) setF((x: any) => (x.arrive === m.arrive && x.depart === m.depart ? x : { ...x, arrive: m.arrive, depart: m.depart }));
       }
       // "Request these dates" on the map → finish here: scroll to the form and put the cursor in the name
@@ -93,7 +94,7 @@ export function RequestForm(l: L) {
           {lotsOpen && <div className="absolute left-0 right-0 z-20 mt-1 max-h-60 overflow-y-auto rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
             <div className="grid grid-cols-5 gap-1.5">
               {avail.lots.map((x) => (
-                <button type="button" key={x.lot} onClick={() => { setPicked({ lot: x.lot, available: true, status: x.rent ? "rent" : "free" }); setLotsOpen(false); window.dispatchEvent(new CustomEvent("melyos-pick", { detail: { lot: x.lot } })); }}
+                <button type="button" key={x.lot} onClick={() => { setPicked({ lot: x.lot, available: true, status: x.rent ? "rent" : "free", maxLen: x.maxLen ?? null }); setBooked(""); setLotsOpen(false); window.dispatchEvent(new CustomEvent("melyos-pick", { detail: { lot: x.lot } })); }}
                   className={`rounded-lg px-1 py-2 text-sm font-black text-white shadow-sm ${x.rent ? "bg-violet-500 hover:bg-violet-600" : "bg-emerald-600 hover:bg-emerald-700"} ${picked?.lot === x.lot ? "ring-2 ring-offset-1 ring-slate-900" : ""}`}>{x.lot}</button>))}
             </div>
             <p className="mt-2 px-1 text-xs text-slate-500">Only the {unit}s free for your dates{f.vessel?.length_ft || f.vessel?.power_amp ? " that fit your rig" : ""}.</p>
@@ -124,12 +125,15 @@ export function RequestForm(l: L) {
         // Nov 20 (per Mely — online sales, not requests): the guest books and pays on the park's own live map
         // (its real checkout). Stays longer than 15 nights go to the park's application instead.
         const nights = f.arrive && f.depart ? Math.round((Date.parse(f.depart) - Date.parse(f.arrive)) / 86400000) : 0;
-        const long = nights > 15, ready = nights > 0 && !!picked && picked.available !== false;
-        const go = () => { if (!ready || !picked) return; window.dispatchEvent(new CustomEvent("melyos-book", { detail: { lot: picked.lot, arrive: f.arrive, depart: f.depart, length: f.vessel?.length_ft || "" } })); };
+        const len = Number(f.vessel?.length_ft) || 0, tooLong = !!(picked?.maxLen && len > picked.maxLen);
+        const long = nights > 15, ready = nights > 0 && !!picked && picked.available !== false && !tooLong;
+        const go = () => { if (!ready || !picked) return; setBooked(picked.lot); window.dispatchEvent(new CustomEvent("melyos-book", { detail: { lot: picked.lot, arrive: f.arrive, depart: f.depart, length: f.vessel?.length_ft || "" } })); };
         return <>
+          {picked?.maxLen && <div className={`rounded-xl px-3 py-2 text-sm ${tooLong ? "border-2 border-rose-300 bg-rose-50 font-bold text-rose-700" : "bg-slate-50 text-slate-700"}`}>
+            {tooLong ? `⚠ Your RV is ${len} ft — ${unit} ${picked.lot} takes RVs up to ${picked.maxLen} ft. Pick another ${unit}.` : `${unit[0].toUpperCase() + unit.slice(1)} ${picked.lot} takes RVs up to ${picked.maxLen} ft${len ? ` — your ${len} ft RV fits ✓` : ". Enter your RV length below to check."}`}</div>}
           {long && <div className="rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900"><b>{nights} nights:</b> stays longer than 15 nights need a short application (guest screening). The button takes you there with your dates and {unit}.</div>}
-          <button type="button" onClick={go} disabled={!ready} className="w-full rounded-xl bg-[#08B8D8] px-6 py-3.5 text-lg font-black text-white transition hover:bg-[#079db9] disabled:opacity-60">
-            {!nights ? "Pick your dates" : !picked ? `Pick a ${unit}` : long ? `Start the application · ${unit} ${picked.lot} →` : `Book & pay · ${unit} ${picked.lot} · ${nights} night${nights > 1 ? "s" : ""} →`}</button>
+          <button type="button" onClick={go} disabled={!ready} className={`w-full rounded-xl px-6 py-3.5 text-lg font-black transition disabled:opacity-60 ${booked && booked === picked?.lot ? "border-2 border-emerald-300 bg-emerald-50 text-base text-emerald-800" : "bg-[#08B8D8] text-white hover:bg-[#079db9]"}`}>
+            {booked && booked === picked?.lot ? "✓ Checkout is open on the map — finish there" : !nights ? "Pick your dates" : !picked ? `Pick a ${unit}` : tooLong ? "Your RV is too long for this site" : long ? `Start the application · ${unit} ${picked.lot} →` : `Book & pay · ${unit} ${picked.lot} · ${nights} night${nights > 1 ? "s" : ""} →`}</button>
           <p className="text-xs text-slate-500">{long ? "Once approved, you pay the deposit online." : "You pay securely by card on the park's own checkout. Prices and availability come straight from the park."}</p>
         </>;
       })() : <>
