@@ -1,1 +1,1 @@
-run 2026-11-20 retry missing states
+run 2026-11-20 retry CO KS TN WY

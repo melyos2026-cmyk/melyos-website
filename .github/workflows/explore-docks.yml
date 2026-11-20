@@ -16,28 +16,10 @@ jobs:
       max-parallel: 4
       matrix:
         batch:
-          - "FL"
-          - "IA"
-          - "KS"
-          - "AR"
           - "CO"
-          - "MD"
-          - "MA"
-          - "MI"
-          - "NE"
-          - "NV"
-          - "OH"
-          - "SD"
+          - "KS"
           - "TN"
-          - "TX"
-          - "UT"
-          - "VT"
-          - "VA"
-          - "WA"
-          - "WV"
-          - "WI"
           - "WY"
-          - "PR"
     steps:
       - uses: actions/checkout@v4
       - name: Fetch
