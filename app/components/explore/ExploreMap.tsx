@@ -6,7 +6,9 @@ import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { STATES, KIND, type Row } from "./states";
 import StatePicker from "./StatePicker";
-import { FEATURED, FEATURED_PHOTO, isFeatured } from "./featured";
+import { useBoater } from "./useBoater";
+import { FEATURED, FEATURED_PHOTO, FEATURED_INFO, isFeatured } from "./featured";
+import { AMENITIES, STAY_FILTERS, AmenIcon, hasAmen } from "./amenities";
 import { listingPath } from "./slug";
 
 // Oct 21 (per Mely): MelyOS Explore search — every marina, RV park and campground of
@@ -47,6 +49,18 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
   const [onlyFuel, setOnlyFuel] = useState(false);
   const [onlyRated, setOnlyRated] = useState(false);
   const [follow, setFollow] = useState(true);
+  // Nov 20 (per Mely): our own amenity/stay filters + street/satellite map, MelyOS partners spotlighted first
+  const [amen, setAmen] = useState<string[]>([]);
+  const [stayF, setStayF] = useState<string[]>([]);
+  const [moreF, setMoreF] = useState(false);
+  const [sat, setSat] = useState(false);
+  // Nov 20 (per Mely): guests see every pin and our partners in full; the full list and the phone/website
+  // of the other places need a free traveler account (that is how travelers sign up with MelyOS).
+  const { me } = useBoater();
+  const guest = !!me && !me.boater;
+  const FREE_ROWS = 5;
+  const signUp = () => `/explore/account?next=${encodeURIComponent(typeof window !== "undefined" ? location.pathname + location.search : "/explore")}`;
+  const tiles = useRef<{ street?: any; sat?: any; lab?: any }>({});
   const [bounds, setBounds] = useState<[number, number, number, number] | null>(null);
   const mapEl = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
@@ -107,10 +121,12 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
       map.current = Lmod.map(mapEl.current, { zoomControl: true, scrollWheelZoom: true }).setView([meta[1], meta[2]], meta[3]);
       // Oct 21 (per Mely): CARTO started asking for an API key, so the base map is now
       // OpenStreetMap's standard tiles (no key; attribution required).
-      Lmod.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      tiles.current.street = Lmod.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
       }).addTo(map.current);
+      tiles.current.sat = Lmod.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "Imagery &copy; Esri, Maxar, Earthstar Geographics" });
+      tiles.current.lab = Lmod.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19 });
       // Phones: the map box can get its final size after Leaflet starts; re-measure.
       setTimeout(() => map.current && map.current.invalidateSize(), 250);
       const nb = () => { const b = map.current.getBounds(); setBounds([b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]); };
@@ -121,10 +137,20 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
     return () => { off = true; };
   }, [meta]);
 
+  useEffect(() => {
+    const m = map.current, t = tiles.current;
+    if (!ready || !m || !t.street) return;
+    if (sat) { m.removeLayer(t.street); t.sat.addTo(m); t.lab.addTo(m); } else { m.removeLayer(t.sat); m.removeLayer(t.lab); t.street.addTo(m); }
+  }, [sat, ready]);
+
   useEffect(() => { if (map.current) map.current.setView([meta[1], meta[2]], meta[3]);   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
   // A place is "bookable" (Online Booking + red pin) when it runs on MelyOS or has its own booking page.
+  // A MelyOS partner = a property that runs on MelyOS (signed with us). Spotlighted first everywhere.
+  const partner = (r: Row) => isFeatured(r) || !!extra.overrides[r[7]]?.client;
+  const amenText = (r: Row) => `${FEATURED_INFO[r[7]]?.amenities || ""} ${extra.overrides[r[7]]?.amenities || ""}`;
+  const staysOf = (r: Row): string[] => FEATURED_INFO[r[7]]?.stays || (Array.isArray(extra.overrides[r[7]]?.stay_types) ? extra.overrides[r[7]].stay_types : []);
   const bookable = (r: Row) => isFeatured(r) || !!extra.overrides[r[7]]?.client || okUrl(extra.overrides[r[7]]?.booking_url);
   const photoOf = (r: Row) => (isFeatured(r) ? FEATURED_PHOTO[r[7]] : "") || (okUrl(extra.overrides[r[7]]?.photo_url) ? extra.overrides[r[7]].photo_url : "") || (!broken[r[7]] && okUrl(photos[r[7]]) ? photos[r[7]] : "");
   const dates = arrive || depart ? `?${new URLSearchParams({ ...(arrive ? { arrive } : {}), ...(depart ? { depart } : {}) })}` : "";
@@ -132,17 +158,26 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
   const shown = useMemo(() => {
     const t = q.trim().toLowerCase();
     return (rows || []).filter((r) => kinds.includes(r[0]) && (!t || r[1].toLowerCase().includes(t) || r[4].toLowerCase().includes(t))
-      && (!onlyBook || bookable(r)) && (!onlyFuel || !!extra.fuel[r[7]]) && (!onlyRated || !!extra.stars[r[7]]));
+      && (!onlyBook || bookable(r)) && (!onlyFuel || !!extra.fuel[r[7]]) && (!onlyRated || !!extra.stars[r[7]])
+      && amen.every((id) => { const a = AMENITIES.find((x) => x.id === id); return !a || hasAmen(amenText(r), a); })
+      && (!stayF.length || staysOf(r).some((x) => stayF.includes(x))));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, kinds, q, onlyBook, onlyFuel, onlyRated, extra]);
+  }, [rows, kinds, q, onlyBook, onlyFuel, onlyRated, extra, amen, stayF]);
 
   // The list: what's inside the map right now (when "Search as I move the map" is on), bookable places first.
   const listed = useMemo(() => {
-    const inBox = follow && bounds ? shown.filter((r) => r[2] >= bounds[0] && r[2] <= bounds[2] && r[3] >= bounds[1] && r[3] <= bounds[3]) : shown;
+    const inBox = (follow && bounds ? shown.filter((r) => r[2] >= bounds[0] && r[2] <= bounds[2] && r[3] >= bounds[1] && r[3] <= bounds[3]) : shown).filter((r) => !partner(r));
     const score = (r: Row) => (bookable(r) ? 4 : 0) + (photoOf(r) ? 2 : 0) + (extra.stars[r[7]] ? 1 : 0) + (extra.fuel[r[7]] ? 1 : 0);
     return [...inBox].sort((a, b) => score(b) - score(a));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shown, follow, bounds, extra]);
+  // Partners are always on top of the list — the closest to the map first — even when a bit outside the map area.
+  const partners = useMemo(() => {
+    const c = bounds ? [(bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2] : [meta[1], meta[2]];
+    const d = (r: Row) => (r[2] - c[0]) ** 2 + (r[3] - c[1]) ** 2;
+    return shown.filter(partner).sort((a, b) => d(a) - d(b)).slice(0, 6);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shown, bounds, extra]);
 
   useEffect(() => {
     const Lm = L.current;
@@ -160,12 +195,15 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
     markers.current = {};
     for (const r of shown) {
       const k = KIND[r[0]];
-      const feat = isFeatured(r), book = bookable(r);
+      const feat = isFeatured(r), book = bookable(r), pt = partner(r);
       // Red teardrop pin = Online Booking (like Dockwa). Small kind-colored dot = Inquiry only.
-      const icon = book
+      const icon = pt
+        ? Lm.divIcon({ className: "mx-partner", html: `<span class="mx-halo"></span><svg width="42" height="54" viewBox="0 0 30 40" style="position:relative;filter:drop-shadow(0 3px 4px rgba(7,26,51,.45))"><defs><linearGradient id="mxg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b3a5e"/><stop offset="1" stop-color="#071A33"/></linearGradient></defs><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 39 15 39s14-13.6 14-24.1C29 7.2 22.7 1 15 1z" fill="url(#mxg)" stroke="#39d5ee" stroke-width="2"/><path d="m15 7.6 2.2 4.5 5 .7-3.6 3.5.9 4.9-4.5-2.4-4.5 2.4.9-4.9-3.6-3.5 5-.7z" fill="#fbbf24"/></svg>`, iconSize: [42, 54], iconAnchor: [21, 53], popupAnchor: [0, -46] })
+        : book
         ? Lm.divIcon({ className: "", html: `<svg width="30" height="40" viewBox="0 0 30 40" style="filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 39 15 39s14-13.6 14-24.1C29 7.2 22.7 1 15 1z" fill="${RED}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="15" r="5.5" fill="#fff"/></svg>`, iconSize: [30, 40], iconAnchor: [15, 39], popupAnchor: [0, -34] })
         : Lm.divIcon({ className: "", html: `<span style="display:block;width:16px;height:16px;border-radius:50%;background:${k.color};border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45)"></span>`, iconSize: [16, 16], iconAnchor: [8, 8] });
-      const m = Lm.marker([r[2], r[3]], { icon, title: nice(r[1]), zIndexOffset: book ? 1000 : 0 });
+      const m = Lm.marker([r[2], r[3]], { icon, title: nice(r[1]), zIndexOffset: pt ? 3000 : book ? 1000 : 0 });
+      if (pt) m.bindTooltip(`<span style="color:#fbbf24">&#9733;</span> ${esc(nice(r[1]))}`, { permanent: true, direction: "top", offset: [0, -50], className: "mx-tip" });
       const photo = photoOf(r);
       const ov = extra.overrides[r[7]] || {};
       const phone = ov.phone || r[5], site = ov.website || r[6];
@@ -175,13 +213,14 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
       const bookUrl = feat ? site : okUrl(ov.booking_url) ? ov.booking_url : `${page}${dates}#request`;
       m.bindPopup(`<div style="font-family:system-ui,sans-serif;min-width:210px;max-width:250px">
         ${photo ? `<img src="${esc(photo)}" alt="${esc(nice(r[1]))}" style="display:block;width:100%;height:110px;object-fit:cover;border-radius:10px;margin-bottom:8px" />` : ""}
+        ${pt ? `<div style="display:inline-block;background:linear-gradient(90deg,#071A33,#0b3a5e);color:#fbbf24;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px;margin-bottom:5px">&#9733; MelyOS Partner</div>` : ""}
         <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:${k.color}">${k.label}${ov.verified || ov.client ? ` <span style="color:#059669">&#10003; verified</span>` : ""}</div>
         <a href="${page}${dates}" style="display:block;font-size:15px;font-weight:800;color:#071A33;margin:2px 0 4px;text-decoration:none">${esc(nice(r[1]))}</a>
         ${star ? `<div style="color:#f59e0b;font-weight:800">&#9733; ${star[0].toFixed(1)} <span style="color:#64748b;font-weight:600">(${star[1]} review${star[1] === 1 ? "" : "s"})</span></div>` : ""}
         <div style="color:#475569">${r[4] ? `${esc(r[4])}, ` : ""}${esc(meta[0])}</div>
         ${fu ? `<div style="margin-top:4px;font-weight:700">&#9981; ${fu.gas ? `Gas $${fu.gas.toFixed(2)}` : ""}${fu.gas && fu.diesel ? " · " : ""}${fu.diesel ? `Diesel $${fu.diesel.toFixed(2)}` : ""} <span style="color:#64748b;font-weight:500">· ${ago(fu.at)}</span></div>` : ""}
-        ${phone ? `<div style="margin-top:4px">&#9742; <a href="tel:${esc(phone.replace(/[^\d+]/g, ""))}">${esc(phone)}</a></div>` : ""}
-        ${site ? `<div style="margin-top:2px">&#127760; <a href="${esc(site)}" target="_blank" rel="noopener nofollow">Website</a></div>` : ""}
+        ${guest && !pt ? `<a href="${signUp()}" style="display:block;margin-top:6px;background:#f1f5f9;border-radius:8px;padding:6px 8px;color:#071A33;font-size:12px;font-weight:700;text-decoration:none">&#128274; Phone &amp; website: <span style="color:#0891b2">create a free account</span></a>` : `${phone ? `<div style="margin-top:4px">&#9742; <a href="tel:${esc(phone.replace(/[^\d+]/g, ""))}">${esc(phone)}</a></div>` : ""}
+        ${site ? `<div style="margin-top:2px">&#127760; <a href="${esc(site)}" target="_blank" rel="noopener nofollow">Website</a></div>` : ""}`}
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
           ${book ? `<a href="${esc(bookUrl)}" ${feat || okUrl(ov.booking_url) ? 'target="_blank" rel="noopener"' : ""} style="background:${RED};color:#fff;padding:6px 10px;border-radius:8px;font-weight:800;text-decoration:none;font-size:12px">Book online</a>`
             : `<a href="${page}${dates}#request" style="background:#08B8D8;color:#fff;padding:6px 10px;border-radius:8px;font-weight:800;text-decoration:none;font-size:12px">Request a ${unit}</a>`}
@@ -194,7 +233,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
       m.on("click", () => setPicked(r[7]));
       markers.current[r[7]] = m;
       // Bookable places stay visible at every zoom (never folded into a number circle).
-      if (book) featLayer.addLayer(m); else group.addLayer(m);
+      if (book || pt) featLayer.addLayer(m); else group.addLayer(m);
     }
     group.addTo(map.current);
     layer.current = group;
@@ -211,13 +250,13 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
       map.current.fitBounds(b, { padding: [24, 24], maxZoom: 9 });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shown, ready, state, rows, extra, dates]);
+  }, [shown, ready, state, rows, extra, dates, guest]);
 
   function focus(r: Row) {
     setPicked(r[7]);
     const m = markers.current[r[7]];
     if (!m || !layer.current) return;
-    if (bookable(r)) { map.current.setView([r[2], r[3]], Math.max(map.current.getZoom(), 13)); m.openPopup(); return; }
+    if (bookable(r) || partner(r)) { map.current.setView([r[2], r[3]], Math.max(map.current.getZoom(), 13)); m.openPopup(); return; }
     layer.current.zoomToShowLayer(m, () => m.openPopup());
   }
 
@@ -232,6 +271,10 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
     <div className="flex flex-col lg:h-[calc(100vh-6rem)] lg:flex-row">
       <div className="relative order-1 h-[55vh] min-h-[320px] border-b border-slate-200 lg:order-2 lg:h-auto lg:flex-1 lg:border-b-0 lg:border-l">
         <div ref={mapEl} className="absolute inset-0 z-0 isolate" />
+        <style>{`.mx-partner{position:relative}.mx-halo{position:absolute;left:50%;top:40%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(57,213,238,.45);animation:mxpulse 1.8s ease-out infinite}@keyframes mxpulse{0%{transform:scale(.5);opacity:.9}100%{transform:scale(1.9);opacity:0}}.mx-tip{background:#071A33;color:#fff;border:0;border-radius:999px;padding:4px 10px;font:800 12px system-ui,sans-serif;box-shadow:0 3px 10px rgba(7,26,51,.35)}.mx-tip:before{border-top-color:#071A33!important}`}</style>
+        <div className="absolute right-3 top-3 z-[500] flex rounded-xl bg-white p-1 text-[13px] font-bold shadow-md">
+          {([["Map", false], ["Satellite", true]] as [string, boolean][]).map(([lab, v]) => <button key={lab} type="button" onClick={() => setSat(v)} className={`rounded-lg px-3 py-1.5 ${sat === v ? "bg-[#071A33] text-white" : "text-slate-600 hover:bg-slate-50"}`}>{lab}</button>)}
+        </div>
       </div>
       <div className="order-2 flex min-h-0 flex-col bg-white lg:order-1 lg:w-[560px] xl:w-[620px]">
         <div className="grid gap-3 border-b border-slate-200 p-4">
@@ -273,6 +316,33 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
               <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-slate-400" /> Inquiry only</span>
             </span>
           </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <button type="button" onClick={() => setMoreF(!moreF)} className="inline-flex items-center gap-2 rounded-xl border border-[#071A33] px-3 py-1.5 text-sm font-black text-[#071A33] hover:bg-slate-50">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 6h16M7 12h10M10 18h4" /></svg>
+              {moreF ? "Hide filters" : "Amenities & stays"}{amen.length + stayF.length ? <span className="rounded-full bg-[#08B8D8] px-1.5 text-xs text-white">{amen.length + stayF.length}</span> : null}
+            </button>
+            {(amen.length + stayF.length > 0 || onlyBook || onlyFuel || onlyRated || q) && <button type="button" onClick={() => { setAmen([]); setStayF([]); setOnlyBook(false); setOnlyFuel(false); setOnlyRated(false); setQ(""); }} className="text-sm font-bold text-rose-600 hover:underline">Clear all</button>}
+          </div>
+          {moreF && (
+            <div className="grid gap-3 rounded-2xl border border-slate-200 bg-slate-50/60 p-3">
+              <div>
+                <p className="mb-2 text-[11px] font-black uppercase tracking-[0.14em] text-slate-500">Stay</p>
+                <div className="flex flex-wrap gap-2">{STAY_FILTERS.map(([k, lab]) => <button key={k} type="button" onClick={() => setStayF(stayF.includes(k) ? stayF.filter((x) => x !== k) : [...stayF, k])} className={chip(stayF.includes(k))}>{lab}</button>)}</div>
+              </div>
+              <div>
+                <p className="mb-2 text-[11px] font-black uppercase tracking-[0.14em] text-slate-500">Amenities</p>
+                <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+                  {AMENITIES.filter((a) => a.kinds.some((k) => kinds.includes(k))).map((a) => {
+                    const on = amen.includes(a.id);
+                    return <button key={a.id} type="button" aria-pressed={on} onClick={() => setAmen(on ? amen.filter((x) => x !== a.id) : [...amen, a.id])}
+                      className={`flex items-center gap-2 rounded-xl border px-2.5 py-2 text-left text-[13px] font-semibold transition ${on ? "border-[#08B8D8] bg-cyan-50 text-[#071A33]" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"}`}>
+                      <span className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg ${on ? "bg-[#08B8D8] text-white" : "bg-slate-100 text-[#0b3a5e]"}`}><AmenIcon svg={a.icon} size={16} /></span>{a.label}</button>;
+                  })}
+                </div>
+                <p className="mt-2 text-[11px] text-slate-500">Amenities come from what each owner lists on MelyOS. Places that haven't listed theirs yet won't match.</p>
+              </div>
+            </div>
+          )}
         </div>
         <div className="flex items-center justify-between gap-2 border-b border-slate-200 px-4 py-3">
           <p className="text-sm font-bold text-[#071A33]">{rows ? `${listed.length.toLocaleString()} ${follow && bounds ? "in this area" : "places"}` : "Loading…"}</p>
@@ -280,7 +350,33 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
         </div>
         <div className="max-h-[70vh] overflow-y-auto lg:max-h-none lg:min-h-0 lg:flex-1">
           {rows && !listed.length && <p className="p-5 text-sm text-slate-500">Nothing here. Zoom out or move the map, clear a filter, or choose another state above.</p>}
-          {listed.slice(0, 150).map((r) => {
+          {partners.length > 0 && (
+            <div className="border-b border-slate-200 bg-gradient-to-b from-[#071A33] to-[#0b3a5e] p-3">
+              <p className="mb-2 flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-[#fbbf24]">★ MelyOS Partners <span className="font-semibold normal-case tracking-normal text-cyan-100/80">· book directly, live site map</span></p>
+              <div className="grid gap-2">
+                {partners.map((r) => {
+                  const photo = photoOf(r), star = extra.stars[r[7]], k = KIND[r[0]];
+                  const am = AMENITIES.filter((a) => hasAmen(amenText(r), a)).slice(0, 5);
+                  return (
+                    <div key={r[7]} onClick={() => focus(r)} className={`flex cursor-pointer gap-3 rounded-2xl bg-white p-2.5 shadow-lg ring-2 transition hover:-translate-y-0.5 ${picked === r[7] ? "ring-[#39d5ee]" : "ring-[#fbbf24]/70"}`}>
+                      <div className="relative h-28 w-32 shrink-0 overflow-hidden rounded-xl bg-slate-200">
+                        <img src={photo || aerial(r[2], r[3])} alt="" loading="lazy" className="h-full w-full object-cover" />
+                        <span className="absolute left-1.5 top-1.5 rounded-full bg-[#071A33]/90 px-2 py-0.5 text-[10px] font-black text-[#fbbf24]">★ PARTNER</span>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <a href={`${listingPath(stOf(r), r)}${dates}`} onClick={(e) => e.stopPropagation()} className="line-clamp-2 text-[17px] font-black leading-snug text-[#071A33] hover:underline">{nice(r[1])}</a>
+                        <p className="truncate text-sm text-slate-500">{k.label}{r[4] ? ` · ${r[4]}` : ""}</p>
+                        {star && <p className="text-sm"><span className="text-amber-500">★</span> <b>{star[0].toFixed(1)}</b> <span className="text-slate-500">({star[1]})</span></p>}
+                        {am.length > 0 && <div className="mt-1 flex gap-1 text-[#0b3a5e]">{am.map((a) => <span key={a.id} title={a.label} className="grid h-6 w-6 place-items-center rounded-md bg-cyan-50"><AmenIcon svg={a.icon} size={14} /></span>)}</div>}
+                        <span className="mt-1.5 inline-block rounded-full bg-[#e11d48] px-2.5 py-0.5 text-[11px] font-black text-white">Book online · instant</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          {(guest ? listed.slice(0, FREE_ROWS) : listed.slice(0, 150)).map((r) => {
             const book = bookable(r), photo = photoOf(r), star = extra.stars[r[7]], fu = extra.fuel[r[7]], k = KIND[r[0]];
             return (
               <div key={r[7]} onClick={() => focus(r)} className={`flex cursor-pointer gap-3 border-b border-slate-100 p-3 transition hover:bg-slate-50 ${picked === r[7] ? "bg-cyan-50" : ""}`}>
@@ -298,7 +394,15 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
               </div>
             );
           })}
-          {listed.length > 150 && <p className="p-4 text-center text-xs text-slate-500">Showing 150 of {listed.length.toLocaleString()}. Zoom in on the map or search to narrow it down.</p>}
+          {guest && listed.length > FREE_ROWS && (
+            <div className="m-3 rounded-2xl border border-cyan-200 bg-gradient-to-br from-cyan-50 to-white p-4 text-center">
+              <p className="text-lg font-black text-[#071A33]">See all {listed.length.toLocaleString()} places here</p>
+              <p className="mt-1 text-sm text-slate-600">Create your free MelyOS account to unlock the full list, phone numbers and websites, save favorites and request sites in one tap.</p>
+              <a href={signUp()} className="mt-3 inline-block rounded-xl bg-[#08B8D8] px-5 py-2.5 font-black text-white hover:bg-[#079db9]">Create free account</a>
+              <p className="mt-2 text-xs text-slate-500">Already have one? <a href={signUp()} className="font-bold underline">Sign in</a></p>
+            </div>
+          )}
+          {!guest && listed.length > 150 && <p className="p-4 text-center text-xs text-slate-500">Showing 150 of {listed.length.toLocaleString()}. Zoom in on the map or search to narrow it down.</p>}
         </div>
         <p className="border-t border-slate-100 px-4 py-2 text-[11px] text-slate-500">Map data © <a className="underline" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors · Aerial imagery © Esri, Maxar, Earthstar Geographics. Listings are public information; owners can claim and correct theirs for free.</p>
       </div>

@@ -20,3 +20,9 @@ export const FEATURED_PHOTO: Record<string, string> = {
 export const FEATURED_MAP: Record<string, string> = {
   "melyos-aloha": "https://aloha-rv-park-lilac.vercel.app/?park_id=aloha",
 };
+
+// Nov 20 (per Mely): what each MelyOS property offers, for the Explore filters (amenities + stay types).
+// Edit here when a client adds or changes an amenity.
+export const FEATURED_INFO: Record<string, { amenities: string; stays: string[] }> = {
+  "melyos-aloha": { amenities: "Full hookups, 30/50 amp, water, sewer, laundry, propane", stays: ["week", "month", "year"] },
+};
