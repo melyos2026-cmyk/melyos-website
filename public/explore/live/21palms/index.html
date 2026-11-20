@@ -37,7 +37,7 @@ svg polygon.lp:hover{fill-opacity:1;stroke:#fff;stroke-width:3}
 .badge{display:inline-block;color:#fff;border-radius:12px;padding:3px 10px;font-size:12px;font-weight:700;margin-left:8px;vertical-align:middle}
 .rows{margin:12px 0 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .rows div{background:#f4f7fa;border-radius:10px;padding:9px 11px;font-size:12px;color:#5b6b7c}
-.rows b{display:block;color:#0f2a4a;font-size:15px;margin-top:2px}.feat{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 14px}.feat span{background:#eef4fb;color:#0f2a4a;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:600}#hov .hf{padding:0!important;display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}#hov .hf span{background:#eef4fb;border-radius:999px;padding:1px 7px;font-size:11px;color:#0f2a4a}
+.rows b{display:block;color:#0f2a4a;font-size:15px;margin-top:2px}.feat{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 14px}.feat span{background:#eef4fb;color:#0f2a4a;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:600}#hov .pv div{padding:0}#hov .pv>div+div{margin-top:6px}#hov .hf{padding:0!important;display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}#hov .hf span{background:#eef4fb;border-radius:999px;padding:1px 7px;font-size:11px;color:#0f2a4a}
 .cta{width:100%;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:700;color:#fff;background:#08b8d8}
 .cta.alt{background:#0f2a4a}
 .close{position:absolute;right:14px;top:12px;border:none;background:#eef2f5;border-radius:16px;width:32px;height:32px;font-size:18px;color:#33475b}
@@ -139,7 +139,7 @@ function label(pts,name,max){const W=map.clientWidth,H=map.clientHeight;const px
  const size=Math.min(max,sh.len*0.7,(lg.len*0.86)/(0.62*Math.max(1,name.length)));return size<5?null:{size,ang}}
 
 // Nov 20 (per Mely): amenity labels on the map — clean icons, not emojis, so it looks professional.
-const POIS=[[66.06, 69.33, "Clubhouse", "house", "dark", 0.8, "Office, check-in and activities. Packages and mail at the front desk.", "", "Office: Mon–Sat 9am–5pm · Sun closed"], [73.39, 71.07, "", "dumbbell", "dark", 0.9, "For residents and registered guests. Please wipe down equipment after use.", "", "Daily 6am–10pm"], [81.86, 71.7, "", "pool", "dark", 1.1, "No lifeguard on duty — swim at your own risk.\nShower before entering.\nNo glass or food in the pool area.\nChildren under 14 must be with an adult.\nResidents and registered guests only.", "🏊🏼‍♀️", "Daily 9am–9pm"], [77.47, 65.21, "", "wheelchair", "ada", 0.9, "", "", ""], [62.39, 64.84, "", "tank", "propane", 0.9, "Propane refills. Pay ahead online with the QR code or charge it to your resident account.", "", "Mon–Sat 9am–4pm", "22|30|38|4.49"], [75.23, 89.78, "Fishing Lake", "fish", "dark", 0.9, "Catch and release. Residents and guests only.", "", "Sunrise to sunset"]];
+const POIS=[[66.06, 69.33, "Clubhouse", "house", "dark", 0.8, "Office, check-in and activities. Packages and mail at the front desk.", "", "Office: Mon–Sat 9am–5pm · Sun closed"], [73.39, 71.07, "", "dumbbell", "dark", 0.9, "For residents and registered guests. Please wipe down equipment after use.", "", "Daily 6am–10pm"], [81.86, 71.7, "", "pool", "dark", 1.1, "No lifeguard on duty — swim at your own risk.\nShower before entering.\nNo glass or food in the pool area.\nChildren under 14 must be with an adult.\nResidents and registered guests only.", "🏊🏼‍♀️", "Daily 9am–9pm"], [77.47, 65.21, "", "wheelchair", "ada", 0.9, "", "", ""], [62.39, 64.84, "", "tank", "propane", 0.9, "Propane refills. Pay ahead online with the QR code or charge it to your resident account.", "", "Mon–Sat 9am–4pm", "22|30|38|4.49"], [75.23, 89.78, "Fishing Lake", "fish", "dark", 0.9, "Catch and release. Residents and guests only.", "", "Sunrise to sunset"], [50.5, 93.2, "", "ambulance", "emergency", 1, "In an emergency call 911 right away.\nGive this address: 21 Palms RV Resort, 6951 Osceola Polk Line Rd, Davenport, FL 33896 — and your lot number.\nThen let the office know.", "🚑", "Emergency: call 911 · 24/7"], [21, 98.6, "Osceola Polk Line Rd · CR 532", "road", "road", 0.75, "Main road in front of the park. The park entrance is on this road.", "", ""]];
 const ICON={
  house:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
  dumbbell:'<path d="M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12"/>',
@@ -149,12 +149,13 @@ const ICON={
  laundry:'<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13" r="4.5"/><path d="M7 6.5h.01M10 6.5h.01"/>',
  tank:'<path d="M9 3h6M10 3v2M14 3v2"/><rect x="6" y="5" width="12" height="16" rx="5"/><path d="M13.6 10.2c-.4-.5-1-.7-1.6-.7-1 0-1.7.5-1.7 1.3 0 1.8 3.5 1 3.5 2.9 0 .8-.8 1.4-1.8 1.4-.7 0-1.3-.3-1.7-.8M12 8.6v.9M12 15.1v.9"/>',
  pin:'<path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2"/>',
+ road:'<path d="M5 21l4-18M19 21l-4-18M12 4v3M12 10v3M12 16v3"/>',
  fish:'<path d="M3 12c3-4 8-5 12-3l4-3v12l-4-3c-4 2-9 1-12-3z"/><circle cx="8" cy="11" r=".9" fill="currentColor"/>'
 };
 let PO=[],selPoi=-1;
 function drawPois(){const z0=map.clientWidth/980;const base=Math.max(7,Math.min(12,10*z0*1.6));
  PO.forEach((p,i)=>{const [x,y,l,ic,st]=p,sc=p[5]||1,fs=base*sc;const el=document.createElement("div");
-  const bg=st=="ada"?"#1d5fbf":st=="propane"?"#f59e0b":"#0f2540",fg=st=="propane"?"#0f2540":"#fff";
+  const bg=st=="ada"?"#1d5fbf":st=="propane"?"#f59e0b":st=="road"?"rgba(55,65,81,.92)":st=="emergency"?"#dc2626":"#0f2540",fg=st=="propane"?"#0f2540":"#fff";
   const on=editing&&i==selPoi,em=!!p[7]&&!l;
   el.style.cssText=em?`position:absolute;left:${x}%;top:${y}%;transform:translate(-50%,-50%);line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45));outline:${on?"2px solid #f59e0b":"none"};outline-offset:2px;border-radius:6px;`:`position:absolute;left:${x}%;top:${y}%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:4px;padding:${l?(fs<10?"2px 6px 2px 4px":"3px 8px 3px 5px"):"3px"};border-radius:${st=="ada"?"5px":"999px"};background:${bg};color:${fg};font:700 ${fs}px/1 Inter,system-ui,sans-serif;white-space:nowrap;box-shadow:${on?"0 0 0 3px #f59e0b,":""}0 1px 4px rgba(0,0,0,.35);border:1.5px solid rgba(255,255,255,.9);`;el.style.cssText+=`pointer-events:${editing||p[6]||p[8]||p[9]?"auto":"none"};cursor:${editing?"move":(p[6]||p[8]||p[9])?"pointer":"default"};touch-action:none;z-index:4`;
   el.innerHTML=(p[7]?`<span style="font-size:${em?fs*2.2:fs+3}px;line-height:1">${p[7]}</span>`:`<svg width="${fs+3}" height="${fs+3}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[ic]||ICON.pin}</svg>`)+`${l?`<span>${l}</span>`:""}`;
@@ -162,7 +163,14 @@ function drawPois(){const z0=map.clientWidth/980;const base=Math.max(7,Math.min(
   el.onpointerdown=e=>{if(!editing){if(p[6]||p[8]||p[9]){e.stopPropagation();showPoi(p)}return}e.preventDefault();e.stopPropagation();select(-1);selPoi=i;poiPanel();
    const [sx,sy]=pos(e),ox=p[0],oy=p[1];window.onpointermove=ev=>{const [x2,y2]=pos(ev);p[0]=Math.round((ox+x2-sx)*100)/100;p[1]=Math.round((oy+y2-sy)*100)/100;render()};
    window.onpointerup=()=>{window.onpointermove=null};render()};
+  // Nov 20 (per Mely): hover an icon and its info shows — no click needed
+  el.onpointerenter=e=>{if(editing||e.pointerType!=="mouse"||!(p[6]||p[8]))return;poiHov(p,e)};el.onpointermove=e=>{if(!editing&&e.pointerType==="mouse"&&hov.style.display=="block")moveHov(e)};el.onpointerleave=()=>hideHov();
   over.appendChild(el)})}
+function poiHov(p,e){const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+ const title=p[2]||({wheelchair:"Accessible parking",dumbbell:"Fitness center",tank:"Propane for sale",pool:"Pool",ambulance:"Emergency — call 911"})[p[3]]||"";
+ const red=p[3]=="ambulance";
+ hov.innerHTML=`<div class="pv" style="padding:10px 12px"><div style="display:flex;align-items:center;gap:6px"><span style="font-size:18px;line-height:1">${p[7]?esc(p[7]):""}</span><b style="color:${red?"#dc2626":"#0f2540"}">${esc(title)}</b></div>${p[8]?`<div style="margin-top:6px;display:inline-block;background:${red?"#fee2e2":"#e8f6f9"};color:${red?"#b91c1c":"#0e7a8c"};font-weight:700;font-size:11px;padding:2px 8px;border-radius:999px">${esc(p[8])}</div>`:""}<div style="margin-top:6px;color:#475569;font-size:12px">${String(p[6]||"").split(/\n+/).filter(Boolean).map(esc).join("<br>")}</div>${p[9]?`<div style="margin-top:6px;font-size:11px;color:#0e7a8c;font-weight:600">Click to order</div>`:""}</div>`;
+ hov.style.width="250px";hov.style.display="block";moveHov(e)}
 function poiPanel(){const p=PO[selPoi];document.getElementById("poiText").value=p?p[2]:"";document.getElementById("poiEmoji").value=p?(p[7]||""):"";document.getElementById("poiInfo").value=p?(p[6]||""):"";document.getElementById("poiHours").value=p?(p[8]||""):"";document.getElementById("poiPrice").value=p?(p[9]||""):"";if(p)document.getElementById("poiIcon").value=p[3]}
 const needPoi=()=>{if(selPoi<0||!PO[selPoi]){say("Tap a label on the map first");return true}return false};
 document.getElementById("poiText").oninput=e=>{if(needPoi())return;PO[selPoi][2]=e.target.value;render()};
@@ -174,7 +182,7 @@ const pop=document.createElement("div");pop.style.cssText="position:fixed;left:5
 function hidePop(){pop.style.display="none"}
 document.addEventListener("pointerdown",e=>{if(pop.style.display=="block"&&!pop.contains(e.target))hidePop()},true);
 function showPoi(p){const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
- const title=p[2]||({wheelchair:"Accessible parking",dumbbell:"Fitness center",tank:"Propane for sale",pool:"Pool"})[p[3]]||"";
+ const title=p[2]||({wheelchair:"Accessible parking",dumbbell:"Fitness center",tank:"Propane for sale",pool:"Pool",ambulance:"Emergency — call 911"})[p[3]]||"";
  const lines=String(p[6]||"").split(/\n+/).map(s=>s.trim()).filter(Boolean);
  pop.innerHTML=`<button aria-label="Close" style="position:absolute;top:8px;right:8px;width:26px;height:26px;border:0;border-radius:999px;background:#f1f5f9;color:#475569;font-size:15px;cursor:pointer">×</button>
  <div style="display:flex;align-items:center;gap:8px;padding-right:26px"><span style="font-size:22px;line-height:1">${p[7]?esc(p[7]):""}</span><b style="font-size:15px;color:#0f2540">${esc(title)}</b></div>
@@ -283,8 +291,8 @@ function open(i){select(i);render();arr=dep=null;calM=new Date(today.getFullYear
 const hov=document.createElement("div");hov.id="hov";document.body.appendChild(hov);
 function showHov(i,e){const t=T[L],st=ST[i],es=L=="es",k=kind(i);const col={free:"#16a34a",occ:"#dc2626",res:"#ca8a04",rent:"#8b5cf6",maint:"#4b5563"}[st];
  const price=st=="rent"?(es?"$95 por noche":"$95 / night"):({home:"$750",pm:"$700",rv:"$650"}[k]+(es?" / mes":" / month"));
- hov.innerHTML=`<img src="${photoOf(i)}" alt=""><div><b>${t.lot} ${NUM[i]}</b><i style="background:${col}">${t[st]}</i><br><span style="color:#475569">${st=="maint"?"":price}</span><div class="hf">${(()=>{const f=info(i);return [f.amp,f.size,...(f.sleeps?[f.sleeps]:[])].map(x=>`<span>${x}</span>`).join("")})()}</div></div>`;hov.style.display="block";moveHov(e)}
-function moveHov(e){const w=230,h=hov.offsetHeight||190;let x=e.clientX+16,y=e.clientY+16;if(x+w>innerWidth-8)x=e.clientX-w-16;if(y+h>innerHeight-8)y=e.clientY-h-16;hov.style.left=x+"px";hov.style.top=Math.max(8,y)+"px"}
+ hov.style.width="230px";hov.innerHTML=`<img src="${photoOf(i)}" alt=""><div><b>${t.lot} ${NUM[i]}</b><i style="background:${col}">${t[st]}</i><br><span style="color:#475569">${st=="maint"?"":price}</span><div class="hf">${(()=>{const f=info(i);return [f.amp,f.size,...(f.sleeps?[f.sleeps]:[])].map(x=>`<span>${x}</span>`).join("")})()}</div></div>`;hov.style.display="block";moveHov(e)}
+function moveHov(e){const w=hov.offsetWidth||230,h=hov.offsetHeight||190;let x=e.clientX+16,y=e.clientY+16;if(x+w>innerWidth-8)x=e.clientX-w-16;if(y+h>innerHeight-8)y=e.clientY-h-16;hov.style.left=x+"px";hov.style.top=Math.max(8,y)+"px"}
 function hideHov(){hov.style.display="none"}
 function drawLot(i){hideHov();const t=T[L],k=kind(i),st=ST[i],es=L=="es",inf=info(i);
  const rate={home:"$750",pm:"$700",rv:"$650"}[k],fits=k=="rv"?(es?"40 pies · 30/50 amp":"40 ft · 30/50 amp"):(es?"No aplica (casa / park model)":"Not an RV site");
