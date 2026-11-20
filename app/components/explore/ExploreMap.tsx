@@ -41,8 +41,13 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
     const t = new URLSearchParams(window.location.search).get("type");
     // Nov 20 (per Mely): the map always opens on "All"; ?type= is ignored.
     void t;
+    // Nov 20 (per Mely): sales demo — ?demo=<listing id> shows a prospect as if it were a MelyOS partner
+    // (only in that view; not linked anywhere). e.g. /explore/fl?demo=x-21-palms
+    const dm = new URLSearchParams(window.location.search).get("demo");
+    if (dm && /^[\w-]{3,40}$/.test(dm)) setDemo(dm);
   }, []);
   const [picked, setPicked] = useState<string | null>(null);
+  const [demo, setDemo] = useState<string | null>(null);
   // Nov 18 (per Mely): Dockwa-style search — dates, filters, list of cards, "search as I move the map"
   const [arrive, setArrive] = useState("");
   const [depart, setDepart] = useState("");
@@ -163,10 +168,10 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
 
   // A place is "bookable" (Online Booking + red pin) when it runs on MelyOS or has its own booking page.
   // A MelyOS partner = a property that runs on MelyOS (signed with us). Spotlighted first everywhere.
-  const partner = (r: Row) => isFeatured(r) || !!extra.overrides[r[7]]?.client;
+  const partner = (r: Row) => isFeatured(r) || !!extra.overrides[r[7]]?.client || r[7] === demo;
   const amenText = (r: Row) => `${FEATURED_INFO[r[7]]?.amenities || ""} ${extra.overrides[r[7]]?.amenities || ""}`;
   const staysOf = (r: Row): string[] => FEATURED_INFO[r[7]]?.stays || (Array.isArray(extra.overrides[r[7]]?.stay_types) ? extra.overrides[r[7]].stay_types : []);
-  const bookable = (r: Row) => isFeatured(r) || !!extra.overrides[r[7]]?.client || okUrl(extra.overrides[r[7]]?.booking_url);
+  const bookable = (r: Row) => partner(r) || !!extra.overrides[r[7]]?.client || okUrl(extra.overrides[r[7]]?.booking_url);
   const photoOf = (r: Row) => (isFeatured(r) ? FEATURED_PHOTO[r[7]] : "") || (okUrl(extra.overrides[r[7]]?.photo_url) ? extra.overrides[r[7]].photo_url : "") || (!broken[r[7]] && okUrl(photos[r[7]]) ? photos[r[7]] : "");
   const dates = arrive || depart ? `?${new URLSearchParams({ ...(arrive ? { arrive } : {}), ...(depart ? { depart } : {}) })}` : "";
 
@@ -185,14 +190,14 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
     const score = (r: Row) => (bookable(r) ? 4 : 0) + (photoOf(r) ? 2 : 0) + (extra.stars[r[7]] ? 1 : 0) + (extra.fuel[r[7]] ? 1 : 0);
     return [...inBox].sort((a, b) => score(b) - score(a));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shown, follow, bounds, extra]);
+  }, [shown, follow, bounds, extra, demo]);
   // Partners are always on top of the list — the closest to the map first — even when a bit outside the map area.
   const partners = useMemo(() => {
     const c = bounds ? [(bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2] : [meta[1], meta[2]];
     const d = (r: Row) => (r[2] - c[0]) ** 2 + (r[3] - c[1]) ** 2;
     return shown.filter(partner).sort((a, b) => d(a) - d(b)).slice(0, 6);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shown, bounds, extra]);
+  }, [shown, bounds, extra, demo]);
 
   useEffect(() => {
     const Lm = L.current;
@@ -213,7 +218,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
       const feat = isFeatured(r), book = bookable(r), pt = partner(r);
       // Red teardrop pin = Online Booking (like Dockwa). Small kind-colored dot = Inquiry only.
       const icon = pt
-        ? Lm.divIcon({ className: "", html: `<svg width="30" height="40" viewBox="0 0 30 40" style="filter:drop-shadow(0 2px 3px rgba(7,26,51,.35))"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 39 15 39s14-13.6 14-24.1C29 7.2 22.7 1 15 1z" fill="#0b2a4a" stroke="#fff" stroke-width="2"/><path d="m15 8.6 1.9 3.9 4.3.6-3.1 3 .7 4.3-3.8-2-3.8 2 .7-4.3-3.1-3 4.3-.6z" fill="#e8c26a"/></svg>`, iconSize: [30, 40], iconAnchor: [15, 39], popupAnchor: [0, -34] })
+        ? Lm.divIcon({ className: "", html: `<svg width="30" height="40" viewBox="0 0 30 40" style="filter:drop-shadow(0 2px 3px rgba(7,26,51,.35))"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 39 15 39s14-13.6 14-24.1C29 7.2 22.7 1 15 1z" fill="${RED}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="14.6" r="7.6" fill="#fff"/><path d="m15 9.4 1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#d4a94a"/></svg>`, iconSize: [30, 40], iconAnchor: [15, 39], popupAnchor: [0, -34] })
         : book
         ? Lm.divIcon({ className: "", html: `<svg width="30" height="40" viewBox="0 0 30 40" style="filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 39 15 39s14-13.6 14-24.1C29 7.2 22.7 1 15 1z" fill="${RED}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="15" r="5.5" fill="#fff"/></svg>`, iconSize: [30, 40], iconAnchor: [15, 39], popupAnchor: [0, -34] })
         : Lm.divIcon({ className: "", html: `<span style="display:block;width:16px;height:16px;border-radius:50%;background:${k.color};border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45)"></span>`, iconSize: [16, 16], iconAnchor: [8, 8] });
@@ -265,7 +270,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
       map.current.fitBounds(b, { padding: [24, 24], maxZoom: 9 });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shown, ready, state, rows, extra, dates, guest]);
+  }, [shown, ready, state, rows, extra, dates, guest, demo]);
 
   useEffect(() => {
     const Lm = L.current, m = map.current;
@@ -286,6 +291,15 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
     g.addTo(m); dockLayer.current = g;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [docks, showDocks, ready, kinds]);
+
+  const demoDone = useRef(false);
+  useEffect(() => {
+    if (!demo || demoDone.current || !ready || !rows) return;
+    const r = rows.find((x) => x[7] === demo); if (!r || !markers.current[r[7]]) return;
+    demoDone.current = true;
+    setTimeout(() => { map.current.setView([r[2], r[3]], 10); }, 400);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [demo, ready, rows, shown]);
 
   function focus(r: Row) {
     setPicked(r[7]);
