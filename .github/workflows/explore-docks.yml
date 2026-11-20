@@ -1,0 +1,63 @@
+# Nov 20 (per Mely): free arrival docks / boat ramps for signed-in Explore boaters.
+# Runs by hand, or when .github/run/docks.txt changes. Commits data/docks/*.json.
+name: Explore docks
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/run/docks.txt"]
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        batch:
+          - "AL,AK,AZ,AR,CA,CO,CT,DE,DC"
+          - "FL,GA,HI,ID,IL,IN,IA,KS"
+          - "KY,LA,ME,MD,MA,MI,MN,MS"
+          - "MO,MT,NE,NV,NH,NJ,NM,NY"
+          - "NC,ND,OH,OK,OR,PA,RI,SC"
+          - "SD,TN,TX,UT,VT,VA,WA,WV,WI,WY,PR"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch
+        env:
+          BATCH: ${{ strategy.job-index }}
+        run: |
+          rm -rf data/docks && mkdir -p data/docks
+          python3 scripts/explore_docks.py "${{ matrix.batch }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docks-${{ strategy.job-index }}
+          path: data/docks/
+          if-no-files-found: ignore
+  commit:
+    needs: fetch
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: docks-*
+          path: data/docks/
+          merge-multiple: true
+      - name: Merge and commit
+        run: |
+          python3 - <<'PY'
+          import glob, json, os
+          d = "data/docks"; p = f"{d}/index.json"
+          idx = json.load(open(p)) if os.path.exists(p) else {}
+          for f in sorted(glob.glob(f"{d}/index-part-*.json")):
+              idx.update(json.load(open(f))); os.remove(f)
+          json.dump(idx, open(p, "w"), separators=(",", ":"), sort_keys=True)
+          tot = sum(sum(v.values()) for v in idx.values())
+          print(f"::notice title=Docks::{len(idx)} states · {tot} docks, ramps, piers and anchorages")
+          PY
+          git config user.name "MelyOS Explore bot"
+          git config user.email "info@melyos.io"
+          git add data/docks
+          git diff --cached --quiet && echo "no changes" || (git commit -m "Explore docks refresh" && git pull --rebase && git push)

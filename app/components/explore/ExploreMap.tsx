@@ -59,6 +59,20 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
   const { me } = useBoater();
   const guest = !!me && !me.boater;
   const FREE_ROWS = 5;
+  // Nov 20 (per Mely): free arrival docks / boat ramps / piers / anchorages — signed-in boaters only.
+  type Dock = [string, string, number, number, string, string];
+  const [docks, setDocks] = useState<Dock[]>([]);
+  const [showDocks, setShowDocks] = useState(true);
+  const dockLayer = useRef<any>(null);
+  const DOCK: Record<string, [string, string]> = { r: ["Boat ramp", "#0e7490"], d: ["Dock", "#0369a1"], p: ["Pier", "#475569"], a: ["Anchorage", "#1e3a8a"] };
+  useEffect(() => {
+    if (!me?.boater) { setDocks([]); return; }
+    let off = false;
+    Promise.all(sts.map((st) => fetch(`/api/explore/docks?state=${st}`).then((r) => (r.ok ? r.json() : { rows: [] })).catch(() => ({ rows: [] }))))
+      .then((all) => !off && setDocks(all.flatMap((j: any) => j.rows || [])));
+    return () => { off = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state, me]);
   const signUp = () => `/explore/account?next=${encodeURIComponent(typeof window !== "undefined" ? location.pathname + location.search : "/explore")}`;
   const tiles = useRef<{ street?: any; sat?: any; lab?: any }>({});
   const [bounds, setBounds] = useState<[number, number, number, number] | null>(null);
@@ -252,6 +266,26 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shown, ready, state, rows, extra, dates, guest]);
 
+  useEffect(() => {
+    const Lm = L.current, m = map.current;
+    if (!ready || !Lm || !m) return;
+    if (dockLayer.current) { m.removeLayer(dockLayer.current); dockLayer.current = null; }
+    if (!showDocks || !docks.length || !kinds.includes("m")) return;
+    const g = (Lm as any).markerClusterGroup({ showCoverageOnHover: false, maxClusterRadius: 50, chunkedLoading: true, disableClusteringAtZoom: 14,
+      iconCreateFunction: (c: any) => Lm.divIcon({ className: "", iconSize: [30, 30], html: `<div style="width:30px;height:30px;border-radius:9px;background:#e0f2fe;color:#0369a1;border:2px solid #0369a1;display:flex;align-items:center;justify-content:center;font:800 11px system-ui,sans-serif;box-shadow:0 1px 4px rgba(0,0,0,.25)">&#9875;${c.getChildCount()}</div>` }) });
+    for (const d of docks) {
+      const [lab, col] = DOCK[d[0]] || DOCK.d;
+      const mk = Lm.marker([d[2], d[3]], { icon: Lm.divIcon({ className: "", iconSize: [20, 20], iconAnchor: [10, 10], html: `<span style="display:flex;width:20px;height:20px;border-radius:6px;background:#fff;border:2px solid ${col};color:${col};align-items:center;justify-content:center;font-size:12px;box-shadow:0 1px 3px rgba(0,0,0,.3)">${d[0] === "r" ? "&#8689;" : "&#9875;"}</span>` }), title: d[1] || lab });
+      mk.bindPopup(`<div style="font-family:system-ui,sans-serif;min-width:180px"><div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:${col}">&#9875; ${lab}${d[4] === "free" ? ' <span style="color:#059669">&middot; Free</span>' : d[4] === "paid" ? ' <span style="color:#b45309">&middot; Fee</span>' : ""}</div>
+        <div style="font-size:14px;font-weight:800;color:#071A33;margin:2px 0 6px">${esc(d[1] || `${lab} (no name)`)}</div>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=${d[2]},${d[3]}" target="_blank" rel="noopener" style="display:inline-block;background:#0369a1;color:#fff;padding:5px 9px;border-radius:8px;font-weight:800;text-decoration:none;font-size:12px">Directions</a>
+        <div style="color:#64748b;font-size:11px;margin-top:6px">Public info from OpenStreetMap. Check local rules and hours before you tie up.</div></div>`);
+      g.addLayer(mk);
+    }
+    g.addTo(m); dockLayer.current = g;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [docks, showDocks, ready, kinds]);
+
   function focus(r: Row) {
     setPicked(r[7]);
     const m = markers.current[r[7]];
@@ -276,7 +310,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
           {([["Map", false], ["Satellite", true]] as [string, boolean][]).map(([lab, v]) => <button key={lab} type="button" onClick={() => setSat(v)} className={`rounded-lg px-3 py-1.5 ${sat === v ? "bg-[#071A33] text-white" : "text-slate-600 hover:bg-slate-50"}`}>{lab}</button>)}
         </div>
       </div>
-      <div className="order-2 flex min-h-0 flex-col bg-white lg:order-1 lg:w-[560px] xl:w-[620px]">
+      <div className="order-2 flex min-h-0 flex-col bg-white lg:order-1 lg:w-[560px] lg:overflow-y-auto xl:w-[620px]">
         <div className="grid gap-3 border-b border-slate-200 p-4">
           {heading}
     <div role="tablist" aria-label="Show" className="grid grid-cols-2 gap-1 rounded-2xl border border-slate-200 bg-white p-1 sm:flex">
@@ -311,6 +345,9 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
             <button type="button" onClick={() => setOnlyBook(!onlyBook)} className={chip(onlyBook)}><span className="mr-1 inline-block h-2.5 w-2.5 rounded-full" style={{ background: RED }} />Online booking</button>
             {kinds.includes("m") && <button type="button" onClick={() => setOnlyFuel(!onlyFuel)} className={chip(onlyFuel)}>⛽ Fuel prices</button>}
             <button type="button" onClick={() => setOnlyRated(!onlyRated)} className={chip(onlyRated)}>★ Has reviews</button>
+            {kinds.includes("m") && (me?.boater
+              ? <button type="button" onClick={() => setShowDocks(!showDocks)} className={chip(showDocks)}>⚓ Docks & ramps{docks.length ? ` · ${docks.length.toLocaleString()}` : ""}</button>
+              : <a href={signUp()} title="Free with a MelyOS account" className="rounded-full border border-dashed border-cyan-400 bg-cyan-50 px-3 py-1.5 text-sm font-bold text-[#0369a1] hover:bg-cyan-100">🔒 ⚓ Free docks & boat ramps · sign up free</a>)}
             <span className="ml-auto flex items-center gap-3 text-xs text-slate-500">
               <span className="flex items-center gap-1"><svg width="11" height="15" viewBox="0 0 30 40"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 39 15 39s14-13.6 14-24.1C29 7.2 22.7 1 15 1z" fill={RED} /></svg> Book online</span>
               <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-slate-400" /> Inquiry only</span>
@@ -348,7 +385,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
           <p className="text-sm font-bold text-[#071A33]">{rows ? `${listed.length.toLocaleString()} ${follow && bounds ? "in this area" : "places"}` : "Loading…"}</p>
           <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-600"><input type="checkbox" checked={follow} onChange={(e) => setFollow(e.target.checked)} className="h-4 w-4 accent-[#08B8D8]" />Search as I move the map</label>
         </div>
-        <div className="max-h-[70vh] overflow-y-auto lg:max-h-none lg:min-h-0 lg:flex-1">
+        <div className="max-h-[70vh] overflow-y-auto lg:max-h-none lg:flex-1 lg:overflow-visible">
           {rows && !listed.length && <p className="p-5 text-sm text-slate-500">Nothing here. Zoom out or move the map, clear a filter, or choose another state above.</p>}
           {partners.length > 0 && (
             <div className="border-b border-slate-200 bg-gradient-to-b from-[#071A33] to-[#0b3a5e] p-3">
@@ -397,7 +434,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
           {guest && listed.length > FREE_ROWS && (
             <div className="m-3 rounded-2xl border border-cyan-200 bg-gradient-to-br from-cyan-50 to-white p-4 text-center">
               <p className="text-lg font-black text-[#071A33]">See all {listed.length.toLocaleString()} places here</p>
-              <p className="mt-1 text-sm text-slate-600">Create your free MelyOS account to unlock the full list, phone numbers and websites, save favorites and request sites in one tap.</p>
+              <p className="mt-1 text-sm text-slate-600">Create your free MelyOS account to unlock the full list, phone numbers and websites, public docks and boat ramps on the map, save favorites and request sites in one tap.</p>
               <a href={signUp()} className="mt-3 inline-block rounded-xl bg-[#08B8D8] px-5 py-2.5 font-black text-white hover:bg-[#079db9]">Create free account</a>
               <p className="mt-2 text-xs text-slate-500">Already have one? <a href={signUp()} className="font-bold underline">Sign in</a></p>
             </div>

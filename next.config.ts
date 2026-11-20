@@ -11,6 +11,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Nov 20: private dock data read by /api/explore/docks (signed-in boaters only)
+  outputFileTracingIncludes: { '/api/explore/docks': ['./data/docks/**/*'] },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
