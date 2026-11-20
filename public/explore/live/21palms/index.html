@@ -240,13 +240,13 @@ document.getElementById("poiAdd").onclick=()=>{const v=document.getElementById("
 function render(){svg.innerHTML="";over.innerHTML="";const W=map.clientWidth;
  SH.forEach((pts,i)=>{const col=COLOR[ST[i]],srch=typeof RANGE!=="undefined"&&!!RANGE,hit=srch&&okLot(i),dim=(filt!="all"&&ST[i]!=filt)||(srch&&!hit);
   const pg=document.createElementNS("http://www.w3.org/2000/svg","polygon");pg.setAttribute("points",pts.map(p=>p.join(",")).join(" "));
-  const cc=hit?"#16a34a":srch?"#94a3b8":col;pg.setAttribute("fill",srch&&!hit?"transparent":cc+(dim?"10":hit?"88":"55"));pg.setAttribute("stroke",i==sel?"#fff":cc);pg.setAttribute("stroke-width",i==sel?2.6:1.6);
+  const cc=hit?(ST[i]=="rent"?"#8b5cf6":"#16a34a"):srch?"#6b7280":col;pg.setAttribute("fill",srch&&!hit?"#9ca3afcc":cc+(dim?"10":hit?"88":"55"));pg.setAttribute("stroke",i==sel?"#fff":cc);pg.setAttribute("stroke-width",i==sel?2.6:1.6);
   pg.setAttribute("vector-effect","non-scaling-stroke");pg.setAttribute("class","lp"+(!editing&&!dim&&i!=sel&&(hit||(!srch&&(ST[i]=="free"||ST[i]=="rent")))?" blink":""));pg.setAttribute("stroke-linejoin","round");
-  pg.style.cssText=`pointer-events:auto;cursor:${editing?"move":"pointer"};opacity:${srch&&!hit?.18:dim?.35:1};filter:${i==sel||(srch&&!hit)?"none":`drop-shadow(0 0 1.5px ${cc})`}`;
+  pg.style.cssText=`pointer-events:auto;cursor:${editing?"move":"pointer"};opacity:${srch?1:dim?.35:1};filter:${i==sel||(srch&&!hit)?"none":`drop-shadow(0 0 1.5px ${cc})`}`;
   pg.onpointerdown=e=>{HINTDONE=true;downShape(e,i)};svg.appendChild(pg);
   pg.onpointerenter=e=>{if(editing||e.pointerType!=="mouse")return;showHov(i,e)};pg.onpointermove=e=>{if(!editing&&e.pointerType==="mouse")moveHov(e)};pg.onpointerleave=()=>hideHov();
   const c=cen(pts),lb=label(pts,NUM[i],13);if(lb){const sp=document.createElement("span");sp.textContent=NUM[i];
-   sp.style.cssText=`position:absolute;left:${c[0]}%;top:${c[1]}%;transform:translate(-50%,-50%) rotate(${lb.ang}deg);font-size:${lb.size}px;line-height:1;font-weight:700;color:#fff;white-space:nowrap;text-shadow:0 0 2px #000,0 1px 2px #000;opacity:${srch&&!hit?.25:dim?.35:1}`;over.appendChild(sp)}});
+   sp.style.cssText=`position:absolute;left:${c[0]}%;top:${c[1]}%;transform:translate(-50%,-50%) rotate(${lb.ang}deg);font-size:${lb.size}px;line-height:1;font-weight:700;color:#fff;white-space:nowrap;text-shadow:0 0 2px #000,0 1px 2px #000;opacity:${srch?1:dim?.35:1}`;over.appendChild(sp)}});
  drawPois();if(editing&&sel>=0)handles();bar();
  if(!editing&&!HINTDONE&&sel<0){let k=ST.findIndex((s,j)=>s=="free"&&NUM[j]=="91");if(k<0)k=ST.findIndex((s,j)=>s=="free"&&cen(SH[j])[0]>35&&cen(SH[j])[0]<65&&cen(SH[j])[1]>25);if(k<0)k=ST.findIndex(s=>s=="free");if(k<0)k=0;const c=cen(SH[k]);
   const h=document.createElement("span");h.id="hand";h.innerHTML='<svg width="30" height="34" viewBox="0 0 30 34"><path d="M10.5 3.2c0-1.3 1-2.2 2.2-2.2s2.2.9 2.2 2.2v9.3l.1-2.4c0-1.2 1-2.1 2.2-2.1s2.1.9 2.1 2.1v2.6c.1-1.1 1-2 2.1-2s2.2.9 2.2 2.1v2.3c.1-1.1 1-1.9 2.1-1.9 1.2 0 2.1.9 2.1 2.1v7.6c0 5.3-3.6 9.1-9 9.1h-1.7c-3 0-5.1-1.2-6.9-3.6l-6-8.1c-.7-1-.5-2.4.5-3.1s2.3-.6 3.1.3l2.6 2.8V3.2z" fill="#fff" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/><path d="M14.9 14.5v6M19.1 15v5.5M23.3 15.8v4.7" stroke="#111" stroke-width="1.3" stroke-linecap="round"/></svg>';h.style.left=c[0]+"%";h.style.top=c[1]+"%";over.appendChild(h);
@@ -383,15 +383,16 @@ const dOf=s=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||"");return m?new Date(
 const iso=d=>d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`:"";
 function freeFor(i,a,d){if(ST[i]=="maint")return false;for(let x=new Date(+a);x<d;x=new Date(+x+DAY))if(isBlocked(i,x))return false;return true}
 function tell(m){if(INFRAME)try{parent.postMessage(Object.assign({source:"melyos-map"},m),"*")}catch(e){}}
-function sendAvail(){if(!RANGE)return;let n=0;SH.forEach((_,i)=>{if(okLot(i))n++});tell({type:"melyos-avail",available:n,total:SH.length,arrive:iso(RANGE.a),depart:iso(RANGE.d)})}
+function sendAvail(){if(!RANGE)return;let n=0;const lots=[];SH.forEach((_,i)=>{if(okLot(i)){n++;lots.push({lot:NUM[i],rent:ST[i]=="rent"})}});lots.sort((a,b)=>String(a.lot).localeCompare(String(b.lot),undefined,{numeric:true}));tell({type:"melyos-avail",available:n,lots,total:SH.length,arrive:iso(RANGE.a),depart:iso(RANGE.d)})}
 // Nov 20 (per Mely): RV length and power from the form narrow it too — only lots that fit and are free show
 let NEED={len:0,amp:""};
-function fitsNeed(i){if(ST[i]=="rent")return !NEED.len;const k=kind(i),f=info(i);
+function fitsNeed(i){if(NEED.rental)return ST[i]=="rent";if(ST[i]=="rent")return false;const k=kind(i),f=info(i);
  if(NEED.len){if(k!="rv")return false;if((parseInt(f.size)||0)<NEED.len)return false}
  if(NEED.amp=="50"&&!/50/.test(f.amp))return false;return true}
 function okLot(i){return !!RANGE&&freeFor(i,RANGE.a,RANGE.d)&&fitsNeed(i)}
 addEventListener("message",e=>{const m=e.data||{};if(m.type!=="melyos-dates")return;const a=dOf(m.arrive),d=dOf(m.depart);
- const L0=+m.length;NEED={len:L0>0&&L0<100?Math.round(L0):0,amp:(String(m.power||"").match(/\d+/)||[""])[0]};RANGE=a&&d&&d>a?{a,d}:null;render();if(RANGE)sendAvail();else tell({type:"melyos-avail",available:null})});
+ const L0=+m.length;NEED={len:L0>0&&L0<100?Math.round(L0):0,amp:(String(m.power||"").match(/\d+/)||[""])[0],rental:!!m.rental};RANGE=a&&d&&d>a?{a,d}:null;render();if(RANGE)sendAvail();else tell({type:"melyos-avail",available:null})});
+addEventListener("message",e=>{const m=e.data||{};if(m.type!=="melyos-pick")return;const i=NUM.indexOf(String(m.lot));if(i>=0)open(i)});
 tell({type:"melyos-ready"});
 let wq=null;document.getElementById("wrap").addEventListener("wheel",e=>{if(!e.ctrlKey&&!e.metaKey)return;e.preventDefault();
  const nz=z*Math.exp(-Math.max(-25,Math.min(25,e.deltaY))*0.012);const cx=e.clientX,cy=e.clientY;if(wq)cancelAnimationFrame(wq);wq=requestAnimationFrame(()=>zoomTo(nz,cx,cy))},{passive:false});

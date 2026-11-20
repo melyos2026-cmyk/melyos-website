@@ -13,7 +13,7 @@ export default function LiveMap({ src, title, fixed }: { src: string; title: str
   const last = useRef<{ arrive?: string; depart?: string } | null>(null);
   useEffect(() => {
     const origin = new URL(src, window.location.href).origin;
-    const post = (d: any) => { try { frame.current?.contentWindow?.postMessage({ type: "melyos-dates", arrive: d?.arrive || "", depart: d?.depart || "", length: String(d?.length || "").slice(0, 6), power: String(d?.power || "").slice(0, 12) }, origin); } catch {} };
+    const post = (d: any) => { try { frame.current?.contentWindow?.postMessage({ type: "melyos-dates", arrive: d?.arrive || "", depart: d?.depart || "", length: String(d?.length || "").slice(0, 6), power: String(d?.power || "").slice(0, 12), rental: !!d?.rental }, origin); } catch {} };
     const on = (e: MessageEvent) => {
       if (e.origin !== origin) return;
       if (e.data?.type === "aloha-map-height" && typeof e.data.height === "number") setH(Math.max(420, Math.min(4000, e.data.height)));
@@ -23,9 +23,12 @@ export default function LiveMap({ src, title, fixed }: { src: string; title: str
       }
     };
     const dates = (e: Event) => { last.current = (e as CustomEvent).detail; post(last.current); };
+    // Nov 20 (per Mely): a site picked in the form's "Lot" list is shown on the map
+    const pick = (e: Event) => { const lot = String((e as CustomEvent).detail?.lot || "").slice(0, 20); if (lot) try { frame.current?.contentWindow?.postMessage({ type: "melyos-pick", lot }, origin); } catch {} };
     window.addEventListener("message", on);
     window.addEventListener("melyos-dates", dates);
-    return () => { window.removeEventListener("message", on); window.removeEventListener("melyos-dates", dates); };
+    window.addEventListener("melyos-pick", pick);
+    return () => { window.removeEventListener("message", on); window.removeEventListener("melyos-dates", dates); window.removeEventListener("melyos-pick", pick); };
   }, [src]);
   // Nov 20: a self-contained demo map fills the screen (the whole map shows at first; its popups center in view)
   // Nov 20 (per Mely — "que se vea bien"): the frame is only as wide as the map at full height (no grey side bands);

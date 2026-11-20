@@ -39,17 +39,18 @@ export function RequestForm(l: L) {
   const set = (k: string, v: any) => setF((x: any) => ({ ...x, [k]: v }));
   // Nov 20 (per Mely): next to a live map — dates go to the map (it fades what's taken and says how many are free),
   // and the site picked on the map comes back here with its availability.
-  const [avail, setAvail] = useState<{ available: number | null; total?: number } | null>(null);
+  const [avail, setAvail] = useState<{ available: number | null; total?: number; lots?: { lot: string; rent?: boolean }[] } | null>(null);
+  const [lotsOpen, setLotsOpen] = useState(false);
   const [picked, setPicked] = useState<{ lot: string; available: boolean | null; status: string } | null>(null);
   useEffect(() => {
     if (!l.live) return;
-    window.dispatchEvent(new CustomEvent("melyos-dates", { detail: { arrive: f.arrive || "", depart: f.depart || "", length: f.vessel?.length_ft || "", power: f.vessel?.power_amp || "" } }));
-  }, [l.live, f.arrive, f.depart, f.vessel?.length_ft, f.vessel?.power_amp]);
+    window.dispatchEvent(new CustomEvent("melyos-dates", { detail: { arrive: f.arrive || "", depart: f.depart || "", length: f.vessel?.length_ft || "", power: f.vessel?.power_amp || "", rental: f.vessel?.kind === "rental" } }));
+  }, [l.live, f.arrive, f.depart, f.vessel?.length_ft, f.vessel?.power_amp, f.vessel?.kind]);
   useEffect(() => {
     if (!l.live) return;
     const on = (e: Event) => {
       const m = (e as CustomEvent).detail || {};
-      if (m.type === "melyos-avail") setAvail(m.available == null ? null : { available: m.available, total: m.total });
+      if (m.type === "melyos-avail") setAvail(m.available == null ? null : { available: m.available, total: m.total, lots: Array.isArray(m.lots) ? m.lots.slice(0, 500).map((x: any) => ({ lot: String(x?.lot ?? "").slice(0, 20), rent: !!x?.rent })).filter((x: any) => x.lot) : undefined });
       if (m.type === "melyos-lot" && m.lot) {
         setPicked({ lot: String(m.lot).slice(0, 20), available: typeof m.available === "boolean" ? m.available : null, status: String(m.status || "") });
         if (m.arrive && m.depart) setF((x: any) => (x.arrive === m.arrive && x.depart === m.depart ? x : { ...x, arrive: m.arrive, depart: m.depart }));
@@ -81,8 +82,23 @@ export function RequestForm(l: L) {
         <label className="text-sm font-bold">Leave<input type="date" className={inp} value={f.depart || ""} onChange={(e) => set("depart", e.target.value)} /></label>
       </div>
       {l.live && (f.arrive && f.depart && avail ? <div className={`rounded-xl px-3 py-2 text-sm font-bold ${avail.available ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-700"}`}>
-          {avail.available ? `✓ ${avail.available} ${unit}s free for these dates${f.vessel?.length_ft || f.vessel?.power_amp ? " that fit your rig" : ""} — tap a green one on the map` : `No ${unit}s free for these dates${f.vessel?.length_ft || f.vessel?.power_amp ? " that fit your rig" : ""} — try other dates`}</div>
+          {avail.available ? `✓ ${avail.available} ${unit}s free for these dates${f.vessel?.length_ft || f.vessel?.power_amp ? " that fit your rig" : ""} — tap a ${f.vessel?.kind === "rental" ? "purple" : "green"} one on the map` : `No ${unit}s free for these dates${f.vessel?.length_ft || f.vessel?.power_amp ? " that fit your rig" : ""} — try other dates`}</div>
         : <div className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-600">{f.arrive && f.depart ? `Now tap a ${unit} on the map to see if it's free for your dates.` : `Pick your dates — the map shows which ${unit}s are free.`}</div>)}
+      {l.live && f.arrive && f.depart && !!avail?.lots?.length && (
+        <div className="relative">
+          <button type="button" onClick={() => setLotsOpen((v) => !v)} className={`${inp} flex items-center justify-between text-left font-bold`} aria-expanded={lotsOpen}>
+            <span>{picked ? `${unit[0].toUpperCase() + unit.slice(1)} ${picked.lot}` : `${unit[0].toUpperCase() + unit.slice(1)}s — ${avail.lots.length} available`}</span>
+            <span className="text-slate-400">{lotsOpen ? "▲" : "▼"}</span>
+          </button>
+          {lotsOpen && <div className="absolute left-0 right-0 z-20 mt-1 max-h-60 overflow-y-auto rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+            <div className="grid grid-cols-5 gap-1.5">
+              {avail.lots.map((x) => (
+                <button type="button" key={x.lot} onClick={() => { setPicked({ lot: x.lot, available: true, status: x.rent ? "rent" : "free" }); setLotsOpen(false); window.dispatchEvent(new CustomEvent("melyos-pick", { detail: { lot: x.lot } })); }}
+                  className={`rounded-lg px-1 py-2 text-sm font-black text-white shadow-sm ${x.rent ? "bg-violet-500 hover:bg-violet-600" : "bg-emerald-600 hover:bg-emerald-700"} ${picked?.lot === x.lot ? "ring-2 ring-offset-1 ring-slate-900" : ""}`}>{x.lot}</button>))}
+            </div>
+            <p className="mt-2 px-1 text-xs text-slate-500">Only the {unit}s free for your dates{f.vessel?.length_ft || f.vessel?.power_amp ? " that fit your rig" : ""}.</p>
+          </div>}
+        </div>)}
       {l.live && picked && <div className={`flex items-center justify-between gap-2 rounded-xl border-2 px-3 py-2.5 ${picked.available === false ? "border-rose-300 bg-rose-50" : picked.available ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white"}`}>
           <span className="font-black">{unit[0].toUpperCase() + unit.slice(1)} {picked.lot}</span>
           <span className={`text-sm font-bold ${picked.available === false ? "text-rose-700" : picked.available ? "text-emerald-700" : "text-slate-500"}`}>{picked.available === false ? "Not available for these dates" : picked.available ? "✓ Available for your dates" : "Pick dates on the map"}</span>
@@ -95,7 +111,7 @@ export function RequestForm(l: L) {
         <p className="mb-2 text-sm font-black">{l.kind === "m" ? "Your boat" : "Your RV / camper"}</p>
         <div className="grid grid-cols-2 gap-2">
           <select className={inp} value={f.vessel.kind} onChange={(e) => setV("kind", e.target.value)}>
-            {l.kind === "m" ? <><option value="boat">Boat</option><option value="other">Other</option></> : <><option value="rv">RV / motorhome</option><option value="trailer">Travel trailer</option><option value="tent">Tent</option><option value="other">Other</option></>}
+            {l.kind === "m" ? <><option value="boat">Boat</option><option value="other">Other</option></> : <><option value="rv">RV / motorhome</option><option value="trailer">Travel trailer</option><option value="tent">Tent</option><option value="rental">Rent a home / park model</option><option value="other">Other</option></>}
           </select>
           <input className={inp} inputMode="decimal" placeholder="Length (ft)" value={f.vessel.length_ft || ""} onChange={(e) => setV("length_ft", e.target.value)} />
           {l.kind === "m" ? <><input className={inp} inputMode="decimal" placeholder="Beam (ft)" value={f.vessel.beam_ft || ""} onChange={(e) => setV("beam_ft", e.target.value)} />
