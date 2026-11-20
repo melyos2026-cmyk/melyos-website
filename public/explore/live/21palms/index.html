@@ -37,7 +37,7 @@ svg polygon.lp:hover{fill-opacity:1;stroke:#fff;stroke-width:3}
 .badge{display:inline-block;color:#fff;border-radius:12px;padding:3px 10px;font-size:12px;font-weight:700;margin-left:8px;vertical-align:middle}
 .rows{margin:12px 0 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .rows div{background:#f4f7fa;border-radius:10px;padding:9px 11px;font-size:12px;color:#5b6b7c}
-.rows b{display:block;color:#0f2a4a;font-size:15px;margin-top:2px}.where{margin:10px 0 2px;padding:11px 13px;border-radius:12px;background:linear-gradient(135deg,#ecfdf5,#eff6ff);border:1px solid #d1fae5}.where .wt{font-weight:700;color:#065f46;font-size:13px}.where .wd{color:#334155;font-size:13px;line-height:1.45;margin-top:3px;font-style:italic}.co{margin-top:12px;padding:12px 14px;border:2px solid #0e7a8c;border-radius:14px;background:#f0fbfd;font-size:13px;color:#0f2a4a;display:grid;gap:6px}.co b{font-size:15px}.cl2{display:flex;justify-content:space-between}.ct{font-weight:800;font-size:15px;border-top:1px solid #cfe3ea;padding-top:6px}.cn2{font-size:12px;color:#475569;line-height:1.4}.co .cta{margin-top:4px}.near{margin:-2px 0 14px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:12px}.near .nt{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#64748b;font-weight:700;margin-bottom:4px}.near .nr{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;color:#0f2a4a}.near .nr+.nr{border-top:1px dashed #e2e8f0}.near .nr b{font-weight:600;flex:1}.near .nr i{font-style:normal;color:#64748b;font-size:12px}.feat{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 14px}.feat span{background:#eef4fb;color:#0f2a4a;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:600}#hov .pv div{padding:0}#hov .pv>div+div{margin-top:6px}#hov .hf{padding:0!important;display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}#hov .hf span{background:#eef4fb;border-radius:999px;padding:1px 7px;font-size:11px;color:#0f2a4a}
+.rows b{display:block;color:#0f2a4a;font-size:15px;margin-top:2px}.where{margin:10px 0 2px;padding:11px 13px;border-radius:12px;background:linear-gradient(135deg,#ecfdf5,#eff6ff);border:1px solid #d1fae5}.where .wt{font-weight:700;color:#065f46;font-size:13px}.where .wd{color:#334155;font-size:13px;line-height:1.45;margin-top:3px;font-style:italic}.co{margin-top:12px;padding:12px 14px;border:2px solid #0e7a8c;border-radius:14px;background:#f0fbfd;font-size:13px;color:#0f2a4a;display:grid;gap:6px}.co b{font-size:15px}.cl2{display:flex;justify-content:space-between}.ct{font-weight:800;font-size:15px;border-top:1px solid #cfe3ea;padding-top:6px}.cn2{font-size:12px;color:#475569;line-height:1.4}.co .cta{margin-top:4px}.mnt{margin:10px 0 0;padding:10px 12px;border-radius:12px;background:#f3f4f6;border:1px solid #d1d5db;color:#374151;font-size:13px;line-height:1.4}.near{margin:-2px 0 14px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:12px}.near .nt{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#64748b;font-weight:700;margin-bottom:4px}.near .nr{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;color:#0f2a4a}.near .nr+.nr{border-top:1px dashed #e2e8f0}.near .nr b{font-weight:600;flex:1}.near .nr i{font-style:normal;color:#64748b;font-size:12px}.feat{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 14px}.feat span{background:#eef4fb;color:#0f2a4a;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:600}#hov .pv div{padding:0}#hov .pv>div+div{margin-top:6px}#hov .hf{padding:0!important;display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}#hov .hf span{background:#eef4fb;border-radius:999px;padding:1px 7px;font-size:11px;color:#0f2a4a}
 .cta{width:100%;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:700;color:#fff;background:#08b8d8}
 .cta.alt{background:#0f2a4a}
 #scrollhint{position:sticky;bottom:0;margin:0 -18px -18px;padding:10px;text-align:center;font:700 13px Inter,system-ui,sans-serif;color:#fff;background:linear-gradient(180deg,rgba(14,122,140,.0),rgba(14,122,140,.95) 35%);pointer-events:none;transition:opacity .25s;animation:hintbob 1.4s ease-in-out infinite}#scrollhint.gone{opacity:0}@keyframes hintbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}.close{position:sticky;top:0;float:right;margin:0 0 -34px;z-index:5;border:none;background:rgba(255,255,255,.95);box-shadow:0 2px 8px rgba(15,37,64,.25);border-radius:999px;width:34px;height:34px;font-size:20px;line-height:1;color:#0f2540;cursor:pointer}
@@ -125,6 +125,8 @@ function load(){let d=null,lab=null;
   if(!d.stv&&!ST.includes("rent")){s=21;ST=SH.map((_,i)=>{const r=rnd();return i>=101?"free":r<.58?"occ":r<.84?"free":r<.92?"res":r<.97?"rent":"maint"})}}else{s=21;SH=BASE.map((b,i)=>POLY[i]||rectPts(b));ST=SH.map((_,i)=>{const r=rnd();return i>=101?"free":r<.58?"occ":r<.84?"free":r<.92?"res":r<.97?"rent":"maint"});NUM=SH.map((_,i)=>String(i+1))}}
 const kind=i=>{const n=i+1;return n>101?"pm":n<=5?"home":n<=27?"pm":n<=50?"home":n<=87?"rv":"home"};
 // Nov 20 (per Mely): lot details — amps, size, hookups — so every lot looks complete (examples until the park sends its real data)
+// Nov 20 (per Mely): a lot under maintenance says when it is back (sample dates in the demo; the park sets them)
+function maintUntil(i){return new Date(+today+((+NUM[i]||i)%5+2)*DAY)}
 // Nov 20 (per Mely — online sales, not requests): demo checkout. Short stays pay here; long stays go to the application.
 const LONG=15;
 function nightly(i){return ST[i]=="rent"?95:kind(i)=="rv"?55:65}
@@ -256,10 +258,15 @@ document.getElementById("poiAdd").onclick=()=>{const v=document.getElementById("
 function render(){svg.innerHTML="";over.innerHTML="";const W=map.clientWidth;
  SH.forEach((pts,i)=>{let col=COLOR[ST[i]],srch=typeof RANGE!=="undefined"&&!!RANGE&&filt=="all",pk=srch&&PICKED>=0&&okLot(PICKED),hit=srch&&okLot(i)&&(!pk||i==PICKED),dim=(filt!="all"&&(ST[i]!=filt||(RANGE&&ST[i]!="maint"&&ST[i]!="occ"&&!freeFor(i,RANGE.a,RANGE.d))))||(srch&&!hit);   // a status chip shows that status in its own color (free for the dates when dates are set)
   const pg=document.createElementNS("http://www.w3.org/2000/svg","polygon");pg.setAttribute("points",pts.map(p=>p.join(",")).join(" "));
-  if(GUEST){const R=typeof RANGE!=="undefined"&&RANGE,catOk=filt=="all"||(filt=="rent"?ST[i]=="rent":ST[i]!="rent"),
-   okG=ST[i]!="maint"&&(R?freeFor(i,R.a,R.d)&&(filt=="all"?fitsNeed(i):(ST[i]=="rent"||((!NEED.len||(kind(i)=="rv"&&(parseInt(info(i).size)||0)>=NEED.len))&&(NEED.amp!="50"||/50/.test(info(i).amp))))):gcat(i)!="na"),
-   pkOk=PICKED>=0&&R&&freeFor(PICKED,R.a,R.d);srch=true;hit=okG&&catOk&&(!pkOk||i==PICKED);dim=!hit}
-  const gc=GUEST&&!srch?(gcat(i)=="na"?"#9ca3af":col):col,cc=hit?(ST[i]=="rent"?COLOR.rent:COLOR.free):srch?"#6b7280":gc;pg.setAttribute("fill",srch&&!hit?"#9ca3afcc":cc+(dim?"10":hit?"88":"55"));pg.setAttribute("stroke",i==sel?"#fff":cc);pg.setAttribute("stroke-width",i==sel?2.6:1.6);
+  if(GUEST){const R=typeof RANGE!=="undefined"&&RANGE;
+   // Nov 20 (per Mely): All = every lot in its real color; Available = only green; For rent = only violet; Maintenance = only those.
+   // With dates: only the lots free for those dates (green / violet), the rest gray.
+   if(R&&filt!="maint"){const catOk=filt=="all"||(filt=="rent"?ST[i]=="rent":ST[i]!="rent"),
+     okG=freeFor(i,R.a,R.d)&&(filt=="all"?fitsNeed(i):(ST[i]=="rent"||((!NEED.len||(kind(i)=="rv"&&(parseInt(info(i).size)||0)>=NEED.len))&&(NEED.amp!="50"||/50/.test(info(i).amp))))),
+     pkOk=PICKED>=0&&freeFor(PICKED,R.a,R.d);srch=true;hit=okG&&catOk&&(!pkOk||i==PICKED);dim=!hit}
+   else if(filt!="all"){srch=true;hit=ST[i]==filt;dim=!hit;if(hit)col=COLOR[ST[i]]}
+   else{srch=false;hit=false;dim=false}}
+  const cc=hit?(ST[i]=="rent"?COLOR.rent:ST[i]=="maint"?COLOR.maint:COLOR.free):srch?"#6b7280":col;pg.setAttribute("fill",srch&&!hit?"#9ca3afcc":cc+(dim?"10":hit?"88":"55"));pg.setAttribute("stroke",i==sel?"#fff":cc);pg.setAttribute("stroke-width",i==sel?2.6:1.6);
   pg.setAttribute("vector-effect","non-scaling-stroke");pg.setAttribute("class","lp"+(!editing&&!dim&&i!=sel&&(hit||(!srch&&(ST[i]=="free"||ST[i]=="rent")))?" blink":""));pg.setAttribute("stroke-linejoin","round");
   pg.style.cssText=`pointer-events:auto;cursor:${editing?"move":"pointer"};opacity:${srch?1:dim?.35:1};filter:${i==sel||(srch&&!hit)?"none":`drop-shadow(0 0 1.5px ${cc})`}`;
   pg.onpointerdown=e=>{HINTDONE=true;downShape(e,i)};svg.appendChild(pg);
@@ -300,8 +307,8 @@ function select(i){sel=i;if(i>=0)selPoi=-1;if(i<0)vi=-1;document.getElementById(
 function say(t){const m=document.getElementById("msg");m.textContent=t;setTimeout(()=>{if(m.textContent==t)m.textContent=""},2600)}
 function bar(){const c={all:SH.length,free:0,occ:0,res:0,rent:0,maint:0};ST.forEach(x=>c[x]=(c[x]||0)+1);
  if(GUEST){const R=typeof RANGE!=="undefined"&&RANGE;c.free=0;c.rent=0;SH.forEach((_,i)=>{const g=gcat(i)=="na"&&!R?null:ST[i]=="rent"?"rent":"free";if(ST[i]=="maint")return;if(R?freeFor(i,R.a,R.d):g)c[ST[i]=="rent"?"rent":"free"]++});
-  if(filt!="all"&&filt!="free"&&filt!="rent")filt="all";
-  document.getElementById("bar").innerHTML=["all","free","rent"].map(k=>`<button class="chip ${filt==k?"on":""}" data-k="${k}">${k!="all"?`<span class="dot ${k}"></span>`:""}${k=="free"?(L=="es"?"Disponible":"Available"):T[L][k]}${k=="all"?"":` · ${c[k]}`}</button>`).join("");
+  if(!["all","free","rent","maint"].includes(filt))filt="all";c.maint=ST.filter(x=>x=="maint").length;
+  document.getElementById("bar").innerHTML=["all","free","rent","maint"].filter(k=>k!="maint"||c.maint).map(k=>`<button class="chip ${filt==k?"on":""}" data-k="${k}">${k!="all"?`<span class="dot ${k}"></span>`:""}${k=="free"?(L=="es"?"Disponible":"Available"):T[L][k]}${k=="all"?"":` · ${c[k]}`}</button>`).join("");
   document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{filt=b.dataset.k;render()});return}
  document.getElementById("bar").innerHTML=["all","free","occ","res","rent","maint"].filter(k=>k=="all"||c[k]).map(k=>`<button class="chip ${filt==k?"on":""}" data-k="${k}">${k!="all"?`<span class="dot ${k}"></span>`:""}${T[L][k]} · ${c[k]}</button>`).join("");
  document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{filt=b.dataset.k;render()})}
@@ -334,13 +341,13 @@ function blocks(i){const st=ST[i];let a=(i*37)%23;const r=[];
  (FIXED[NUM[i]]||[]).forEach(([a,b])=>out.push([new Date(a+"T00:00:00"),new Date(+new Date(b+"T00:00:00")+DAY)]));
  return out}
 const FIXED={"91":[["2026-11-27","2026-11-29"]]};
-function isBlocked(i,d){if(ST[i]=="maint")return true;return d<today||blocks(i).some(([a,b])=>d>=a&&d<b)}
+function isBlocked(i,d){if(ST[i]=="maint"&&d<maintUntil(i))return true;return d<today||blocks(i).some(([a,b])=>d>=a&&d<b)}
 let calM=null,arr=null,dep=null;
 function open(i){PICKED=i;HINTDONE=true;select(i);render();{const sh=document.getElementById("sheet"),h=document.getElementById("scrollhint");sh.scrollTop=0;h.classList.remove("gone");document.getElementById("sht").textContent=L=="es"?"Baje para ver el calendario":"Scroll down for the calendar";sh.onscroll=()=>{if(sh.scrollTop>60)h.classList.add("gone")}}arr=dep=null;calM=new Date(today.getFullYear(),today.getMonth(),1);if(typeof RANGE!=="undefined"&&RANGE){arr=RANGE.a;dep=RANGE.d;calM=new Date(arr.getFullYear(),arr.getMonth(),1)}drawLot(i);document.getElementById("sheet").classList.add("open");setTimeout(()=>{const sh=document.getElementById("sheet");if(sh.scrollHeight<=sh.clientHeight+30)document.getElementById("scrollhint").classList.add("gone")},250)}
 const hov=document.createElement("div");hov.id="hov";document.body.appendChild(hov);
-function showHov(i,e){const t=T[L],st=ST[i],es=L=="es",k=kind(i);const col=(GUEST&&gcat(i)=="na"?"#9ca3af":COLOR[st]);
+function showHov(i,e){const t=T[L],st=ST[i],es=L=="es",k=kind(i);const col=COLOR[st];
  const price=st=="rent"?(es?"$1,450 / mes · $95 por noche":"$1,450 / month · $95 / night"):({home:"$750",pm:"$700",rv:"$650"}[k]+(es?" / mes":" / month"));
- hov.style.width="230px";hov.innerHTML=`<img src="${photoOf(i)}" alt=""><div><b>${t.lot} ${NUM[i]}</b><i style="background:${col}">${GUEST&&gcat(i)=="na"?(es?"No disponible":"Not available"):t[st]}</i><br><span style="color:#475569">${st=="maint"?"":price}</span><div style="padding:0;margin-top:3px;font-size:11.5px;color:#065f46;font-weight:600">📍 ${where(i).short}</div><div class="hf">${(()=>{const f=info(i);return [f.amp,f.size,...(f.sleeps?[f.sleeps]:[])].map(x=>`<span>${x}</span>`).join("")})()}</div>${(()=>{const a=nearby(i,1)[0];return a?`<div style="margin-top:6px;font-size:11.5px;color:#64748b">${a.e} ${es?"Lo más cerca":"Closest"}: <b style="font-weight:600;font-size:inherit;color:#0f2540">${a.t}</b> · ${walk(a.m)}</div>`:""})()}</div>`;hov.style.display="block";moveHov(e)}
+ hov.style.width="230px";hov.innerHTML=`<img src="${photoOf(i)}" alt=""><div><b>${t.lot} ${NUM[i]}</b><i style="background:${col}">${t[st]}</i><br><span style="color:#475569">${st=="maint"?"":price}</span><div style="padding:0;margin-top:3px;font-size:11.5px;color:#065f46;font-weight:600">📍 ${where(i).short}</div><div class="hf">${(()=>{const f=info(i);return [f.amp,f.size,...(f.sleeps?[f.sleeps]:[])].map(x=>`<span>${x}</span>`).join("")})()}</div>${(()=>{const a=nearby(i,1)[0];return a?`<div style="margin-top:6px;font-size:11.5px;color:#64748b">${a.e} ${es?"Lo más cerca":"Closest"}: <b style="font-weight:600;font-size:inherit;color:#0f2540">${a.t}</b> · ${walk(a.m)}</div>`:""})()}</div>`;hov.style.display="block";moveHov(e)}
 function moveHov(e){// Nov 20 (per Mely): the card always stays fully inside the map — never cut off at an edge
  const W=innerWidth,Hh=innerHeight;if(hov.style.width){const want=parseInt(hov.style.width)||230;hov.style.width=Math.min(want,W-16)+"px"}
  const w=hov.offsetWidth||230,h=hov.offsetHeight||190;
@@ -353,11 +360,11 @@ function moveHov(e){// Nov 20 (per Mely): the card always stays fully inside the
 function hideHov(){hov.style.display="none"}
 function drawLot(i){hideHov();const t=T[L],k=kind(i),st=ST[i],es=L=="es",inf=info(i);
  const rate={home:"$750",pm:"$700",rv:"$650"}[k],fits=k=="rv"?(es?"40 pies · 30/50 amp":"40 ft · 30/50 amp"):(es?"No aplica (casa / park model)":"Not an RV site");
- const col=(GUEST&&gcat(i)=="na"?"#9ca3af":COLOR[st]);
+ const col=COLOR[st];
  const fmt=d=>d.toLocaleDateString(es?"es-US":"en-US",{month:"short",day:"numeric"});
  let nxt=null;for(let d=new Date(today);d<today.getTime()+400*DAY;d=new Date(+d+DAY))if(!isBlocked(i,d)){nxt=d;break}
  let cal="";
- if(st!="maint"){const y=calM.getFullYear(),m=calM.getMonth(),first=new Date(y,m,1).getDay(),n=new Date(y,m+1,0).getDate();
+ {const y=calM.getFullYear(),m=calM.getMonth(),first=new Date(y,m,1).getDay(),n=new Date(y,m+1,0).getDate();
   const wd=(es?["D","L","M","M","J","V","S"]:["S","M","T","W","T","F","S"]).map(x=>`<span class="cw">${x}</span>`).join("");
   let cells="";for(let s=0;s<first;s++)cells+="<span></span>";
   for(let d=1;d<=n;d++){const dt=new Date(y,m,d),b=isBlocked(i,dt),sel=(arr&&+dt==+arr)||(dep&&+dt==+dep),inr=arr&&dep&&dt>arr&&dt<dep;
@@ -367,15 +374,16 @@ function drawLot(i){hideHov();const t=T[L],k=kind(i),st=ST[i],es=L=="es",inf=inf
    ${nxt?`<div class="nx"><span>${es?"Próxima fecha disponible":"Next available date"}: <b>${fmt(nxt)}</b></span><button id="usen">${es?"Usar esta fecha":"Use this date"}</button></div>`:""}
    <div class="rows"><div>${es?"Llegada":"Arrival"}<b>${arr?fmt(arr):"—"}</b></div><div>${es?"Salida":"Departure"}<b>${dep?fmt(dep):"—"}</b></div></div>`}
  const ok=arr&&dep;
- const okD=st!="maint"&&arr&&dep&&freeFor(i,arr,dep),stTxt=okD?(es?"Libre para sus fechas":"Free for your dates"):GUEST&&gcat(i)=="na"?(es?"No disponible":"Not available"):t[st],stCol=okD?(st=="rent"?"#8b5cf6":"#16a34a"):col;
+ const okD=arr&&dep&&freeFor(i,arr,dep),stTxt=okD?(es?"Libre para sus fechas":"Free for your dates"):t[st],stCol=okD?(st=="rent"?"#8b5cf6":"#16a34a"):col;
  document.getElementById("sc").innerHTML=`<img class="lph" src="${photoOf(i)}" alt="${t.lot} ${NUM[i]}"><h2>${t.lot} ${NUM[i]}<span class="badge" style="background:${stCol}">${stTxt}</span></h2>
  ${(()=>{const w=where(i);return `<div class="where"><div class="wt">📍 ${w.short}</div><div class="wd">${w.long}</div></div>`})()}
+ ${st=="maint"?`<p class="mnt">🛠 ${es?`Este lote está en mantenimiento. Estará disponible desde el <b>${fmt(maintUntil(i))}</b>.`:`This site is under maintenance. It will be available from <b>${fmt(maintUntil(i))}</b>.`}</p>`:""}
  <div class="rows"><div>${t.type}<b>${st=="rent"?(es?"Park model en renta":"Park model rental"):t[k]}</b></div><div>${t.rate}<b>${st=="rent"?"$1,450":rate}</b></div>${st=="rent"?`<div>${es?"Semanal / Por noche":"Weekly / Nightly"}<b>$450 · $95</b></div>`:""}<div>${st=="rent"?(es?"Casa":"Home"):(k=="rv"?t.size:(es?"Tamaño del lote":"Lot size"))}<b>${st=="rent"?inf.size:(k=="rv"?inf.size:inf.size)}</b></div><div>${es?"Electricidad":"Power"}<b>${inf.amp}</b></div>${inf.pad?`<div>${es?"Piso":"Pad"}<b>${inf.pad}</b></div>`:""}${inf.sleeps?`<div>${es?"Capacidad":"Capacity"}<b>${inf.sleeps}</b></div>`:""}<div>${es?"Estado":"Status"}<b style="color:${okD?stCol:"inherit"}">${stTxt}</b></div></div>
  <div class="feat">${inf.chips.map(c=>`<span>${c}</span>`).join("")}</div>
  ${(()=>{const a=nearby(i,3);return a.length?`<div class="near"><div class="nt">${es?"Lo más cerca":"What's close by"}</div>${a.map(x=>`<div class="nr"><span>${x.e}</span><b>${x.t}</b><i>${walk(x.m)}</i></div>`).join("")}</div>`:""})()}
- ${st=="maint"?`<p class="mn">${es?"Este lote está en mantenimiento y no se puede reservar por ahora.":"This lot is under maintenance and can't be booked right now."}</p>`:cal}
- ${st=="maint"?"":(()=>{const n=ok?Math.round((dep-arr)/DAY):0,lng=n>LONG;return `<button class="cta" id="bk" ${ok?"":"disabled"} style="${ok?"":"opacity:.5"}">${!ok?(es?"Escoja llegada y salida":"Pick arrival and departure"):lng?(es?"Llenar la aplicación →":"Start the application →"):(es?`Reservar y pagar · ${n} noche${n>1?"s":""}`:`Book & pay · ${n} night${n>1?"s":""}`)}</button>${ok&&lng?`<p class="mn" style="display:block">${es?`Estadías de más de ${LONG} noches necesitan una aplicación corta (verificación del huésped). El botón lo lleva a ella con sus fechas.`:`Stays longer than ${LONG} nights need a short application (guest screening). The button takes you there with your dates.`}</p>`:""}<div id="bkm"></div>`})()}`;
- if(typeof tell==="function")tell({type:"melyos-lot",lot:NUM[i],status:st,arrive:iso(arr),depart:iso(dep),available:st=="maint"?false:(arr&&dep?freeFor(i,arr,dep):null)});
+ ${cal}
+ ${(()=>{const n=ok?Math.round((dep-arr)/DAY):0,lng=n>LONG;return `<button class="cta" id="bk" ${ok?"":"disabled"} style="${ok?"":"opacity:.5"}">${!ok?(es?"Escoja llegada y salida":"Pick arrival and departure"):lng?(es?"Llenar la aplicación →":"Start the application →"):(es?`Reservar y pagar · ${n} noche${n>1?"s":""}`:`Book & pay · ${n} night${n>1?"s":""}`)}</button>${ok&&lng?`<p class="mn" style="display:block">${es?`Estadías de más de ${LONG} noches necesitan una aplicación corta (verificación del huésped). El botón lo lleva a ella con sus fechas.`:`Stays longer than ${LONG} nights need a short application (guest screening). The button takes you there with your dates.`}</p>`:""}<div id="bkm"></div>`})()}`;
+ if(typeof tell==="function")tell({type:"melyos-lot",lot:NUM[i],status:st,arrive:iso(arr),depart:iso(dep),available:arr&&dep?freeFor(i,arr,dep):null});
  const sc=document.getElementById("sc");
  sc.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{calM=new Date(calM.getFullYear(),calM.getMonth()+Number(b.dataset.m),1);drawLot(i)});
  sc.querySelectorAll(".cd.ca").forEach(b=>b.onclick=()=>{const d=new Date(Number(b.dataset.d));
@@ -405,7 +413,7 @@ if(INFRAME){document.documentElement.classList.add("embed");addEventListener("re
 let RANGE=null;
 const dOf=s=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||"");return m?new Date(+m[1],+m[2]-1,+m[3]):null};
 const iso=d=>d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`:"";
-function freeFor(i,a,d){if(ST[i]=="maint")return false;for(let x=new Date(+a);x<d;x=new Date(+x+DAY))if(isBlocked(i,x))return false;return true}
+function freeFor(i,a,d){for(let x=new Date(+a);x<d;x=new Date(+x+DAY))if(isBlocked(i,x))return false;return true}
 function tell(m){if(INFRAME)try{parent.postMessage(Object.assign({source:"melyos-map"},m),"*")}catch(e){}}
 function sendAvail(){if(!RANGE)return;let n=0;const lots=[];SH.forEach((_,i)=>{if(okLot(i)){n++;lots.push({lot:NUM[i],rent:ST[i]=="rent"})}});lots.sort((a,b)=>String(a.lot).localeCompare(String(b.lot),undefined,{numeric:true}));tell({type:"melyos-avail",available:n,lots,total:SH.length,arrive:iso(RANGE.a),depart:iso(RANGE.d)})}
 // Nov 20 (per Mely): RV length and power from the form narrow it too — only lots that fit and are free show
