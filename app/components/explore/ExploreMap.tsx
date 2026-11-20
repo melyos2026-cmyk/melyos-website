@@ -174,6 +174,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
   const bookable = (r: Row) => partner(r) || !!extra.overrides[r[7]]?.client || okUrl(extra.overrides[r[7]]?.booking_url);
   const photoOf = (r: Row) => (isFeatured(r) ? FEATURED_PHOTO[r[7]] : "") || (okUrl(extra.overrides[r[7]]?.photo_url) ? extra.overrides[r[7]].photo_url : "") || (!broken[r[7]] && okUrl(photos[r[7]]) ? photos[r[7]] : "");
   const dates = arrive || depart ? `?${new URLSearchParams({ ...(arrive ? { arrive } : {}), ...(depart ? { depart } : {}) })}` : "";
+  const dq = (r: Row) => (r[7] === demo ? `${dates ? `${dates}&` : "?"}demo=${encodeURIComponent(demo)}` : dates);
 
   const shown = useMemo(() => {
     const t = q.trim().toLowerCase();
@@ -230,12 +231,12 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
       const star = extra.stars[r[7]];
       const fu = extra.fuel[r[7]];
       const page = listingPath(stOf(r), r), unit = r[0] === "m" ? "slip" : "site";
-      const bookUrl = feat ? site : okUrl(ov.booking_url) ? ov.booking_url : `${page}${dates}#request`;
+      const bookUrl = feat ? site : okUrl(ov.booking_url) ? ov.booking_url : `${page}${dq(r)}#request`;
       m.bindPopup(`<div style="font-family:system-ui,sans-serif;min-width:210px;max-width:250px">
         ${photo ? `<img src="${esc(photo)}" alt="${esc(nice(r[1]))}" style="display:block;width:100%;height:110px;object-fit:cover;border-radius:10px;margin-bottom:8px" />` : ""}
         ${pt ? `<div style="font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#a07a1f;margin-bottom:3px">&#9733; MelyOS Partner</div>` : ""}
         <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:${k.color}">${k.label}${ov.verified || ov.client ? ` <span style="color:#059669">&#10003; verified</span>` : ""}</div>
-        <a href="${page}${dates}" style="display:block;font-size:15px;font-weight:800;color:#071A33;margin:2px 0 4px;text-decoration:none">${esc(nice(r[1]))}</a>
+        <a href="${page}${dq(r)}" style="display:block;font-size:15px;font-weight:800;color:#071A33;margin:2px 0 4px;text-decoration:none">${esc(nice(r[1]))}</a>
         ${star ? `<div style="color:#f59e0b;font-weight:800">&#9733; ${star[0].toFixed(1)} <span style="color:#64748b;font-weight:600">(${star[1]} review${star[1] === 1 ? "" : "s"})</span></div>` : ""}
         <div style="color:#475569">${r[4] ? `${esc(r[4])}, ` : ""}${esc(meta[0])}</div>
         ${fu ? `<div style="margin-top:4px;font-weight:700">&#9981; ${fu.gas ? `Gas $${fu.gas.toFixed(2)}` : ""}${fu.gas && fu.diesel ? " · " : ""}${fu.diesel ? `Diesel $${fu.diesel.toFixed(2)}` : ""} <span style="color:#64748b;font-weight:500">· ${ago(fu.at)}</span></div>` : ""}
@@ -243,8 +244,8 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
         ${site ? `<div style="margin-top:2px">&#127760; <a href="${esc(site)}" target="_blank" rel="noopener nofollow">Website</a></div>` : ""}`}
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
           ${book ? `<a href="${esc(bookUrl)}" ${feat || okUrl(ov.booking_url) ? 'target="_blank" rel="noopener"' : ""} style="background:${RED};color:#fff;padding:6px 10px;border-radius:8px;font-weight:800;text-decoration:none;font-size:12px">Book online</a>`
-            : `<a href="${page}${dates}#request" style="background:#08B8D8;color:#fff;padding:6px 10px;border-radius:8px;font-weight:800;text-decoration:none;font-size:12px">Request a ${unit}</a>`}
-          <a href="${page}${dates}" style="border:1px solid #cbd5e1;color:#071A33;padding:5px 9px;border-radius:8px;font-weight:700;text-decoration:none;font-size:12px">Details &amp; reviews</a>
+            : `<a href="${page}${dq(r)}#request" style="background:#08B8D8;color:#fff;padding:6px 10px;border-radius:8px;font-weight:800;text-decoration:none;font-size:12px">Request a ${unit}</a>`}
+          <a href="${page}${dq(r)}" style="border:1px solid #cbd5e1;color:#071A33;padding:5px 9px;border-radius:8px;font-weight:700;text-decoration:none;font-size:12px">Details &amp; reviews</a>
           <a href="https://www.google.com/maps/dir/?api=1&destination=${r[2]},${r[3]}" target="_blank" rel="noopener" style="border:1px solid #cbd5e1;color:#071A33;padding:5px 9px;border-radius:8px;font-weight:700;text-decoration:none;font-size:12px">Directions</a>
         </div>
         ${feat ? `<div style="color:#079db9;font-size:11px;font-weight:700;margin-top:6px">&#9733; Runs on MelyOS</div>`
@@ -412,7 +413,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[#a07a1f]">★ MelyOS Partner</p>
-                  <a href={`${listingPath(stOf(r), r)}${dates}`} onClick={(e) => e.stopPropagation()} className="line-clamp-2 font-black leading-snug text-[#071A33] hover:underline">{nice(r[1])}</a>
+                  <a href={`${listingPath(stOf(r), r)}${dq(r)}`} onClick={(e) => e.stopPropagation()} className="line-clamp-2 font-black leading-snug text-[#071A33] hover:underline">{nice(r[1])}</a>
                   <p className="truncate text-sm text-slate-500">{k.label}{r[4] ? ` · ${r[4]}` : ""}</p>
                   {star && <p className="text-sm"><span className="text-amber-500">★</span> <b>{star[0].toFixed(1)}</b> <span className="text-slate-500">({star[1]})</span></p>}
                   <span className="mt-1 inline-block rounded-full bg-rose-50 px-2 py-0.5 text-[11px] font-black text-rose-700">Online Booking</span>
@@ -429,7 +430,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
                     : <img src={aerial(r[2], r[3])} alt="" loading="lazy" className="h-full w-full object-cover" />}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <a href={`${listingPath(stOf(r), r)}${dates}`} onClick={(e) => e.stopPropagation()} className="line-clamp-2 font-black leading-snug text-[#071A33] hover:underline">{nice(r[1])}</a>
+                  <a href={`${listingPath(stOf(r), r)}${dq(r)}`} onClick={(e) => e.stopPropagation()} className="line-clamp-2 font-black leading-snug text-[#071A33] hover:underline">{nice(r[1])}</a>
                   <p className="truncate text-sm text-slate-500">{k.label}{r[4] ? ` · ${r[4]}` : ""}</p>
                   {star && <p className="text-sm"><span className="text-amber-500">★</span> <b>{star[0].toFixed(1)}</b> <span className="text-slate-500">({star[1]})</span></p>}
                   {fu && <p className="text-[13px] font-semibold text-slate-700">⛽ {fu.gas ? `Gas $${fu.gas.toFixed(2)}` : ""}{fu.gas && fu.diesel ? " · " : ""}{fu.diesel ? `Diesel $${fu.diesel.toFixed(2)}` : ""} <span className="font-normal text-slate-500">· {ago(fu.at)}</span></p>}

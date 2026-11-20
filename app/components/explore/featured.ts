@@ -26,3 +26,8 @@ export const FEATURED_MAP: Record<string, string> = {
 export const FEATURED_INFO: Record<string, { amenities: string; stays: string[] }> = {
   "melyos-aloha": { amenities: "Full hookups, 30/50 amp, water, sewer, laundry, propane", stays: ["week", "month", "year"] },
 };
+
+// Nov 20 (per Mely): sales demos — a prospect's live map, shown on its Explore page only with ?demo=<id>.
+export const DEMO_MAP: Record<string, string> = {
+  "x-21-palms": "/explore/live/21palms/index.html",
+};

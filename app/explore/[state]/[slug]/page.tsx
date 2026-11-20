@@ -7,7 +7,7 @@ import SiteFooter from "../../../components/site/Footer";
 import AccountPill from "../../../components/explore/AccountPill";
 import { FavoriteButton, Fuel, RequestForm, Reviews } from "../../../components/explore/ListingActions";
 import { STATES, KIND } from "../../../components/explore/states";
-import { isFeatured, FEATURED_MAP } from "../../../components/explore/featured";
+import { isFeatured, FEATURED_MAP, DEMO_MAP } from "../../../components/explore/featured";
 import LiveMap from "../../../components/explore/LiveMap";
 import SpotMap from "../../../components/explore/SpotMap";
 import { exploreApi, findListing, keyFromSlug, listingPath, nice } from "../../../lib/explore";
@@ -43,8 +43,9 @@ export async function generateMetadata({ params }: { params: Promise<{ state: st
   };
 }
 
-export default async function Page({ params }: { params: Promise<{ state: string; slug: string }> }) {
+export default async function Page({ params, searchParams }: { params: Promise<{ state: string; slug: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { state, slug } = await params;
+  const demoId = (await searchParams).demo;
   const d = await load(state, slug);
   if (!d) notFound();
   const { st, row, info } = d;
@@ -53,7 +54,8 @@ export default async function Page({ params }: { params: Promise<{ state: string
   const name = nice(row[1]), k = KIND[row[0]], unit = row[0] === "m" ? "slip" : "site";
   const phone = info.phone || row[5], website = info.website || row[6];
   const feat = isFeatured(row);
-  const liveMap = FEATURED_MAP[row[7]] || (d.client && typeof info.map_url === "string" && /^https:\/\//.test(info.map_url) ? info.map_url : "");
+  const demoMap = demoId === row[7] ? DEMO_MAP[row[7]] || "" : "";
+  const liveMap = demoMap || FEATURED_MAP[row[7]] || (d.client && typeof info.map_url === "string" && /^https:\/\//.test(info.map_url) ? info.map_url : "");
   const L = { state: st, listing_key: row[7], listing_name: name, kind: row[0] };
   const stays: string[] = Array.isArray(info.stay_types) ? info.stay_types : [];
   const facts: [string, string][] = ([["Spaces", info.spaces], ["Max length", info.max_length], ["Rates", info.rates], ["Amenities", info.amenities]] as [string, string][]).filter(([, v]) => v);
@@ -89,7 +91,7 @@ export default async function Page({ params }: { params: Promise<{ state: string
             </div>
             <a href={liveMap} target="_blank" rel="noopener" className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-black">Open full screen ↗</a>
           </div>
-          <LiveMap src={liveMap} title={`${name} — live ${unit} map`} />
+          <LiveMap src={liveMap} fixed={!!demoMap} title={`${name} — live ${unit} map`} />
         </div>
       </section>}
       <section className="py-10">
