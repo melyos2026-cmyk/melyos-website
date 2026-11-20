@@ -294,7 +294,15 @@ const hov=document.createElement("div");hov.id="hov";document.body.appendChild(h
 function showHov(i,e){const t=T[L],st=ST[i],es=L=="es",k=kind(i);const col={free:"#16a34a",occ:"#dc2626",res:"#ca8a04",rent:"#8b5cf6",maint:"#4b5563"}[st];
  const price=st=="rent"?(es?"$1,450 / mes · $95 por noche":"$1,450 / month · $95 / night"):({home:"$750",pm:"$700",rv:"$650"}[k]+(es?" / mes":" / month"));
  hov.style.width="230px";hov.innerHTML=`<img src="${photoOf(i)}" alt=""><div><b>${t.lot} ${NUM[i]}</b><i style="background:${col}">${t[st]}</i><br><span style="color:#475569">${st=="maint"?"":price}</span><div class="hf">${(()=>{const f=info(i);return [f.amp,f.size,...(f.sleeps?[f.sleeps]:[])].map(x=>`<span>${x}</span>`).join("")})()}</div></div>`;hov.style.display="block";moveHov(e)}
-function moveHov(e){const w=hov.offsetWidth||230,h=hov.offsetHeight||190;let x=e.clientX+16,y=e.clientY+16;if(x+w>innerWidth-8)x=e.clientX-w-16;if(y+h>innerHeight-8)y=e.clientY-h-16;hov.style.left=x+"px";hov.style.top=Math.max(8,y)+"px"}
+function moveHov(e){// Nov 20 (per Mely): the card always stays fully inside the map — never cut off at an edge
+ const W=innerWidth,Hh=innerHeight;if(hov.style.width){const want=parseInt(hov.style.width)||230;hov.style.width=Math.min(want,W-16)+"px"}
+ const w=hov.offsetWidth||230,h=hov.offsetHeight||190;
+ const cx=e.clientX,cy=e.clientY,g=18;let x,y;
+ if(cx+g+w<=W-8){x=cx+g;y=cy-h/2}            // right of the cursor
+ else if(cx-g-w>=8){x=cx-g-w;y=cy-h/2}       // left of the cursor
+ else{x=cx-w/2;y=cy+g+h<=Hh-8?cy+g:cy-g-h}   // no room beside it: centered above / below, never over the lot
+ x=Math.max(8,Math.min(W-w-8,x));y=Math.max(8,Math.min(Hh-h-8,y));
+ hov.style.left=x+"px";hov.style.top=y+"px"}
 function hideHov(){hov.style.display="none"}
 function drawLot(i){hideHov();const t=T[L],k=kind(i),st=ST[i],es=L=="es",inf=info(i);
  const rate={home:"$750",pm:"$700",rv:"$650"}[k],fits=k=="rv"?(es?"40 pies · 30/50 amp":"40 ft · 30/50 amp"):(es?"No aplica (casa / park model)":"Not an RV site");
