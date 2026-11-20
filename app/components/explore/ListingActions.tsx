@@ -82,7 +82,7 @@ export function RequestForm(l: L) {
       </div>
       {l.live && (f.arrive && f.depart && avail ? <div className={`rounded-xl px-3 py-2 text-sm font-bold ${avail.available ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-700"}`}>
           {avail.available ? `✓ ${avail.available} ${unit}s free for these dates — tap a green one on the map` : `No ${unit}s free for these dates — try other dates`}</div>
-        : <div className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-600">Pick your dates — the map shows which {unit}s are free.</div>)}
+        : <div className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-600">{f.arrive && f.depart ? `Now tap a ${unit} on the map to see if it's free for your dates.` : `Pick your dates — the map shows which ${unit}s are free.`}</div>)}
       {l.live && picked && <div className={`flex items-center justify-between gap-2 rounded-xl border-2 px-3 py-2.5 ${picked.available === false ? "border-rose-300 bg-rose-50" : picked.available ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white"}`}>
           <span className="font-black">{unit[0].toUpperCase() + unit.slice(1)} {picked.lot}</span>
           <span className={`text-sm font-bold ${picked.available === false ? "text-rose-700" : picked.available ? "text-emerald-700" : "text-slate-500"}`}>{picked.available === false ? "Not available for these dates" : picked.available ? "✓ Available for your dates" : "Pick dates on the map"}</span>
