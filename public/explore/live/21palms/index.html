@@ -340,7 +340,8 @@ function zoomTo(nz,cx,cy){const W=document.getElementById("wrap"),r0=map.getBoun
  const r1=map.getBoundingClientRect();W.scrollLeft+=r1.left+fx*r1.width-cx;window.scrollBy(0,r1.top+fy*r1.height-cy);render()}
 function zoom(d){zoomTo(z+d)}
 // Nov 20 (per Mely): inside MelyOS Explore (iframe) the whole map fits the screen at first; zoom from there.
-const INFRAME=(()=>{try{return window.self!==window.top}catch(e){return true}})();
+// Embed layout only inside the MelyOS Explore page — the Claude artifact keeps the header with Edit / Download
+const INFRAME=(()=>{let f;try{f=window.self!==window.top}catch(e){f=true}return f&&/\/explore\/live\//.test(location.pathname)})();
 function baseW(){const W=document.getElementById("wrap").clientWidth;if(!INFRAME)return W;
  const im=map.querySelector("img"),ratio=im&&im.naturalHeight?im.naturalWidth/im.naturalHeight:981/1604;
  const top=(document.querySelector("header")||{offsetHeight:0}).offsetHeight+(document.getElementById("bar")||{offsetHeight:0}).offsetHeight;
