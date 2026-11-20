@@ -28,7 +28,10 @@ export default function LiveMap({ src, title, fixed }: { src: string; title: str
     return () => { window.removeEventListener("message", on); window.removeEventListener("melyos-dates", dates); };
   }, [src]);
   // Nov 20: a self-contained demo map fills the screen (the whole map shows at first; its popups center in view)
-  if (fixed) return <div className="overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200" style={{ height: "max(520px, calc(100vh - 7.5rem))" }}>
+  // Nov 20 (per Mely — "que se vea bien"): the frame is only as wide as the map at full height (no grey side bands);
+  // on phones it's full width.
+  if (fixed) return <div className="mx-live mx-auto w-full overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200" style={{ height: "max(520px, calc(100vh - 7.5rem))" }}>
+    <style>{`@media (min-width:1024px){.mx-live{width:calc((max(520px, 100vh - 7.5rem) - 60px) * 0.612 + 2px)}}`}</style>
     <iframe ref={frame} src={src} title={title} className="h-full w-full border-0" />
   </div>;
   return <div className="overflow-hidden rounded-2xl ring-1 ring-slate-200" style={{ height: h }}>

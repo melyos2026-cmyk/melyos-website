@@ -92,7 +92,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
             </div>
             <a href={liveMap} target="_blank" rel="noopener" className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-black">Open full screen ↗</a>
           </div>
-          <div className="grid gap-5 lg:grid-cols-[1fr_400px]">
+          <div className={`grid gap-5 ${demoMap ? "lg:grid-cols-[auto_400px] lg:justify-center" : "lg:grid-cols-[1fr_400px]"}`}>
             <LiveMap src={liveMap} fixed={!!demoMap} title={`${name} — live ${unit} map`} />
             <aside id="request" className="scroll-mt-24">
               <div className="rounded-3xl border-2 border-[#08B8D8] bg-white p-5 shadow-sm lg:sticky lg:top-24">
