@@ -13,14 +13,31 @@ jobs:
     timeout-minutes: 150
     strategy:
       fail-fast: false
+      max-parallel: 4
       matrix:
         batch:
-          - "AL,AK,AZ,AR,CA,CO,CT,DE,DC"
-          - "FL,GA,HI,ID,IL,IN,IA,KS"
-          - "KY,LA,ME,MD,MA,MI,MN,MS"
-          - "MO,MT,NE,NV,NH,NJ,NM,NY"
-          - "NC,ND,OH,OK,OR,PA,RI,SC"
-          - "SD,TN,TX,UT,VT,VA,WA,WV,WI,WY,PR"
+          - "FL"
+          - "IA"
+          - "KS"
+          - "AR"
+          - "CO"
+          - "MD"
+          - "MA"
+          - "MI"
+          - "NE"
+          - "NV"
+          - "OH"
+          - "SD"
+          - "TN"
+          - "TX"
+          - "UT"
+          - "VT"
+          - "VA"
+          - "WA"
+          - "WV"
+          - "WI"
+          - "WY"
+          - "PR"
     steps:
       - uses: actions/checkout@v4
       - name: Fetch
