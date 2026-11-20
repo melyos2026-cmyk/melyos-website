@@ -40,7 +40,7 @@ svg polygon.lp:hover{fill-opacity:1;stroke:#fff;stroke-width:3}
 .rows b{display:block;color:#0f2a4a;font-size:15px;margin-top:2px}.where{margin:10px 0 2px;padding:11px 13px;border-radius:12px;background:linear-gradient(135deg,#ecfdf5,#eff6ff);border:1px solid #d1fae5}.where .wt{font-weight:700;color:#065f46;font-size:13px}.where .wd{color:#334155;font-size:13px;line-height:1.45;margin-top:3px;font-style:italic}.near{margin:-2px 0 14px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:12px}.near .nt{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#64748b;font-weight:700;margin-bottom:4px}.near .nr{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;color:#0f2a4a}.near .nr+.nr{border-top:1px dashed #e2e8f0}.near .nr b{font-weight:600;flex:1}.near .nr i{font-style:normal;color:#64748b;font-size:12px}.feat{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 14px}.feat span{background:#eef4fb;color:#0f2a4a;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:600}#hov .pv div{padding:0}#hov .pv>div+div{margin-top:6px}#hov .hf{padding:0!important;display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}#hov .hf span{background:#eef4fb;border-radius:999px;padding:1px 7px;font-size:11px;color:#0f2a4a}
 .cta{width:100%;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:700;color:#fff;background:#08b8d8}
 .cta.alt{background:#0f2a4a}
-.close{position:sticky;top:0;float:right;margin:0 0 -34px;z-index:5;border:none;background:rgba(255,255,255,.95);box-shadow:0 2px 8px rgba(15,37,64,.25);border-radius:999px;width:34px;height:34px;font-size:20px;line-height:1;color:#0f2540;cursor:pointer}
+#scrollhint{position:sticky;bottom:0;margin:0 -18px -18px;padding:10px;text-align:center;font:700 13px Inter,system-ui,sans-serif;color:#fff;background:linear-gradient(180deg,rgba(14,122,140,.0),rgba(14,122,140,.95) 35%);pointer-events:none;transition:opacity .25s;animation:hintbob 1.4s ease-in-out infinite}#scrollhint.gone{opacity:0}@keyframes hintbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}.close{position:sticky;top:0;float:right;margin:0 0 -34px;z-index:5;border:none;background:rgba(255,255,255,.95);box-shadow:0 2px 8px rgba(15,37,64,.25);border-radius:999px;width:34px;height:34px;font-size:20px;line-height:1;color:#0f2540;cursor:pointer}
 footer{text-align:center;font-size:11.5px;color:#7a8a9a;padding:14px 16px 90px}
 footer b{color:#0f2a4a}
 .edit-btn{position:absolute;right:96px;top:14px;border:1px solid #3d5b80;background:transparent;color:#cfe;font-size:12px;border-radius:14px;padding:4px 10px}
@@ -71,7 +71,7 @@ body.editing{padding-bottom:var(--ph,420px)}.panel{max-height:70vh;overflow:auto
 <div class="bar" id="bar"></div>
 <div class="wrap" id="wrap"><div class="map" id="map"><img src="map.jpg" alt="21 Palms RV Resort map"></div></div>
 <div class="zoom"><button id="zin">+</button><button id="zout">−</button></div>
-<div class="sheet" id="sheet"><div class="grab"></div><button class="close" id="x">×</button><div id="sc"></div></div>
+<div class="sheet" id="sheet"><div class="grab"></div><button class="close" id="x">×</button><div id="sc"></div><div id="scrollhint">↓ <span id="sht">Scroll for the calendar</span></div></div>
 <div class="panel" id="panel">
 <button id="pmin" type="button">▾ Hide</button><p class="t" id="pt">Edit mode <span>· drag the lot to move it · white corner = reshape · orange diamond = push a side · orange dot = rotate (Shift = free)</span></p>
 <div class="prow"><label>Lot #</label><input id="pnum"><label>Status</label><button data-st="free">Avail.</button><button data-st="occ">Occ.</button><button data-st="res">Res.</button><button data-st="rent">For rent</button><button data-st="maint">Maint.</button></div>
@@ -94,7 +94,7 @@ es:{sub:"Mapa en vivo · demo de MelyOS · propuesta",all:"Todos",free:"Disponib
 const AX=9.81, AY=16.04;            // px per 1% of the 980x1605 picture (keeps right angles when rotating)
 const COLOR={free:"#5dffa8",occ:"#ff6670",res:"#ffc545",rent:"#a78bfa",maint:"#9ca3af"};
 let L="en",filt="all",z=1,sel=-1,editing=false,vi=-1;
-let s=21;const rnd=()=>{s=(s*9301+49297)%233280;return s/233280};
+var PICKED=-1;let s=21;const rnd=()=>{s=(s*9301+49297)%233280;return s/233280};
 const r2=n=>Math.round(n*1000)/1000;
 function rectPts(b){const cx=b[0]*AX,cy=b[1]*AY,hw=b[2]*AX/2,hh=b[3]*AY/2,a=b[4]*Math.PI/180,c=Math.cos(a),sn=Math.sin(a);
  return [[-hw,-hh],[hw,-hh],[hw,hh],[-hw,hh]].map(([x,y])=>[r2((cx+x*c-y*sn)/AX),r2((cy+x*sn+y*c)/AY)])}
@@ -238,7 +238,7 @@ document.getElementById("poiIcon").onchange=e=>{if(selPoi<0||!PO[selPoi])return;
 document.getElementById("poiAdd").onclick=()=>{const v=document.getElementById("poiIcon").value;const t=document.getElementById("poiText").value.trim()||"New label";
  PO.push([50,45,v=="wheelchair"?"":t,v,v=="wheelchair"?"ada":(v=="flame"||v=="tank")?"propane":"dark",1,document.getElementById("poiInfo").value||"",document.getElementById("poiEmoji").value.trim()||"",document.getElementById("poiHours").value||""]);selPoi=PO.length-1;poiPanel();render();say("Label added in the middle — drag it to its place")};
 function render(){svg.innerHTML="";over.innerHTML="";const W=map.clientWidth;
- SH.forEach((pts,i)=>{const col=COLOR[ST[i]],srch=typeof RANGE!=="undefined"&&!!RANGE,hit=srch&&okLot(i),dim=(filt!="all"&&ST[i]!=filt)||(srch&&!hit);
+ SH.forEach((pts,i)=>{const col=COLOR[ST[i]],srch=typeof RANGE!=="undefined"&&!!RANGE,pk=srch&&PICKED>=0&&okLot(PICKED),hit=srch&&okLot(i)&&(!pk||i==PICKED),dim=(filt!="all"&&ST[i]!=filt)||(srch&&!hit);
   const pg=document.createElementNS("http://www.w3.org/2000/svg","polygon");pg.setAttribute("points",pts.map(p=>p.join(",")).join(" "));
   const cc=hit?(ST[i]=="rent"?"#8b5cf6":"#16a34a"):srch?"#6b7280":col;pg.setAttribute("fill",srch&&!hit?"#9ca3afcc":cc+(dim?"10":hit?"88":"55"));pg.setAttribute("stroke",i==sel?"#fff":cc);pg.setAttribute("stroke-width",i==sel?2.6:1.6);
   pg.setAttribute("vector-effect","non-scaling-stroke");pg.setAttribute("class","lp"+(!editing&&!dim&&i!=sel&&(hit||(!srch&&(ST[i]=="free"||ST[i]=="rent")))?" blink":""));pg.setAttribute("stroke-linejoin","round");
@@ -313,7 +313,7 @@ function blocks(i){const st=ST[i];let a=(i*37)%23;const r=[];
 const FIXED={"91":[["2026-11-27","2026-11-29"]]};
 function isBlocked(i,d){if(ST[i]=="maint")return true;return d<today||blocks(i).some(([a,b])=>d>=a&&d<b)}
 let calM=null,arr=null,dep=null;
-function open(i){select(i);render();arr=dep=null;calM=new Date(today.getFullYear(),today.getMonth(),1);if(typeof RANGE!=="undefined"&&RANGE){arr=RANGE.a;dep=RANGE.d;calM=new Date(arr.getFullYear(),arr.getMonth(),1)}drawLot(i);document.getElementById("sheet").classList.add("open")}
+function open(i){PICKED=i;HINTDONE=true;select(i);render();{const sh=document.getElementById("sheet"),h=document.getElementById("scrollhint");sh.scrollTop=0;h.classList.remove("gone");document.getElementById("sht").textContent=L=="es"?"Baje para ver el calendario":"Scroll down for the calendar";sh.onscroll=()=>{if(sh.scrollTop>60)h.classList.add("gone")}}arr=dep=null;calM=new Date(today.getFullYear(),today.getMonth(),1);if(typeof RANGE!=="undefined"&&RANGE){arr=RANGE.a;dep=RANGE.d;calM=new Date(arr.getFullYear(),arr.getMonth(),1)}drawLot(i);document.getElementById("sheet").classList.add("open");setTimeout(()=>{const sh=document.getElementById("sheet");if(sh.scrollHeight<=sh.clientHeight+30)document.getElementById("scrollhint").classList.add("gone")},250)}
 const hov=document.createElement("div");hov.id="hov";document.body.appendChild(hov);
 function showHov(i,e){const t=T[L],st=ST[i],es=L=="es",k=kind(i);const col={free:"#16a34a",occ:"#dc2626",res:"#ca8a04",rent:"#8b5cf6",maint:"#4b5563"}[st];
  const price=st=="rent"?(es?"$1,450 / mes · $95 por noche":"$1,450 / month · $95 / night"):({home:"$750",pm:"$700",rv:"$650"}[k]+(es?" / mes":" / month"));
@@ -344,9 +344,10 @@ function drawLot(i){hideHov();const t=T[L],k=kind(i),st=ST[i],es=L=="es",inf=inf
    ${nxt?`<div class="nx"><span>${es?"Próxima fecha disponible":"Next available date"}: <b>${fmt(nxt)}</b></span><button id="usen">${es?"Usar esta fecha":"Use this date"}</button></div>`:""}
    <div class="rows"><div>${es?"Llegada":"Arrival"}<b>${arr?fmt(arr):"—"}</b></div><div>${es?"Salida":"Departure"}<b>${dep?fmt(dep):"—"}</b></div></div>`}
  const ok=arr&&dep;
- document.getElementById("sc").innerHTML=`<img class="lph" src="${photoOf(i)}" alt="${t.lot} ${NUM[i]}"><h2>${t.lot} ${NUM[i]}<span class="badge" style="background:${col}">${t[st]}</span></h2>
+ const okD=st!="maint"&&arr&&dep&&freeFor(i,arr,dep),stTxt=okD?(es?"Libre para sus fechas":"Free for your dates"):t[st],stCol=okD?(st=="rent"?"#8b5cf6":"#16a34a"):col;
+ document.getElementById("sc").innerHTML=`<img class="lph" src="${photoOf(i)}" alt="${t.lot} ${NUM[i]}"><h2>${t.lot} ${NUM[i]}<span class="badge" style="background:${stCol}">${stTxt}</span></h2>
  ${(()=>{const w=where(i);return `<div class="where"><div class="wt">📍 ${w.short}</div><div class="wd">${w.long}</div></div>`})()}
- <div class="rows"><div>${t.type}<b>${st=="rent"?(es?"Park model en renta":"Park model rental"):t[k]}</b></div><div>${t.rate}<b>${st=="rent"?"$1,450":rate}</b></div>${st=="rent"?`<div>${es?"Semanal / Por noche":"Weekly / Nightly"}<b>$450 · $95</b></div>`:""}<div>${st=="rent"?(es?"Casa":"Home"):(k=="rv"?t.size:(es?"Tamaño del lote":"Lot size"))}<b>${st=="rent"?inf.size:(k=="rv"?inf.size:inf.size)}</b></div><div>${es?"Electricidad":"Power"}<b>${inf.amp}</b></div>${inf.pad?`<div>${es?"Piso":"Pad"}<b>${inf.pad}</b></div>`:""}${inf.sleeps?`<div>${es?"Capacidad":"Capacity"}<b>${inf.sleeps}</b></div>`:""}<div>${es?"Estado":"Status"}<b>${t[st]}</b></div></div>
+ <div class="rows"><div>${t.type}<b>${st=="rent"?(es?"Park model en renta":"Park model rental"):t[k]}</b></div><div>${t.rate}<b>${st=="rent"?"$1,450":rate}</b></div>${st=="rent"?`<div>${es?"Semanal / Por noche":"Weekly / Nightly"}<b>$450 · $95</b></div>`:""}<div>${st=="rent"?(es?"Casa":"Home"):(k=="rv"?t.size:(es?"Tamaño del lote":"Lot size"))}<b>${st=="rent"?inf.size:(k=="rv"?inf.size:inf.size)}</b></div><div>${es?"Electricidad":"Power"}<b>${inf.amp}</b></div>${inf.pad?`<div>${es?"Piso":"Pad"}<b>${inf.pad}</b></div>`:""}${inf.sleeps?`<div>${es?"Capacidad":"Capacity"}<b>${inf.sleeps}</b></div>`:""}<div>${es?"Estado":"Status"}<b style="color:${okD?stCol:"inherit"}">${stTxt}</b></div></div>
  <div class="feat">${inf.chips.map(c=>`<span>${c}</span>`).join("")}</div>
  ${(()=>{const a=nearby(i,3);return a.length?`<div class="near"><div class="nt">${es?"Lo más cerca":"What's close by"}</div>${a.map(x=>`<div class="nr"><span>${x.e}</span><b>${x.t}</b><i>${walk(x.m)}</i></div>`).join("")}</div>`:""})()}
  ${st=="maint"?`<p class="mn">${es?"Este lote está en mantenimiento y no se puede reservar por ahora.":"This lot is under maintenance and can't be booked right now."}</p>`:cal}
@@ -390,9 +391,9 @@ function fitsNeed(i){if(NEED.rental)return ST[i]=="rent";if(ST[i]=="rent")return
  if(NEED.len){if(k!="rv")return false;if((parseInt(f.size)||0)<NEED.len)return false}
  if(NEED.amp=="50"&&!/50/.test(f.amp))return false;return true}
 function okLot(i){return !!RANGE&&freeFor(i,RANGE.a,RANGE.d)&&fitsNeed(i)}
-addEventListener("message",e=>{const m=e.data||{};if(m.type!=="melyos-dates")return;const a=dOf(m.arrive),d=dOf(m.depart);
+addEventListener("message",e=>{const m=e.data||{};if(m.type!=="melyos-dates")return;HINTDONE=true;const a=dOf(m.arrive),d=dOf(m.depart);
  const L0=+m.length;NEED={len:L0>0&&L0<100?Math.round(L0):0,amp:(String(m.power||"").match(/\d+/)||[""])[0],rental:!!m.rental};RANGE=a&&d&&d>a?{a,d}:null;render();if(RANGE)sendAvail();else tell({type:"melyos-avail",available:null})});
-addEventListener("message",e=>{const m=e.data||{};if(m.type!=="melyos-pick")return;const i=NUM.indexOf(String(m.lot));if(i>=0)open(i)});
+addEventListener("message",e=>{const m=e.data||{};if(m.type!=="melyos-pick")return;if(!m.lot){PICKED=-1;render();return}const i=NUM.indexOf(String(m.lot));if(i>=0)open(i)});
 tell({type:"melyos-ready"});
 let wq=null;document.getElementById("wrap").addEventListener("wheel",e=>{if(!e.ctrlKey&&!e.metaKey)return;e.preventDefault();
  const nz=z*Math.exp(-Math.max(-25,Math.min(25,e.deltaY))*0.012);const cx=e.clientX,cy=e.clientY;if(wq)cancelAnimationFrame(wq);wq=requestAnimationFrame(()=>zoomTo(nz,cx,cy))},{passive:false});

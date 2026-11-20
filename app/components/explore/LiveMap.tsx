@@ -24,7 +24,7 @@ export default function LiveMap({ src, title, fixed }: { src: string; title: str
     };
     const dates = (e: Event) => { last.current = (e as CustomEvent).detail; post(last.current); };
     // Nov 20 (per Mely): a site picked in the form's "Lot" list is shown on the map
-    const pick = (e: Event) => { const lot = String((e as CustomEvent).detail?.lot || "").slice(0, 20); if (lot) try { frame.current?.contentWindow?.postMessage({ type: "melyos-pick", lot }, origin); } catch {} };
+    const pick = (e: Event) => { const lot = String((e as CustomEvent).detail?.lot || "").slice(0, 20); try { frame.current?.contentWindow?.postMessage({ type: "melyos-pick", lot }, origin); } catch {} };
     window.addEventListener("message", on);
     window.addEventListener("melyos-dates", dates);
     window.addEventListener("melyos-pick", pick);

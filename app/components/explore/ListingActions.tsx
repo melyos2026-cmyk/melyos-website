@@ -102,7 +102,7 @@ export function RequestForm(l: L) {
       {l.live && picked && <div className={`flex items-center justify-between gap-2 rounded-xl border-2 px-3 py-2.5 ${picked.available === false ? "border-rose-300 bg-rose-50" : picked.available ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white"}`}>
           <span className="font-black">{unit[0].toUpperCase() + unit.slice(1)} {picked.lot}</span>
           <span className={`text-sm font-bold ${picked.available === false ? "text-rose-700" : picked.available ? "text-emerald-700" : "text-slate-500"}`}>{picked.available === false ? "Not available for these dates" : picked.available ? "✓ Available for your dates" : "Pick dates on the map"}</span>
-          <button type="button" onClick={() => setPicked(null)} className="text-xs font-bold text-slate-500 underline">Clear</button></div>}
+          <button type="button" onClick={() => { setPicked(null); window.dispatchEvent(new CustomEvent("melyos-pick", { detail: { lot: "" } })); }} className="text-xs font-bold text-slate-500 underline">Clear</button></div>}
       <label className="block text-sm font-bold">Stay
         <select className={inp} value={f.stay_type} onChange={(e) => set("stay_type", e.target.value)}>
           {STAYS.map(([k, lab]) => <option key={k} value={k}>{lab}</option>)}
