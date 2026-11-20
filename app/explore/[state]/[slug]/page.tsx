@@ -96,8 +96,8 @@ export default async function Page({ params, searchParams }: { params: Promise<{
             <LiveMap src={liveMap} fixed={!!demoMap} title={`${name} — live ${unit} map`} />
             <aside id="request" className="scroll-mt-24">
               <div className="rounded-3xl border-2 border-[#08B8D8] bg-white p-5 shadow-sm lg:sticky lg:top-24">
-                <h2 className="text-2xl font-black">Request a {unit}</h2>
-                <p className="mb-3 mt-1 text-slate-600">Pick your dates, then tap a {unit} on the map.</p>
+                <h2 className="text-2xl font-black">Book your {unit}</h2>
+                <p className="mb-3 mt-1 text-slate-600">Pick your dates and a {unit}, then book and pay online.</p>
                 <RequestForm {...L} stays={stays} live />
               </div>
             </aside>

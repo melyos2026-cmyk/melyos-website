@@ -27,8 +27,11 @@ export default function LiveMap({ src, title, fixed }: { src: string; title: str
     const pick = (e: Event) => { const lot = String((e as CustomEvent).detail?.lot || "").slice(0, 20); try { frame.current?.contentWindow?.postMessage({ type: "melyos-pick", lot }, origin); } catch {} };
     window.addEventListener("message", on);
     window.addEventListener("melyos-dates", dates);
+    // Nov 20 (per Mely): "Book & pay" in the form opens the park's own booking on the map
+    const book = (e: Event) => { const d = (e as CustomEvent).detail || {}; try { frame.current?.contentWindow?.postMessage({ type: "melyos-book", lot: String(d.lot || "").slice(0, 20), arrive: String(d.arrive || "").slice(0, 10), depart: String(d.depart || "").slice(0, 10), length: String(d.length || "").slice(0, 6) }, origin); } catch {} frame.current?.scrollIntoView({ behavior: "smooth", block: "start" }); };
     window.addEventListener("melyos-pick", pick);
-    return () => { window.removeEventListener("message", on); window.removeEventListener("melyos-dates", dates); window.removeEventListener("melyos-pick", pick); };
+    window.addEventListener("melyos-book", book);
+    return () => { window.removeEventListener("message", on); window.removeEventListener("melyos-dates", dates); window.removeEventListener("melyos-pick", pick); window.removeEventListener("melyos-book", book); };
   }, [src]);
   // Nov 20: a self-contained demo map fills the screen (the whole map shows at first; its popups center in view)
   // Nov 20 (per Mely — "que se vea bien"): the frame is only as wide as the map at full height (no grey side bands);

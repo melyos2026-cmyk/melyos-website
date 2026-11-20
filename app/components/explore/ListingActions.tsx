@@ -103,10 +103,10 @@ export function RequestForm(l: L) {
           <span className="font-black">{unit[0].toUpperCase() + unit.slice(1)} {picked.lot}</span>
           <span className={`text-sm font-bold ${picked.available === false ? "text-rose-700" : picked.available ? "text-emerald-700" : "text-slate-500"}`}>{picked.available === false ? "Not available for these dates" : picked.available ? "✓ Available for your dates" : "Pick dates on the map"}</span>
           <button type="button" onClick={() => { setPicked(null); window.dispatchEvent(new CustomEvent("melyos-pick", { detail: { lot: "" } })); }} className="text-xs font-bold text-slate-500 underline">Clear</button></div>}
-      <label className="block text-sm font-bold">Stay
+      {!l.live && <label className="block text-sm font-bold">Stay
         <select className={inp} value={f.stay_type} onChange={(e) => set("stay_type", e.target.value)}>
           {STAYS.map(([k, lab]) => <option key={k} value={k}>{lab}</option>)}
-        </select></label>
+        </select></label>}
       <div className="rounded-xl bg-slate-50 p-3">
         <p className="mb-2 text-sm font-black">{l.kind === "m" ? "Your boat" : "Your RV / camper"}</p>
         <div className="grid grid-cols-2 gap-2">
@@ -120,15 +120,29 @@ export function RequestForm(l: L) {
         </div>
         {l.kind === "m" && <select className={`${inp} mt-2`} value={f.vessel.power_amp || ""} onChange={(e) => setV("power_amp", e.target.value)}><option value="">Shore power</option><option>30 amp</option><option>50 amp</option><option>100 amp</option><option>None</option></select>}
       </div>
+      {l.live ? (() => {
+        // Nov 20 (per Mely — online sales, not requests): the guest books and pays on the park's own live map
+        // (its real checkout). Stays longer than 15 nights go to the park's application instead.
+        const nights = f.arrive && f.depart ? Math.round((Date.parse(f.depart) - Date.parse(f.arrive)) / 86400000) : 0;
+        const long = nights > 15, ready = nights > 0 && !!picked && picked.available !== false;
+        const go = () => { if (!ready || !picked) return; window.dispatchEvent(new CustomEvent("melyos-book", { detail: { lot: picked.lot, arrive: f.arrive, depart: f.depart, length: f.vessel?.length_ft || "" } })); };
+        return <>
+          {long && <div className="rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900"><b>{nights} nights:</b> stays longer than 15 nights need a short application (guest screening). The button takes you there with your dates and {unit}.</div>}
+          <button type="button" onClick={go} disabled={!ready} className="w-full rounded-xl bg-[#08B8D8] px-6 py-3.5 text-lg font-black text-white transition hover:bg-[#079db9] disabled:opacity-60">
+            {!nights ? "Pick your dates" : !picked ? `Pick a ${unit}` : long ? `Start the application · ${unit} ${picked.lot} →` : `Book & pay · ${unit} ${picked.lot} · ${nights} night${nights > 1 ? "s" : ""} →`}</button>
+          <p className="text-xs text-slate-500">{long ? "Once approved, you pay the deposit online." : "You pay securely by card on the park's own checkout. Prices and availability come straight from the park."}</p>
+        </>;
+      })() : <>
       <div className="grid gap-3 sm:grid-cols-3">
-        <input required className={inp} placeholder="Your name" value={f.name || ""} onChange={(e) => set("name", e.target.value)} />
-        <input required type="email" className={inp} placeholder="Email" value={f.email || ""} onChange={(e) => set("email", e.target.value)} />
-        <input className={inp} type="tel" placeholder="Phone (optional)" value={f.phone || ""} onChange={(e) => set("phone", e.target.value)} />
-      </div>
-      <textarea className={inp} rows={3} placeholder="Anything they should know? (optional)" value={f.message || ""} onChange={(e) => set("message", e.target.value)} />
-      {st.err && <p className="text-sm font-bold text-red-600">{st.err}</p>}
-      <button disabled={st.busy || (l.live && picked?.available === false)} className="w-full rounded-xl bg-[#08B8D8] px-6 py-3.5 text-lg font-black text-white transition hover:bg-[#079db9] disabled:opacity-60">{st.busy ? "Sending…" : slip ? `Request ${unit} ${slip}` : `Request a ${unit}`}</button>
-      <p className="text-xs text-slate-500">Free. Your request goes to the property; they confirm availability and price with you.</p>
+          <input required className={inp} placeholder="Your name" value={f.name || ""} onChange={(e) => set("name", e.target.value)} />
+          <input required type="email" className={inp} placeholder="Email" value={f.email || ""} onChange={(e) => set("email", e.target.value)} />
+          <input className={inp} type="tel" placeholder="Phone (optional)" value={f.phone || ""} onChange={(e) => set("phone", e.target.value)} />
+        </div>
+        <textarea className={inp} rows={3} placeholder="Anything they should know? (optional)" value={f.message || ""} onChange={(e) => set("message", e.target.value)} />
+        {st.err && <p className="text-sm font-bold text-red-600">{st.err}</p>}
+        <button disabled={st.busy || (l.live && picked?.available === false)} className="w-full rounded-xl bg-[#08B8D8] px-6 py-3.5 text-lg font-black text-white transition hover:bg-[#079db9] disabled:opacity-60">{st.busy ? "Sending…" : slip ? `Request ${unit} ${slip}` : `Request a ${unit}`}</button>
+        <p className="text-xs text-slate-500">Free. Your request goes to the property; they confirm availability and price with you.</p>
+      </>}
     </form>
   );
 }
