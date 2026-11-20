@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useBoater, post } from "./useBoater";
 
 // Nov 17 (per Mely): on every Explore listing — ♡ Save, Request a slip / site, reviews (read + write).
-type L = { state: string; listing_key: string; listing_name: string; kind: string; slip?: string };
+type L = { state: string; listing_key: string; listing_name: string; kind: string; slip?: string; stays?: string[] };
 const inp = "w-full rounded-xl border border-slate-300 px-3 py-2.5 text-[15px] outline-none focus:border-[#08B8D8]";
 const Stars = ({ n, size = "text-base" }: { n: number; size?: string }) => <span className={`${size} text-amber-500`} aria-label={`${n} of 5 stars`}>{"★★★★★".slice(0, Math.round(n))}<span className="text-slate-300">{"★★★★★".slice(Math.round(n))}</span></span>;
 
@@ -21,7 +21,9 @@ export function FavoriteButton(l: L) {
 export function RequestForm(l: L) {
   const { me } = useBoater();
   const unit = l.kind === "m" ? "slip" : "site";
-  const [f, setF] = useState<any>({ stay_type: "night", vessel: { kind: l.kind === "m" ? "boat" : "rv" } });
+  // Nov 20 (per Mely): only the stays the owner accepts (all of them when the owner hasn't chosen)
+  const STAYS: [string, string][] = ([["night", "Nightly"], ["week", "Weekly"], ["month", "Monthly"], ["season", "Seasonal"], ["year", "Annual"]] as [string, string][]).filter(([k]) => !l.stays?.length || l.stays.includes(k));
+  const [f, setF] = useState<any>({ stay_type: STAYS[0]?.[0] || "night", vessel: { kind: l.kind === "m" ? "boat" : "rv" } });
   const [st, setSt] = useState<{ busy?: boolean; err?: string; done?: boolean; forwarded?: boolean }>({});
   // Nov 18: dates picked on the Explore search (?arrive=&depart=) fill the form
   useEffect(() => {
@@ -53,7 +55,7 @@ export function RequestForm(l: L) {
       </div>
       <label className="block text-sm font-bold">Stay
         <select className={inp} value={f.stay_type} onChange={(e) => set("stay_type", e.target.value)}>
-          <option value="night">Nightly</option><option value="week">Weekly</option><option value="month">Monthly</option><option value="season">Seasonal</option><option value="year">Annual</option>
+          {STAYS.map(([k, lab]) => <option key={k} value={k}>{lab}</option>)}
         </select></label>
       <div className="rounded-xl bg-slate-50 p-3">
         <p className="mb-2 text-sm font-black">{l.kind === "m" ? "Your boat" : "Your RV / camper"}</p>

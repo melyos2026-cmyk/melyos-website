@@ -55,6 +55,7 @@ export default async function Page({ params }: { params: Promise<{ state: string
   const feat = isFeatured(row);
   const liveMap = FEATURED_MAP[row[7]] || (d.client && typeof info.map_url === "string" && /^https:\/\//.test(info.map_url) ? info.map_url : "");
   const L = { state: st, listing_key: row[7], listing_name: name, kind: row[0] };
+  const stays: string[] = Array.isArray(info.stay_types) ? info.stay_types : [];
   const facts: [string, string][] = ([["Spaces", info.spaces], ["Max length", info.max_length], ["Rates", info.rates], ["Amenities", info.amenities]] as [string, string][]).filter(([, v]) => v);
   const ld = { "@context": "https://schema.org", "@type": row[0] === "c" ? "Campground" : row[0] === "r" ? "RVPark" : "LocalBusiness", name,
     address: { "@type": "PostalAddress", addressLocality: row[4] || undefined, addressRegion: st, addressCountry: "US" }, geo: { "@type": "GeoCoordinates", latitude: row[2], longitude: row[3] },
@@ -151,7 +152,7 @@ export default async function Page({ params }: { params: Promise<{ state: string
               <p className="mb-4 mt-1 text-slate-600">Tell {name} your dates and {row[0] === "m" ? "boat" : "rig"}. Free, no account needed.</p>
               {liveMap && <a href="#live-map" className="mb-4 block rounded-xl bg-[#071A33] px-4 py-3 text-center font-black text-white">Book instantly on the live map ↑</a>}
               {!liveMap && d.slipmap && <a href={`${canonical}/slips`} className="mb-4 block rounded-xl bg-[#071A33] px-4 py-3 text-center font-black text-white">Pick your {unit} on the map →</a>}
-              <RequestForm {...L} />
+              <RequestForm {...L} stays={stays} />
             </div>
           </aside>
         </div>

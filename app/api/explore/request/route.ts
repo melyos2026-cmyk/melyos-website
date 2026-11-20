@@ -53,6 +53,11 @@ export async function POST(req: NextRequest) {
   }
   if (r.data.owner_email) {
     await sendMail(r.data.owner_email, leadSubject, lead(), String(b.email));
+  } else {
+    // Nov 20 (per Mely): until the property claims its listing, every lead also lands in MelyOS's inbox —
+    // that's the sales call ("we have a guest for you"). Reply goes straight to the guest.
+    const claim = `https://melyos.io/explore/claim?state=${st}&key=${encodeURIComponent(row[7])}`;
+    await sendMail(process.env.MELYOS_LEADS_EMAIL || "info@melyos.io", `[Not claimed] ${leadSubject} — ${name}`, lead(claim), String(b.email));
   }
   await sendMail(String(b.email), `Your ${unit} request — ${name}`, mailWrap(`We got your request`,
     `<p>Your request for <b>${escH(name)}</b> (${escH(STATES[st][0])}) was sent${sentTo ? " to the property" : ""}. ${sentTo ? "They'll reply to you by email or phone." : "We're contacting the property for you — you can also call them directly."}</p>${table}<p style="margin-top:16px"><a href="${link}" style="color:#0284c7">See the listing</a>${row[5] ? ` · Phone: ${escH(row[5])}` : ""}</p>`));

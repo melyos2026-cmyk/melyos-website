@@ -68,6 +68,13 @@ export default function ClaimForm({ state, listingKey, phone, website, kind }: {
         <input className={`${inp} sm:col-span-2`} placeholder={kind === "m" ? "Amenities (fuel, pump-out, 30/50/100 amp, showers…)" : "Amenities (full hookups, Wi-Fi, pool, laundry…)"} value={f.edits.amenities || ""} onChange={(e) => setE("amenities", e.target.value)} />
         {kind === "m" && <><input className={inp} inputMode="decimal" placeholder="Gas price today ($/gal)" value={f.edits.fuel_gas || ""} onChange={(e) => setE("fuel_gas", e.target.value)} />
           <input className={inp} inputMode="decimal" placeholder="Diesel price today ($/gal)" value={f.edits.fuel_diesel || ""} onChange={(e) => setE("fuel_diesel", e.target.value)} /></>}
+        {/* Nov 20 (per Mely): the owner picks the stays they accept — guests only see those in "Request a site" */}
+        <div className="rounded-xl bg-slate-50 p-3 sm:col-span-2"><p className="mb-2 text-sm font-black">Stays you accept</p>
+          <div className="flex flex-wrap gap-x-5 gap-y-2">{([["night", "Nightly"], ["week", "Weekly"], ["month", "Monthly"], ["season", "Seasonal"], ["year", "Annual"]] as const).map(([k, lab]) => {
+            const cur: string[] = Array.isArray(f.edits.stay_types) ? f.edits.stay_types : [];
+            return <label key={k} className="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" className="h-4 w-4 accent-[#08B8D8]" checked={cur.includes(k)} onChange={(e) => setE("stay_types", e.target.checked ? [...cur, k] : cur.filter((x) => x !== k))} />{lab}</label>;
+          })}</div>
+          <p className="mt-1 text-xs text-slate-500">Leave all empty if you take every kind of stay.</p></div>
         <textarea className={`${inp} sm:col-span-2`} rows={4} placeholder="Short description of your property" value={f.edits.description || ""} onChange={(e) => setE("description", e.target.value)} />
       </div></div>
       {st.err && <p className="text-sm font-bold text-red-600">{st.err}</p>}
