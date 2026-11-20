@@ -111,13 +111,13 @@ export function RequestForm(l: L) {
       <div className="rounded-xl bg-slate-50 p-3">
         <p className="mb-2 text-sm font-black">{l.kind === "m" ? "Your boat" : "Your RV / camper"}</p>
         <div className="grid grid-cols-2 gap-2">
-          <select className={inp} value={f.vessel.kind} onChange={(e) => setV("kind", e.target.value)}>
-            {l.kind === "m" ? <><option value="boat">Boat</option><option value="other">Other</option></> : <><option value="rv">RV / motorhome</option><option value="trailer">Travel trailer</option><option value="tent">Tent</option><option value="rental">Rent a home / park model</option><option value="other">Other</option></>}
+          <select className={inp} value={f.vessel.kind} onChange={(e) => setF((x: any) => ({ ...x, vessel: { ...x.vessel, kind: e.target.value, ...(e.target.value === "rental" ? { length_ft: "", power_amp: "" } : {}) } }))}>
+            {l.kind === "m" ? <><option value="boat">Boat</option><option value="other">Other</option></> : <><option value="rv">RV / motorhome</option><option value="trailer">Travel trailer</option>{!l.live && <option value="tent">Tent</option>}{l.live && <option value="rental">Rent a home / park model</option>}<option value="other">Other</option></>}
           </select>
-          <input className={inp} inputMode="decimal" placeholder="Length (ft)" value={f.vessel.length_ft || ""} onChange={(e) => setV("length_ft", e.target.value)} />
+          {f.vessel.kind !== "rental" && <input className={inp} inputMode="decimal" placeholder="Length (ft)" value={f.vessel.length_ft || ""} onChange={(e) => setV("length_ft", e.target.value)} />}
           {l.kind === "m" ? <><input className={inp} inputMode="decimal" placeholder="Beam (ft)" value={f.vessel.beam_ft || ""} onChange={(e) => setV("beam_ft", e.target.value)} />
             <input className={inp} inputMode="decimal" placeholder="Draft (ft)" value={f.vessel.draft_ft || ""} onChange={(e) => setV("draft_ft", e.target.value)} /></>
-            : <select className={inp} value={f.vessel.power_amp || ""} onChange={(e) => setV("power_amp", e.target.value)}><option value="">Power</option><option>30 amp</option><option>50 amp</option><option>No power</option></select>}
+            : f.vessel.kind !== "rental" && <select className={inp} value={f.vessel.power_amp || ""} onChange={(e) => setV("power_amp", e.target.value)}><option value="">Power</option><option>30 amp</option><option>50 amp</option><option>No power</option></select>}
         </div>
         {l.kind === "m" && <select className={`${inp} mt-2`} value={f.vessel.power_amp || ""} onChange={(e) => setV("power_amp", e.target.value)}><option value="">Shore power</option><option>30 amp</option><option>50 amp</option><option>100 amp</option><option>None</option></select>}
       </div>
