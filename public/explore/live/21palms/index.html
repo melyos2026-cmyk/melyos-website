@@ -37,7 +37,7 @@ svg polygon.lp:hover{fill-opacity:1;stroke:#fff;stroke-width:3}
 .badge{display:inline-block;color:#fff;border-radius:12px;padding:3px 10px;font-size:12px;font-weight:700;margin-left:8px;vertical-align:middle}
 .rows{margin:12px 0 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .rows div{background:#f4f7fa;border-radius:10px;padding:9px 11px;font-size:12px;color:#5b6b7c}
-.rows b{display:block;color:#0f2a4a;font-size:15px;margin-top:2px}.feat{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 14px}.feat span{background:#eef4fb;color:#0f2a4a;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:600}#hov .pv div{padding:0}#hov .pv>div+div{margin-top:6px}#hov .hf{padding:0!important;display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}#hov .hf span{background:#eef4fb;border-radius:999px;padding:1px 7px;font-size:11px;color:#0f2a4a}
+.rows b{display:block;color:#0f2a4a;font-size:15px;margin-top:2px}.near{margin:-2px 0 14px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:12px}.near .nt{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#64748b;font-weight:700;margin-bottom:4px}.near .nr{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;color:#0f2a4a}.near .nr+.nr{border-top:1px dashed #e2e8f0}.near .nr b{font-weight:600;flex:1}.near .nr i{font-style:normal;color:#64748b;font-size:12px}.feat{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 14px}.feat span{background:#eef4fb;color:#0f2a4a;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:600}#hov .pv div{padding:0}#hov .pv>div+div{margin-top:6px}#hov .hf{padding:0!important;display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}#hov .hf span{background:#eef4fb;border-radius:999px;padding:1px 7px;font-size:11px;color:#0f2a4a}
 .cta{width:100%;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:700;color:#fff;background:#08b8d8}
 .cta.alt{background:#0f2a4a}
 .close{position:absolute;right:14px;top:12px;border:none;background:#eef2f5;border-radius:16px;width:32px;height:32px;font-size:18px;color:#33475b}
@@ -121,6 +121,13 @@ function load(){let d=null,lab=null;
   if(!d.stv&&!ST.includes("rent")){s=21;ST=SH.map((_,i)=>{const r=rnd();return i>=101?"free":r<.58?"occ":r<.84?"free":r<.92?"res":r<.97?"rent":"maint"})}}else{s=21;SH=BASE.map((b,i)=>POLY[i]||rectPts(b));ST=SH.map((_,i)=>{const r=rnd();return i>=101?"free":r<.58?"occ":r<.84?"free":r<.92?"res":r<.97?"rent":"maint"});NUM=SH.map((_,i)=>String(i+1))}}
 const kind=i=>{const n=i+1;return n>101?"pm":n<=5?"home":n<=27?"pm":n<=50?"home":n<=87?"rv":"home"};
 // Nov 20 (per Mely): lot details — amps, size, hookups — so every lot looks complete (examples until the park sends its real data)
+// Nov 20 (per Mely — like Aloha): the amenities closest to each lot, measured on the map, shown softly in the cards
+function nearby(i,n){const es=L=="es",c=cen(SH[i]);
+ const nm={house:es?"Clubhouse":"Clubhouse",dumbbell:es?"Gimnasio":"Fitness center",pool:es?"Piscina":"Pool",tank:es?"Propano":"Propane",fish:es?"Lago de pesca":"Fishing lake"};
+ const em={house:"🏠",dumbbell:"🏋️",pool:"🏊",tank:"🔥",fish:"🎣"};
+ return PO.filter(p=>nm[p[3]]).map(p=>{const d=Math.hypot((p[0]-c[0])*AX,(p[1]-c[1])*AY);const m=Math.max(1,Math.round(d*0.46*1.3/80));
+   return{t:nm[p[3]],e:em[p[3]],m,d}}).sort((a,b)=>a.d-b.d).slice(0,n||3)}
+const walk=m=>L=="es"?`${m} min a pie`:`${m} min walk`;
 function info(i){const n=NUM[i]|0,k=kind(i),es=L=="es",st=ST[i];
  if(st=="rent")return{amp:"50 amp",size:es?"2 hab · 1 baño":"2 bed · 1 bath",sleeps:es?"Duermen 4":"Sleeps 4",chips:es?["A/C central","Cocina equipada","Porche cubierto","Wi-Fi","Estacionamiento"]:["Central A/C","Full kitchen","Covered porch","Wi-Fi","Parking"]};
  const amp=k=="rv"?(n%3==0?"30/50 amp":"50 amp"):"50 amp";
@@ -294,7 +301,7 @@ function open(i){select(i);render();arr=dep=null;calM=new Date(today.getFullYear
 const hov=document.createElement("div");hov.id="hov";document.body.appendChild(hov);
 function showHov(i,e){const t=T[L],st=ST[i],es=L=="es",k=kind(i);const col={free:"#16a34a",occ:"#dc2626",res:"#ca8a04",rent:"#8b5cf6",maint:"#4b5563"}[st];
  const price=st=="rent"?(es?"$1,450 / mes · $95 por noche":"$1,450 / month · $95 / night"):({home:"$750",pm:"$700",rv:"$650"}[k]+(es?" / mes":" / month"));
- hov.style.width="230px";hov.innerHTML=`<img src="${photoOf(i)}" alt=""><div><b>${t.lot} ${NUM[i]}</b><i style="background:${col}">${t[st]}</i><br><span style="color:#475569">${st=="maint"?"":price}</span><div class="hf">${(()=>{const f=info(i);return [f.amp,f.size,...(f.sleeps?[f.sleeps]:[])].map(x=>`<span>${x}</span>`).join("")})()}</div></div>`;hov.style.display="block";moveHov(e)}
+ hov.style.width="230px";hov.innerHTML=`<img src="${photoOf(i)}" alt=""><div><b>${t.lot} ${NUM[i]}</b><i style="background:${col}">${t[st]}</i><br><span style="color:#475569">${st=="maint"?"":price}</span><div class="hf">${(()=>{const f=info(i);return [f.amp,f.size,...(f.sleeps?[f.sleeps]:[])].map(x=>`<span>${x}</span>`).join("")})()}</div>${(()=>{const a=nearby(i,1)[0];return a?`<div style="margin-top:6px;font-size:11.5px;color:#64748b">${a.e} ${es?"Lo más cerca":"Closest"}: <b style="font-weight:600;color:#0f2540">${a.t}</b> · ${walk(a.m)}</div>`:""})()}</div>`;hov.style.display="block";moveHov(e)}
 function moveHov(e){// Nov 20 (per Mely): the card always stays fully inside the map — never cut off at an edge
  const W=innerWidth,Hh=innerHeight;if(hov.style.width){const want=parseInt(hov.style.width)||230;hov.style.width=Math.min(want,W-16)+"px"}
  const w=hov.offsetWidth||230,h=hov.offsetHeight||190;
@@ -324,6 +331,7 @@ function drawLot(i){hideHov();const t=T[L],k=kind(i),st=ST[i],es=L=="es",inf=inf
  document.getElementById("sc").innerHTML=`<img class="lph" src="${photoOf(i)}" alt="${t.lot} ${NUM[i]}"><h2>${t.lot} ${NUM[i]}<span class="badge" style="background:${col}">${t[st]}</span></h2>
  <div class="rows"><div>${t.type}<b>${st=="rent"?(es?"Park model en renta":"Park model rental"):t[k]}</b></div><div>${t.rate}<b>${st=="rent"?"$1,450":rate}</b></div>${st=="rent"?`<div>${es?"Semanal / Por noche":"Weekly / Nightly"}<b>$450 · $95</b></div>`:""}<div>${st=="rent"?(es?"Casa":"Home"):(k=="rv"?t.size:(es?"Tamaño del lote":"Lot size"))}<b>${st=="rent"?inf.size:(k=="rv"?inf.size:inf.size)}</b></div><div>${es?"Electricidad":"Power"}<b>${inf.amp}</b></div>${inf.pad?`<div>${es?"Piso":"Pad"}<b>${inf.pad}</b></div>`:""}${inf.sleeps?`<div>${es?"Capacidad":"Capacity"}<b>${inf.sleeps}</b></div>`:""}<div>${es?"Estado":"Status"}<b>${t[st]}</b></div></div>
  <div class="feat">${inf.chips.map(c=>`<span>${c}</span>`).join("")}</div>
+ ${(()=>{const a=nearby(i,3);return a.length?`<div class="near"><div class="nt">${es?"Lo más cerca":"What's close by"}</div>${a.map(x=>`<div class="nr"><span>${x.e}</span><b>${x.t}</b><i>${walk(x.m)}</i></div>`).join("")}</div>`:""})()}
  ${st=="maint"?`<p class="mn">${es?"Este lote está en mantenimiento y no se puede reservar por ahora.":"This lot is under maintenance and can't be booked right now."}</p>`:cal}
  ${st=="maint"?"":`<button class="cta" id="bk" ${ok?"":"disabled"} style="${ok?"":"opacity:.5"}">${ok?(es?"Solicitar estas fechas":"Request these dates"):(es?"Escoja llegada y salida":"Pick arrival and departure")}</button><p id="bkm" class="mn" style="display:none">${es?"Demo: en su mapa real el huésped paga el depósito y recibe la confirmación por email.":"Demo: on your live map the guest pays the deposit and gets an email confirmation."}</p>`}`;
  if(typeof tell==="function")tell({type:"melyos-lot",lot:NUM[i],status:st,arrive:iso(arr),depart:iso(dep),available:st=="maint"?false:(arr&&dep?freeFor(i,arr,dep):null)});
