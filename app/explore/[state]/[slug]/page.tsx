@@ -81,21 +81,31 @@ export default async function Page({ params, searchParams }: { params: Promise<{
           </div>
         </div>
       </section>
-      {liveMap && <section id="live-map" className="border-b border-slate-200 bg-slate-50 py-10">
-        <div className="mx-auto max-w-6xl px-5 lg:px-8">
-          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+      {/* Nov 20 (per Mely): the live map comes first and fills the screen; the request form sits next to it and
+          talks to the map (dates fade taken sites; the site picked on the map comes into the form). */}
+      {liveMap && <section id="live-map" className="scroll-mt-20 border-b border-slate-200 bg-slate-50 py-6">
+        <div className="mx-auto max-w-[1400px] px-4 lg:px-6">
+          <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.18em] text-[#0891b2]">Live {unit} map</p>
               <h2 className="text-2xl font-black md:text-3xl">Pick your {unit} and book online</h2>
-              <p className="mt-1 text-slate-600">Tap any available {unit} to see its details, dates and price — then book it right here.</p>
             </div>
             <a href={liveMap} target="_blank" rel="noopener" className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-black">Open full screen ↗</a>
           </div>
-          <LiveMap src={liveMap} fixed={!!demoMap} title={`${name} — live ${unit} map`} />
+          <div className="grid gap-5 lg:grid-cols-[1fr_400px]">
+            <LiveMap src={liveMap} fixed={!!demoMap} title={`${name} — live ${unit} map`} />
+            <aside id="request" className="scroll-mt-24">
+              <div className="rounded-3xl border-2 border-[#08B8D8] bg-white p-5 shadow-sm lg:sticky lg:top-24">
+                <h2 className="text-2xl font-black">Request a {unit}</h2>
+                <p className="mb-3 mt-1 text-slate-600">Pick your dates, then tap a {unit} on the map.</p>
+                <RequestForm {...L} stays={stays} live />
+              </div>
+            </aside>
+          </div>
         </div>
       </section>}
       <section className="py-10">
-        <div className="mx-auto grid max-w-6xl gap-8 px-5 lg:grid-cols-[1fr_420px] lg:px-8">
+        <div className={`mx-auto grid max-w-6xl gap-8 px-5 lg:px-8 ${liveMap ? "" : "lg:grid-cols-[1fr_420px]"}`}>
           <div className="space-y-8">
             {/* Nov 18 (per Mely): the real photo + a big map side by side; no photo → the big map full width */}
             {(() => {
@@ -148,7 +158,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
             {row[0] === "m" && <Fuel {...L} fuel={d.fuel} />}
             <Reviews {...L} />
           </div>
-          <aside>
+          {!liveMap && <aside>
             <div id="request" className="rounded-3xl border-2 border-[#08B8D8] p-6 shadow-sm lg:sticky lg:top-24">
               <h2 className="text-2xl font-black">Request a {unit}</h2>
               <p className="mb-4 mt-1 text-slate-600">Tell {name} your dates and {row[0] === "m" ? "boat" : "rig"}. Free, no account needed.</p>
@@ -156,7 +166,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
               {!liveMap && d.slipmap && <a href={`${canonical}/slips`} className="mb-4 block rounded-xl bg-[#071A33] px-4 py-3 text-center font-black text-white">Pick your {unit} on the map →</a>}
               <RequestForm {...L} stays={stays} />
             </div>
-          </aside>
+          </aside>}
         </div>
       </section>
       <SiteFooter />

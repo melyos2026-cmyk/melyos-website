@@ -15,7 +15,7 @@ header p{margin:3px 0 0;font-size:12.5px;color:#8fe3f2}
 .chip.on{border-color:#0f2a4a;background:#0f2a4a;color:#fff}
 .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
 .wrap{overflow:auto;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch;max-width:900px;margin:0 auto}
-.map{position:relative;width:100%;transform-origin:0 0}
+.map{position:relative;width:100%;transform-origin:0 0;margin:0 auto}html.embed .wrap{max-width:none}
 .map img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
 .lotold{position:absolute;border-radius:3px;border:1.5px solid rgba(255,255,255,.95);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:clamp(6px,1.35vw,11px);line-height:1;box-shadow:0 1px 2px rgba(0,0,0,.25);cursor:pointer;transition:transform .12s,opacity .2s;padding:0}
 
@@ -66,7 +66,6 @@ body.editing{padding-bottom:var(--ph,420px)}.panel{max-height:70vh;overflow:auto
 .mn{font-size:13px;color:#475569;margin:10px 0 4px}
 .sheet.open{max-height:88vh;overflow:auto}
 </style><style>#edit,#dl{display:none!important}</style>
-
 </head><body>
 <header><h1>21 Palms RV Resort</h1><p id="sub"></p>
 <button class="edit-btn" id="edit">✎ Edit</button><div class="lang"><button id="en" class="on">EN</button><button id="es">ES</button></div></header>
@@ -191,7 +190,7 @@ document.getElementById("poiIcon").onchange=e=>{if(selPoi<0||!PO[selPoi])return;
 document.getElementById("poiAdd").onclick=()=>{const v=document.getElementById("poiIcon").value;const t=document.getElementById("poiText").value.trim()||"New label";
  PO.push([50,45,v=="wheelchair"?"":t,v,v=="wheelchair"?"ada":(v=="flame"||v=="tank")?"propane":"dark",1,document.getElementById("poiInfo").value||"",document.getElementById("poiEmoji").value.trim()||"",document.getElementById("poiHours").value||""]);selPoi=PO.length-1;poiPanel();render();say("Label added in the middle — drag it to its place")};
 function render(){svg.innerHTML="";over.innerHTML="";const W=map.clientWidth;
- SH.forEach((pts,i)=>{const col=COLOR[ST[i]],dim=filt!="all"&&ST[i]!=filt;
+ SH.forEach((pts,i)=>{const col=COLOR[ST[i]],dim=(filt!="all"&&ST[i]!=filt)||(typeof RANGE!=="undefined"&&RANGE&&!freeFor(i,RANGE.a,RANGE.d));
   const pg=document.createElementNS("http://www.w3.org/2000/svg","polygon");pg.setAttribute("points",pts.map(p=>p.join(",")).join(" "));
   pg.setAttribute("fill",col+(dim?"10":"55"));pg.setAttribute("stroke",i==sel?"#fff":col);pg.setAttribute("stroke-width",i==sel?2.6:1.6);
   pg.setAttribute("vector-effect","non-scaling-stroke");pg.setAttribute("class","lp"+(!editing&&!dim&&i!=sel&&(ST[i]=="free"||ST[i]=="rent")?" blink":""));pg.setAttribute("stroke-linejoin","round");
@@ -265,7 +264,7 @@ function blocks(i){const st=ST[i];let a=(i*37)%23;const r=[];
 const FIXED={"91":[["2026-11-27","2026-11-29"]]};
 function isBlocked(i,d){if(ST[i]=="maint")return true;return d<today||blocks(i).some(([a,b])=>d>=a&&d<b)}
 let calM=null,arr=null,dep=null;
-function open(i){select(i);render();arr=dep=null;calM=new Date(today.getFullYear(),today.getMonth(),1);drawLot(i);document.getElementById("sheet").classList.add("open")}
+function open(i){select(i);render();arr=dep=null;calM=new Date(today.getFullYear(),today.getMonth(),1);if(typeof RANGE!=="undefined"&&RANGE){arr=RANGE.a;dep=RANGE.d;calM=new Date(arr.getFullYear(),arr.getMonth(),1)}drawLot(i);document.getElementById("sheet").classList.add("open")}
 function drawLot(i){const t=T[L],k=kind(i),st=ST[i],es=L=="es";
  const rate={home:"$750",pm:"$700",rv:"$650"}[k],fits=k=="rv"?(es?"40 pies · 30/50 amp":"40 ft · 30/50 amp"):(es?"No aplica (casa / park model)":"Not an RV site");
  const col={free:"#16a34a",occ:"#dc2626",res:"#ca8a04",rent:"#8b5cf6",maint:"#4b5563"}[st];
@@ -286,18 +285,39 @@ function drawLot(i){const t=T[L],k=kind(i),st=ST[i],es=L=="es";
  <div class="rows"><div>${t.type}<b>${st=="rent"?(es?"Park model en renta":"Park model rental"):t[k]}</b></div><div>${st=="rent"?(es?"Por noche":"Nightly"):t.rate}<b>${st=="rent"?"$95":rate}</b></div><div>${t.size}<b>${st=="rent"?"—":fits}</b></div><div>${es?"Estado":"Status"}<b>${t[st]}</b></div></div>
  ${st=="maint"?`<p class="mn">${es?"Este lote está en mantenimiento y no se puede reservar por ahora.":"This lot is under maintenance and can't be booked right now."}</p>`:cal}
  ${st=="maint"?"":`<button class="cta" id="bk" ${ok?"":"disabled"} style="${ok?"":"opacity:.5"}">${ok?(es?"Solicitar estas fechas":"Request these dates"):(es?"Escoja llegada y salida":"Pick arrival and departure")}</button><p id="bkm" class="mn" style="display:none">${es?"Demo: en su mapa real el huésped paga el depósito y recibe la confirmación por email.":"Demo: on your live map the guest pays the deposit and gets an email confirmation."}</p>`}`;
+ if(typeof tell==="function")tell({type:"melyos-lot",lot:NUM[i],status:st,arrive:iso(arr),depart:iso(dep),available:st=="maint"?false:(arr&&dep?freeFor(i,arr,dep):null)});
  const sc=document.getElementById("sc");
  sc.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{calM=new Date(calM.getFullYear(),calM.getMonth()+Number(b.dataset.m),1);drawLot(i)});
  sc.querySelectorAll(".cd.ca").forEach(b=>b.onclick=()=>{const d=new Date(Number(b.dataset.d));
   if(!arr||dep||d<=arr){arr=d;dep=null}else{let clash=false;for(let x=new Date(+arr);x<d;x=new Date(+x+DAY))if(isBlocked(i,x))clash=true;if(clash){arr=d;dep=null}else dep=d}drawLot(i)});
  const u=sc.querySelector("#usen");if(u)u.onclick=()=>{arr=nxt;dep=null;calM=new Date(nxt.getFullYear(),nxt.getMonth(),1);drawLot(i)};
- const bk=sc.querySelector("#bk");if(bk&&ok)bk.onclick=()=>{sc.querySelector("#bkm").style.display="block"}}
+ const bk=sc.querySelector("#bk");if(bk&&ok)bk.onclick=()=>{if(typeof INFRAME!=="undefined"&&INFRAME){tell({type:"melyos-request",lot:NUM[i],arrive:iso(arr),depart:iso(dep)});document.getElementById("sheet").classList.remove("open");return}sc.querySelector("#bkm").style.display="block"}}
 document.getElementById("x").onclick=()=>{document.getElementById("sheet").classList.remove("open");select(-1);render()};
 function zoomTo(nz,cx,cy){const W=document.getElementById("wrap"),r0=map.getBoundingClientRect();
  if(cx==null){const wr=W.getBoundingClientRect();cx=wr.left+wr.width/2;cy=Math.max(wr.top,0)+Math.min(wr.height,innerHeight)/2}
- const fx=(cx-r0.left)/r0.width,fy=(cy-r0.top)/r0.height;z=Math.min(4,Math.max(1,nz));map.style.width=(z*100)+"%";
+ const fx=(cx-r0.left)/r0.width,fy=(cy-r0.top)/r0.height;z=Math.min(4,Math.max(1,nz));map.style.width=Math.round(baseW()*z)+"px";
  const r1=map.getBoundingClientRect();W.scrollLeft+=r1.left+fx*r1.width-cx;window.scrollBy(0,r1.top+fy*r1.height-cy);render()}
 function zoom(d){zoomTo(z+d)}
+// Nov 20 (per Mely): inside MelyOS Explore (iframe) the whole map fits the screen at first; zoom from there.
+const INFRAME=(()=>{try{return window.self!==window.top}catch(e){return true}})();
+function baseW(){const W=document.getElementById("wrap").clientWidth;if(!INFRAME)return W;
+ const im=map.querySelector("img"),ratio=im&&im.naturalHeight?im.naturalWidth/im.naturalHeight:981/1604;
+ const top=(document.querySelector("header")||{offsetHeight:0}).offsetHeight+(document.getElementById("bar")||{offsetHeight:0}).offsetHeight;
+ return Math.max(260,Math.min(W,(innerHeight-top-12)*ratio))}
+function fitNow(){map.style.width=Math.round(baseW()*z)+"px";render()}
+if(INFRAME){document.documentElement.classList.add("embed");addEventListener("resize",fitNow);const im=map.querySelector("img");if(im&&!im.complete)im.addEventListener("load",fitNow);setTimeout(fitNow,0)}
+// Nov 20 (per Mely — the Explore request form and the map work together):
+//  parent → map  {type:"melyos-dates", arrive, depart}   → lots not free for those nights fade out; count sent back
+//  map → parent  {type:"melyos-avail", available, total, arrive, depart}
+//  map → parent  {type:"melyos-lot", lot, status, arrive, depart, available}   (when a guest picks a lot / dates)
+let RANGE=null;
+const dOf=s=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||"");return m?new Date(+m[1],+m[2]-1,+m[3]):null};
+const iso=d=>d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`:"";
+function freeFor(i,a,d){if(ST[i]=="maint")return false;for(let x=new Date(+a);x<d;x=new Date(+x+DAY))if(isBlocked(i,x))return false;return true}
+function tell(m){if(INFRAME)try{parent.postMessage(Object.assign({source:"melyos-map"},m),"*")}catch(e){}}
+function sendAvail(){if(!RANGE)return;let n=0;SH.forEach((_,i)=>{if(freeFor(i,RANGE.a,RANGE.d))n++});tell({type:"melyos-avail",available:n,total:SH.length,arrive:iso(RANGE.a),depart:iso(RANGE.d)})}
+addEventListener("message",e=>{const m=e.data||{};if(m.type!=="melyos-dates")return;const a=dOf(m.arrive),d=dOf(m.depart);RANGE=a&&d&&d>a?{a,d}:null;render();if(RANGE)sendAvail();else tell({type:"melyos-avail",available:null})});
+tell({type:"melyos-ready"});
 let wq=null;document.getElementById("wrap").addEventListener("wheel",e=>{if(!e.ctrlKey&&!e.metaKey)return;e.preventDefault();
  const nz=z*Math.exp(-Math.max(-25,Math.min(25,e.deltaY))*0.012);const cx=e.clientX,cy=e.clientY;if(wq)cancelAnimationFrame(wq);wq=requestAnimationFrame(()=>zoomTo(nz,cx,cy))},{passive:false});
 let pin=null;const W0=document.getElementById("wrap");

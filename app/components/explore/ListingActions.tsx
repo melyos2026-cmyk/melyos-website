@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useBoater, post } from "./useBoater";
 
 // Nov 17 (per Mely): on every Explore listing — ♡ Save, Request a slip / site, reviews (read + write).
-type L = { state: string; listing_key: string; listing_name: string; kind: string; slip?: string; stays?: string[] };
+type L = { state: string; listing_key: string; listing_name: string; kind: string; slip?: string; stays?: string[]; live?: boolean };
 const inp = "w-full rounded-xl border border-slate-300 px-3 py-2.5 text-[15px] outline-none focus:border-[#08B8D8]";
 const Stars = ({ n, size = "text-base" }: { n: number; size?: string }) => <span className={`${size} text-amber-500`} aria-label={`${n} of 5 stars`}>{"★★★★★".slice(0, Math.round(n))}<span className="text-slate-300">{"★★★★★".slice(Math.round(n))}</span></span>;
 
@@ -37,10 +37,37 @@ export function RequestForm(l: L) {
     setF((x: any) => ({ ...x, name: x.name || me.boater!.name, email: x.email || me.boater!.email, phone: x.phone || me.boater!.phone || "", ...(v && !x.vessel?.length_ft ? { vessel: { kind: v.kind, length_ft: v.length_ft || "", beam_ft: v.beam_ft || "", draft_ft: v.draft_ft || "", power_amp: v.power_amp || "", name: v.name || "" } } : {}) }));
   }, [me]);
   const set = (k: string, v: any) => setF((x: any) => ({ ...x, [k]: v }));
+  // Nov 20 (per Mely): next to a live map — dates go to the map (it fades what's taken and says how many are free),
+  // and the site picked on the map comes back here with its availability.
+  const [avail, setAvail] = useState<{ available: number | null; total?: number } | null>(null);
+  const [picked, setPicked] = useState<{ lot: string; available: boolean | null; status: string } | null>(null);
+  useEffect(() => {
+    if (!l.live) return;
+    window.dispatchEvent(new CustomEvent("melyos-dates", { detail: { arrive: f.arrive || "", depart: f.depart || "" } }));
+  }, [l.live, f.arrive, f.depart]);
+  useEffect(() => {
+    if (!l.live) return;
+    const on = (e: Event) => {
+      const m = (e as CustomEvent).detail || {};
+      if (m.type === "melyos-avail") setAvail(m.available == null ? null : { available: m.available, total: m.total });
+      if (m.type === "melyos-lot" && m.lot) {
+        setPicked({ lot: String(m.lot).slice(0, 20), available: typeof m.available === "boolean" ? m.available : null, status: String(m.status || "") });
+        if (m.arrive && m.depart) setF((x: any) => (x.arrive === m.arrive && x.depart === m.depart ? x : { ...x, arrive: m.arrive, depart: m.depart }));
+      }
+      // "Request these dates" on the map → finish here: scroll to the form and put the cursor in the name
+      if (m.type === "melyos-request") {
+        const el = document.querySelector<HTMLInputElement>("#request input[placeholder='Your name']");
+        el?.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(() => el?.focus(), 400);
+      }
+    };
+    window.addEventListener("melyos-map", on);
+    return () => window.removeEventListener("melyos-map", on);
+  }, [l.live]);
+  const slip = picked?.lot || l.slip;
   const setV = (k: string, v: any) => setF((x: any) => ({ ...x, vessel: { ...x.vessel, [k]: v } }));
   async function send(e: React.FormEvent) {
     e.preventDefault(); setSt({ busy: true });
-    try { const r = await post("/api/explore/request", { ...f, state: l.state, listing_key: l.listing_key, slip: l.slip }); setSt({ done: true, forwarded: r.forwarded }); }
+    try { const r = await post("/api/explore/request", { ...f, state: l.state, listing_key: l.listing_key, slip }); setSt({ done: true, forwarded: r.forwarded }); }
     catch (er: any) { setSt({ err: er.message }); }
   }
   if (st.done) return <div className="rounded-2xl border-2 border-emerald-300 bg-emerald-50 p-6"><p className="text-xl font-black text-emerald-800">✓ Request sent</p>
@@ -53,6 +80,13 @@ export function RequestForm(l: L) {
         <label className="text-sm font-bold">Arrive<input type="date" className={inp} value={f.arrive || ""} onChange={(e) => set("arrive", e.target.value)} /></label>
         <label className="text-sm font-bold">Leave<input type="date" className={inp} value={f.depart || ""} onChange={(e) => set("depart", e.target.value)} /></label>
       </div>
+      {l.live && (f.arrive && f.depart && avail ? <div className={`rounded-xl px-3 py-2 text-sm font-bold ${avail.available ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-700"}`}>
+          {avail.available ? `✓ ${avail.available} ${unit}s free for these dates — tap a green one on the map` : `No ${unit}s free for these dates — try other dates`}</div>
+        : <div className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-600">Pick your dates — the map shows which {unit}s are free.</div>)}
+      {l.live && picked && <div className={`flex items-center justify-between gap-2 rounded-xl border-2 px-3 py-2.5 ${picked.available === false ? "border-rose-300 bg-rose-50" : picked.available ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white"}`}>
+          <span className="font-black">{unit[0].toUpperCase() + unit.slice(1)} {picked.lot}</span>
+          <span className={`text-sm font-bold ${picked.available === false ? "text-rose-700" : picked.available ? "text-emerald-700" : "text-slate-500"}`}>{picked.available === false ? "Not available for these dates" : picked.available ? "✓ Available for your dates" : "Pick dates on the map"}</span>
+          <button type="button" onClick={() => setPicked(null)} className="text-xs font-bold text-slate-500 underline">Clear</button></div>}
       <label className="block text-sm font-bold">Stay
         <select className={inp} value={f.stay_type} onChange={(e) => set("stay_type", e.target.value)}>
           {STAYS.map(([k, lab]) => <option key={k} value={k}>{lab}</option>)}
@@ -77,7 +111,7 @@ export function RequestForm(l: L) {
       </div>
       <textarea className={inp} rows={3} placeholder="Anything they should know? (optional)" value={f.message || ""} onChange={(e) => set("message", e.target.value)} />
       {st.err && <p className="text-sm font-bold text-red-600">{st.err}</p>}
-      <button disabled={st.busy} className="w-full rounded-xl bg-[#08B8D8] px-6 py-3.5 text-lg font-black text-white transition hover:bg-[#079db9] disabled:opacity-60">{st.busy ? "Sending…" : l.slip ? `Request ${unit} ${l.slip}` : `Request a ${unit}`}</button>
+      <button disabled={st.busy || (l.live && picked?.available === false)} className="w-full rounded-xl bg-[#08B8D8] px-6 py-3.5 text-lg font-black text-white transition hover:bg-[#079db9] disabled:opacity-60">{st.busy ? "Sending…" : slip ? `Request ${unit} ${slip}` : `Request a ${unit}`}</button>
       <p className="text-xs text-slate-500">Free. Your request goes to the property; they confirm availability and price with you.</p>
     </form>
   );
