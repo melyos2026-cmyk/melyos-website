@@ -264,12 +264,12 @@ function render(){svg.innerHTML='<defs><pattern id="mst" patternUnits="userSpace
   if(GUEST){const R=typeof RANGE!=="undefined"&&RANGE;
    // Nov 20 (per Mely): All = every lot in its real color; Available = only green; For rent = only violet; Maintenance = only those.
    // With dates: only the lots free for those dates (green / violet), the rest gray.
-   if(R&&filt!="maint"){const catOk=filt=="all"||(filt=="rent"?ST[i]=="rent":ST[i]!="rent"),
+   if(R&&(filt=="all"||filt=="free"||filt=="rent")){const catOk=filt=="all"||(filt=="rent"?ST[i]=="rent":ST[i]!="rent"),
      okG=freeFor(i,R.a,R.d)&&(filt=="all"?fitsNeed(i):(ST[i]=="rent"||fitsRig(i))),
      pkOk=PICKED>=0&&freeFor(PICKED,R.a,R.d);srch=true;hit=okG&&catOk&&(!pkOk||i==PICKED);dim=!hit}
    else if(filt!="all"){srch=true;hit=ST[i]==filt;dim=!hit;if(hit)col=COLOR[ST[i]]}
    else{srch=false;hit=false;dim=false}}
-  const cc=hit?(ST[i]=="rent"?COLOR.rent:ST[i]=="maint"?COLOR.maint:COLOR.free):srch?"#6b7280":col;pg.setAttribute("fill",srch&&!hit?"#9ca3afcc":cc+(dim?"10":hit?"88":"55"));pg.setAttribute("stroke",i==sel?"#fff":cc);if(ST[i]=="maint"&&!dim&&!(srch&&!hit)){pg.setAttribute("fill","url(#mst)");pg.setAttribute("stroke",i==sel?"#fff":"#facc15")}   // Nov 20 (per Mely): maintenance = construction stripes, never plain gray
+  const cc=hit?(srch&&typeof RANGE!=="undefined"&&RANGE&&(filt=="all"||filt=="free"||filt=="rent")?(ST[i]=="rent"?COLOR.rent:COLOR.free):COLOR[ST[i]]):srch?"#6b7280":col;pg.setAttribute("fill",srch&&!hit?"#9ca3afcc":cc+(dim?"10":hit?"88":"55"));pg.setAttribute("stroke",i==sel?"#fff":cc);if(ST[i]=="maint"&&!dim&&!(srch&&!hit)){pg.setAttribute("fill","url(#mst)");pg.setAttribute("stroke",i==sel?"#fff":"#facc15")}   // Nov 20 (per Mely): maintenance = construction stripes, never plain gray
   pg.setAttribute("stroke-width",i==sel?2.6:1.6);
   pg.setAttribute("vector-effect","non-scaling-stroke");pg.setAttribute("class","lp"+(!editing&&!dim&&i!=sel&&(hit||(!srch&&(ST[i]=="free"||ST[i]=="rent")))?" blink":""));pg.setAttribute("stroke-linejoin","round");
   pg.style.cssText=`pointer-events:auto;cursor:${editing?"move":"pointer"};opacity:${srch?1:dim?.35:1};filter:${i==sel||(srch&&!hit)?"none":`drop-shadow(0 0 1.5px ${cc})`}`;
@@ -311,8 +311,8 @@ function select(i){sel=i;if(i>=0)selPoi=-1;if(i<0)vi=-1;document.getElementById(
 function say(t){const m=document.getElementById("msg");m.textContent=t;setTimeout(()=>{if(m.textContent==t)m.textContent=""},2600)}
 function bar(){const c={all:SH.length,free:0,occ:0,res:0,rent:0,maint:0};ST.forEach(x=>c[x]=(c[x]||0)+1);
  if(GUEST){const R=typeof RANGE!=="undefined"&&RANGE;c.free=0;c.rent=0;SH.forEach((_,i)=>{const g=gcat(i)=="na"&&!R?null:ST[i]=="rent"?"rent":"free";if(ST[i]=="maint")return;if(R?freeFor(i,R.a,R.d):g)c[ST[i]=="rent"?"rent":"free"]++});
-  if(!["all","free","rent","maint"].includes(filt))filt="all";c.maint=ST.filter(x=>x=="maint").length;
-  document.getElementById("bar").innerHTML=["all","free","rent","maint"].filter(k=>k!="maint"||c.maint).map(k=>`<button class="chip ${filt==k?"on":""}" data-k="${k}">${k!="all"?`<span class="dot ${k}"></span>`:""}${k=="free"?(R?(L=="es"?"Disponible":"Available"):(L=="es"?"Disponible hoy":"Available today")):k=="rent"&&!R?(L=="es"?"En renta hoy":"For rent today"):T[L][k]}${k=="all"?"":` · ${c[k]}`}</button>`).join("");
+  if(!["all","free","occ","res","rent","maint"].includes(filt))filt="all";c.occ=ST.filter(x=>x=="occ").length;c.res=ST.filter(x=>x=="res").length;c.maint=ST.filter(x=>x=="maint").length;
+  document.getElementById("bar").innerHTML=["all","free","occ","res","rent","maint"].filter(k=>k=="all"||c[k]).map(k=>`<button class="chip ${filt==k?"on":""}" data-k="${k}">${k!="all"?`<span class="dot ${k}"></span>`:""}${k=="free"?(R?(L=="es"?"Disponible":"Available"):(L=="es"?"Disponible hoy":"Available today")):k=="rent"&&!R?(L=="es"?"En renta hoy":"For rent today"):T[L][k]}${k=="all"?"":` · ${c[k]}`}</button>`).join("");
   document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{filt=b.dataset.k;render()});return}
  document.getElementById("bar").innerHTML=["all","free","occ","res","rent","maint"].filter(k=>k=="all"||c[k]).map(k=>`<button class="chip ${filt==k?"on":""}" data-k="${k}">${k!="all"?`<span class="dot ${k}"></span>`:""}${T[L][k]} · ${c[k]}</button>`).join("");
  document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{filt=b.dataset.k;render()})}
