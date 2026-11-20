@@ -94,7 +94,7 @@ es:{sub:"Mapa en vivo · demo de MelyOS · propuesta",all:"Todos",free:"Disponib
 const AX=9.81, AY=16.04;            // px per 1% of the 980x1605 picture (keeps right angles when rotating)
 const COLOR={free:"#22c55e",occ:"#ef4444",res:"#eab308",rent:"#8b5cf6",maint:"#6b7280"};   // Nov 20: same colors as the chips and the cards
 // Nov 20 (per Mely): guests (the map inside Explore) only see what they can book — Available (green) and For rent (violet); everything else is gray.
-var GUEST=(()=>{let f;try{f=window.self!==window.top}catch(e){f=true}return f&&/\/explore\/live\//.test(location.pathname)})();
+var GUEST=/\/explore\/live\//.test(location.pathname);   // the public copy on melyos.io (inside Explore or full screen)
 const gcat=i=>ST[i]=="free"?"free":ST[i]=="rent"?"rent":"na";
 let L="en",filt="all",z=1,sel=-1,editing=false,vi=-1;
 var PICKED=-1;let s=21;const rnd=()=>{s=(s*9301+49297)%233280;return s/233280};
