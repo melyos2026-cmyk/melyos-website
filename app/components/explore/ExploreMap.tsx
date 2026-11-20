@@ -212,12 +212,12 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
       const feat = isFeatured(r), book = bookable(r), pt = partner(r);
       // Red teardrop pin = Online Booking (like Dockwa). Small kind-colored dot = Inquiry only.
       const icon = pt
-        ? Lm.divIcon({ className: "mx-partner", html: `<span class="mx-halo"></span><svg width="42" height="54" viewBox="0 0 30 40" style="position:relative;filter:drop-shadow(0 3px 4px rgba(7,26,51,.45))"><defs><linearGradient id="mxg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b3a5e"/><stop offset="1" stop-color="#071A33"/></linearGradient></defs><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 39 15 39s14-13.6 14-24.1C29 7.2 22.7 1 15 1z" fill="url(#mxg)" stroke="#39d5ee" stroke-width="2"/><path d="m15 7.6 2.2 4.5 5 .7-3.6 3.5.9 4.9-4.5-2.4-4.5 2.4.9-4.9-3.6-3.5 5-.7z" fill="#fbbf24"/></svg>`, iconSize: [42, 54], iconAnchor: [21, 53], popupAnchor: [0, -46] })
+        ? Lm.divIcon({ className: "", html: `<svg width="30" height="40" viewBox="0 0 30 40" style="filter:drop-shadow(0 2px 3px rgba(7,26,51,.35))"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 39 15 39s14-13.6 14-24.1C29 7.2 22.7 1 15 1z" fill="#0b2a4a" stroke="#fff" stroke-width="2"/><path d="m15 8.6 1.9 3.9 4.3.6-3.1 3 .7 4.3-3.8-2-3.8 2 .7-4.3-3.1-3 4.3-.6z" fill="#e8c26a"/></svg>`, iconSize: [30, 40], iconAnchor: [15, 39], popupAnchor: [0, -34] })
         : book
         ? Lm.divIcon({ className: "", html: `<svg width="30" height="40" viewBox="0 0 30 40" style="filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 39 15 39s14-13.6 14-24.1C29 7.2 22.7 1 15 1z" fill="${RED}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="15" r="5.5" fill="#fff"/></svg>`, iconSize: [30, 40], iconAnchor: [15, 39], popupAnchor: [0, -34] })
         : Lm.divIcon({ className: "", html: `<span style="display:block;width:16px;height:16px;border-radius:50%;background:${k.color};border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45)"></span>`, iconSize: [16, 16], iconAnchor: [8, 8] });
       const m = Lm.marker([r[2], r[3]], { icon, title: nice(r[1]), zIndexOffset: pt ? 3000 : book ? 1000 : 0 });
-      if (pt) m.bindTooltip(`<span style="color:#fbbf24">&#9733;</span> ${esc(nice(r[1]))}`, { permanent: true, direction: "top", offset: [0, -50], className: "mx-tip" });
+      if (pt) m.bindTooltip(`<span style="color:#fbbf24">&#9733;</span> ${esc(nice(r[1]))}`, { direction: "top", offset: [0, -38], className: "mx-tip" });
       const photo = photoOf(r);
       const ov = extra.overrides[r[7]] || {};
       const phone = ov.phone || r[5], site = ov.website || r[6];
@@ -227,7 +227,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
       const bookUrl = feat ? site : okUrl(ov.booking_url) ? ov.booking_url : `${page}${dates}#request`;
       m.bindPopup(`<div style="font-family:system-ui,sans-serif;min-width:210px;max-width:250px">
         ${photo ? `<img src="${esc(photo)}" alt="${esc(nice(r[1]))}" style="display:block;width:100%;height:110px;object-fit:cover;border-radius:10px;margin-bottom:8px" />` : ""}
-        ${pt ? `<div style="display:inline-block;background:linear-gradient(90deg,#071A33,#0b3a5e);color:#fbbf24;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px;margin-bottom:5px">&#9733; MelyOS Partner</div>` : ""}
+        ${pt ? `<div style="font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#a07a1f;margin-bottom:3px">&#9733; MelyOS Partner</div>` : ""}
         <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:${k.color}">${k.label}${ov.verified || ov.client ? ` <span style="color:#059669">&#10003; verified</span>` : ""}</div>
         <a href="${page}${dates}" style="display:block;font-size:15px;font-weight:800;color:#071A33;margin:2px 0 4px;text-decoration:none">${esc(nice(r[1]))}</a>
         ${star ? `<div style="color:#f59e0b;font-weight:800">&#9733; ${star[0].toFixed(1)} <span style="color:#64748b;font-weight:600">(${star[1]} review${star[1] === 1 ? "" : "s"})</span></div>` : ""}
@@ -305,7 +305,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
     <div className="flex flex-col lg:h-[calc(100vh-6rem)] lg:flex-row">
       <div className="relative order-1 h-[55vh] min-h-[320px] border-b border-slate-200 lg:order-2 lg:h-auto lg:flex-1 lg:border-b-0 lg:border-l">
         <div ref={mapEl} className="absolute inset-0 z-0 isolate" />
-        <style>{`.mx-partner{position:relative}.mx-halo{position:absolute;left:50%;top:40%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(57,213,238,.45);animation:mxpulse 1.8s ease-out infinite}@keyframes mxpulse{0%{transform:scale(.5);opacity:.9}100%{transform:scale(1.9);opacity:0}}.mx-tip{background:#071A33;color:#fff;border:0;border-radius:999px;padding:4px 10px;font:800 12px system-ui,sans-serif;box-shadow:0 3px 10px rgba(7,26,51,.35)}.mx-tip:before{border-top-color:#071A33!important}`}</style>
+        <style>{`.mx-partner{position:relative}.mx-halo{position:absolute;left:50%;top:40%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(57,213,238,.45);animation:mxpulse 1.8s ease-out infinite}@keyframes mxpulse{0%{transform:scale(.5);opacity:.9}100%{transform:scale(1.9);opacity:0}}.mx-tip{background:#fff;color:#071A33;border:1px solid #e2e8f0;border-radius:8px;padding:3px 8px;font:700 12px system-ui,sans-serif;box-shadow:0 2px 6px rgba(7,26,51,.15)}.mx-tip:before{border-top-color:#fff!important}`}</style>
         <div className="absolute right-3 top-3 z-[500] flex rounded-xl bg-white p-1 text-[13px] font-bold shadow-md">
           {([["Map", false], ["Satellite", true]] as [string, boolean][]).map(([lab, v]) => <button key={lab} type="button" onClick={() => setSat(v)} className={`rounded-lg px-3 py-1.5 ${sat === v ? "bg-[#071A33] text-white" : "text-slate-600 hover:bg-slate-50"}`}>{lab}</button>)}
         </div>
@@ -387,32 +387,24 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
         </div>
         <div className="max-h-[70vh] overflow-y-auto lg:max-h-none lg:flex-1 lg:overflow-visible">
           {rows && !listed.length && <p className="p-5 text-sm text-slate-500">Nothing here. Zoom out or move the map, clear a filter, or choose another state above.</p>}
-          {partners.length > 0 && (
-            <div className="border-b border-slate-200 bg-gradient-to-b from-[#071A33] to-[#0b3a5e] p-3">
-              <p className="mb-2 flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-[#fbbf24]">★ MelyOS Partners <span className="font-semibold normal-case tracking-normal text-cyan-100/80">· book directly, live site map</span></p>
-              <div className="grid gap-2">
-                {partners.map((r) => {
-                  const photo = photoOf(r), star = extra.stars[r[7]], k = KIND[r[0]];
-                  const am = AMENITIES.filter((a) => hasAmen(amenText(r), a)).slice(0, 5);
-                  return (
-                    <div key={r[7]} onClick={() => focus(r)} className={`flex cursor-pointer gap-3 rounded-2xl bg-white p-2.5 shadow-lg ring-2 transition hover:-translate-y-0.5 ${picked === r[7] ? "ring-[#39d5ee]" : "ring-[#fbbf24]/70"}`}>
-                      <div className="relative h-28 w-32 shrink-0 overflow-hidden rounded-xl bg-slate-200">
-                        <img src={photo || aerial(r[2], r[3])} alt="" loading="lazy" className="h-full w-full object-cover" />
-                        <span className="absolute left-1.5 top-1.5 rounded-full bg-[#071A33]/90 px-2 py-0.5 text-[10px] font-black text-[#fbbf24]">★ PARTNER</span>
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <a href={`${listingPath(stOf(r), r)}${dates}`} onClick={(e) => e.stopPropagation()} className="line-clamp-2 text-[17px] font-black leading-snug text-[#071A33] hover:underline">{nice(r[1])}</a>
-                        <p className="truncate text-sm text-slate-500">{k.label}{r[4] ? ` · ${r[4]}` : ""}</p>
-                        {star && <p className="text-sm"><span className="text-amber-500">★</span> <b>{star[0].toFixed(1)}</b> <span className="text-slate-500">({star[1]})</span></p>}
-                        {am.length > 0 && <div className="mt-1 flex gap-1 text-[#0b3a5e]">{am.map((a) => <span key={a.id} title={a.label} className="grid h-6 w-6 place-items-center rounded-md bg-cyan-50"><AmenIcon svg={a.icon} size={14} /></span>)}</div>}
-                        <span className="mt-1.5 inline-block rounded-full bg-[#e11d48] px-2.5 py-0.5 text-[11px] font-black text-white">Book online · instant</span>
-                      </div>
-                    </div>
-                  );
-                })}
+          {partners.map((r) => {
+            const photo = photoOf(r), star = extra.stars[r[7]], k = KIND[r[0]];
+            return (
+              <div key={r[7]} onClick={() => focus(r)} className={`relative flex cursor-pointer gap-3 border-b border-slate-100 p-3 transition hover:bg-slate-50 ${picked === r[7] ? "bg-cyan-50" : "bg-[#fffdf7]"}`}>
+                <span className="absolute inset-y-3 left-0 w-[3px] rounded-r bg-[#d4a94a]" />
+                <div className="relative h-24 w-28 shrink-0 overflow-hidden rounded-xl bg-slate-200">
+                  <img src={photo || aerial(r[2], r[3])} alt="" loading="lazy" className="h-full w-full object-cover" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[#a07a1f]">★ MelyOS Partner</p>
+                  <a href={`${listingPath(stOf(r), r)}${dates}`} onClick={(e) => e.stopPropagation()} className="line-clamp-2 font-black leading-snug text-[#071A33] hover:underline">{nice(r[1])}</a>
+                  <p className="truncate text-sm text-slate-500">{k.label}{r[4] ? ` · ${r[4]}` : ""}</p>
+                  {star && <p className="text-sm"><span className="text-amber-500">★</span> <b>{star[0].toFixed(1)}</b> <span className="text-slate-500">({star[1]})</span></p>}
+                  <span className="mt-1 inline-block rounded-full bg-rose-50 px-2 py-0.5 text-[11px] font-black text-rose-700">Online Booking</span>
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })}
           {(guest ? listed.slice(0, FREE_ROWS) : listed.slice(0, 150)).map((r) => {
             const book = bookable(r), photo = photoOf(r), star = extra.stars[r[7]], fu = extra.fuel[r[7]], k = KIND[r[0]];
             return (
