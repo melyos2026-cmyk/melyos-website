@@ -116,7 +116,9 @@ function load(){let d=null,lab=null;
   for(const m of def)if(!PO.some(q=>q[3]==m[3]))PO.push([...m])}   // new markers (pool…) added, hers keep their place
  else PO=def;
  if(!d){try{const v=JSON.parse(localStorage.getItem("p21shapes4")||localStorage.getItem("p21shapes3")||"null");if(v&&v.sh)d=v}catch(e){}}
- if(d&&d.sh){SH=d.sh;ST=d.st;NUM=d.num}else{s=21;SH=BASE.map((b,i)=>POLY[i]||rectPts(b));ST=SH.map((_,i)=>{const r=rnd();return i>=101?"free":r<.58?"occ":r<.84?"free":r<.92?"res":r<.97?"rent":"maint"});NUM=SH.map((_,i)=>String(i+1))}}
+ if(d&&d.sh){SH=d.sh;ST=d.st;NUM=d.num;
+  // Nov 20 (per Mely): an old save had no "for rent" lots — keep her lot shapes, but use the same statuses as the website demo
+  if(!d.stv&&!ST.includes("rent")){s=21;ST=SH.map((_,i)=>{const r=rnd();return i>=101?"free":r<.58?"occ":r<.84?"free":r<.92?"res":r<.97?"rent":"maint"})}}else{s=21;SH=BASE.map((b,i)=>POLY[i]||rectPts(b));ST=SH.map((_,i)=>{const r=rnd();return i>=101?"free":r<.58?"occ":r<.84?"free":r<.92?"res":r<.97?"rent":"maint"});NUM=SH.map((_,i)=>String(i+1))}}
 const kind=i=>{const n=i+1;return n>101?"pm":n<=5?"home":n<=27?"pm":n<=50?"home":n<=87?"rv":"home"};
 // Nov 20 (per Mely): lot details — amps, size, hookups — so every lot looks complete (examples until the park sends its real data)
 function info(i){const n=NUM[i]|0,k=kind(i),es=L=="es",st=ST[i];
@@ -269,7 +271,7 @@ document.getElementById("dup").onclick=()=>{if(need())return;const h=Math.max(..
 document.getElementById("delb").onclick=()=>{if(need())return;SH.splice(sel,1);ST.splice(sel,1);NUM.splice(sel,1);select(-1);render()};
 document.getElementById("addc").onclick=()=>{if(need())return;const p=SH[sel],k=vi>=0?vi:0,q=p[(k+1)%p.length];p.splice(k+1,0,[r2((p[k][0]+q[0])/2),r2((p[k][1]+q[1])/2)]);vi=k+1;render()};
 document.getElementById("remc").onclick=()=>{if(need())return;if(vi<0)return say("Tap a white corner first");if(SH[sel].length<=3)return say("A lot needs at least 3 corners");SH[sel].splice(vi,1);vi=-1;render()};
-document.getElementById("save").onclick=()=>{try{localStorage.setItem("p21shapes5",JSON.stringify({sh:SH,st:ST,num:NUM,po:PO}));say("Saved on this device ✓")}catch(e){say("Could not save on this device")}};
+document.getElementById("save").onclick=()=>{try{localStorage.setItem("p21shapes5",JSON.stringify({sh:SH,st:ST,stv:2,num:NUM,po:PO}));say("Saved on this device ✓")}catch(e){say("Could not save on this device")}};
 document.getElementById("copy").onclick=async()=>{const t=JSON.stringify({sh:SH,st:ST,num:NUM,po:PO});try{await navigator.clipboard.writeText(t);say("Layout copied — paste it to Claude")}catch(e){say("Copy not allowed here")}};
 document.getElementById("reset").onclick=()=>{try{localStorage.removeItem("p21shapes5")}catch(e){}select(-1);load();render();say("Back to the original layout")};
 document.getElementById("edit").onclick=()=>{editing=!editing;document.body.classList.toggle("editing",editing);const b=document.getElementById("edit");b.classList.toggle("on",editing);b.textContent=editing?"✓ Done":"✎ Edit";document.getElementById("sheet").classList.remove("open");if(!editing)select(-1);render()};
@@ -386,7 +388,7 @@ function fitPanel(){document.body.style.setProperty("--ph",(panelEl.offsetHeight
 document.getElementById("pmin").onclick=()=>{const m=panelEl.classList.toggle("min");document.body.classList.toggle("pmin",m);document.getElementById("pmin").textContent=m?"▴ Show":"▾ Hide";fitPanel()};
 new ResizeObserver(fitPanel).observe(panelEl);
 // Nov 20 (per Mely): download the map exactly as she left it — one HTML file with the layout and the picture inside.
-document.getElementById("dl").onclick=async()=>{const lay={sh:SH,st:ST,num:NUM,po:PO,ph:PH};
+document.getElementById("dl").onclick=async()=>{const lay={sh:SH,st:ST,stv:2,num:NUM,po:PO,ph:PH};
  let src=SRC0.replace("const EMBED=null;","const EMBED="+JSON.stringify(lay).replace(/</g,"\\u003c")+";");
  try{const b=await (await fetch("map.jpg")).blob();const u=await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});src=src.replace('src="map.jpg"','src="'+u+'"')}catch(e){}
  for(const f of ["lot.jpg","rent.jpg"]){try{const b=await (await fetch(f)).blob();const u=await new Promise(r=>{const x=new FileReader();x.onload=()=>r(x.result);x.readAsDataURL(b)});src=src.replace('"'+f+'"','"'+u+'"')}catch(e){}}
