@@ -330,13 +330,13 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
       <div className="order-2 flex min-h-0 flex-col bg-white md:order-1 md:w-[380px] md:shrink-0 md:overflow-y-auto md:overflow-x-hidden lg:w-[460px] xl:w-[560px]">
         <div className="grid min-w-0 gap-3 border-b border-slate-200 p-4 [&>*]:min-w-0">
           {heading}
-    <div role="tablist" aria-label="Show" className="grid grid-cols-2 gap-1 rounded-2xl border border-slate-200 bg-white p-1 sm:flex md:grid xl:flex">
+    <div role="tablist" aria-label="Show" className="grid grid-cols-2 gap-1.5 rounded-2xl bg-slate-100 p-1.5 sm:flex md:grid xl:flex">
             {tabs.map(([id, label, ks]) => {
               const on = activeTab === id;
               const color = id === "all" ? "#071A33" : KIND[id].color;
               return (
                 <button key={id} type="button" role="tab" aria-selected={on} onClick={() => setKinds(ks)}
-                  className={`flex min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-2 py-2 text-[13px] font-bold transition ${on ? "text-white shadow" : "text-slate-600 hover:bg-slate-50"}`}
+                  className={`flex min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-2 py-2 text-[13px] font-bold transition border ${on ? "border-transparent text-white shadow" : "border-slate-300 bg-white text-slate-700 shadow-sm hover:border-[#08B8D8] hover:bg-cyan-50"} cursor-pointer`}
                   style={on ? { background: color } : undefined}>
                   {id !== "all" && <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: on ? "#fff" : color }} />}
                   {label}
