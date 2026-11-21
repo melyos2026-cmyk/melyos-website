@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Sunset Ridge RV Resort — Live Map (MelyOS demo)</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;background:#eef2f5;color:#0f2a4a}
+header{background:#0f2a4a;color:#fff;padding:14px 16px 12px;position:sticky;top:0;z-index:20}
+header h1{margin:0;font-size:20px;letter-spacing:-.2px}
+header p{margin:3px 0 0;font-size:12.5px;color:#8fe3f2}
+.lang{position:absolute;right:12px;top:14px;display:flex;gap:4px}
+.lang button{border:1px solid #3d5b80;background:transparent;color:#cfe;font-size:12px;border-radius:14px;padding:4px 9px}
+.lang button.on{background:#08b8d8;border-color:#08b8d8;color:#fff}
+.bar{display:flex;gap:8px;padding:10px 12px;overflow-x:auto;background:#fff;border-bottom:1px solid #e3e8ee;position:sticky;top:62px;z-index:15}
+.chip{flex:none;border:1px solid #d7dee6;background:#fff;border-radius:18px;padding:7px 12px;font-size:13px;font-weight:600;color:#33475b;display:flex;align-items:center;gap:6px}
+.chip.on{border-color:#0f2a4a;background:#0f2a4a;color:#fff}
+.dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+.wrap{cursor:grab;overflow:auto;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch;max-width:900px;margin:0 auto}
+.map{position:relative;width:100%;transform-origin:0 0;margin:0 auto}html.embed .wrap{max-width:none}html.embed header{display:none}html.embed .bar{position:static}
+.wrap.grabbing,.wrap.grabbing *{cursor:grabbing!important;user-select:none}.map img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
+.lotold{position:absolute;border-radius:3px;border:1.5px solid rgba(255,255,255,.95);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:clamp(6px,1.35vw,11px);line-height:1;box-shadow:0 1px 2px rgba(0,0,0,.25);cursor:pointer;transition:transform .12s,opacity .2s;padding:0}
+
+@keyframes lotblink{0%,100%{fill-opacity:1;stroke-width:1.6}50%{fill-opacity:.25;stroke-width:3}}
+svg polygon.blink{animation:lotblink 1.6s ease-in-out infinite}
+svg polygon.lp:hover{fill-opacity:1;stroke:#fff;stroke-width:3}
+@keyframes handtap{0%,100%{transform:translate(-30%,-10%) scale(1)}50%{transform:translate(-30%,-10%) scale(.82)}}
+#hand{position:absolute;z-index:6;line-height:0;pointer-events:none;transform-origin:30% 10%;animation:handtap 1.1s ease-in-out infinite;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}
+#handtip{position:absolute;z-index:6;pointer-events:none;background:#0f2a4a;color:#fff;font:700 12px/1 Inter,system-ui,sans-serif;padding:6px 9px;border-radius:999px;white-space:nowrap;transform:translate(-50%,-150%);box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.lot.dim{opacity:.18}
+.lot.sel{outline:3px solid #0f2a4a;outline-offset:1px;z-index:5}
+.free{background:rgba(34,197,94,.78)}.occ{background:rgba(239,68,68,.82)}.res{background:rgba(234,179,8,.85)}.rent{background:rgba(139,92,246,.85)}.maint{background:repeating-linear-gradient(45deg,#facc15 0 3px,#111827 3px 6px)}
+.zoom{position:fixed;right:12px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:70}
+.zoom button{cursor:pointer;touch-action:manipulation;width:44px;height:44px;border-radius:22px;border:none;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.2);font-size:22px;color:#0f2a4a}
+.sheet{position:fixed;left:50%;top:50%;background:#fff;border-radius:18px;box-shadow:0 14px 40px rgba(15,37,64,.3);padding:16px 18px 18px;transform:translate(-50%,-46%);opacity:0;pointer-events:none;transition:transform .2s,opacity .2s;z-index:30;width:min(440px,92vw);max-height:88vh;overflow:auto;box-sizing:border-box}
+.sheet.open{transform:translate(-50%,-50%);opacity:1;pointer-events:auto}
+.sheet .grab{display:none}
+.sheet h2{margin:0;font-size:22px}.lph{display:block;width:100%;height:180px;object-fit:cover;border-radius:12px;margin:0 0 12px;background:#e2e8f0}#hov{position:fixed;z-index:55;width:230px;background:#fff;border-radius:12px;box-shadow:0 10px 28px rgba(15,37,64,.3);overflow:hidden;pointer-events:none;display:none;font:13px/1.35 Inter,system-ui,sans-serif;color:#0f2540}#hov img{display:block;width:100%;height:128px;object-fit:cover}#hov div{padding:8px 10px}#hov b{font-size:14px}#hov i{font-style:normal;display:inline-block;color:#fff;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:700;margin-left:6px}
+.badge{display:inline-block;color:#fff;border-radius:12px;padding:3px 10px;font-size:12px;font-weight:700;margin-left:8px;vertical-align:middle}
+.rows{margin:12px 0 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rows div{background:#f4f7fa;border-radius:10px;padding:9px 11px;font-size:12px;color:#5b6b7c}
+.rows b{display:block;color:#0f2a4a;font-size:15px;margin-top:2px}.where{margin:10px 0 2px;padding:11px 13px;border-radius:12px;background:linear-gradient(135deg,#ecfdf5,#eff6ff);border:1px solid #d1fae5}.where .wt{font-weight:700;color:#065f46;font-size:13px}.where .wd{color:#334155;font-size:13px;line-height:1.45;margin-top:3px;font-style:italic}.co{margin-top:12px;padding:12px 14px;border:2px solid #0e7a8c;border-radius:14px;background:#f0fbfd;font-size:13px;color:#0f2a4a;display:grid;gap:6px}.co b{font-size:15px}.cl2{display:flex;justify-content:space-between}.ct{font-weight:800;font-size:15px;border-top:1px solid #cfe3ea;padding-top:6px}.cn2{font-size:12px;color:#475569;line-height:1.4}.co .cta{margin-top:4px}#payov{position:fixed;inset:0;z-index:90;background:rgba(15,37,64,.55);display:flex;align-items:center;justify-content:center;padding:16px}.pv2{background:#fff;border-radius:18px;width:min(380px,94vw);padding:18px;display:grid;gap:10px;font:14px Inter,system-ui,sans-serif;color:#0f2a4a;box-shadow:0 20px 50px rgba(0,0,0,.3)}.ph2{display:flex;justify-content:space-between;align-items:center}.ph2 b{font-size:18px}.ph2 span{font-size:12px;color:#047857;font-weight:700}.pt2{font-weight:700}.pt2 small{font-weight:500;color:#64748b}.pa2{font-size:28px;font-weight:800}.pv2 label{display:grid;gap:4px;font-size:12px;color:#64748b;font-weight:600}.pv2 input{box-sizing:border-box;width:100%;min-width:0;border:1px solid #cbd5e1;border-radius:10px;padding:10px;font:15px Inter,system-ui,sans-serif;color:#0f2a4a;background:#f8fafc}.pr2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pd2{font-size:12px;color:#64748b;line-height:1.45}.pc2{border:0;background:none;color:#64748b;font-weight:600;cursor:pointer;padding:6px}.ok2{width:54px;height:54px;border-radius:999px;background:#dcfce7;color:#16a34a;font-size:30px;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto}.pv2 h3{margin:0;text-align:center;font-size:20px}.toolong{margin:0 0 12px;padding:10px 12px;border-radius:12px;background:#fef2f2;border:1.5px solid #fca5a5;color:#b91c1c;font-weight:700;font-size:13px}.mnt{margin:10px 0 0;padding:10px 12px;border-radius:12px;background:#f3f4f6;border:1px solid #d1d5db;color:#374151;font-size:13px;line-height:1.4}.near{margin:-2px 0 14px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:12px}.near .nt{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#64748b;font-weight:700;margin-bottom:4px}.near .nr{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;color:#0f2a4a}.near .nr+.nr{border-top:1px dashed #e2e8f0}.near .nr b{font-weight:600;flex:1}.near .nr i{font-style:normal;color:#64748b;font-size:12px}.feat{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 14px}.feat span{background:#eef4fb;color:#0f2a4a;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:600}#hov .pv div{padding:0}#hov .pv>div+div{margin-top:6px}#hov .hf{padding:0!important;display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}#hov .hf span{background:#eef4fb;border-radius:999px;padding:1px 7px;font-size:11px;color:#0f2a4a}
+.cta{width:100%;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:700;color:#fff;background:#08b8d8}
+.cta.alt{background:#0f2a4a}
+#scrollhint{position:sticky;bottom:0;margin:0 -18px -18px;padding:10px;text-align:center;font:700 13px Inter,system-ui,sans-serif;color:#fff;background:linear-gradient(180deg,rgba(14,122,140,.0),rgba(14,122,140,.95) 35%);pointer-events:none;transition:opacity .25s;animation:hintbob 1.4s ease-in-out infinite}#scrollhint.gone{opacity:0}@keyframes hintbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}.close{position:sticky;top:0;float:right;margin:0 0 -34px;z-index:5;border:none;background:rgba(255,255,255,.95);box-shadow:0 2px 8px rgba(15,37,64,.25);border-radius:999px;width:34px;height:34px;font-size:20px;line-height:1;color:#0f2540;cursor:pointer}
+footer{text-align:center;font-size:11.5px;color:#7a8a9a;padding:14px 16px 90px}
+footer b{color:#0f2a4a}
+.edit-btn{position:absolute;right:96px;top:14px;border:1px solid #3d5b80;background:transparent;color:#cfe;font-size:12px;border-radius:14px;padding:4px 10px}
+.edit-btn.on{background:#f0a01e;border-color:#f0a01e;color:#fff}
+body.editing .lotold{cursor:move;touch-action:none}
+.psec{border:1px solid #e2e8f0;border-radius:12px;padding:8px 10px;margin:8px 0;background:#f8fafc}.psec h4{margin:0 0 6px;font:800 14px Inter,system-ui,sans-serif;color:#0f2540}.psec h4 small{font-weight:500;color:#64748b}.psec .prow label{min-width:54px}.psec .hint{color:#94a3b8;font-size:11px}
+#msg{position:fixed;left:50%;top:84px;transform:translateX(-50%);z-index:95;background:#0f2540;color:#fff;font:700 15px Inter,system-ui,sans-serif;padding:10px 16px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.3);max-width:90vw;text-align:center}#msg:empty{display:none}
+
+/* Nov 21 (per Mely): compact editor — only the box for what you tapped shows; on a computer it sits on the right side so the map stays visible */
+body:not(.haslot) #secLot,body:not(.haspoi) #secPoi{display:none}
+#ptip{margin:6px 0;color:#475569;font:600 13px Inter,system-ui,sans-serif}body.haslot #ptip,body.haspoi #ptip{display:none}
+.panel .prow button{padding:5px 9px;font-size:13px}.panel .prow input{padding:5px 8px;font-size:13px}.panel #pt span{display:none}
+@media (min-width:480px){body.editing .panel{left:auto;right:8px;top:8px;bottom:8px;width:min(300px,44vw);max-width:none;max-height:none;border-radius:16px;margin:0}
+ body.editing{padding-bottom:0!important;padding-right:calc(min(300px,44vw) + 16px)}body.editing .zoom{right:calc(min(300px,44vw) + 24px)}body.editing header,body.editing .bar{margin-right:0}
+ .psec .prow label{min-width:46px}}
+.panel{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -6px 24px rgba(0,0,0,.18);padding:10px 12px 14px;z-index:40;display:none;border-radius:16px 16px 0 0;max-width:760px;margin:0 auto}
+body.editing .panel{display:block}
+body.editing{padding-bottom:var(--ph,420px)}.panel{max-height:70vh;overflow:auto}
+.panel.min .prow,.panel.min .psec{display:none}.panel.min{padding-bottom:10px}body.editing.pmin{padding-bottom:70px}
+#pmin{float:right;border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:3px 10px;font-weight:700;cursor:pointer;margin-left:8px}
+.panel .t{font-size:13px;font-weight:700;margin:0 0 8px}.panel .t span{color:#7a8a9a;font-weight:500}
+.prow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;align-items:center}
+.prow label{font-size:12px;color:#5b6b7c;width:48px}
+.prow button,.prow input{border:1px solid #d7dee6;background:#f6f8fb;border-radius:9px;padding:7px 10px;font-size:13px;font-weight:600;color:#0f2a4a}
+.prow input{width:64px}
+.prow .pri{background:#0f2a4a;color:#fff;border-color:#0f2a4a}.prow .ok{background:#08b8d8;color:#fff;border-color:#08b8d8}.prow .del{color:#d63031}
+.msg{font-size:12px;color:#2eaa5a;min-height:16px}
+.cal{margin:10px 0 6px;border:1px solid #e2e8f0;border-radius:12px;padding:10px}.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;font-size:14px;color:#0f2540;text-transform:capitalize}.cn{width:30px;height:30px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;font-size:18px;cursor:pointer}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}.cw{font-size:11px;color:#64748b;text-align:center;font-weight:700}.cd{height:30px;border:0;border-radius:6px;font:600 12.5px Inter,system-ui,sans-serif;cursor:pointer}
+.cd.ca{background:#bbf7d0;color:#14532d}.cd.ca:hover{background:#86efac}.cd.cb{background:#f1f5f9;color:#9ca3af;text-decoration:line-through;cursor:not-allowed}.cd.cs{background:#16a34a!important;color:#fff!important}.cd.ci{background:#dcfce7}
+.cl{display:flex;gap:14px;margin-top:6px;font-size:11.5px;color:#475569}.cl i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:-1px}.cl i.ca{background:#bbf7d0}.cl i.cb{background:#e2e8f0}
+.nx{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 10px;margin:6px 0;font-size:12.5px;color:#166534}.nx button{font-size:11.5px;font-weight:700;color:#166534;background:#dcfce7;border:1px solid #86efac;border-radius:6px;padding:5px 9px;cursor:pointer;white-space:nowrap}
+.mn{font-size:13px;color:#475569;margin:10px 0 4px}
+.sheet.open{max-height:88vh;overflow:auto}
+</style><style>html:not(.canedit) #edit,html:not(.canedit) #dl{display:none!important}</style></head><body>
+<header><h1>Sunset Ridge RV Resort</h1><p id="sub"></p>
+<button class="edit-btn" id="edit">✎ Edit</button><div class="lang"><button id="en" class="on">EN</button><button id="es">ES</button></div></header>
+<div class="bar" id="bar"></div>
+<div class="wrap" id="wrap"><div class="map" id="map"><img src="map.jpg" alt="Sunset Ridge RV Resort map"></div></div>
+<div class="zoom"><button id="zin">+</button><button id="zout">−</button></div>
+<div class="sheet" id="sheet"><div class="grab"></div><button class="close" id="x">×</button><div id="sc"></div><div id="scrollhint">↓ <span id="sht">Scroll for the calendar</span></div></div>
+<div class="panel" id="panel">
+<button id="pmin" type="button">▾ Hide</button><p class="t" id="pt">Edit mode <span>· drag the lot to move it · white corner = reshape · orange diamond = push a side · orange dot = rotate (Shift = free)</span></p>
+<p id="ptip">👆 Tap a lot or an icon on the map to edit it. Drag icons to move them.</p><div class="psec" id="secSave"><h4>💾 Save</h4>
+<div class="prow"><button class="ok" id="save">Save</button><button id="copy">Copy layout</button><button class="ok" id="dl">⬇ Download</button><button id="reset">Reset</button></div></div><div class="psec" id="secLot"><h4>🅿️ Lot <small>— tap a lot on the map</small></h4>
+<div class="prow"><label>Lot #</label><input id="pnum"></div>
+<div class="prow"><label>Status</label><button data-st="free">Avail.</button><button data-st="occ">Occ.</button><button data-st="res">Res.</button><button data-st="rent">For rent</button><button data-st="maint">Maint.</button></div>
+<div class="prow"><label>Photo</label><button id="phb">Photo… (upload)</button><button id="phx">Use sample photo</button><input type="file" id="phf" accept="image/*" style="display:none"></div>
+<div class="prow"><label>Size</label><button id="wm">Width −</button><button id="wp">Width +</button><button id="hm">Length −</button><button id="hp">Length +</button><button id="same">Same size as its row</button></div>
+<div class="prow"><label>Shape</label><button id="addc">Add corner</button><button id="remc">Remove corner</button></div>
+<div class="prow"><label>Lots</label><button class="pri" id="add">+ Add lot</button><button id="next">+ Next lot beside it</button><button id="dup">Duplicate</button><button class="del" id="delb">Delete lot</button></div></div>
+<div class="psec" id="secPoi"><h4>📍 Icon / label <small>— tap an icon on the map, drag it to move it</small></h4>
+<div class="prow"><label>Text</label><input id="poiText" placeholder="Tap an icon on the map" style="width:220px"><select id="poiIcon"><option value="house">Building</option><option value="dumbbell">Fitness</option><option value="pool">Pool</option><option value="tank">Propane sale</option><option value="flame">Flame</option><option value="wheelchair">Accessible</option><option value="fish">Lake</option><option value="laundry">Laundry</option><option value="pin">Other</option></select></div>
+<div class="prow"><label>Size</label><button id="poiSm">Smaller</button><button id="poiLg">Bigger</button></div>
+<div class="prow"><label>Emoji</label><input id="poiEmoji" placeholder="e.g. 🏊 (optional)" style="width:130px"><label>Hours</label><input id="poiHours" placeholder="e.g. Daily 8am–9pm" style="width:170px"></div>
+<div class="prow"><label>Info</label><input id="poiInfo" placeholder="What guests see when they tap it" style="flex:1;min-width:200px"></div>
+<div class="prow"><label>Propane $</label><input id="poiPrice" placeholder="20lb|30lb|40lb|$/gal" title="20 LB tank | 30 LB tank | 40 LB tank | Motor home per gallon" style="width:170px"><small class="hint">only for the propane icon</small></div>
+<div class="prow"><label>Icons</label><button class="pri" id="poiAdd">+ Add icon</button><button class="del" id="poiDel">Delete icon</button></div></div>
+
+<div class="msg" id="msg"></div></div>
+<footer id="foot"></footer>
+<script>
+const SRC0="<!DOCTYPE html>\n"+document.documentElement.outerHTML;
+const EMBED=null;
+// Nov 20 (per Mely — "exactamente como el mapa de Demo Marina"): free shapes like the marina editor —
+// drag the shape to move it, drag a white corner to reshape, drag an orange diamond to push a side,
+// drag the orange dot to rotate (5° steps, Shift = free). Points are % of the picture.
+const POLY={"0": [[8.563, 5.112], [15.189, 5.112], [15.189, 6.671], [8.563, 6.671]], "1": [[8.563, 7.606], [15.189, 7.606], [15.189, 9.352], [8.563, 9.352]], "2": [[8.563, 10.411], [15.189, 10.411], [15.189, 12.157], [8.563, 12.157]], "3": [[8.563, 13.217], [15.189, 13.217], [15.189, 14.963], [8.563, 14.963]], "4": [[8.563, 16.022], [15.189, 16.022], [15.189, 17.768], [8.563, 17.768]], "5": [[19.572, 5.549], [22.426, 5.549], [22.426, 9.102], [19.572, 9.102]], "6": [[24.465, 5.549], [27.217, 5.549], [27.217, 9.102], [24.465, 9.102]], "7": [[29.256, 5.549], [32.11, 5.549], [32.11, 9.102], [29.256, 9.102]], "8": [[34.251, 5.549], [37.105, 5.549], [37.105, 9.102], [34.251, 9.102]], "9": [[39.246, 5.549], [41.998, 5.549], [41.998, 9.102], [39.246, 9.102]], "10": [[44.037, 5.549], [46.891, 5.549], [46.891, 9.102], [44.037, 9.102]], "11": [[48.93, 5.549], [51.682, 5.549], [51.682, 9.102], [48.93, 9.102]], "12": [[53.721, 5.549], [56.575, 5.549], [56.575, 9.102], [53.721, 9.102]], "13": [[20.387, 9.601], [23.14, 9.601], [23.14, 13.217], [20.387, 13.217]], "14": [[25.382, 9.601], [28.135, 9.601], [28.135, 13.217], [25.382, 13.217]], "15": [[30.275, 9.601], [33.129, 9.601], [33.129, 13.217], [30.275, 13.217]], "16": [[35.27, 9.601], [38.124, 9.601], [38.124, 13.217], [35.27, 13.217]], "17": [[40.163, 9.601], [42.915, 9.601], [42.915, 13.217], [40.163, 13.217]], "18": [[45.056, 9.601], [47.91, 9.601], [47.91, 13.217], [45.056, 13.217]], "19": [[50.051, 9.601], [52.803, 9.601], [52.803, 13.217], [50.051, 13.217]], "20": [[54.74, 9.601], [57.594, 9.601], [57.594, 13.217], [54.74, 13.217]], "21": [[20.489, 15.087], [23.344, 15.087], [23.344, 18.392], [20.489, 18.392]], "22": [[25.382, 15.087], [28.135, 15.087], [28.135, 18.392], [25.382, 18.392]], "23": [[30.173, 15.087], [33.028, 15.087], [33.028, 18.392], [30.173, 18.392]], "24": [[35.168, 15.087], [37.92, 15.087], [37.92, 18.392], [35.168, 18.392]], "25": [[39.959, 15.087], [42.813, 15.087], [42.813, 18.392], [39.959, 18.392]], "26": [[44.75, 15.087], [47.503, 15.087], [47.503, 18.392], [44.75, 18.392]], "27": [[50.153, 16.272], [58.104, 16.272], [58.104, 17.955], [50.153, 17.955]], "28": [[50.153, 19.015], [58.104, 19.015], [58.104, 20.698], [50.153, 20.698]], "29": [[50.153, 21.82], [58.104, 21.82], [58.104, 23.504], [50.153, 23.504]], "30": [[50.153, 24.626], [58.104, 24.626], [58.104, 26.372], [50.153, 26.372]], "31": [[50.153, 27.556], [58.104, 27.556], [58.104, 29.239], [50.153, 29.239]], "32": [[50.153, 30.362], [58.104, 30.362], [58.104, 32.045], [50.153, 32.045]], "33": [[50.153, 33.167], [58.104, 33.167], [58.104, 34.788], [50.153, 34.788]], "34": [[50.153, 35.848], [58.104, 35.848], [58.104, 37.531], [50.153, 37.531]], "35": [[50.153, 38.591], [58.104, 38.591], [58.104, 40.337], [50.153, 40.337]], "36": [[50.153, 41.459], [58.104, 41.459], [58.104, 43.142], [50.153, 43.142]], "37": [[50.153, 44.202], [58.104, 44.202], [58.104, 45.823], [50.153, 45.823]], "38": [[50.153, 46.82], [58.104, 46.82], [58.104, 48.504], [50.153, 48.504]], "39": [[50.153, 49.501], [58.104, 49.501], [58.104, 51.185], [50.153, 51.185]], "40": [[50.153, 52.244], [58.104, 52.244], [58.104, 53.928], [50.153, 53.928]], "41": [[50.153, 54.988], [58.104, 54.988], [58.104, 56.671], [50.153, 56.671]], "42": [[50.153, 57.731], [58.104, 57.731], [58.104, 59.414], [50.153, 59.414]], "43": [[50.153, 60.536], [58.104, 60.536], [58.104, 62.219], [50.153, 62.219]], "44": [[50.153, 63.342], [58.104, 63.342], [58.104, 64.963], [50.153, 64.963]], "45": [[50.153, 66.085], [58.104, 66.085], [58.104, 67.706], [50.153, 67.706]], "46": [[50.153, 68.766], [58.104, 68.766], [58.104, 70.449], [50.153, 70.449]], "47": [[50.153, 71.446], [58.104, 71.446], [58.104, 73.13], [50.153, 73.13]], "48": [[50.153, 74.314], [58.104, 74.314], [58.104, 75.935], [50.153, 75.935]], "49": [[50.153, 77.057], [58.104, 77.057], [58.104, 78.803], [50.153, 78.803]], "50": [[60.958, 25.169], [69.521, 27.63], [69.521, 30.264], [60.958, 27.803]], "51": [[60.958, 27.803], [69.521, 30.264], [69.521, 32.898], [60.958, 30.437]], "52": [[60.958, 30.437], [69.521, 32.898], [69.521, 35.532], [60.958, 33.071]], "53": [[60.958, 33.071], [69.521, 35.532], [69.521, 38.166], [60.958, 35.705]], "54": [[60.958, 35.705], [69.521, 38.166], [69.521, 40.8], [60.958, 38.339]], "55": [[60.958, 38.339], [69.521, 40.8], [69.521, 43.435], [60.958, 40.973]], "56": [[60.958, 40.973], [69.521, 43.435], [69.521, 46.069], [60.958, 43.607]], "57": [[60.958, 43.607], [69.521, 46.069], [69.521, 48.703], [60.958, 46.241]], "58": [[60.958, 46.241], [69.521, 48.703], [69.521, 51.337], [60.958, 48.875]], "59": [[60.958, 48.875], [69.521, 51.337], [69.521, 53.971], [60.958, 51.509]], "60": [[60.958, 51.509], [69.521, 53.971], [69.521, 56.605], [60.958, 54.143]], "61": [[60.958, 54.143], [69.521, 56.605], [69.521, 59.239], [60.958, 56.777]], "62": [[60.958, 56.777], [69.521, 59.239], [69.521, 61.873], [60.958, 59.411]], "63": [[72.375, 25.264], [81.04, 27.755], [81.04, 30.373], [72.375, 27.883]], "64": [[72.375, 27.883], [81.04, 30.373], [81.04, 32.992], [72.375, 30.501]], "65": [[72.375, 30.501], [81.04, 32.992], [81.04, 35.61], [72.375, 33.12]], "66": [[72.375, 33.12], [81.04, 35.61], [81.04, 38.229], [72.375, 35.738]], "67": [[72.375, 35.738], [81.04, 38.229], [81.04, 40.847], [72.375, 38.357]], "68": [[72.375, 38.357], [81.04, 40.847], [81.04, 43.466], [72.375, 40.975]], "69": [[72.375, 40.975], [81.04, 43.466], [81.04, 46.084], [72.375, 43.594]], "70": [[72.375, 43.594], [81.04, 46.084], [81.04, 48.703], [72.375, 46.212]], "71": [[72.375, 46.212], [81.04, 48.703], [81.04, 51.321], [72.375, 48.83]], "72": [[72.375, 48.83], [81.04, 51.321], [81.04, 53.94], [72.375, 51.449]], "73": [[72.375, 51.449], [81.04, 53.94], [81.04, 56.558], [72.375, 54.067]], "74": [[72.375, 54.067], [81.04, 56.558], [81.04, 59.176], [72.375, 56.686]], "75": [[72.375, 56.686], [81.04, 59.176], [81.04, 61.795], [72.375, 59.304]], "76": [[83.792, 25.227], [91.03, 27.086], [91.03, 29.689], [83.792, 27.83]], "77": [[83.792, 27.83], [91.03, 29.689], [91.03, 32.292], [83.792, 30.433]], "78": [[83.792, 30.433], [91.03, 32.292], [91.03, 34.895], [83.792, 33.036]], "79": [[83.792, 33.036], [91.03, 34.895], [91.03, 37.498], [83.792, 35.638]], "80": [[83.792, 35.638], [91.03, 37.498], [91.03, 40.1], [83.792, 38.241]], "81": [[83.792, 38.241], [91.03, 40.1], [91.03, 42.703], [83.792, 40.844]], "82": [[83.792, 40.844], [91.03, 42.703], [91.03, 45.306], [83.792, 43.447]], "83": [[83.792, 43.447], [91.03, 45.306], [91.03, 47.909], [83.792, 46.05]], "84": [[83.792, 46.05], [91.03, 47.909], [91.03, 50.512], [83.792, 48.653]], "85": [[83.792, 48.653], [91.03, 50.512], [91.03, 53.115], [83.792, 51.256]], "86": [[83.792, 51.256], [91.03, 53.115], [91.03, 55.718], [83.792, 53.858]], "87": [[83.792, 53.858], [91.03, 55.718], [91.03, 58.32], [83.792, 56.461]], "88": [[83.792, 56.461], [91.03, 58.32], [91.03, 60.923], [83.792, 59.064]], "89": [[23.649, 82.294], [26.402, 82.294], [26.402, 85.536], [23.649, 85.536]], "90": [[28.44, 82.294], [31.091, 82.294], [31.091, 85.536], [28.44, 85.536]], "91": [[33.129, 82.294], [35.78, 82.294], [35.78, 85.536], [33.129, 85.536]], "92": [[37.717, 82.294], [40.367, 82.294], [40.367, 85.536], [37.717, 85.536]], "93": [[42.304, 82.294], [44.954, 82.294], [44.954, 85.536], [42.304, 85.536]], "94": [[46.993, 82.294], [49.541, 82.294], [49.541, 85.536], [46.993, 85.536]], "95": [[23.445, 87.531], [26.198, 87.531], [26.198, 91.085], [23.445, 91.085]], "96": [[28.236, 87.531], [30.989, 87.531], [30.989, 91.085], [28.236, 91.085]], "97": [[33.028, 87.531], [35.78, 87.531], [35.78, 91.085], [33.028, 91.085]], "98": [[37.717, 87.531], [40.367, 87.531], [40.367, 91.085], [37.717, 91.085]], "99": [[42.406, 87.531], [45.056, 87.531], [45.056, 91.085], [42.406, 91.085]], "100": [[47.095, 87.531], [49.643, 87.531], [49.643, 91.085], [47.095, 91.085]], "101": [[13.756, 83.592], [10.913, 79.863], [13.5, 79.125], [16.343, 82.855]], "102": [[12.255, 85.066], [6.55, 82.886], [8.062, 81.406], [13.768, 83.586]], "103": [[12.365, 86.904], [5.646, 87.119], [5.497, 85.376], [12.215, 85.161]], "104": [[14.107, 88.34], [8.734, 90.816], [7.016, 89.422], [12.389, 86.945]], "105": [[16.603, 88.923], [14.083, 92.738], [11.436, 92.084], [13.956, 88.269]]};
+const BASE=[[12.347, 6.729, 5.918, 1.495, 0], [12.347, 9.315, 5.918, 1.495, 0], [12.347, 12.399, 5.918, 1.495, 0], [12.347, 15.327, 5.918, 1.495, 0], [12.347, 17.726, 5.918, 1.495, 0], [20.765, 7.944, 2.755, 3.676, 0], [25.255, 7.944, 2.755, 3.676, 0], [29.592, 7.944, 2.755, 3.676, 0], [34.337, 7.944, 2.755, 3.676, 0], [38.98, 7.944, 2.755, 3.676, 0], [43.163, 7.944, 2.755, 3.676, 0], [47.653, 7.944, 2.755, 3.676, 0], [52.296, 7.944, 2.755, 3.676, 0], [56.378, 7.944, 2.755, 3.676, 0], [22.347, 12.056, 2.7039999999999997, 3.551, 0.0], [26.99, 12.056, 2.7039999999999997, 3.551, 0.0], [31.633, 12.056, 2.7039999999999997, 3.551, 0.0], [36.378, 12.056, 2.7039999999999997, 3.551, 0.0], [41.02, 12.056, 2.7039999999999997, 3.551, 0.0], [45.357, 12.056, 2.7039999999999997, 3.551, 0.0], [50.0, 12.056, 2.7039999999999997, 3.551, 0.0], [54.694, 12.056, 2.7039999999999997, 3.551, 0.0], [22.194, 17.227, 2.551, 2.679, 0], [26.786, 17.227, 2.551, 2.679, 0], [31.531, 17.227, 2.551, 2.679, 0], [36.327, 17.227, 2.551, 2.679, 0], [40.867, 17.227, 2.551, 2.679, 0], [53.571, 17.632, 6.531, 1.682, 0], [53.571, 20.156, 6.531, 1.682, 0], [53.571, 22.804, 6.531, 1.682, 0], [53.571, 25.763, 6.531, 1.682, 0], [53.571, 28.505, 6.531, 1.682, 0], [53.571, 31.153, 6.531, 1.682, 0], [53.571, 33.894, 6.531, 1.682, 0], [53.571, 36.729, 6.531, 1.682, 0], [53.571, 39.72, 6.531, 1.682, 0], [53.571, 42.648, 6.531, 1.682, 0], [53.571, 45.607, 6.531, 1.682, 0], [53.571, 48.505, 6.531, 1.682, 0], [53.571, 51.215, 6.531, 1.682, 0], [53.571, 53.988, 6.531, 1.682, 0], [53.571, 56.791, 6.531, 1.682, 0], [53.571, 59.533, 6.531, 1.682, 0], [53.571, 62.43, 6.531, 1.682, 0], [53.571, 65.265, 6.531, 1.682, 0], [53.571, 68.037, 6.531, 1.682, 0], [53.571, 70.779, 6.531, 1.682, 0], [53.571, 73.614, 6.531, 1.682, 0], [53.571, 76.417, 6.531, 1.682, 0], [53.571, 79.034, 6.531, 1.682, 0], [66.092, 26.539, 7.031, 1.317, 17.9], [66.092, 29.283, 7.031, 1.317, 17.9], [66.092, 32.087, 7.031, 1.317, 17.9], [66.092, 34.885, 7.031, 1.317, 17.9], [66.092, 37.728, 7.031, 1.317, 17.9], [66.092, 40.476, 7.031, 1.317, 17.9], [66.092, 43.211, 7.031, 1.317, 17.9], [66.092, 45.989, 7.031, 1.317, 17.9], [66.092, 48.803, 7.031, 1.317, 17.9], [66.092, 51.56, 7.031, 1.317, 17.9], [66.092, 54.267, 7.031, 1.317, 17.9], [66.092, 57.115, 7.031, 1.317, 17.9], [66.092, 59.697, 7.031, 1.317, 17.9], [77.563, 26.704, 7.545, 1.358, 16.1], [77.563, 29.451, 7.545, 1.358, 16.1], [77.563, 32.304, 7.545, 1.358, 16.1], [77.563, 35.186, 7.545, 1.358, 16.1], [77.563, 38.012, 7.545, 1.358, 16.1], [77.563, 40.723, 7.545, 1.358, 16.1], [77.563, 43.54, 7.545, 1.358, 16.1], [77.563, 46.246, 7.545, 1.358, 16.1], [77.563, 49.02, 7.545, 1.358, 16.1], [77.563, 51.852, 7.545, 1.358, 16.1], [77.563, 54.588, 7.545, 1.358, 16.1], [77.563, 57.427, 7.545, 1.358, 16.1], [77.563, 60.125, 7.545, 1.358, 16.1], [86.936, 27.795, 5.675, 1.389, 13.2], [86.936, 29.673, 5.675, 1.389, 13.2], [86.936, 32.32, 5.675, 1.389, 13.2], [86.936, 35.158, 5.675, 1.389, 13.2], [86.936, 37.886, 5.675, 1.389, 13.2], [86.936, 40.677, 5.675, 1.389, 13.2], [86.936, 43.345, 5.675, 1.389, 13.2], [86.936, 45.987, 5.675, 1.389, 13.2], [86.936, 48.914, 5.675, 1.389, 13.2], [86.936, 51.697, 5.675, 1.389, 13.2], [86.936, 54.488, 5.675, 1.389, 13.2], [86.936, 57.369, 5.675, 1.389, 13.2], [86.936, 59.99, 5.675, 1.389, 13.2], [24.524, 84.6585, 5.144, 1.5035, -87.19999999999999], [29.124, 84.6585, 5.144, 1.5035, -87.19999999999999], [33.856, 84.6585, 5.144, 1.5035, -87.19999999999999], [38.688, 84.6585, 5.144, 1.5035, -87.19999999999999], [43.125, 84.6585, 5.144, 1.5035, -87.19999999999999], [48.02, 84.6585, 5.144, 1.5035, -87.19999999999999], [24.561, 89.86500000000001, 5.407, 1.6135000000000002, -91.25], [29.157, 89.86500000000001, 5.407, 1.6135000000000002, -91.25], [34.145, 89.86500000000001, 5.407, 1.6135000000000002, -91.25], [38.78, 89.86500000000001, 5.407, 1.6135000000000002, -91.25], [43.359, 89.86500000000001, 5.407, 1.6135000000000002, -91.25], [48.137, 89.86500000000001, 5.407, 1.6135000000000002, -91.25], [14.55, 82.707, 5.144, 1.5035, 70], [10.792, 84.468, 5.144, 1.5035, 35], [9.367, 87.227, 5.144, 1.5035, 0], [10.792, 89.986, 5.144, 1.5035, -35], [14.55, 91.748, 5.144, 1.5035, -70]];
+const T={en:{sub:"Live map · MelyOS demo · proposal",all:"All",free:"Available",occ:"Occupied",res:"Reserved",rent:"For rent",maint:"Maintenance",lot:"Lot",type:"Type",size:"Max RV",rate:"Monthly",nightly:"Nightly",status:"Status",home:"Home site",pm:"Park model",rv:"RV site",book:"Book this lot",hold:"View reservation",res2:"Resident",paid:"Rent paid · autopay on",late:"Rent due in 3 days",guest:"Guest arrives Dec 1",foot:"Proposal draft. Lot numbers, rates and residents are examples; the final map uses your real lots.",by:"Powered by"},
+es:{sub:"Mapa en vivo · demo de MelyOS · propuesta",all:"Todos",free:"Disponible",occ:"Ocupado",res:"Reservado",rent:"En renta",maint:"Mantenimiento",lot:"Lote",type:"Tipo",size:"RV máximo",rate:"Mensual",nightly:"Por noche",status:"Estado",home:"Casa",pm:"Park model",rv:"Espacio RV",book:"Reservar este lote",hold:"Ver reservación",res2:"Residente",paid:"Renta pagada · autopago activo",late:"Renta vence en 3 días",guest:"Huésped llega el 1 de dic.",foot:"Borrador de propuesta. Los números, precios y residentes son de ejemplo; el mapa final usa sus lotes reales.",by:"Hecho con"}};
+const AX=9.81, AY=16.04;            // px per 1% of the 980x1605 picture (keeps right angles when rotating)
+const COLOR={free:"#22c55e",occ:"#ef4444",res:"#eab308",rent:"#8b5cf6",maint:"#d97706"};   // Nov 20: same colors as the chips and the cards
+// Nov 20 (per Mely): guests (the map inside Explore) only see what they can book — Available (green) and For rent (violet); everything else is gray.
+var GUEST=/\/explore\/live\//.test(location.pathname);   // the public copy on melyos.io (inside Explore or full screen)
+const gcat=i=>ST[i]=="free"?"free":ST[i]=="rent"?"rent":"na";
+let L="en",filt="all",z=1,sel=-1,editing=false,vi=-1;
+var PICKED=-1;let s=21;const rnd=()=>{s=(s*9301+49297)%233280;return s/233280};
+const r2=n=>Math.round(n*1000)/1000;
+function rectPts(b){const cx=b[0]*AX,cy=b[1]*AY,hw=b[2]*AX/2,hh=b[3]*AY/2,a=b[4]*Math.PI/180,c=Math.cos(a),sn=Math.sin(a);
+ return [[-hw,-hh],[hw,-hh],[hw,hh],[-hw,hh]].map(([x,y])=>[r2((cx+x*c-y*sn)/AX),r2((cy+x*sn+y*c)/AY)])}
+let SH,ST,NUM;
+// Nov 20 (per Mely): a photo for every lot (sample photos until the park adds its own) — shown in the lot popup
+// and as a preview when the mouse is over a lot. In Edit mode: Photo… to upload one per lot.
+const DEF_PH={rent:"rent.jpg",any:"lot.jpg"};let PH={};
+const photoOf=i=>PH[NUM[i]]||(ST[i]=="rent"?DEF_PH.rent:DEF_PH.any);
+function savePH(){try{localStorage.setItem("sunsetphotos",JSON.stringify(PH));return true}catch(e){return false}}
+// Nov 21 (per Mely): LABEL / EMOJI POSITIONS ARE FIXED — the ones in POIS above are the official places
+// (Clubhouse on the main building, fitness on the small building, 🏊 in the pool, ♿ in the parking, propane at the corner
+// by lot 45, 🧺 laundry in the clubhouse, Shuffleboard on the big green field, Fishing Lake on the lake, 🚑 + road at the entrance).
+// Never move them when fixing something else. The melyos.io copy (read-only) ignores anything saved in the browser,
+// so old saved positions can never put them out of place again.
+const READONLY=/\/explore\/live\//.test(location.pathname);
+try{["sunsetshapes5","sunsetshapes4","sunsetshapes3"].forEach(k=>localStorage.removeItem(k))}catch(e){}
+// Nov 21 (per Mely): she edits the melyos.io map with ?edit=1 — it starts from the positions in this file;
+// "Save" copies the layout so she can paste it to Claude, who makes it permanent in this file.
+const EDITURL=READONLY&&/[?&]edit=1\b/.test(location.search);if(EDITURL)document.documentElement.classList.add("canedit");
+function load(){let d=null,lab=null;
+ // Nov 21 (per Mely): the file is the ONLY source of positions everywhere (melyos.io and the Claude map) — old
+ // layouts saved in a browser are never loaded again, so icons can not show up in old places.
+ if(true){PH={};PO=POIS.map(p=>p.length>5?[...p]:[...p,0.9,"","",""]);s=21;SH=BASE.map((b,i)=>POLY[i]||rectPts(b));ST=SH.map((_,i)=>{const r=rnd();return i>=101?"free":r<.58?"occ":r<.84?"free":r<.92?"res":r<.97?"rent":"maint"});NUM=SH.map((_,i)=>String(i+1));return}
+ try{PH=JSON.parse(localStorage.getItem("sunsetphotos")||"null")||(EMBED&&EMBED.ph)||{}}catch(e){PH={}}
+ if(EMBED&&!localStorage.getItem("sunsetshapes5")){try{localStorage.setItem("sunsetshapes5",JSON.stringify(EMBED))}catch(e){}}
+ // Nov 20 (per Mely): never lose her saved layout or label positions when the page updates — read the newest save,
+ // and if an older save has the labels where she put them, keep those positions.
+ try{for(const k of ["sunsetshapes5","sunsetshapes4","sunsetshapes3"]){const v=JSON.parse(localStorage.getItem(k)||"null");if(v&&!d&&v.sh&&k=="sunsetshapes5")d=v;if(v&&v.po&&!lab)lab=v.po}}catch(e){}
+ const def=POIS.map(p=>p.length>5?[...p]:[...p,0.9,"","",""]);
+ if(lab){PO=lab.map(p=>{const q=[...p];while(q.length<10)q.push("");const m=def.find(x=>x[3]==q[3]&&(x[2]==q[2]||!x[2]));
+   if(m){if(q[3]=="tank"&&q[9]&&!String(q[9]).includes("|"))q[9]=m[9];if(OLDINFO[q[3]]&&q[6]===OLDINFO[q[3]])q[6]=m[6];for(const j of [6,7,8,9])if(!q[j]&&m[j])q[j]=m[j];if(!q[5])q[5]=m[5]}return q});
+  for(const m of def)if(!PO.some(q=>q[3]==m[3]))PO.push([...m])}   // new markers (pool…) added, hers keep their place
+ else PO=def;
+ PO=PO.filter(p=>p[3]!="horseshoe");   // Nov 20 (per Mely): no horseshoes; shuffleboard goes on the big green field
+ if(!d){try{const v=JSON.parse(localStorage.getItem("sunsetshapes4")||localStorage.getItem("sunsetshapes3")||"null");if(v&&v.sh)d=v}catch(e){}}
+ if(d&&d.sh){SH=d.sh;ST=d.st;NUM=d.num;
+  // Nov 20 (per Mely): an old save had no "for rent" lots — keep her lot shapes, but use the same statuses as the website demo
+  if(!d.stv&&!ST.includes("rent")){s=21;ST=SH.map((_,i)=>{const r=rnd();return i>=101?"free":r<.58?"occ":r<.84?"free":r<.92?"res":r<.97?"rent":"maint"})}}else{s=21;SH=BASE.map((b,i)=>POLY[i]||rectPts(b));ST=SH.map((_,i)=>{const r=rnd();return i>=101?"free":r<.58?"occ":r<.84?"free":r<.92?"res":r<.97?"rent":"maint"});NUM=SH.map((_,i)=>String(i+1))}}
+const kind=i=>{const n=i+1;return n>101?"pm":n<=5?"home":n<=27?"pm":n<=50?"home":n<=87?"rv":"home"};
+// Nov 20 (per Mely): lot details — amps, size, hookups — so every lot looks complete (examples until the park sends its real data)
+// Nov 20 (per Mely): "Pay" works in the demo — a MelyOS secure-checkout preview (test card only, nothing is charged)
+function payDemo(i,n,tot){const es=L=="es",ov=document.createElement("div");ov.id="payov";
+ const fmt=d=>d.toLocaleDateString(es?"es-US":"en-US",{month:"short",day:"numeric"});
+ ov.innerHTML=`<div class="pv2"><div class="ph2"><b>MelyOS</b><span>🔒 ${es?"Pago seguro":"Secure checkout"}</span></div>
+ <div class="pt2">Sunset Ridge RV Resort · ${es?"Lote":"Lot"} ${NUM[i]}<br><small>${fmt(arr)} → ${fmt(dep)} · ${n} ${es?(n>1?"noches":"noche"):(n>1?"nights":"night")}</small></div>
+ <div class="pa2">$${tot}</div>
+ <label>Email<input value="guest@example.com" readonly></label>
+ <label>${es?"Tarjeta":"Card"}<input value="4242 4242 4242 4242" readonly></label>
+ <div class="pr2"><label>${es?"Vence":"Expires"}<input value="12 / 30" readonly></label><label>CVC<input value="123" readonly></label></div>
+ <div class="pd2">${es?"Modo demo · tarjeta de prueba · no se cobra nada":"Demo mode · test card · nothing is charged"}</div>
+ <button class="cta" id="pgo">${es?`Pagar $${tot}`:`Pay $${tot}`}</button><button class="pc2" id="pcx">${es?"Cancelar":"Cancel"}</button></div>`;
+ document.body.appendChild(ov);ov.querySelector("#pcx").onclick=()=>ov.remove();
+ ov.querySelector("#pgo").onclick=()=>{const b=ov.querySelector("#pgo");b.disabled=true;b.textContent=es?"Procesando…":"Processing…";
+  setTimeout(()=>{const code="21P-"+String(Date.now()).slice(-6);
+   ov.querySelector(".pv2").innerHTML=`<div class="ok2">✓</div><h3>${es?"¡Reservación confirmada!":"Booking confirmed!"}</h3>
+   <div class="pt2">Sunset Ridge RV Resort · ${es?"Lote":"Lot"} ${NUM[i]}<br><small>${fmt(arr)} → ${fmt(dep)} · ${n} ${es?(n>1?"noches":"noche"):(n>1?"nights":"night")}</small></div>
+   <div class="pa2">$${tot} ${es?"pagado":"paid"}</div><div class="pd2">${es?"Confirmación":"Confirmation"} <b>${code}</b><br>${es?"El recibo y las instrucciones de llegada se envían por email al huésped. El lote queda reservado en el mapa del parque.":"The receipt and check-in details are emailed to the guest. The lot is now booked on the park's map."}</div>
+   <button class="cta" id="pdn">${es?"Listo":"Done"}</button>`;
+   ov.querySelector("#pdn").onclick=()=>{ov.remove();document.getElementById("x").click()};tell({type:"melyos-paid",lot:NUM[i]})},1400)}}
+// Nov 20 (per Mely): a lot under maintenance says when it is back (sample dates in the demo; the park sets them)
+function maxLen(i){return ST[i]!="rent"&&kind(i)=="rv"?(parseInt(info(i).size)||null):null}
+function maintUntil(i){return new Date(+today+((+NUM[i]||i)%5+2)*DAY)}
+// Nov 20 (per Mely — online sales, not requests): demo checkout. Short stays pay here; long stays go to the application.
+const LONG=15;
+// A Stripe TEST-mode Payment Link (no real charge; card 4242 4242 4242 4242) — opens from "Pay" when set
+const DEMO_PAY_URL="";
+function nightly(i){return ST[i]=="rent"?95:kind(i)=="rv"?55:65}
+function checkout(i){const es=L=="es",n=Math.round((dep-arr)/DAY),box=document.getElementById("bkm"),sh=document.getElementById("sheet");
+ const fmt=d=>d.toLocaleDateString(es?"es-US":"en-US",{month:"short",day:"numeric"});
+ if(n>LONG){box.innerHTML=`<div class="co"><b>${es?"Aplicación":"Application"} · ${t9(es,"Lote","Lot")} ${NUM[i]}</b><div>${fmt(arr)} → ${fmt(dep)} · ${n} ${es?"noches":"nights"}</div><div class="cn2">${es?"Demo: en su mapa real esto abre la aplicación del parque con las fechas y el lote ya puestos. Al aprobarla, el huésped paga el depósito en línea.":"Demo: on your live map this opens the park's application with the dates and lot filled in. Once approved, the guest pays the deposit online."}</div></div>`;}
+ else{const r=nightly(i),sub=r*n,tx=n<=180,tax=tx?Math.round(sub*0.075*100)/100:0,tdt=tx?Math.round(sub*0.06*100)/100:0,tot=(sub+tax+tdt).toFixed(2);   // Osceola County: 7.5% sales tax + 6% tourist tax (stays under 6 months)
+  box.innerHTML=`<div class="co"><b>${es?"Pago":"Checkout"} · ${t9(es,"Lote","Lot")} ${NUM[i]}</b><div>${fmt(arr)} → ${fmt(dep)} · ${n} ${es?(n>1?"noches":"noche"):(n>1?"nights":"night")}</div>
+  <div class="cl2"><span>${n} × $${r}</span><span>$${sub.toFixed(2)}</span></div><div class="cl2"><span>${es?"Impuesto de ventas (7.5%)":"Sales tax (7.5%)"}</span><span>$${tax.toFixed(2)}</span></div><div class="cl2"><span>${es?"Impuesto turístico Osceola (6%)":"Osceola tourist tax (6%)"}</span><span>$${tdt.toFixed(2)}</span></div><div class="cl2 ct"><span>Total</span><span>$${tot}</span></div>
+  <button class="cta" id="pay">${es?`Pagar $${tot}`:`Pay $${tot}`}</button><div class="cn2" id="payn" style="display:none">${es?"Demo: no se cobró nada. En su mapa real el huésped paga seguro con tarjeta (Stripe), el lote queda reservado y le llega la confirmación por email.":"Demo: nothing was charged. On your live map the guest pays securely by card (Stripe), the lot is booked and the confirmation is emailed."}</div></div>`;
+  box.querySelector("#pay").onclick=()=>{if(DEMO_PAY_URL){try{window.open(DEMO_PAY_URL,"_blank","noopener")}catch(e){}return}payDemo(i,n,tot)}}
+ {const b=document.getElementById("bk");if(b)b.style.display="none"}setTimeout(()=>box.scrollIntoView({behavior:"smooth",block:"center"}),60);tell({type:"melyos-checkout",lot:NUM[i],nights:n})}
+const t9=(es,a,b)=>es?a:b;
+// Nov 20 (per Mely): where each lot sits in the park, written warmly (corner lots called out)
+const CORNER=new Set([1,5,6,13,14,21,22,27,28,50,51,63,64,76,77,89,90,95,96,101]);
+function where(i){const n=+NUM[i],es=L=="es",c=CORNER.has(n);
+ const z=n<=5?["North tree line","Línea de árboles norte","Along the quiet tree line at the north end — morning shade and very little traffic.","Junto a la línea de árboles al norte — sombra en la mañana y casi nada de tráfico."]
+  :n<=27?["North loop","Lazo norte","In the north loop, a small, friendly block tucked away from the main road.","En el lazo norte, una cuadra pequeña y tranquila, lejos de la carretera."]
+  :n<=50?["Palm woods row","Fila del bosque","Backs onto the palm woods — natural shade and privacy behind you.","Da al bosque de palmas — sombra natural y privacidad atrás."]
+  :n<=89?["Heart of the park","Corazón del parque","In the heart of the park, a short stroll to the clubhouse and the pool.","En el corazón del parque, a pasos del clubhouse y la piscina."]
+  :n<=101?["Lakeside garden street","Calle jardín del lago","A garden street by the entrance, steps from the fishing lake.","Calle con jardín junto a la entrada, a pasos del lago de pesca."]
+  :["Quiet cul-de-sac","Cul-de-sac tranquilo","On the quiet cul-de-sac — extra open space and no through traffic.","En el cul-de-sac tranquilo — más espacio abierto y sin tráfico de paso."];
+ return{short:(es?z[1]:z[0])+(c?(es?" · Esquina":" · Corner"):""),long:(es?z[3]:z[2])+(c?(es?" Lote de esquina, con más espacio al lado.":" A corner lot, with extra room to the side."):""),corner:c}}
+// Nov 20 (per Mely — like Aloha): the amenities closest to each lot, measured on the map, shown softly in the cards
+function nearby(i,n){const es=L=="es",c=cen(SH[i]);
+ const nm={house:es?"Clubhouse":"Clubhouse",dumbbell:es?"Gimnasio":"Fitness center",pool:es?"Piscina":"Pool",tank:es?"Propano":"Propane",fish:es?"Lago de pesca":"Fishing lake",shuffle:"Shuffleboard",horseshoe:es?"Herraduras":"Horseshoes"};
+ const em={house:"🏠",dumbbell:"🏋️",pool:"🏊",tank:"🔥",fish:"🎣",shuffle:"🥌",horseshoe:"🧲"};
+ return PO.filter(p=>nm[p[3]]).map(p=>{const d=Math.hypot((p[0]-c[0])*AX,(p[1]-c[1])*AY);const m=Math.max(1,Math.round(d*0.46*1.3/80));
+   return{t:nm[p[3]],e:em[p[3]],m,d}}).sort((a,b)=>a.d-b.d).slice(0,n||3)}
+const walk=m=>L=="es"?`${m} min a pie`:`${m} min walk`;
+function info(i){const n=NUM[i]|0,k=kind(i),es=L=="es",st=ST[i];
+ if(st=="rent")return{amp:"50 amp",size:es?"2 hab · 1 baño":"2 bed · 1 bath",sleeps:es?"Duermen 4":"Sleeps 4",chips:es?["A/C central","Cocina equipada","Porche cubierto","Wi-Fi","Estacionamiento"]:["Central A/C","Full kitchen","Covered porch","Wi-Fi","Parking"]};
+ const amp=k=="rv"?(n%3==0?"30/50 amp":"50 amp"):"50 amp";
+ const len=k=="rv"?(n%4==0?"45 ft":n%2?"40 ft":"50 ft"):(k=="pm"?"40 × 60 ft":"50 × 80 ft");
+ const pad=k=="rv"?(n%2?(es?"Concreto":"Concrete"):(es?"Grava":"Gravel")):null;
+ const base=es?["Agua","Alcantarillado","Wi-Fi"]:["Water","Sewer","Wi-Fi"];
+ const extra=k=="rv"?(n%2?[es?"Pull-through":"Pull-through"]:[es?"Back-in":"Back-in"]):[es?"Mascotas OK":"Pets OK"];
+ return{amp,size:len,pad,chips:[...(maxSO(i)!=null?[es?`Slide-outs: hasta ${maxSO(i)} por lado`:`Slide-outs: up to ${maxSO(i)} per side`]:[]),...(CORNER.has(n)?[es?"Lote de esquina":"Corner lot"]:[]),amp,...base,...extra,...(n%5==0?[es?"Mesa de picnic":"Picnic table"]:[])]}}
+const map=document.getElementById("map");
+const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.setAttribute("viewBox","0 0 100 100");svg.setAttribute("preserveAspectRatio","none");
+svg.style.cssText="position:absolute;inset:0;width:100%;height:100%;pointer-events:none";map.appendChild(svg);
+const over=document.createElement("div");over.style.cssText="position:absolute;inset:0;pointer-events:none";map.appendChild(over);
+const cen=p=>[p.reduce((a,q)=>a+q[0],0)/p.length,p.reduce((a,q)=>a+q[1],0)/p.length];
+function label(pts,name,max){const W=map.clientWidth,H=map.clientHeight;const px=pts.map(([x,y])=>[x*W/100,y*H/100]);
+ const side=(a,b)=>({len:Math.hypot(b[0]-a[0],b[1]-a[1]),ang:Math.atan2(b[1]-a[1],b[0]-a[0])*180/Math.PI});
+ const s1=side(px[0],px[1]),s2=side(px[1],px[2]);const lg=s1.len>=s2.len?s1:s2,sh=s1.len>=s2.len?s2:s1;
+ let ang=lg.ang;if(ang>90)ang-=180;if(ang<=-90)ang+=180;if(Math.abs(ang)<8)ang=0;
+ const size=Math.min(max,sh.len*0.7,(lg.len*0.86)/(0.62*Math.max(1,name.length)));return size<5?null:{size,ang}}
+
+// Nov 20 (per Mely): amenity labels on the map — clean icons, not emojis, so it looks professional.
+const OLDINFO={"house": "Office, check-in and activities. Packages and mail at the front desk.", "dumbbell": "For residents and registered guests. Please wipe down equipment after use.", "pool": "No lifeguard on duty — swim at your own risk.\nShower before entering.\nNo glass or food in the pool area.\nChildren under 14 must be with an adult.\nResidents and registered guests only.", "tank": "Propane refills. Pay ahead online with the QR code or charge it to your resident account.", "fish": "Catch and release. Residents and guests only.", "ambulance": "In an emergency call 911 right away.\nGive this address: Sunset Ridge RV Resort — the office will give you the address — and your lot number.\nThen let the office know.", "road": "Main road in front of the park. The park entrance is on this road."};
+const POIS=[[66.34, 69.84, "Clubhouse", "house", "dark", 0.3, "Office: check-in, payments and activities\nMail: packages and mail at the front desk", "", "Office: Mon–Sat 9am–5pm · Sun closed"], [73.54, 71.77, "", "dumbbell", "dark", 0.2, "Who: residents and registered guests\nPlease: wipe down equipment after use", "", "Daily 6am–10pm"], [81.86, 71.7, "", "pool", "dark", 0.9, "Lifeguard: none — swim at your own risk\nBefore you swim: shower first\nNot allowed: glass or food in the pool area\nKids under 14: must be with an adult\nWho: residents and registered guests", "🏊🏼‍♀️", "Daily 9am–9pm"], [70.53, 67.8, "", "wheelchair", "ada", 0.2, "", "", ""], [66.16, 72.51, "", "tank", "propane", 0.2, "Refills: propane tanks filled on site\nPay: online with the QR code, or charge it to your resident account", "", "Mon–Sat 9am–4pm", "22|30|38|4.49"], [73.39, 69.75, "", "laundry", "dark", 0.6, "Where: inside the clubhouse\nWho: residents and registered guests\nPay: at the machines", "laundry.png", "Daily 7am–10pm"], [78.89, 77.94, "Fishing Lake", "fish", "dark", 0.9, "Fishing: allowed for residents and registered guests\nPlease: keep the lake area clean", "", "Sunrise to sunset"], [5, 97.2, "", "ambulance", "emergency", 1, "First: call 911 right away\nAddress: Sunset Ridge RV Resort — the office will give you the address\nTell them: your lot number\nThen: let the office know", "🚑", "Emergency: call 911 · 24/7"], [78, 22, "Shuffleboard", "shuffle", "dark", 0.8, "Courts: free for residents and guests\nGear: ask at the clubhouse", "", "Daily 8am–9pm"]];
+const ICON={
+ house:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+ dumbbell:'<path d="M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12"/>',
+ pool:'<path d="M2 18c2 0 2-1.5 4-1.5S8 18 10 18s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5"/><path d="M8 15V5a2 2 0 0 1 4 0M16 15V5a2 2 0 0 0-4 0M8 9h8M8 12h8"/>',
+ wheelchair:'<circle cx="12" cy="4" r="1.6" fill="currentColor"/><path d="M11 7v6h5l2 5"/><path d="M11 10h4"/><path d="M8.5 11.5A5 5 0 1 0 15 18"/>',
+ flame:'<path d="M12 3c1 4 5 5.5 5 10a5 5 0 0 1-10 0c0-2.5 1.5-4 2.5-5 .3 1.6 1 2.5 2 3 .5-2.5-.5-5 .5-8z"/>',
+ laundry:'<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13" r="4.5"/><path d="M7 6.5h.01M10 6.5h.01"/>',
+ tank:'<path d="M9 3h6M10 3v2M14 3v2"/><rect x="6" y="5" width="12" height="16" rx="5"/><path d="M13.6 10.2c-.4-.5-1-.7-1.6-.7-1 0-1.7.5-1.7 1.3 0 1.8 3.5 1 3.5 2.9 0 .8-.8 1.4-1.8 1.4-.7 0-1.3-.3-1.7-.8M12 8.6v.9M12 15.1v.9"/>',
+ pin:'<path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2"/>',
+ road:'<path d="M5 21l4-18M19 21l-4-18M12 4v3M12 10v3M12 16v3"/>',
+ shuffle:'<path d="M4 20L18 6"/><path d="M16 4l4 4"/><circle cx="6.5" cy="17.5" r="2.5"/>',
+ horseshoe:'<path d="M7 4v8a5 5 0 0 0 10 0V4"/><path d="M5 4h4M15 4h4"/>',
+ fish:'<path d="M3 12c3-4 8-5 12-3l4-3v12l-4-3c-4 2-9 1-12-3z"/><circle cx="8" cy="11" r=".9" fill="currentColor"/>'
+};
+let PO=[],selPoi=-1;
+// Nov 21 (per Mely): icon sizes are set for the map fully zoomed out (REFW wide) and then grow/shrink
+// together with the map, so everything stays in proportion at every zoom and on every screen.
+const REFW=352;
+function drawPois(){const z0=REFW/980,KZ=map.clientWidth/REFW;const base=Math.max(7,Math.min(12,10*z0*1.6));
+ PO.forEach((p,i)=>{const [x,y,l,ic,st]=p,sc=p[5]||1,fs=base*sc;const el=document.createElement("div");
+  const bg=st=="ada"?"#1d5fbf":st=="propane"?"#f59e0b":st=="road"?"rgba(55,65,81,.92)":st=="emergency"?"#dc2626":"#0f2540",fg=st=="propane"?"#0f2540":"#fff";
+  const on=editing&&i==selPoi,em=!!p[7]&&!l;
+  // Nov 21: outer size kept exactly as Mely set it; padding/border/glyph are proportional so small icons stay crisp
+  const S=(l?fs:fs+3)+2*(l?(fs<10?2:3):3)+3,bw=Math.max(.4,S*.07),pv=S*.13,inn=Math.max(1,S-2*pv-2*bw),ph=S*.34;const es=Math.round(Math.max(6,Math.min(60,REFW*0.028*sc)));
+  el.style.cssText=em?`position:absolute;left:${x}%;top:${y}%;transform:translate(-50%,-50%);width:${es}px;height:${es}px;display:flex;align-items:center;justify-content:center;line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45));outline:${on?"2px solid #f59e0b":"none"};outline-offset:2px;border-radius:6px;`:`position:absolute;left:${x}%;top:${y}%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:${S*.14}px;padding:${pv}px ${l?ph:pv}px ${pv}px ${l?pv*1.4:pv}px;border-radius:${st=="ada"?S*.22+"px":"999px"};background:${bg};color:${fg};font:700 ${st=="road"?fs:inn*.92}px/1 Inter,system-ui,sans-serif;white-space:nowrap;box-shadow:${on?"0 0 0 3px #f59e0b,":""}0 ${S*.06}px ${S*.25}px rgba(0,0,0,.35);border:${bw}px solid rgba(255,255,255,.9);`;if(st=="road")el.style.cssText+=`background:transparent;border:0;box-shadow:${on?"0 0 0 2px #f59e0b":"none"};padding:0;color:#fff;font-weight:600;letter-spacing:.02em;text-shadow:0 1px 2px rgba(0,0,0,.9),0 0 4px rgba(0,0,0,.6);`;
+  el.style.transform=`translate(-50%,-50%) scale(${KZ})`;el.style.transformOrigin="50% 50%";el.style.cssText+=`pointer-events:${editing||p[6]||p[8]||p[9]?"auto":"none"};cursor:${editing?"move":(p[6]||p[8]||p[9])?"pointer":"default"};touch-action:none;z-index:4`;
+  el.innerHTML=st=="road"?`<span>${l}</span>`:(p[7]?(/\.(png|jpe?g|webp|svg)$/i.test(p[7])?`<img src="${p[7]}" alt="" style="width:${em?es:inn}px;height:${em?es:inn}px;object-fit:contain;display:block" draggable="false">`:`<span style="font-size:${em?Math.round(es*0.86):inn}px;line-height:1;display:block">${p[7]}</span>`):`<svg width="${inn}" height="${inn}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[ic]||ICON.pin}</svg>`)+`${l?`<span>${l}</span>`:""}`;
+  if(!l&&!p[6]&&!p[8])el.title=ic=="wheelchair"?"Accessible parking":ic=="dumbbell"?"Fitness center":ic=="tank"?"Propane for sale":ic=="pool"?"Pool":"";
+  el.onpointerdown=e=>{if(!editing){if(p[6]||p[8]||p[9]){e.stopPropagation();showPoi(p)}return}e.preventDefault();e.stopPropagation();select(-1);selPoi=i;poiPanel();
+   const [sx,sy]=pos(e),ox=p[0],oy=p[1];window.onpointermove=ev=>{const [x2,y2]=pos(ev);p[0]=Math.round((ox+x2-sx)*100)/100;p[1]=Math.round((oy+y2-sy)*100)/100;render()};
+   window.onpointerup=()=>{window.onpointermove=null};render()};
+  // Nov 20 (per Mely): hover an icon and its info shows — no click needed
+  el.onpointerenter=e=>{if(editing||e.pointerType!=="mouse"||!(p[6]||p[8]))return;poiHov(p,e)};el.onpointermove=e=>{if(!editing&&e.pointerType==="mouse"&&hov.style.display=="block")moveHov(e)};el.onpointerleave=()=>hideHov();
+  over.appendChild(el)})}
+function poiHov(p,e){const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+ const title=p[2]||({wheelchair:"Accessible parking",dumbbell:"Fitness center",tank:"Propane for sale",pool:"Pool",ambulance:"Emergency — call 911"})[p[3]]||"";
+ const red=p[3]=="ambulance";
+ hov.innerHTML=`<div class="pv" style="padding:10px 12px"><div style="display:flex;align-items:center;gap:6px"><span style="font-size:18px;line-height:1">${p[7]?(/\.(png|jpe?g|webp|svg)$/i.test(p[7])?`<img src="${esc(p[7])}" alt="" style="width:20px;height:20px;object-fit:contain;vertical-align:middle">`:esc(p[7])):""}</span><b style="color:${red?"#dc2626":"#0f2540"}">${esc(title)}</b></div>${p[8]?`<div style="margin-top:6px;display:inline-block;background:${red?"#fee2e2":"#e8f6f9"};color:${red?"#b91c1c":"#0e7a8c"};font-weight:700;font-size:11px;padding:2px 8px;border-radius:999px">${esc(p[8])}</div>`:""}<div style="color:#475569;font-size:12px">${noteHTML(p[6],esc)}</div>${p[9]?`<div style="margin-top:6px;font-size:11px;color:#0e7a8c;font-weight:600">Click to order</div>`:""}</div>`;
+ hov.style.width="250px";hov.style.display="block";moveHov(e)}
+function poiPanel(){const p=PO[selPoi];document.getElementById("poiText").value=p?p[2]:"";document.getElementById("poiEmoji").value=p?(p[7]||""):"";document.getElementById("poiInfo").value=p?(p[6]||""):"";document.getElementById("poiHours").value=p?(p[8]||""):"";document.getElementById("poiPrice").value=p?(p[9]||""):"";if(p)document.getElementById("poiIcon").value=p[3]}
+const needPoi=()=>{if(selPoi<0||!PO[selPoi]){say("Tap a label on the map first");return true}return false};
+document.getElementById("poiText").oninput=e=>{if(needPoi())return;PO[selPoi][2]=e.target.value;render()};
+document.getElementById("poiEmoji").oninput=e=>{if(needPoi())return;PO[selPoi][7]=e.target.value.trim().slice(0,8);render()};
+document.getElementById("poiPrice").oninput=e=>{if(needPoi())return;PO[selPoi][9]=e.target.value.replace(/[^0-9.|]/g,"");render()};
+document.getElementById("poiHours").oninput=e=>{if(needPoi())return;PO[selPoi][8]=e.target.value;render()};
+document.getElementById("poiInfo").oninput=e=>{if(needPoi())return;PO[selPoi][6]=e.target.value;render()};
+const pop=document.createElement("div");pop.style.cssText="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:60;display:none;width:280px;max-width:86vw;max-height:80vh;overflow:auto;background:#fff;border-radius:14px;box-shadow:0 10px 30px rgba(15,37,64,.28);padding:12px 14px 12px;font:13px/1.45 Inter,system-ui,sans-serif;color:#1e293b";document.body.appendChild(pop);
+function hidePop(){pop.style.display="none"}
+document.addEventListener("pointerdown",e=>{if(pop.style.display=="block"&&!pop.contains(e.target))hidePop()},true);
+const noteHTML=(txt,esc)=>{const L=String(txt||"").split(/\n+/).map(x=>x.trim()).filter(Boolean);if(!L.length)return"";
+ return `<ul style="list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px">${L.map(l=>{const k=l.indexOf(": ");return `<li style="line-height:1.4;position:relative;padding-left:14px"><span style="position:absolute;left:0;top:0;color:#0e7a8c;font-weight:900">•</span>${k>0&&k<28?`<b style="color:#0f2540;font-size:inherit;font-weight:700">${esc(l.slice(0,k))}:</b> ${esc(l.slice(k+2))}`:esc(l)}</li>`}).join("")}</ul>`};
+function showPoi(p){const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+ const title=p[2]||({wheelchair:"Accessible parking",dumbbell:"Fitness center",tank:"Propane for sale",pool:"Pool",ambulance:"Emergency — call 911"})[p[3]]||"";
+ const lines=String(p[6]||"").split(/\n+/).map(s=>s.trim()).filter(Boolean);
+ pop.innerHTML=`<button aria-label="Close" style="position:absolute;top:8px;right:8px;width:26px;height:26px;border:0;border-radius:999px;background:#f1f5f9;color:#475569;font-size:15px;cursor:pointer">×</button>
+ <div style="display:flex;align-items:center;gap:8px;padding-right:26px"><span style="font-size:22px;line-height:1">${p[7]?esc(p[7]):""}</span><b style="font-size:15px;color:#0f2540">${esc(title)}</b></div>
+ ${p[8]?`<div style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:#e8f6f9;color:#0e7a8c;font-weight:700;font-size:12px;padding:4px 9px;border-radius:999px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>${esc(p[8])}</div>`:""}
+ ${p[9]?`<div style="margin-top:10px;border-top:1px solid #e2e8f0;padding-top:10px">
+ <div style="font-weight:700;color:#0f2540;margin-bottom:6px">Choose your refill</div>
+ <div id="prods" style="display:grid;gap:6px"></div>
+ <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px"><span id="qlab" style="font-weight:600">Tanks</span><span style="display:flex;align-items:center;gap:6px"><button data-q="-1" aria-label="Less" style="width:28px;height:28px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;font-size:16px;cursor:pointer">−</button><b id="pq" style="min-width:24px;text-align:center">1</b><button data-q="1" aria-label="More" style="width:28px;height:28px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;font-size:16px;cursor:pointer">+</button></span></div>
+ <button id="paynow" style="margin-top:10px;width:100%;border:0;border-radius:10px;background:#16a34a;color:#fff;font:700 14px Inter,system-ui,sans-serif;padding:10px;cursor:pointer">Pay now · <span id="pt2"></span></button>
+ <div style="margin-top:6px;font-size:11.5px;color:#64748b;text-align:center">Pay online, get a QR code, show it at the propane station.</div>
+ <div id="paymsg" style="display:none;margin-top:8px;font-size:12px;color:#0e7a8c;background:#e8f6f9;border-radius:8px;padding:8px">Demo: on your live map the guest pays by card through MelyOS, gets a receipt and a QR code, and shows it at the propane station.</div></div>`:""}
+ ${noteHTML(p[6],esc)}`;
+ pop.querySelector("button").onclick=hidePop;
+ if(p[9]){const pr=String(p[9]).split("|").map(Number);
+  const PRODS=[["20 LB tank",pr[0],"tank"],["30 LB tank",pr[1],"tank"],["40 LB tank",pr[2],"tank"],["Motor home fill-up",pr[3],"gal"]].filter(x=>x[1]>0);
+  let sel=0,q=1;const box=pop.querySelector("#prods");
+  const draw=()=>{box.innerHTML=PRODS.map((x,i)=>`<button data-i="${i}" style="display:flex;justify-content:space-between;align-items:center;width:100%;padding:8px 10px;border-radius:10px;border:${i==sel?"2px solid #0e7a8c":"1px solid #cbd5e1"};background:${i==sel?"#e8f6f9":"#fff"};font:600 13px Inter,system-ui,sans-serif;color:#0f2540;cursor:pointer"><span>${x[0]}</span><span>$${x[1].toFixed(2)}${x[2]=="gal"?"/gal":""}</span></button>`).join("");
+   box.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{sel=Number(b.dataset.i);q=PRODS[sel][2]=="gal"?10:1;draw()});
+   pop.querySelector("#qlab").textContent=PRODS[sel][2]=="gal"?"Gallons":"Tanks";pop.querySelector("#pq").textContent=q;pop.querySelector("#pt2").textContent="$"+(q*PRODS[sel][1]).toFixed(2)};
+  pop.querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>{q=Math.min(PRODS[sel][2]=="gal"?100:10,Math.max(1,q+Number(b.dataset.q)));draw()});
+  pop.querySelector("#paynow").onclick=()=>{pop.querySelector("#paymsg").style.display="block"};draw()}
+ pop.style.display="block"}
+document.getElementById("poiSm").onclick=()=>{if(needPoi())return;PO[selPoi][5]=Math.max(.2,Math.round(((PO[selPoi][5]||1)-.1)*10)/10);render()};
+document.getElementById("poiLg").onclick=()=>{if(needPoi())return;PO[selPoi][5]=Math.min(3,Math.round(((PO[selPoi][5]||1)+.1)*10)/10);render()};
+document.getElementById("poiDel").onclick=()=>{if(needPoi())return;PO.splice(selPoi,1);selPoi=-1;poiPanel();render();say("Label deleted")};
+document.getElementById("poiIcon").onchange=e=>{if(selPoi<0||!PO[selPoi])return;const v=e.target.value;PO[selPoi][3]=v;PO[selPoi][4]=v=="wheelchair"?"ada":(v=="flame"||v=="tank")?"propane":"dark";render()};
+document.getElementById("poiAdd").onclick=()=>{const v=document.getElementById("poiIcon").value;const t=document.getElementById("poiText").value.trim()||"New label";
+ PO.push([50,45,v=="wheelchair"?"":t,v,v=="wheelchair"?"ada":(v=="flame"||v=="tank")?"propane":"dark",1,document.getElementById("poiInfo").value||"",document.getElementById("poiEmoji").value.trim()||"",document.getElementById("poiHours").value||""]);selPoi=PO.length-1;poiPanel();render();say("Label added in the middle — drag it to its place")};
+function render(){document.body.classList.toggle('haslot',typeof sel!=='undefined'&&sel>=0);document.body.classList.toggle('haspoi',typeof selPoi!=='undefined'&&selPoi>=0);svg.innerHTML='<defs><pattern id="mst" patternUnits="userSpaceOnUse" width="1.6" height="1.6" patternTransform="rotate(45)"><rect width="1.6" height="1.6" fill="#1f2937" fill-opacity=".85"/><rect width=".8" height="1.6" fill="#facc15" fill-opacity="1"/></pattern></defs>';over.innerHTML="";const W=map.clientWidth;
+ SH.forEach((pts,i)=>{let col=COLOR[ST[i]],srch=typeof RANGE!=="undefined"&&!!RANGE&&filt=="all",pk=srch&&PICKED>=0&&okLot(PICKED),hit=srch&&okLot(i)&&(!pk||i==PICKED),dim=(filt!="all"&&(ST[i]!=filt||(RANGE&&ST[i]!="maint"&&ST[i]!="occ"&&!freeFor(i,RANGE.a,RANGE.d))))||(srch&&!hit);   // a status chip shows that status in its own color (free for the dates when dates are set)
+  const pg=document.createElementNS("http://www.w3.org/2000/svg","polygon");pg.setAttribute("points",pts.map(p=>p.join(",")).join(" "));
+  if(GUEST||filt!="all"){const R=typeof RANGE!=="undefined"&&RANGE;
+   // Nov 20 (per Mely): All = every lot in its real color; Available = only green; For rent = only violet; Maintenance = only those.
+   // With dates: only the lots free for those dates (green / violet), the rest gray.
+   if(R&&(filt=="all"||filt=="free"||filt=="rent")){const catOk=filt=="all"||(filt=="rent"?ST[i]=="rent":ST[i]!="rent"),
+     okG=freeFor(i,R.a,R.d)&&(filt=="all"?fitsNeed(i):(ST[i]=="rent"||fitsRig(i))),
+     pkOk=PICKED>=0&&freeFor(PICKED,R.a,R.d);srch=true;hit=okG&&catOk&&(!pkOk||i==PICKED);dim=!hit}
+   else if(filt!="all"){srch=true;hit=ST[i]==filt;dim=!hit;if(hit)col=COLOR[ST[i]]}
+   else{srch=false;hit=false;dim=false}}
+  const cc=hit?(srch&&typeof RANGE!=="undefined"&&RANGE&&(filt=="all"||filt=="free"||filt=="rent")?(ST[i]=="rent"?COLOR.rent:COLOR.free):COLOR[ST[i]]):srch?"#6b7280":col;pg.setAttribute("fill",srch&&!hit?"#9ca3afcc":cc+(dim?"10":hit?"88":"55"));pg.setAttribute("stroke",i==sel?"#fff":cc);if(ST[i]=="maint"&&!dim&&!(srch&&!hit)){pg.setAttribute("fill","url(#mst)");pg.setAttribute("stroke",i==sel?"#fff":"#facc15")}   // Nov 20 (per Mely): maintenance = construction stripes, never plain gray
+  pg.setAttribute("stroke-width",i==sel?2.6:1.6);
+  pg.setAttribute("vector-effect","non-scaling-stroke");pg.setAttribute("class","lp"+(!editing&&!dim&&i!=sel&&(hit||(!srch&&(ST[i]=="free"||ST[i]=="rent")))?" blink":""));pg.setAttribute("stroke-linejoin","round");
+  pg.style.cssText=`pointer-events:auto;cursor:${editing?"move":"pointer"};opacity:${srch?1:dim?.35:1};filter:${i==sel||(srch&&!hit)?"none":`drop-shadow(0 0 1.5px ${cc})`}`;
+  pg.onpointerdown=e=>{HINTDONE=true;if(!editing&&e.pointerType==="mouse"&&e.button===0){PEND=i;return}downShape(e,i)};svg.appendChild(pg);
+  pg.onpointerenter=e=>{if(editing||e.pointerType!=="mouse")return;showHov(i,e)};pg.onpointermove=e=>{if(!editing&&e.pointerType==="mouse")moveHov(e)};pg.onpointerleave=()=>hideHov();
+  const c=cen(pts),lb=label(pts,NUM[i],13);if(lb){const sp=document.createElement("span");sp.textContent=NUM[i];
+   sp.style.cssText=`position:absolute;left:${c[0]}%;top:${c[1]}%;transform:translate(-50%,-50%) rotate(${lb.ang}deg);font-size:${lb.size}px;line-height:1;font-weight:700;color:#fff;white-space:nowrap;text-shadow:0 0 2px #000,0 1px 2px #000;opacity:${srch?1:dim?.35:1}`;over.appendChild(sp)}});
+ drawPois();if(editing&&sel>=0)handles();bar();
+ if(!editing&&!HINTDONE&&sel<0){let k=ST.findIndex((s,j)=>s=="free"&&NUM[j]=="91");if(k<0)k=ST.findIndex((s,j)=>s=="free"&&cen(SH[j])[0]>35&&cen(SH[j])[0]<65&&cen(SH[j])[1]>25);if(k<0)k=ST.findIndex(s=>s=="free");if(k<0)k=0;const c=cen(SH[k]);
+  const h=document.createElement("span");h.id="hand";h.innerHTML='<svg width="30" height="34" viewBox="0 0 30 34"><path d="M10.5 3.2c0-1.3 1-2.2 2.2-2.2s2.2.9 2.2 2.2v9.3l.1-2.4c0-1.2 1-2.1 2.2-2.1s2.1.9 2.1 2.1v2.6c.1-1.1 1-2 2.1-2s2.2.9 2.2 2.1v2.3c.1-1.1 1-1.9 2.1-1.9 1.2 0 2.1.9 2.1 2.1v7.6c0 5.3-3.6 9.1-9 9.1h-1.7c-3 0-5.1-1.2-6.9-3.6l-6-8.1c-.7-1-.5-2.4.5-3.1s2.3-.6 3.1.3l2.6 2.8V3.2z" fill="#fff" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/><path d="M14.9 14.5v6M19.1 15v5.5M23.3 15.8v4.7" stroke="#111" stroke-width="1.3" stroke-linecap="round"/></svg>';h.style.left=c[0]+"%";h.style.top=c[1]+"%";over.appendChild(h);
+  const tp=document.createElement("span");tp.id="handtip";tp.textContent=L=="es"?"Toca un lote":"Tap a lot";tp.style.left=c[0]+"%";tp.style.top=c[1]+"%";over.appendChild(tp)}}
+let HINTDONE=false;
+function handles(){const pts=SH[sel],hs=Math.max(9,Math.min(14,10*z));
+ const mk=(x,y,css,fn,title)=>{const h=document.createElement("span");h.title=title||"";h.style.cssText=`position:absolute;left:${x}%;top:${y}%;transform:translate(-50%,-50%);pointer-events:auto;touch-action:none;z-index:5;${css}`;h.onpointerdown=fn;over.appendChild(h)};
+ pts.forEach((p,k)=>{const q=pts[(k+1)%pts.length];
+  mk((p[0]+q[0])/2,(p[1]+q[1])/2,`width:${hs+1}px;height:${hs+1}px;transform:translate(-50%,-50%) rotate(45deg);background:#f59e0b;border:2px solid #0f2540;border-radius:2px;cursor:move`,e=>downEdge(e,k),"Push this side")});
+ pts.forEach((p,k)=>mk(p[0],p[1],`width:${hs}px;height:${hs}px;background:${vi==k?"#0f2540":"#fff"};border:2px solid #0f2540;border-radius:2px;cursor:pointer`,e=>downVertex(e,k),"Move this corner"));
+ const c=cen(pts),minY=Math.min(...pts.map(p=>p[1]));
+ mk(c[0],minY-1.6,`width:${hs+3}px;height:${hs+3}px;border-radius:999px;background:#f59e0b;border:2px solid #0f2540;cursor:grab`,e=>downRotate(e),"Rotate")}
+const pos=e=>{const r=map.getBoundingClientRect();return[(e.clientX-r.left)/r.width*100,(e.clientY-r.top)/r.height*100]};
+let drag=null;
+function start(e,d){e.preventDefault();e.stopPropagation();drag=d;window.onpointermove=moveDrag;window.onpointerup=()=>{drag=null;window.onpointermove=null}}
+function downShape(e,i){if(!editing){open(i);return}select(i);vi=-1;const[sx,sy]=pos(e);start(e,{k:"move",sx,sy,pts:SH[i].map(p=>p.slice())});render()}
+function downVertex(e,k){vi=k;start(e,{k:"vertex",i:k});render()}
+function downEdge(e,k){const[sx,sy]=pos(e);start(e,{k:"edge",i:k,sx,sy,pts:SH[sel].map(p=>p.slice())})}
+function downRotate(e){start(e,{k:"rot",pts:SH[sel].map(p=>p.slice()),c:cen(SH[sel])})}
+function moveDrag(e){if(!drag||sel<0)return;const[x,y]=pos(e);const P=SH[sel];
+ if(drag.k=="move"){const dx=x-drag.sx,dy=y-drag.sy;SH[sel]=drag.pts.map(p=>[r2(p[0]+dx),r2(p[1]+dy)])}
+ if(drag.k=="vertex"){P[drag.i]=[r2(x),r2(y)]}
+ if(drag.k=="edge"){const a=drag.pts[drag.i],b=drag.pts[(drag.i+1)%drag.pts.length];
+  let nx=-(b[1]-a[1])*AY,ny=(b[0]-a[0])*AX;const nl=Math.hypot(nx,ny)||1;nx/=nl;ny/=nl;
+  const dist=((x-drag.sx)*AX)*nx+((y-drag.sy)*AY)*ny;const np=drag.pts.map(p=>p.slice());
+  [drag.i,(drag.i+1)%np.length].forEach(j=>{np[j]=[r2(drag.pts[j][0]+nx*dist/AX),r2(drag.pts[j][1]+ny*dist/AY)]});SH[sel]=np}
+ if(drag.k=="rot"){const c=drag.c,ang=Math.atan2((y-c[1])*AY,(x-c[0])*AX);if(drag.a0==null){drag.a0=ang;return}
+  let deg=(ang-drag.a0)*180/Math.PI;if(!e.shiftKey)deg=Math.round(deg/5)*5;const a=deg*Math.PI/180,cs=Math.cos(a),sn=Math.sin(a);
+  SH[sel]=drag.pts.map(p=>{const dx=(p[0]-c[0])*AX,dy=(p[1]-c[1])*AY;return[r2(c[0]+(dx*cs-dy*sn)/AX),r2(c[1]+(dx*sn+dy*cs)/AY)]})}
+ render()}
+function select(i){sel=i;if(i>=0)selPoi=-1;if(i<0)vi=-1;document.getElementById("pnum").value=i>=0?NUM[i]:"";document.getElementById("pt").firstChild.textContent=i>=0?("Lot "+NUM[i]+" "):"Edit mode "}
+function say(t){const m=document.getElementById("msg");m.textContent=t;setTimeout(()=>{if(m.textContent==t)m.textContent=""},2600)}
+function bar(){const c={all:SH.length,free:0,occ:0,res:0,rent:0,maint:0};ST.forEach(x=>c[x]=(c[x]||0)+1);
+ if(GUEST){const R=typeof RANGE!=="undefined"&&RANGE;c.free=0;c.rent=0;SH.forEach((_,i)=>{const g=gcat(i)=="na"&&!R?null:ST[i]=="rent"?"rent":"free";if(ST[i]=="maint")return;if(R?freeFor(i,R.a,R.d):g)c[ST[i]=="rent"?"rent":"free"]++});
+  if(!["all","free","occ","res","rent","maint"].includes(filt))filt="all";c.occ=ST.filter(x=>x=="occ").length;c.res=ST.filter(x=>x=="res").length;c.maint=ST.filter(x=>x=="maint").length;
+  document.getElementById("bar").innerHTML=["all","free","occ","res","rent","maint"].filter(k=>k=="all"||c[k]).map(k=>`<button class="chip ${filt==k?"on":""}" data-k="${k}">${k!="all"?`<span class="dot ${k}"></span>`:""}${k=="free"?(R?(L=="es"?"Disponible":"Available"):(L=="es"?"Disponible hoy":"Available today")):k=="rent"&&!R?(L=="es"?"En renta hoy":"For rent today"):T[L][k]}${k=="all"?"":` · ${c[k]}`}</button>`).join("");
+  document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{filt=b.dataset.k;render()});return}
+ document.getElementById("bar").innerHTML=["all","free","occ","res","rent","maint"].filter(k=>k=="all"||c[k]).map(k=>`<button class="chip ${filt==k?"on":""}" data-k="${k}">${k!="all"?`<span class="dot ${k}"></span>`:""}${T[L][k]} · ${c[k]}</button>`).join("");
+ document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{filt=b.dataset.k;render()})}
+const need=()=>{if(sel<0){say("Tap a lot first");return true}return false};
+document.querySelectorAll("[data-st]").forEach(b=>b.onclick=()=>{if(need())return;ST[sel]=b.dataset.st;render()});
+document.getElementById("pnum").onchange=e=>{if(sel<0)return;NUM[sel]=e.target.value.trim()||NUM[sel];render()};
+document.getElementById("next").onclick=()=>{if(need())return;const p=SH[sel];const a=p[0],b=p[1],d=p[3];
+ // place the next lot beside this one, along its short side
+ const s1=Math.hypot((b[0]-a[0])*AX,(b[1]-a[1])*AY),s2=Math.hypot((d[0]-a[0])*AX,(d[1]-a[1])*AY);
+ const v=s1<=s2?[b[0]-a[0],b[1]-a[1]]:[d[0]-a[0],d[1]-a[1]];SH.push(p.map(q=>[r2(q[0]+v[0]),r2(q[1]+v[1])]));ST.push("free");
+ NUM.push(String(isNaN(+NUM[sel])?SH.length:+NUM[sel]+1));select(SH.length-1);render();say("Placed beside it — press again for the next one")};
+document.getElementById("add").onclick=()=>{const ref=sel>=0?SH[sel]:rectPts([50,40,4,2,0]);const c=cen(ref);SH.push(ref.map(q=>[r2(q[0]-c[0]+50),r2(q[1]-c[1]+40)]));ST.push("free");NUM.push(String(SH.length));select(SH.length-1);render();say("New lot in the middle — drag it to its place")};
+document.getElementById("dup").onclick=()=>{if(need())return;const h=Math.max(...SH[sel].map(p=>p[1]))-Math.min(...SH[sel].map(p=>p[1]));SH.push(SH[sel].map(q=>[q[0],r2(q[1]+h*1.1)]));ST.push(ST[sel]);NUM.push(String(SH.length));select(SH.length-1);render()};
+document.getElementById("delb").onclick=()=>{if(need())return;SH.splice(sel,1);ST.splice(sel,1);NUM.splice(sel,1);select(-1);render()};
+document.getElementById("addc").onclick=()=>{if(need())return;const p=SH[sel],k=vi>=0?vi:0,q=p[(k+1)%p.length];p.splice(k+1,0,[r2((p[k][0]+q[0])/2),r2((p[k][1]+q[1])/2)]);vi=k+1;render()};
+document.getElementById("remc").onclick=()=>{if(need())return;if(vi<0)return say("Tap a white corner first");if(SH[sel].length<=3)return say("A lot needs at least 3 corners");SH[sel].splice(vi,1);vi=-1;render()};
+document.getElementById("save").onclick=()=>{if(true){document.getElementById("copy").click();return}try{localStorage.setItem("sunsetshapes5",JSON.stringify({sh:SH,st:ST,stv:2,num:NUM,po:PO}));say("Saved on this device ✓")}catch(e){say("Could not save on this device")}};
+document.getElementById("copy").onclick=async()=>{const t=JSON.stringify({sh:SH,st:ST,num:NUM,po:PO});try{await navigator.clipboard.writeText(t);say("✓ Copied — paste it to Claude in the chat (Cmd + V)")}catch(e){say("Copy not allowed here")}};
+document.getElementById("reset").onclick=()=>{try{localStorage.removeItem("sunsetshapes5")}catch(e){}select(-1);load();render();say("Back to the original layout")};
+document.getElementById("edit").onclick=()=>{editing=!editing;document.body.classList.toggle("editing",editing);const b=document.getElementById("edit");b.classList.toggle("on",editing);b.textContent=editing?"✓ Done":"✎ Edit";document.getElementById("sheet").classList.remove("open");if(!editing)select(-1);render();setTimeout(fitNow,30)};
+// Nov 20 (per Mely): lot popup like Aloha's map — guests see a calendar: open days green, taken days gray.
+const DAY=864e5,today=new Date(new Date().toDateString());
+function blocks(i){const st=ST[i];let a=(i*37)%23;const r=[];
+ if(st=="occ")r.push([0,40+(i*13)%120]);
+ if(st=="res")r.push([6+a,6+a+7+(i%5)*3]);
+ if(st=="rent")r.push([2+a%9,6+a%9],[20+a,27+a]);
+ if(st=="free"&&i%4==0)r.push([12+a,17+a]);
+ const out=r.map(([x,y])=>[new Date(+today+x*DAY),new Date(+today+y*DAY)]);
+ // Nov 20 (per Mely): fixed booked nights for the demo (last night inclusive)
+ (FIXED[NUM[i]]||[]).forEach(([a,b])=>out.push([new Date(a+"T00:00:00"),new Date(+new Date(b+"T00:00:00")+DAY)]));
+ return out}
+const FIXED={"91":[["2026-11-27","2026-11-29"]]};
+function isBlocked(i,d){if(ST[i]=="maint"&&d<maintUntil(i))return true;return d<today||blocks(i).some(([a,b])=>d>=a&&d<b)}
+let calM=null,arr=null,dep=null;
+function open(i){PICKED=i;HINTDONE=true;select(i);render();{const sh=document.getElementById("sheet"),h=document.getElementById("scrollhint");sh.scrollTop=0;h.classList.remove("gone");document.getElementById("sht").textContent=L=="es"?"Baje para ver el calendario":"Scroll down for the calendar";sh.onscroll=()=>{if(sh.scrollTop>60)h.classList.add("gone")}}arr=dep=null;calM=new Date(today.getFullYear(),today.getMonth(),1);if(typeof RANGE!=="undefined"&&RANGE){arr=RANGE.a;dep=RANGE.d;calM=new Date(arr.getFullYear(),arr.getMonth(),1)}drawLot(i);document.getElementById("sheet").classList.add("open");setTimeout(()=>{const sh=document.getElementById("sheet");if(sh.scrollHeight<=sh.clientHeight+30)document.getElementById("scrollhint").classList.add("gone")},250)}
+const hov=document.createElement("div");hov.id="hov";document.body.appendChild(hov);
+function showHov(i,e){const t=T[L],st=ST[i],es=L=="es",k=kind(i);const col=COLOR[st];
+ const price=st=="rent"?(es?"$1,450 / mes · $95 por noche":"$1,450 / month · $95 / night"):({home:"$750",pm:"$700",rv:"$650"}[k]+(es?" / mes":" / month"));
+ hov.style.width="230px";hov.innerHTML=`<img src="${photoOf(i)}" alt=""><div><b>${t.lot} ${NUM[i]}</b><i style="background:${col}">${t[st]}</i><br><span style="color:#475569">${st=="maint"?`<b style="color:#92400e;font-size:inherit">🛠 ${es?"Disponible desde":"Available from"} ${maintUntil(i).toLocaleDateString(es?"es-US":"en-US",{month:"short",day:"numeric"})}</b>`:price}</span><div style="padding:0;margin-top:3px;font-size:11.5px;color:#065f46;font-weight:600">📍 ${where(i).short}</div><div class="hf">${(()=>{const f=info(i);return [f.amp,f.size,...(f.sleeps?[f.sleeps]:[])].map(x=>`<span>${x}</span>`).join("")})()}</div>${(()=>{const a=nearby(i,1)[0];return a?`<div style="margin-top:6px;font-size:11.5px;color:#64748b">${a.e} ${es?"Lo más cerca":"Closest"}: <b style="font-weight:600;font-size:inherit;color:#0f2540">${a.t}</b> · ${walk(a.m)}</div>`:""})()}</div>`;hov.style.display="block";moveHov(e)}
+function moveHov(e){// Nov 20 (per Mely): the card always stays fully inside the map — never cut off at an edge
+ const W=innerWidth,Hh=innerHeight;if(hov.style.width){const want=parseInt(hov.style.width)||230;hov.style.width=Math.min(want,W-16)+"px"}
+ const w=hov.offsetWidth||230,h=hov.offsetHeight||190;
+ const cx=e.clientX,cy=e.clientY,g=18;let x,y;
+ if(cx+g+w<=W-8){x=cx+g;y=cy-h/2}            // right of the cursor
+ else if(cx-g-w>=8){x=cx-g-w;y=cy-h/2}       // left of the cursor
+ else{x=cx-w/2;y=cy+g+h<=Hh-8?cy+g:cy-g-h}   // no room beside it: centered above / below, never over the lot
+ x=Math.max(8,Math.min(W-w-8,x));y=Math.max(8,Math.min(Hh-h-8,y));
+ hov.style.left=x+"px";hov.style.top=y+"px"}
+function hideHov(){hov.style.display="none"}
+function drawLot(i){hideHov();const t=T[L],k=kind(i),st=ST[i],es=L=="es",inf=info(i);
+ const rate={home:"$750",pm:"$700",rv:"$650"}[k],fits=k=="rv"?(es?"40 pies · 30/50 amp":"40 ft · 30/50 amp"):(es?"No aplica (casa / park model)":"Not an RV site");
+ const col=COLOR[st];
+ const fmt=d=>d.toLocaleDateString(es?"es-US":"en-US",{month:"short",day:"numeric"});
+ let nxt=null;for(let d=new Date(today);d<today.getTime()+400*DAY;d=new Date(+d+DAY))if(!isBlocked(i,d)){nxt=d;break}
+ let cal="";
+ {const y=calM.getFullYear(),m=calM.getMonth(),first=new Date(y,m,1).getDay(),n=new Date(y,m+1,0).getDate();
+  const wd=(es?["D","L","M","M","J","V","S"]:["S","M","T","W","T","F","S"]).map(x=>`<span class="cw">${x}</span>`).join("");
+  let cells="";for(let s=0;s<first;s++)cells+="<span></span>";
+  for(let d=1;d<=n;d++){const dt=new Date(y,m,d),b=isBlocked(i,dt),sel=(arr&&+dt==+arr)||(dep&&+dt==+dep),inr=arr&&dep&&dt>arr&&dt<dep;
+   cells+=`<button class="cd ${b?"cb":"ca"}${sel?" cs":""}${inr?" ci":""}" ${b?"disabled":""} data-d="${+dt}">${d}</button>`}
+  cal=`<div class="cal"><div class="ch"><button class="cn" data-m="-1" aria-label="Previous month">‹</button><b>${calM.toLocaleDateString(es?"es-US":"en-US",{month:"long",year:"numeric"})}</b><button class="cn" data-m="1" aria-label="Next month">›</button></div>
+   <div class="cg">${wd}${cells}</div><div class="cl"><span><i class="ca"></i>${es?"Disponible":"Available"}</span><span><i class="cb"></i>${es?"No disponible":"Not available"}</span></div></div>
+   ${nxt?`<div class="nx"><span>${es?"Próxima fecha disponible":"Next available date"}: <b>${fmt(nxt)}</b></span><button id="usen">${es?"Usar esta fecha":"Use this date"}</button></div>`:""}
+   <div class="rows"><div>${es?"Llegada":"Arrival"}<b>${arr?fmt(arr):"—"}</b></div><div>${es?"Salida":"Departure"}<b>${dep?fmt(dep):"—"}</b></div></div>`}
+ const ok=arr&&dep;
+ const okD=arr&&dep&&freeFor(i,arr,dep),stTxt=okD?(es?"Libre para sus fechas":"Free for your dates"):st=="maint"?`${t[st]} · ${es?"disponible desde el":"available from"} ${maintUntil(i).toLocaleDateString(es?"es-US":"en-US",{month:"short",day:"numeric"})}`:t[st],stCol=okD?(st=="rent"?"#8b5cf6":"#16a34a"):col;
+ document.getElementById("sc").innerHTML=`<img class="lph" src="${photoOf(i)}" alt="${t.lot} ${NUM[i]}"><h2>${t.lot} ${NUM[i]}<span class="badge" style="background:${stCol}">${stTxt}</span></h2>
+ ${(()=>{const w=where(i);return `<div class="where"><div class="wt">📍 ${w.short}</div><div class="wd">${w.long}</div></div>`})()}
+ ${st=="maint"?`<p class="mnt">🛠 ${es?`Este lote está en mantenimiento. Estará disponible desde el <b>${fmt(maintUntil(i))}</b>.`:`This site is under maintenance. It will be available from <b>${fmt(maintUntil(i))}</b>.`}</p>`:""}
+ <div class="rows"><div>${t.type}<b>${st=="rent"?(es?"Park model en renta":"Park model rental"):t[k]}</b></div><div>${t.rate}<b>${st=="rent"?"$1,450":rate}</b></div>${st=="rent"?`<div>${es?"Semanal / Por noche":"Weekly / Nightly"}<b>$450 · $95</b></div>`:""}<div>${st=="rent"?(es?"Casa":"Home"):(k=="rv"?t.size:(es?"Tamaño del lote":"Lot size"))}<b>${st=="rent"?inf.size:(k=="rv"?inf.size:inf.size)}</b></div><div>${es?"Electricidad":"Power"}<b>${inf.amp}</b></div>${inf.pad?`<div>${es?"Piso":"Pad"}<b>${inf.pad}</b></div>`:""}${inf.sleeps?`<div>${es?"Capacidad":"Capacity"}<b>${inf.sleeps}</b></div>`:""}<div>${es?"Estado":"Status"}<b style="color:${okD?stCol:"inherit"}">${stTxt}</b></div></div>
+ <div class="feat">${inf.chips.map(c=>`<span>${c}</span>`).join("")}</div>
+ ${NEED.len&&maxLen(i)&&NEED.len>maxLen(i)?`<div class="toolong">⚠ ${es?`Su RV mide ${NEED.len} pies — este lote acepta hasta ${maxLen(i)} pies. Escoja otro lote.`:`Your RV is ${NEED.len} ft — this site takes RVs up to ${maxLen(i)} ft. Please pick another site.`}</div>`:""}
+ ${(()=>{const a=nearby(i,3);return a.length?`<div class="near"><div class="nt">${es?"Lo más cerca":"What's close by"}</div>${a.map(x=>`<div class="nr"><span>${x.e}</span><b>${x.t}</b><i>${walk(x.m)}</i></div>`).join("")}</div>`:""})()}
+ ${cal}
+ ${(()=>{const n=ok?Math.round((dep-arr)/DAY):0,lng=n>LONG;return `<button class="cta" id="bk" ${ok?"":"disabled"} style="${ok?"":"opacity:.5"}">${!ok?(es?"Escoja llegada y salida":"Pick arrival and departure"):lng?(es?"Llenar la aplicación →":"Start the application →"):(es?`Reservar y pagar · ${n} noche${n>1?"s":""}`:`Book & pay · ${n} night${n>1?"s":""}`)}</button>${ok&&lng?`<p class="mn" style="display:block">${es?`Estadías de más de ${LONG} noches necesitan una aplicación corta (verificación del huésped). El botón lo lleva a ella con sus fechas.`:`Stays longer than ${LONG} nights need a short application (guest screening). The button takes you there with your dates.`}</p>`:""}<div id="bkm"></div>`})()}`;
+ if(typeof tell==="function")tell({type:"melyos-lot",lot:NUM[i],status:st,arrive:iso(arr),depart:iso(dep),available:arr&&dep?freeFor(i,arr,dep):null,maxLen:maxLen(i),rv:kind(i)=="rv"&&ST[i]!="rent"});
+ const sc=document.getElementById("sc");
+ sc.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{calM=new Date(calM.getFullYear(),calM.getMonth()+Number(b.dataset.m),1);drawLot(i)});
+ sc.querySelectorAll(".cd.ca").forEach(b=>b.onclick=()=>{const d=new Date(Number(b.dataset.d));
+  if(!arr||dep||d<=arr){arr=d;dep=null}else{let clash=false;for(let x=new Date(+arr);x<d;x=new Date(+x+DAY))if(isBlocked(i,x))clash=true;if(clash){arr=d;dep=null}else dep=d}drawLot(i)});
+ const u=sc.querySelector("#usen");if(u)u.onclick=()=>{arr=nxt;dep=null;calM=new Date(nxt.getFullYear(),nxt.getMonth(),1);drawLot(i)};
+ const bk=sc.querySelector("#bk");if(bk&&NEED.len&&maxLen(i)&&NEED.len>maxLen(i)){bk.disabled=true;bk.style.opacity=.5}else if(bk&&ok)bk.onclick=()=>checkout(i);}
+document.getElementById("x").onclick=()=>{document.getElementById("sheet").classList.remove("open");select(-1);render()};
+addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("sheet").classList.contains("open"))document.getElementById("x").click()});
+function zoomTo(nz,cx,cy){const W=document.getElementById("wrap"),r0=map.getBoundingClientRect();
+ if(cx==null){const wr=W.getBoundingClientRect();cx=wr.left+wr.width/2;cy=Math.max(wr.top,0)+Math.min(wr.height,innerHeight)/2}
+ const fx=(cx-r0.left)/r0.width,fy=(cy-r0.top)/r0.height;z=Math.min(4,Math.max(1,nz));map.style.width=Math.round(baseW()*z)+"px";
+ const r1=map.getBoundingClientRect();W.scrollLeft+=r1.left+fx*r1.width-cx;window.scrollBy(0,r1.top+fy*r1.height-cy);render()}
+function zoom(d){zoomTo(z+d)}
+// Nov 20 (per Mely): inside MelyOS Explore (iframe) the whole map fits the screen at first; zoom from there.
+// Embed layout only inside the MelyOS Explore page — the Claude artifact keeps the header with Edit / Download
+const INFRAME=(()=>{let f;try{f=window.self!==window.top}catch(e){f=true}return f&&/\/explore\/live\//.test(location.pathname)})();
+// Nov 21 (per Mely): the whole map fits the screen at the smallest zoom everywhere (not only inside Explore)
+function baseW(){const W=document.getElementById("wrap").clientWidth;
+ const im=map.querySelector("img"),ratio=im&&im.naturalHeight?im.naturalWidth/im.naturalHeight:981/1604;
+ const top=(document.querySelector("header")||{offsetHeight:0}).offsetHeight+(document.getElementById("bar")||{offsetHeight:0}).offsetHeight;
+ return Math.max(260,Math.min(W,(innerHeight-top-12)*ratio))}
+function fitNow(){map.style.width=Math.round(baseW()*z)+"px";render()}
+if(INFRAME)document.documentElement.classList.add("embed");
+{addEventListener("resize",fitNow);const im=map.querySelector("img");if(im&&!im.complete)im.addEventListener("load",fitNow);setTimeout(fitNow,0)}
+// Nov 20 (per Mely — the Explore request form and the map work together):
+//  parent → map  {type:"melyos-dates", arrive, depart}   → lots not free for those nights fade out; count sent back
+//  map → parent  {type:"melyos-avail", available, total, arrive, depart}
+//  map → parent  {type:"melyos-lot", lot, status, arrive, depart, available}   (when a guest picks a lot / dates)
+let RANGE=null;
+const dOf=s=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||"");return m?new Date(+m[1],+m[2]-1,+m[3]):null};
+const iso=d=>d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`:"";
+function freeFor(i,a,d){for(let x=new Date(+a);x<d;x=new Date(+x+DAY))if(isBlocked(i,x))return false;return true}
+function tell(m){if(INFRAME)try{parent.postMessage(Object.assign({source:"melyos-map"},m),"*")}catch(e){}}
+function sendAvail(){if(!RANGE)return;let n=0;const lots=[];SH.forEach((_,i)=>{if(okLot(i)){n++;lots.push({lot:NUM[i],rent:ST[i]=="rent",maxLen:maxLen(i)})}});lots.sort((a,b)=>String(a.lot).localeCompare(String(b.lot),undefined,{numeric:true}));tell({type:"melyos-avail",available:n,lots,total:SH.length,arrive:iso(RANGE.a),depart:iso(RANGE.d)})}
+// Nov 20 (per Mely): RV length and power from the form narrow it too — only lots that fit and are free show
+let NEED={len:0,amp:""};
+function maxSO(i){const n=+NUM[i]||0;return kind(i)!="rv"||ST[i]=="rent"?null:n%4==0?2:n%3==0?3:null}   // demo: some sites limit slide-outs per side
+function fitsRig(i){if(NEED.len&&(kind(i)!="rv"||(parseInt(info(i).size)||0)<NEED.len))return false;if(NEED.amp=="50"&&!/50/.test(info(i).amp))return false;
+ const m=maxSO(i);if(m!=null&&((NEED.ds||0)>m||(NEED.ps||0)>m))return false;return true}
+function fitsNeed(i){if(NEED.rental)return ST[i]=="rent";if(ST[i]=="rent")return false;return fitsRig(i)}
+function okLot(i){return !!RANGE&&freeFor(i,RANGE.a,RANGE.d)&&fitsNeed(i)}
+addEventListener("message",e=>{const m=e.data||{};if(m.type!=="melyos-dates")return;HINTDONE=true;const a=dOf(m.arrive),d=dOf(m.depart);
+ const L0=+m.length;NEED={len:L0>0&&L0<100?Math.round(L0):0,amp:(String(m.power||"").match(/\d+/)||[""])[0],rental:!!m.rental,ds:parseInt(m.driverSlideOuts)||0,ps:parseInt(m.passengerSlideOuts)||0};RANGE=a&&d&&d>a?{a,d}:null;render();if(RANGE)sendAvail();else tell({type:"melyos-avail",available:null})});
+addEventListener("message",e=>{const m=e.data||{};if(m.type!=="melyos-book")return;const i=NUM.indexOf(String(m.lot));const a=dOf(m.arrive),d=dOf(m.depart);if(i<0||!a||!d||d<=a)return;open(i);arr=a;dep=d;calM=new Date(a.getFullYear(),a.getMonth(),1);drawLot(i);if(freeFor(i,a,d))checkout(i)});
+addEventListener("message",e=>{const m=e.data||{};if(m.type!=="melyos-pick")return;if(!m.lot){PICKED=-1;render();return}const i=NUM.indexOf(String(m.lot));if(i>=0)open(i)});
+tell({type:"melyos-ready"});
+let wq=null;document.getElementById("wrap").addEventListener("wheel",e=>{if(!e.ctrlKey&&!e.metaKey)return;e.preventDefault();
+ const nz=z*Math.exp(-Math.max(-25,Math.min(25,e.deltaY))*0.012);const cx=e.clientX,cy=e.clientY;if(wq)cancelAnimationFrame(wq);wq=requestAnimationFrame(()=>zoomTo(nz,cx,cy))},{passive:false});
+let pin=null;const W0=document.getElementById("wrap");
+const tdist=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);
+W0.addEventListener("touchstart",e=>{if(e.touches.length==2){e.preventDefault();pin={d:tdist(e.touches),z};document.getElementById("sheet").classList.remove("open");window.onpointermove=null}},{passive:false});
+W0.addEventListener("touchmove",e=>{if(pin&&e.touches.length==2){e.preventDefault();const t=e.touches;zoomTo(pin.z*tdist(t)/pin.d,(t[0].clientX+t[1].clientX)/2,(t[0].clientY+t[1].clientY)/2)}},{passive:false});
+W0.addEventListener("touchend",e=>{if(e.touches.length<2)pin=null});
+// Nov 20 (per Mely): drag the map with the mouse / one finger on the trackpad to move it (a click without moving still opens the lot)
+let PAN=null,PEND=-1,PANNED=false;
+const endPan=()=>{if(!PAN)return;const was=PANNED,id=PAN.id;PAN=null;PANNED=false;W0.classList.remove("grabbing");try{W0.releasePointerCapture(id)}catch(_){}if(!was&&PEND>=0)open(PEND);PEND=-1};
+W0.addEventListener("pointerdown",e=>{if(editing||e.pointerType!=="mouse"||e.button!==0)return;PAN={x:e.clientX,y:e.clientY,sl:W0.scrollLeft,sy:scrollY,id:e.pointerId};PANNED=false});
+W0.addEventListener("pointermove",e=>{if(!PAN)return;if(!(e.buttons&1)){endPan();return}const dx=e.clientX-PAN.x,dy=e.clientY-PAN.y;
+ if(!PANNED){if(Math.hypot(dx,dy)<5)return;PANNED=true;PEND=-1;W0.classList.add("grabbing");hideHov();try{W0.setPointerCapture(PAN.id)}catch(_){}}
+ e.preventDefault();W0.scrollLeft=PAN.sl-dx;scrollTo(scrollX,PAN.sy-dy)});
+W0.addEventListener("pointerup",endPan);W0.addEventListener("pointercancel",()=>{PEND=-1;endPan()});addEventListener("blur",()=>{PEND=-1;endPan()});
+["gesturestart","gesturechange"].forEach(n=>document.addEventListener(n,e=>e.preventDefault()));
+// Nov 20 (per Mely): one click = one clear step (×1.6 in, ÷1.6 out; back to the whole map in ~3 clicks)
+document.getElementById("zin").onclick=()=>zoomTo(z*1.6);document.getElementById("zout").onclick=()=>zoomTo(z/1.6<1.15?1:z/1.6);
+new ResizeObserver(()=>render()).observe(map);
+function lang(l){L=l;document.getElementById("en").classList.toggle("on",l=="en");document.getElementById("es").classList.toggle("on",l=="es");
+ document.getElementById("sub").textContent=T[l].sub;document.getElementById("foot").innerHTML=T[l].foot+`<br><br>${T[l].by} <b>MelyOS</b> · melyos.io`;bar()}
+document.getElementById("en").onclick=()=>lang("en");document.getElementById("es").onclick=()=>lang("es");
+
+function frame(p){const u=[(p[1][0]-p[0][0])*AX,(p[1][1]-p[0][1])*AY],ul=Math.hypot(...u)||1;const ux=[u[0]/ul,u[1]/ul];return{ux,vx:[-ux[1],ux[0]]}}
+function dims(p){const{ux,vx}=frame(p);const pr=p.map(q=>[q[0]*AX*ux[0]+q[1]*AY*ux[1],q[0]*AX*vx[0]+q[1]*AY*vx[1]]);
+ return[Math.max(...pr.map(a=>a[0]))-Math.min(...pr.map(a=>a[0])),Math.max(...pr.map(a=>a[1]))-Math.min(...pr.map(a=>a[1]))]}
+function scaleTo(i,W,H){const p=SH[i],{ux,vx}=frame(p),[w,h]=dims(p),c=cen(p),fx=W/w,fy=H/h;
+ SH[i]=p.map(q=>{const dx=(q[0]-c[0])*AX,dy=(q[1]-c[1])*AY;const a=(dx*ux[0]+dy*ux[1])*fx,b=(dx*vx[0]+dy*vx[1])*fy;
+  return[r2(c[0]+(a*ux[0]+b*vx[0])/AX),r2(c[1]+(a*ux[1]+b*vx[1])/AY)]})}
+document.getElementById("phb").onclick=()=>{if(need())return;document.getElementById("phf").click()};
+document.getElementById("phx").onclick=()=>{if(need())return;delete PH[NUM[sel]];savePH();say("Lot "+NUM[sel]+" uses the sample photo")};
+document.getElementById("phf").onchange=e=>{const f=e.target.files&&e.target.files[0];e.target.value="";if(!f||sel<0)return;
+ const img=new Image(),u=URL.createObjectURL(f);img.onload=()=>{const k=Math.min(1,1000/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
+  c.getContext("2d").drawImage(img,0,0,c.width,c.height);PH[NUM[sel]]=c.toDataURL("image/jpeg",.8);URL.revokeObjectURL(u);say(savePH()?"Photo added to lot "+NUM[sel]+" ✓":"Photo added, but this device is out of space to keep it")};img.src=u};
+function grow(fw,fh){if(need())return;const[w,h]=dims(SH[sel]);scaleTo(sel,Math.max(4,w*fw),Math.max(4,h*fh));render()}
+document.getElementById("wm").onclick=()=>grow(.9,1);document.getElementById("wp").onclick=()=>grow(1.1,1);
+document.getElementById("hm").onclick=()=>grow(1,.9);document.getElementById("hp").onclick=()=>grow(1,1.1);
+const grp=n=>{n=+n;return isNaN(n)?-1:n<=5?0:n<=27?1:n<=50?2:n<=89?3:n<=101?4:5};
+document.getElementById("same").onclick=()=>{if(need())return;const[w,h]=dims(SH[sel]),g=grp(NUM[sel]);let c=0;
+ SH.forEach((_,i)=>{if(i!=sel&&grp(NUM[i])==g){scaleTo(i,w,h);c++}});render();say(c+" lots now the same size")};
+// Nov 20 (per Mely): the edit panel can be hidden, and the page gets room below the map, so the
+// bottom of the map (Fishing Lake, south lots) can always be reached while editing.
+const panelEl=document.getElementById("panel");
+function fitPanel(){document.body.style.setProperty("--ph",(panelEl.offsetHeight+30)+"px")}
+document.getElementById("pmin").onclick=()=>{const m=panelEl.classList.toggle("min");document.body.classList.toggle("pmin",m);document.getElementById("pmin").textContent=m?"▴ Show":"▾ Hide";fitPanel()};
+new ResizeObserver(fitPanel).observe(panelEl);
+// Nov 20 (per Mely): download the map exactly as she left it — one HTML file with the layout and the picture inside.
+document.getElementById("dl").onclick=async()=>{const lay={sh:SH,st:ST,stv:2,num:NUM,po:PO,ph:PH};
+ let src=SRC0.replace("const EMBED=null;","const EMBED="+JSON.stringify(lay).replace(/</g,"\\u003c")+";");
+ try{const b=await (await fetch("map.jpg")).blob();const u=await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});src=src.replace('src="map.jpg"','src="'+u+'"')}catch(e){}
+ for(const f of ["lot.jpg","rent.jpg"]){try{const b=await (await fetch(f)).blob();const u=await new Promise(r=>{const x=new FileReader();x.onload=()=>r(x.result);x.readAsDataURL(b)});src=src.replace('"'+f+'"','"'+u+'"')}catch(e){}}
+ let done=false;
+ try{const dlx=window.claude&&window.claude.use?await window.claude.use("downloads"):null;if(dlx){await dlx.save({filename:"21Palms-mapa.html",data:src});done=true}}catch(e){if(e&&/declin|cancel/i.test(String(e.message||e))){say("Download cancelled");return}}
+ if(!done){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([src],{type:"text/html"}));a.download="21Palms-mapa.html";document.body.appendChild(a);a.click();a.remove()}
+ try{localStorage.setItem("sunsetshapes5",JSON.stringify(lay))}catch(e){}say("Downloaded ✓ — open 21Palms-mapa.html on any computer")};
+load();lang("en");render();
+</script></body></html>
