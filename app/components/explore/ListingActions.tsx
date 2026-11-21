@@ -7,6 +7,11 @@ type L = { state: string; listing_key: string; listing_name: string; kind: strin
 const inp = "w-full rounded-xl border border-slate-300 px-3 py-2.5 text-[15px] outline-none focus:border-[#08B8D8]";
 const Stars = ({ n, size = "text-base" }: { n: number; size?: string }) => <span className={`${size} text-amber-500`} aria-label={`${n} of 5 stars`}>{"★★★★★".slice(0, Math.round(n))}<span className="text-slate-300">{"★★★★★".slice(Math.round(n))}</span></span>;
 
+const pad2 = (n: number) => String(n).padStart(2, "0");
+const isoOf = (d: Date) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+const todayIso = () => isoOf(new Date());
+const addDayIso = (v: string) => { const [y, m, d] = v.split("-").map(Number); return y && m && d ? isoOf(new Date(y, m - 1, d + 1)) : ""; };
+
 export function FavoriteButton(l: L) {
   const { me, reload } = useBoater();
   const on = !!me?.favorites?.some((f: any) => f.listing_key === l.listing_key);
@@ -79,10 +84,12 @@ export function RequestForm(l: L) {
     <form onSubmit={send} className="space-y-3">
       <input type="text" name="website_hp" className="hidden" tabIndex={-1} autoComplete="off" onChange={(e) => set("website_hp", e.target.value)} />
       <div className="grid grid-cols-2 gap-3">
-        <label className="text-sm font-bold">Arrive<input type="date" className={inp} value={f.arrive || ""} onChange={(e) => set("arrive", e.target.value)} /></label>
-        <label className="text-sm font-bold">Leave<input type="date" className={inp} value={f.depart || ""} onChange={(e) => set("depart", e.target.value)} /></label>
+        {/* Nov 21 (per Mely): no past dates — a past arrival made every site look taken. Leave is always after Arrive. */}
+        <label className="text-sm font-bold">Arrive<input type="date" className={inp} min={todayIso()} value={f.arrive || ""} onChange={(e) => { const v = e.target.value; setF((x: any) => ({ ...x, arrive: v, depart: x.depart && v && x.depart <= v ? addDayIso(v) : x.depart })); }} /></label>
+        <label className="text-sm font-bold">Leave<input type="date" className={inp} min={f.arrive ? addDayIso(f.arrive) : addDayIso(todayIso())} value={f.depart || ""} onChange={(e) => set("depart", e.target.value)} /></label>
       </div>
-      {l.live && (f.arrive && f.depart && avail ? <div className={`rounded-xl px-3 py-2 text-sm font-bold ${avail.available ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-700"}`}>
+      {l.live && f.arrive && f.arrive < todayIso() ? <div className="rounded-xl bg-amber-50 px-3 py-2 text-sm font-bold text-amber-800">Arrival can&apos;t be before today — pick today or a later date.</div>
+        : l.live && (f.arrive && f.depart && avail ? <div className={`rounded-xl px-3 py-2 text-sm font-bold ${avail.available ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-700"}`}>
           {avail.available ? `✓ ${avail.available} ${unit}s free for these dates${f.vessel?.length_ft || f.vessel?.power_amp || f.vessel?.slide_driver || f.vessel?.slide_passenger ? " that fit your RV" : ""} — tap a ${f.vessel?.kind === "rental" ? "purple" : "green"} one on the map` : `No ${unit}s free for these dates${f.vessel?.length_ft || f.vessel?.power_amp || f.vessel?.slide_driver || f.vessel?.slide_passenger ? " that fit your RV" : ""} — try other dates`}</div>
         : <div className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-600">{f.arrive && f.depart ? `Now tap a ${unit} on the map to see if it's free for your dates.` : `Pick your dates — the map shows which ${unit}s are free.`}</div>)}
       {l.live && f.arrive && f.depart && !!avail?.lots?.length && (
