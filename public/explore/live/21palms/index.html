@@ -424,12 +424,14 @@ function zoom(d){zoomTo(z+d)}
 // Nov 20 (per Mely): inside MelyOS Explore (iframe) the whole map fits the screen at first; zoom from there.
 // Embed layout only inside the MelyOS Explore page — the Claude artifact keeps the header with Edit / Download
 const INFRAME=(()=>{let f;try{f=window.self!==window.top}catch(e){f=true}return f&&/\/explore\/live\//.test(location.pathname)})();
-function baseW(){const W=document.getElementById("wrap").clientWidth;if(!INFRAME)return W;
+// Nov 21 (per Mely): the whole map fits the screen at the smallest zoom everywhere (not only inside Explore)
+function baseW(){const W=document.getElementById("wrap").clientWidth;
  const im=map.querySelector("img"),ratio=im&&im.naturalHeight?im.naturalWidth/im.naturalHeight:981/1604;
  const top=(document.querySelector("header")||{offsetHeight:0}).offsetHeight+(document.getElementById("bar")||{offsetHeight:0}).offsetHeight;
  return Math.max(260,Math.min(W,(innerHeight-top-12)*ratio))}
 function fitNow(){map.style.width=Math.round(baseW()*z)+"px";render()}
-if(INFRAME){document.documentElement.classList.add("embed");addEventListener("resize",fitNow);const im=map.querySelector("img");if(im&&!im.complete)im.addEventListener("load",fitNow);setTimeout(fitNow,0)}
+if(INFRAME)document.documentElement.classList.add("embed");
+{addEventListener("resize",fitNow);const im=map.querySelector("img");if(im&&!im.complete)im.addEventListener("load",fitNow);setTimeout(fitNow,0)}
 // Nov 20 (per Mely — the Explore request form and the map work together):
 //  parent → map  {type:"melyos-dates", arrive, depart}   → lots not free for those nights fade out; count sent back
 //  map → parent  {type:"melyos-avail", available, total, arrive, depart}
