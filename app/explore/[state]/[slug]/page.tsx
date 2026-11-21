@@ -7,7 +7,7 @@ import SiteFooter from "../../../components/site/Footer";
 import AccountPill from "../../../components/explore/AccountPill";
 import { FavoriteButton, Fuel, RequestForm, Reviews } from "../../../components/explore/ListingActions";
 import { STATES, KIND } from "../../../components/explore/states";
-import { isFeatured, FEATURED_MAP, DEMO_MAP } from "../../../components/explore/featured";
+import { isFeatured, FEATURED_MAP, DEMO_MAP, DEMO_APPLY } from "../../../components/explore/featured";
 import LiveMap from "../../../components/explore/LiveMap";
 import SpotMap from "../../../components/explore/SpotMap";
 import { exploreApi, findListing, keyFromSlug, listingPath, nice } from "../../../lib/explore";
@@ -56,6 +56,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   const feat = isFeatured(row);
   const demoMap = demoId === row[7] ? DEMO_MAP[row[7]] || "" : "";
   const liveMap = demoMap || FEATURED_MAP[row[7]] || (d.client && typeof info.map_url === "string" && /^https:\/\//.test(info.map_url) ? info.map_url : "");
+  const applyUrl = demoMap ? DEMO_APPLY[row[7]] || "" : typeof info.application_url === "string" && /^https:\/\//.test(info.application_url) ? info.application_url : "";
   const L = { state: st, listing_key: row[7], listing_name: name, kind: row[0] };
   const stays: string[] = Array.isArray(info.stay_types) ? info.stay_types : [];
   const facts: [string, string][] = ([["Spaces", info.spaces], ["Max length", info.max_length], ["Rates", info.rates], ["Amenities", info.amenities]] as [string, string][]).filter(([, v]) => v);
@@ -98,7 +99,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
               <div className="rounded-3xl border-2 border-[#08B8D8] bg-white p-5 shadow-sm md:sticky md:top-24">
                 <h2 className="text-2xl font-black">Book your {unit}</h2>
                 <p className="mb-3 mt-1 text-slate-600">Pick your dates and a {unit}, then book and pay online.</p>
-                <RequestForm {...L} stays={stays} live />
+                <RequestForm {...L} stays={stays} live applyUrl={applyUrl} />
               </div>
             </aside>
           </div>

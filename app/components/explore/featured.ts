@@ -36,3 +36,7 @@ export const DEMO_MAP: Record<string, string> = {
 export const DEMO_PHOTO: Record<string, string> = {
   "x-21-palms": "/explore/featured/21palms.jpg",
 };
+
+// Nov 21 (per Mely — full demo): stays longer than 15 nights / monthly / residency go to the park's online
+// application. Demo maps use the MelyOS sample park's real application.
+export const DEMO_APPLY: Record<string, string> = { "x-21-palms": "https://demo.melyos.io/apply" };

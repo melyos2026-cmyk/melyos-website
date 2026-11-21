@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useBoater, post } from "./useBoater";
 
 // Nov 17 (per Mely): on every Explore listing — ♡ Save, Request a slip / site, reviews (read + write).
-type L = { state: string; listing_key: string; listing_name: string; kind: string; slip?: string; stays?: string[]; live?: boolean };
+type L = { state: string; listing_key: string; listing_name: string; kind: string; slip?: string; stays?: string[]; live?: boolean; applyUrl?: string };
 const inp = "w-full rounded-xl border border-slate-300 px-3 py-2.5 text-[15px] outline-none focus:border-[#08B8D8]";
 const Stars = ({ n, size = "text-base" }: { n: number; size?: string }) => <span className={`${size} text-amber-500`} aria-label={`${n} of 5 stars`}>{"★★★★★".slice(0, Math.round(n))}<span className="text-slate-300">{"★★★★★".slice(Math.round(n))}</span></span>;
 
@@ -122,6 +122,11 @@ export function RequestForm(l: L) {
           <select className={inp} value={f.vessel.kind === "rental" ? "rental" : "rv"} onChange={(e) => setF((x: any) => ({ ...x, vessel: { ...x.vessel, kind: e.target.value, ...(e.target.value === "rental" ? { length_ft: "", slide_driver: "", slide_passenger: "" } : {}) } }))}>
             <option value="rv">A site for my RV / travel trailer</option><option value="rental">Rent a home / park model</option>
           </select>
+          {/* Nov 21 (per Mely): long stays / monthly / residency = application, not a booking */}
+          {l.live && l.kind !== "m" && <div className="mt-2 rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2.5 text-sm text-indigo-950">
+            <b>Staying more than 15 nights, monthly or as a resident?</b> That&apos;s an application, not a booking: fill it in online (ID, RV and insurance, background check), the park approves it, then you pay the deposit online.
+            {l.applyUrl && <a href={l.applyUrl} target="_blank" rel="noopener" className="mt-1.5 block font-black text-indigo-700 underline">Start an application →</a>}
+          </div>}
           {f.vessel.kind !== "rental" && <div className="mt-2 grid grid-cols-3 gap-2">
             <label className="text-xs font-bold text-slate-600">RV length (ft)<input className={inp} inputMode="numeric" placeholder="e.g. 35" value={f.vessel.length_ft || ""} onChange={(e) => setV("length_ft", e.target.value)} /></label>
             <label className="text-xs font-bold text-slate-600">Driver side<select className={inp} value={f.vessel.slide_driver || ""} onChange={(e) => setV("slide_driver", e.target.value)}><option value="">Any</option>{["0", "1", "2", "3", "4+"].map((n) => <option key={n} value={n}>{n}</option>)}</select></label>
@@ -148,11 +153,11 @@ export function RequestForm(l: L) {
         const nights = f.arrive && f.depart ? Math.round((Date.parse(f.depart) - Date.parse(f.arrive)) / 86400000) : 0;
         const len = Number(f.vessel?.length_ft) || 0, tooLong = !!(picked?.maxLen && len > picked.maxLen);
         const long = nights > 15, ready = nights > 0 && !!picked && picked.available !== false && !tooLong;
-        const go = () => { if (!ready || !picked) return; setBooked(picked.lot); window.dispatchEvent(new CustomEvent("melyos-book", { detail: { lot: picked.lot, arrive: f.arrive, depart: f.depart, length: f.vessel?.length_ft || "", driverSlideOuts: f.vessel?.slide_driver || "", passengerSlideOuts: f.vessel?.slide_passenger || "" } })); };
+        const go = () => { if (!ready || !picked) return; if (long && l.applyUrl) { window.open(l.applyUrl, "_blank", "noopener"); return; } setBooked(picked.lot); window.dispatchEvent(new CustomEvent("melyos-book", { detail: { lot: picked.lot, arrive: f.arrive, depart: f.depart, length: f.vessel?.length_ft || "", driverSlideOuts: f.vessel?.slide_driver || "", passengerSlideOuts: f.vessel?.slide_passenger || "" } })); };
         return <>
           {picked?.maxLen && <div className={`rounded-xl px-3 py-2 text-sm ${tooLong ? "border-2 border-rose-300 bg-rose-50 font-bold text-rose-700" : "bg-slate-50 text-slate-700"}`}>
             {tooLong ? `⚠ Your RV is ${len} ft — ${unit} ${picked.lot} takes RVs up to ${picked.maxLen} ft. Pick another ${unit}.` : `${unit[0].toUpperCase() + unit.slice(1)} ${picked.lot} takes RVs up to ${picked.maxLen} ft${len ? ` — your ${len} ft RV fits ✓` : ". Enter your RV length below to check."}`}</div>}
-          {long && <div className="rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900"><b>{nights} nights:</b> stays longer than 15 nights need a short application (guest screening). The button takes you there with your dates and {unit}.</div>}
+          {long && <div className="rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900"><b>{nights} nights:</b> stays longer than 15 nights need a short application (ID, RV and insurance, background check). The button opens it — the park approves it, then you pay the deposit online.</div>}
           <button type="button" onClick={go} disabled={!ready} className={`w-full rounded-xl px-6 py-3.5 text-lg font-black transition disabled:opacity-60 ${booked && booked === picked?.lot ? "border-2 border-emerald-300 bg-emerald-50 text-base text-emerald-800" : "bg-[#08B8D8] text-white hover:bg-[#079db9]"}`}>
             {booked && booked === picked?.lot ? "✓ Checkout is open on the map — finish there" : !nights ? "Pick your dates" : !picked ? `Pick a ${unit}` : tooLong ? "Your RV is too long for this site" : long ? `Start the application · ${unit} ${picked.lot} →` : `Book & pay · ${unit} ${picked.lot} · ${nights} night${nights > 1 ? "s" : ""} →`}</button>
           <p className="text-xs text-slate-500">{long ? "Once approved, you pay the deposit online." : "You pay securely by card on the park's own checkout. Prices and availability come straight from the park."}</p>
