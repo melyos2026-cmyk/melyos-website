@@ -46,18 +46,21 @@ function FixedMap({ frame, src, title }: { frame: RefObject<HTMLIFrameElement | 
   const box = useRef<HTMLDivElement>(null);
   const [hh, setHh] = useState<{ h: number; w: number } | null>(null);
   useEffect(() => {
-    const el = box.current; if (!el) return;
+    const el = box.current, par = el?.parentElement; if (!el || !par) return;
     // Nov 21 (per Mely — "que se vea todo completo, pero en un good size"): the whole map on one screen
     // (screen height minus the site header), as wide as that allows, never wider than its column.
     const fit = () => {
       if (window.innerWidth < 768) { setHh(null); return; }
-      const col = el.clientWidth, h = Math.min(Math.round(col / 0.612 + 62), Math.max(560, window.innerHeight - 104));
+      // Nov 21 (per Mely — "que todo se vea bien y moderado"): map and booking card sit together, centered —
+      // the room for the map is the row minus the card next to it (no empty bands around the map)
+      const side = par.querySelector("aside") as HTMLElement | null, gap = parseFloat(getComputedStyle(par).columnGap) || 20;
+      const col = Math.max(300, par.clientWidth - (side ? side.offsetWidth + gap : 0)), h = Math.min(Math.round(col / 0.612 + 62), Math.max(560, window.innerHeight - 104));
       setHh({ h, w: Math.min(col, Math.round((h - 62) * 0.612 + 2)) });
     };
-    fit(); const ro = new ResizeObserver(fit); ro.observe(el); window.addEventListener("resize", fit);
+    fit(); const ro = new ResizeObserver(fit); ro.observe(par); window.addEventListener("resize", fit);
     return () => { ro.disconnect(); window.removeEventListener("resize", fit); };
   }, []);
-  return <div ref={box} className="w-full min-w-0">
+  return <div ref={box} className="w-full min-w-0 md:w-auto md:shrink-0" style={hh ? { width: hh.w } : undefined}>
     <div className="mx-auto w-full overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200" style={hh ? { height: hh.h, width: hh.w } : { height: "max(520px, calc(100vh - 7.5rem))" }}>
       <iframe ref={frame} src={src} title={title} className="h-full w-full border-0" />
     </div>
