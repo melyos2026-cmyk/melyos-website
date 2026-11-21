@@ -14,9 +14,9 @@ header p{margin:3px 0 0;font-size:12.5px;color:#8fe3f2}
 .chip{flex:none;border:1px solid #d7dee6;background:#fff;border-radius:18px;padding:7px 12px;font-size:13px;font-weight:600;color:#33475b;display:flex;align-items:center;gap:6px}
 .chip.on{border-color:#0f2a4a;background:#0f2a4a;color:#fff}
 .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
-.wrap{overflow:auto;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch;max-width:900px;margin:0 auto}
+.wrap{cursor:grab;overflow:auto;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch;max-width:900px;margin:0 auto}
 .map{position:relative;width:100%;transform-origin:0 0;margin:0 auto}html.embed .wrap{max-width:none}html.embed header{display:none}html.embed .bar{position:static}
-.map img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
+.wrap.grabbing,.wrap.grabbing *{cursor:grabbing!important;user-select:none}.map img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
 .lotold{position:absolute;border-radius:3px;border:1.5px solid rgba(255,255,255,.95);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:clamp(6px,1.35vw,11px);line-height:1;box-shadow:0 1px 2px rgba(0,0,0,.25);cursor:pointer;transition:transform .12s,opacity .2s;padding:0}
 
 @keyframes lotblink{0%,100%{fill-opacity:1;stroke-width:1.6}50%{fill-opacity:.25;stroke-width:3}}
@@ -292,7 +292,7 @@ function render(){svg.innerHTML='<defs><pattern id="mst" patternUnits="userSpace
   pg.setAttribute("stroke-width",i==sel?2.6:1.6);
   pg.setAttribute("vector-effect","non-scaling-stroke");pg.setAttribute("class","lp"+(!editing&&!dim&&i!=sel&&(hit||(!srch&&(ST[i]=="free"||ST[i]=="rent")))?" blink":""));pg.setAttribute("stroke-linejoin","round");
   pg.style.cssText=`pointer-events:auto;cursor:${editing?"move":"pointer"};opacity:${srch?1:dim?.35:1};filter:${i==sel||(srch&&!hit)?"none":`drop-shadow(0 0 1.5px ${cc})`}`;
-  pg.onpointerdown=e=>{HINTDONE=true;downShape(e,i)};svg.appendChild(pg);
+  pg.onpointerdown=e=>{HINTDONE=true;if(!editing&&e.pointerType==="mouse"&&e.button===0){PEND=i;return}downShape(e,i)};svg.appendChild(pg);
   pg.onpointerenter=e=>{if(editing||e.pointerType!=="mouse")return;showHov(i,e)};pg.onpointermove=e=>{if(!editing&&e.pointerType==="mouse")moveHov(e)};pg.onpointerleave=()=>hideHov();
   const c=cen(pts),lb=label(pts,NUM[i],13);if(lb){const sp=document.createElement("span");sp.textContent=NUM[i];
    sp.style.cssText=`position:absolute;left:${c[0]}%;top:${c[1]}%;transform:translate(-50%,-50%) rotate(${lb.ang}deg);font-size:${lb.size}px;line-height:1;font-weight:700;color:#fff;white-space:nowrap;text-shadow:0 0 2px #000,0 1px 2px #000;opacity:${srch?1:dim?.35:1}`;over.appendChild(sp)}});
@@ -459,6 +459,14 @@ const tdist=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);
 W0.addEventListener("touchstart",e=>{if(e.touches.length==2){e.preventDefault();pin={d:tdist(e.touches),z};document.getElementById("sheet").classList.remove("open");window.onpointermove=null}},{passive:false});
 W0.addEventListener("touchmove",e=>{if(pin&&e.touches.length==2){e.preventDefault();const t=e.touches;zoomTo(pin.z*tdist(t)/pin.d,(t[0].clientX+t[1].clientX)/2,(t[0].clientY+t[1].clientY)/2)}},{passive:false});
 W0.addEventListener("touchend",e=>{if(e.touches.length<2)pin=null});
+// Nov 20 (per Mely): drag the map with the mouse / one finger on the trackpad to move it (a click without moving still opens the lot)
+let PAN=null,PEND=-1,PANNED=false;
+const endPan=()=>{if(!PAN)return;const was=PANNED,id=PAN.id;PAN=null;PANNED=false;W0.classList.remove("grabbing");try{W0.releasePointerCapture(id)}catch(_){}if(!was&&PEND>=0)open(PEND);PEND=-1};
+W0.addEventListener("pointerdown",e=>{if(editing||e.pointerType!=="mouse"||e.button!==0)return;PAN={x:e.clientX,y:e.clientY,sl:W0.scrollLeft,sy:scrollY,id:e.pointerId};PANNED=false});
+W0.addEventListener("pointermove",e=>{if(!PAN)return;if(!(e.buttons&1)){endPan();return}const dx=e.clientX-PAN.x,dy=e.clientY-PAN.y;
+ if(!PANNED){if(Math.hypot(dx,dy)<5)return;PANNED=true;PEND=-1;W0.classList.add("grabbing");hideHov();try{W0.setPointerCapture(PAN.id)}catch(_){}}
+ e.preventDefault();W0.scrollLeft=PAN.sl-dx;scrollTo(scrollX,PAN.sy-dy)});
+W0.addEventListener("pointerup",endPan);W0.addEventListener("pointercancel",()=>{PEND=-1;endPan()});addEventListener("blur",()=>{PEND=-1;endPan()});
 ["gesturestart","gesturechange"].forEach(n=>document.addEventListener(n,e=>e.preventDefault()));
 // Nov 20 (per Mely): one click = one clear step (×1.6 in, ÷1.6 out; back to the whole map in ~3 clicks)
 document.getElementById("zin").onclick=()=>zoomTo(z*1.6);document.getElementById("zout").onclick=()=>zoomTo(z/1.6<1.15?1:z/1.6);
