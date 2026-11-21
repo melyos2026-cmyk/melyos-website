@@ -48,6 +48,10 @@ export function RequestForm(l: L) {
   const [lotsOpen, setLotsOpen] = useState(false);
   const [picked, setPicked] = useState<{ lot: string; available: boolean | null; status: string; maxLen?: number | null } | null>(null);
   const [booked, setBooked] = useState("");
+  // Nov 21 (per Mely): "Monthly / resident" = an application with a move-in date only (no leave date)
+  const [stay, setStay] = useState<"short" | "long">("short");
+  const longMode = !!l.live && l.kind !== "m" && stay === "long";
+  const applyHref = l.applyUrl ? `${l.applyUrl}${l.applyUrl.includes("?") ? "&" : "?"}${new URLSearchParams({ ...(f.arrive ? { move_in: f.arrive } : {}), ...(picked?.lot ? { lot: picked.lot } : {}) }).toString()}` : "";
   useEffect(() => {
     if (!l.live) return;
     window.dispatchEvent(new CustomEvent("melyos-dates", { detail: { arrive: f.arrive || "", depart: f.depart || "", length: f.vessel?.length_ft || "", power: f.vessel?.power_amp || "", rental: f.vessel?.kind === "rental", driverSlideOuts: f.vessel?.slide_driver || "", passengerSlideOuts: f.vessel?.slide_passenger || "" } }));
@@ -83,12 +87,19 @@ export function RequestForm(l: L) {
   return (
     <form onSubmit={send} className="space-y-3">
       <input type="text" name="website_hp" className="hidden" tabIndex={-1} autoComplete="off" onChange={(e) => set("website_hp", e.target.value)} />
-      <div className="grid grid-cols-2 gap-3">
+      {l.live && l.kind !== "m" && <div className="grid grid-cols-2 gap-1.5 rounded-2xl bg-slate-100 p-1.5">
+        {([["short", "Short stay", "Book & pay now"], ["long", "Monthly / resident", "Apply online"]] as const).map(([k, t, d]) => (
+          <button key={k} type="button" onClick={() => { setStay(k); if (k === "long") setF((x: any) => ({ ...x, depart: "" })); }}
+            className={`rounded-xl px-2 py-2 text-center leading-tight transition ${stay === k ? "bg-white shadow-sm ring-1 ring-[#08B8D8]" : "text-slate-600 hover:bg-white/60"}`}>
+            <span className="block text-sm font-black">{t}</span><span className="block text-xs text-slate-500">{d}</span></button>))}
+      </div>}
+      {longMode ? <label className="block text-sm font-bold">Move-in date<input type="date" className={inp} min={todayIso()} value={f.arrive || ""} onChange={(e) => set("arrive", e.target.value)} /></label>
+      : <div className="grid grid-cols-2 gap-3">
         {/* Nov 21 (per Mely): no past dates — a past arrival made every site look taken. Leave is always after Arrive. */}
         <label className="text-sm font-bold">Arrive<input type="date" className={inp} min={todayIso()} value={f.arrive || ""} onChange={(e) => { const v = e.target.value; setF((x: any) => ({ ...x, arrive: v, depart: x.depart && v && x.depart <= v ? addDayIso(v) : x.depart })); }} /></label>
         <label className="text-sm font-bold">Leave<input type="date" className={inp} min={f.arrive ? addDayIso(f.arrive) : addDayIso(todayIso())} value={f.depart || ""} onChange={(e) => set("depart", e.target.value)} /></label>
-      </div>
-      {l.live && f.arrive && f.arrive < todayIso() ? <div className="rounded-xl bg-amber-50 px-3 py-2 text-sm font-bold text-amber-800">Arrival can&apos;t be before today — pick today or a later date.</div>
+      </div>}
+      {longMode ? null : l.live && f.arrive && f.arrive < todayIso() ? <div className="rounded-xl bg-amber-50 px-3 py-2 text-sm font-bold text-amber-800">Arrival can&apos;t be before today — pick today or a later date.</div>
         : l.live && (f.arrive && f.depart && avail ? <div className={`rounded-xl px-3 py-2 text-sm font-bold ${avail.available ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-700"}`}>
           {avail.available ? `✓ ${avail.available} ${unit}s free for these dates${f.vessel?.length_ft || f.vessel?.power_amp || f.vessel?.slide_driver || f.vessel?.slide_passenger ? " that fit your RV" : ""} — tap a ${f.vessel?.kind === "rental" ? "purple" : "green"} one on the map` : `No ${unit}s free for these dates${f.vessel?.length_ft || f.vessel?.power_amp || f.vessel?.slide_driver || f.vessel?.slide_passenger ? " that fit your RV" : ""} — try other dates`}</div>
         : <div className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-600">{f.arrive && f.depart ? `Now tap a ${unit} on the map to see if it's free for your dates.` : `Pick your dates — the map shows which ${unit}s are free.`}</div>)}
@@ -123,9 +134,8 @@ export function RequestForm(l: L) {
             <option value="rv">A site for my RV / travel trailer</option><option value="rental">Rent a home / park model</option>
           </select>
           {/* Nov 21 (per Mely): long stays / monthly / residency = application, not a booking */}
-          {l.live && l.kind !== "m" && <div className="mt-2 rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2.5 text-sm text-indigo-950">
-            <b>Staying more than 15 nights, monthly or as a resident?</b> That&apos;s an application, not a booking: fill it in online (ID, RV and insurance, background check), the park approves it, then you pay the deposit online.
-            {l.applyUrl && <a href={l.applyUrl} target="_blank" rel="noopener" className="mt-1.5 block font-black text-indigo-700 underline">Start an application →</a>}
+          {longMode && <div className="mt-2 rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2.5 text-sm text-indigo-950">
+            <b>Monthly stay or residency</b> is an application, not a booking: pick your move-in date, then fill it in online (ID, RV and insurance, background check), the park approves it, then you pay the deposit online.
           </div>}
           {f.vessel.kind !== "rental" && <div className="mt-2 grid grid-cols-3 gap-2">
             <label className="text-xs font-bold text-slate-600">RV length (ft)<input className={inp} inputMode="numeric" placeholder="e.g. 35" value={f.vessel.length_ft || ""} onChange={(e) => setV("length_ft", e.target.value)} /></label>
@@ -147,13 +157,18 @@ export function RequestForm(l: L) {
           {l.kind === "m" && <select className={`${inp} mt-2`} value={f.vessel.power_amp || ""} onChange={(e) => setV("power_amp", e.target.value)}><option value="">Shore power</option><option>30 amp</option><option>50 amp</option><option>100 amp</option><option>None</option></select>}
         </>}
       </div>
-      {l.live ? (() => {
+      {longMode ? <>
+          <button type="button" disabled={!f.arrive || !applyHref} onClick={() => window.open(applyHref, "_blank", "noopener")} className="w-full rounded-xl bg-[#08B8D8] px-6 py-3.5 text-lg font-black text-white transition hover:bg-[#079db9] disabled:opacity-60">
+            {!f.arrive ? "Pick your move-in date" : `Start the application${picked?.lot ? ` · ${unit} ${picked.lot}` : ""} →`}</button>
+          <p className="text-xs text-slate-500">No leave date needed. You can tap a {unit} on the map first (optional) — the park confirms your {unit} when it approves the application.</p>
+        </>
+      : l.live ? (() => {
         // Nov 20 (per Mely — online sales, not requests): the guest books and pays on the park's own live map
         // (its real checkout). Stays longer than 15 nights go to the park's application instead.
         const nights = f.arrive && f.depart ? Math.round((Date.parse(f.depart) - Date.parse(f.arrive)) / 86400000) : 0;
         const len = Number(f.vessel?.length_ft) || 0, tooLong = !!(picked?.maxLen && len > picked.maxLen);
         const long = nights > 15, ready = nights > 0 && !!picked && picked.available !== false && !tooLong;
-        const go = () => { if (!ready || !picked) return; if (long && l.applyUrl) { window.open(l.applyUrl, "_blank", "noopener"); return; } setBooked(picked.lot); window.dispatchEvent(new CustomEvent("melyos-book", { detail: { lot: picked.lot, arrive: f.arrive, depart: f.depart, length: f.vessel?.length_ft || "", driverSlideOuts: f.vessel?.slide_driver || "", passengerSlideOuts: f.vessel?.slide_passenger || "" } })); };
+        const go = () => { if (!ready || !picked) return; if (long && applyHref) { window.open(applyHref, "_blank", "noopener"); return; } setBooked(picked.lot); window.dispatchEvent(new CustomEvent("melyos-book", { detail: { lot: picked.lot, arrive: f.arrive, depart: f.depart, length: f.vessel?.length_ft || "", driverSlideOuts: f.vessel?.slide_driver || "", passengerSlideOuts: f.vessel?.slide_passenger || "" } })); };
         return <>
           {picked?.maxLen && <div className={`rounded-xl px-3 py-2 text-sm ${tooLong ? "border-2 border-rose-300 bg-rose-50 font-bold text-rose-700" : "bg-slate-50 text-slate-700"}`}>
             {tooLong ? `⚠ Your RV is ${len} ft — ${unit} ${picked.lot} takes RVs up to ${picked.maxLen} ft. Pick another ${unit}.` : `${unit[0].toUpperCase() + unit.slice(1)} ${picked.lot} takes RVs up to ${picked.maxLen} ft${len ? ` — your ${len} ft RV fits ✓` : ". Enter your RV length below to check."}`}</div>}
