@@ -328,7 +328,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
         </div>
       </div>
       <div className="order-2 flex min-h-0 flex-col bg-white md:order-1 md:w-[380px] md:shrink-0 md:overflow-y-auto md:overflow-x-hidden lg:w-[460px] xl:w-[560px]">
-        <div className="grid min-w-0 gap-3 border-b border-slate-200 p-4 [&>*]:min-w-0">
+        <div className="grid min-w-0 gap-2.5 border-b border-slate-200 p-4 text-[13px] [&>*]:min-w-0 [&_h1]:text-lg [&_input]:text-[13px] [&_select]:text-[13px] [&_select]:py-2.5 [&_select]:px-3 [&_button]:text-[12.5px] [&_a]:text-[12.5px]">
           {heading}
     <div role="tablist" aria-label="Show" className="grid grid-cols-2 gap-1.5 rounded-2xl bg-slate-100 p-1.5 sm:flex md:grid xl:flex">
             {tabs.map(([id, label, ks]) => {
@@ -352,7 +352,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
                 const hit = Object.entries(STATES).find(([k, m]) => k !== state && m[0].toLowerCase() === v.trim().toLowerCase());
                 if (hit) { window.location.href = `/explore/${hit[0].toLowerCase()}`; return; }
                 setQ(v);
-              }} placeholder="Search a name or city" aria-label={`Search places in ${meta[0]} by name or city`} className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-cyan-400" />
+              }} placeholder="Search a name or city" aria-label={`Search places in ${meta[0]} by name or city`} className="w-full rounded-xl border border-slate-200 px-3 py-2.5 outline-none focus:border-cyan-400" />
             <label className="relative block"><span className="absolute left-3 top-1 text-[10px] font-black uppercase tracking-wider text-slate-500">Arrive</span>
               <input type="date" min={today} value={arrive} onChange={(e) => { setArrive(e.target.value); if (depart && e.target.value > depart) setDepart(""); }} className="w-full rounded-xl border border-slate-200 px-3 pb-2 pt-5 text-sm outline-none focus:border-cyan-400" /></label>
             <label className="relative block"><span className="absolute left-3 top-1 text-[10px] font-black uppercase tracking-wider text-slate-500">Depart</span>
