@@ -7,7 +7,7 @@ import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { STATES, KIND, type Row } from "./states";
 import StatePicker from "./StatePicker";
 import { useBoater } from "./useBoater";
-import { FEATURED, FEATURED_PHOTO, FEATURED_INFO, isFeatured } from "./featured";
+import { FEATURED, FEATURED_PHOTO, FEATURED_INFO, DEMO_PHOTO, isFeatured } from "./featured";
 import { AMENITIES, STAY_FILTERS, AmenIcon, hasAmen } from "./amenities";
 import { listingPath } from "./slug";
 
@@ -173,7 +173,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
   const amenText = (r: Row) => `${FEATURED_INFO[r[7]]?.amenities || ""} ${extra.overrides[r[7]]?.amenities || ""}`;
   const staysOf = (r: Row): string[] => FEATURED_INFO[r[7]]?.stays || (Array.isArray(extra.overrides[r[7]]?.stay_types) ? extra.overrides[r[7]].stay_types : []);
   const bookable = (r: Row) => partner(r) || !!extra.overrides[r[7]]?.client || okUrl(extra.overrides[r[7]]?.booking_url);
-  const photoOf = (r: Row) => (isFeatured(r) ? FEATURED_PHOTO[r[7]] : "") || (okUrl(extra.overrides[r[7]]?.photo_url) ? extra.overrides[r[7]].photo_url : "") || (!broken[r[7]] && okUrl(photos[r[7]]) ? photos[r[7]] : "");
+  const photoOf = (r: Row) => (isFeatured(r) ? FEATURED_PHOTO[r[7]] : "") || (r[7] === demo ? DEMO_PHOTO[r[7]] || "" : "") || (okUrl(extra.overrides[r[7]]?.photo_url) ? extra.overrides[r[7]].photo_url : "") || (!broken[r[7]] && okUrl(photos[r[7]]) ? photos[r[7]] : "");
   const dates = arrive || depart ? `?${new URLSearchParams({ ...(arrive ? { arrive } : {}), ...(depart ? { depart } : {}) })}` : "";
   const dq = (r: Row) => (r[7] === demo ? `${dates ? `${dates}&` : "?"}demo=${encodeURIComponent(demo)}` : dates);
 
@@ -303,7 +303,8 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
     if (!demo || demoDone.current || !ready || !rows) return;
     const r = rows.find((x) => x[7] === demo); if (!r || !markers.current[r[7]]) return;
     demoDone.current = true;
-    setTimeout(() => { map.current.setView([r[2], r[3]], 10); }, 400);
+    // Nov 21 (per Mely): the demo opens on all of Florida (both partner names show); she zooms in herself
+    void r;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [demo, ready, rows, shown]);
 

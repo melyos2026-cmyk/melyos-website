@@ -31,3 +31,8 @@ export const FEATURED_INFO: Record<string, { amenities: string; stays: string[] 
 export const DEMO_MAP: Record<string, string> = {
   "x-21-palms": "/explore/live/21palms/index.html",
 };
+
+// Nov 21 (per Mely): photo for a sales-demo prospect (list card + pin preview), only with ?demo=<id>.
+export const DEMO_PHOTO: Record<string, string> = {
+  "x-21-palms": "/explore/featured/21palms.jpg",
+};
