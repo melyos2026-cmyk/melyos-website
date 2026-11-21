@@ -53,8 +53,8 @@ body.editing .lotold{cursor:move;touch-action:none}
 body:not(.haslot) #secLot,body:not(.haspoi) #secPoi{display:none}
 #ptip{margin:6px 0;color:#475569;font:600 13px Inter,system-ui,sans-serif}body.haslot #ptip,body.haspoi #ptip{display:none}
 .panel .prow button{padding:5px 9px;font-size:13px}.panel .prow input{padding:5px 8px;font-size:13px}.panel #pt span{display:none}
-@media (min-width:900px){body.editing .panel{left:auto;right:10px;top:78px;bottom:10px;width:310px;max-width:310px;max-height:none;border-radius:16px;margin:0}
- body.editing{padding-bottom:0!important;padding-right:330px}body.editing .zoom{right:340px}
+@media (min-width:480px){body.editing .panel{left:auto;right:8px;top:8px;bottom:8px;width:min(300px,44vw);max-width:none;max-height:none;border-radius:16px;margin:0}
+ body.editing{padding-bottom:0!important;padding-right:calc(min(300px,44vw) + 16px)}body.editing .zoom{right:calc(min(300px,44vw) + 24px)}body.editing header,body.editing .bar{margin-right:0}
  .psec .prow label{min-width:46px}}
 .panel{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -6px 24px rgba(0,0,0,.18);padding:10px 12px 14px;z-index:40;display:none;border-radius:16px 16px 0 0;max-width:760px;margin:0 auto}
 body.editing .panel{display:block}
@@ -385,7 +385,7 @@ document.getElementById("remc").onclick=()=>{if(need())return;if(vi<0)return say
 document.getElementById("save").onclick=()=>{if(true){document.getElementById("copy").click();return}try{localStorage.setItem("p21shapes5",JSON.stringify({sh:SH,st:ST,stv:2,num:NUM,po:PO}));say("Saved on this device ✓")}catch(e){say("Could not save on this device")}};
 document.getElementById("copy").onclick=async()=>{const t=JSON.stringify({sh:SH,st:ST,num:NUM,po:PO});try{await navigator.clipboard.writeText(t);say("✓ Copied — paste it to Claude in the chat (Cmd + V)")}catch(e){say("Copy not allowed here")}};
 document.getElementById("reset").onclick=()=>{try{localStorage.removeItem("p21shapes5")}catch(e){}select(-1);load();render();say("Back to the original layout")};
-document.getElementById("edit").onclick=()=>{editing=!editing;document.body.classList.toggle("editing",editing);const b=document.getElementById("edit");b.classList.toggle("on",editing);b.textContent=editing?"✓ Done":"✎ Edit";document.getElementById("sheet").classList.remove("open");if(!editing)select(-1);render()};
+document.getElementById("edit").onclick=()=>{editing=!editing;document.body.classList.toggle("editing",editing);const b=document.getElementById("edit");b.classList.toggle("on",editing);b.textContent=editing?"✓ Done":"✎ Edit";document.getElementById("sheet").classList.remove("open");if(!editing)select(-1);render();setTimeout(fitNow,30)};
 // Nov 20 (per Mely): lot popup like Aloha's map — guests see a calendar: open days green, taken days gray.
 const DAY=864e5,today=new Date(new Date().toDateString());
 function blocks(i){const st=ST[i];let a=(i*37)%23;const r=[];
