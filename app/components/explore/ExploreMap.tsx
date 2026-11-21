@@ -220,12 +220,16 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
       const feat = isFeatured(r), book = bookable(r), pt = partner(r);
       // Red teardrop pin = Online Booking (like Dockwa). Small kind-colored dot = Inquiry only.
       const icon = pt
-        ? Lm.divIcon({ className: "", html: `<svg width="30" height="40" viewBox="0 0 30 40" style="filter:drop-shadow(0 2px 3px rgba(7,26,51,.35))"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 39 15 39s14-13.6 14-24.1C29 7.2 22.7 1 15 1z" fill="${RED}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="14.6" r="7.6" fill="#fff"/><path d="m15 9.4 1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#d4a94a"/></svg>`, iconSize: [30, 40], iconAnchor: [15, 39], popupAnchor: [0, -34] })
+        ? Lm.divIcon({ className: "", html: `<svg width="22" height="29" viewBox="0 0 30 40" style="filter:drop-shadow(0 2px 3px rgba(7,26,51,.35))"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 39 15 39s14-13.6 14-24.1C29 7.2 22.7 1 15 1z" fill="${RED}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="14.6" r="7.6" fill="#fff"/><path d="m15 9.4 1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#d4a94a"/></svg>`, iconSize: [22, 29], iconAnchor: [11, 28], popupAnchor: [0, -34] })
         : book
         ? Lm.divIcon({ className: "", html: `<svg width="30" height="40" viewBox="0 0 30 40" style="filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 39 15 39s14-13.6 14-24.1C29 7.2 22.7 1 15 1z" fill="${RED}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="15" r="5.5" fill="#fff"/></svg>`, iconSize: [30, 40], iconAnchor: [15, 39], popupAnchor: [0, -34] })
         : Lm.divIcon({ className: "", html: `<span style="display:block;width:16px;height:16px;border-radius:50%;background:${k.color};border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45)"></span>`, iconSize: [16, 16], iconAnchor: [8, 8] });
       const m = Lm.marker([r[2], r[3]], { icon, title: nice(r[1]), zIndexOffset: pt ? 3000 : book ? 1000 : 0 });
-      if (pt) m.bindTooltip(`<span style="color:#fbbf24">&#9733;</span> ${esc(nice(r[1]))}`, { permanent: true, direction: "top", offset: [0, -38], className: "mx-tip" });
+      // Nov 21 (per Mely): partners close together (Aloha + 21 Palms) — names to the left / right so they never cover each other
+      if (pt) {
+        const westOfAnother = shown.some((o) => o !== r && partner(o) && Math.abs(o[2] - r[2]) < 0.6 && o[3] > r[3] && o[3] - r[3] < 1.2);
+        m.bindTooltip(`<span style="color:#fbbf24">&#9733;</span> ${esc(nice(r[1]))}`, { permanent: true, direction: westOfAnother ? "left" : "right", offset: westOfAnother ? [-10, -15] : [10, -15], className: "mx-tip" });
+      }
       const photo = photoOf(r);
       const ov = extra.overrides[r[7]] || {};
       const phone = ov.phone || r[5], site = ov.website || r[6];
