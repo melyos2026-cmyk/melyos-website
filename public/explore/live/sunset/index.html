@@ -75,10 +75,11 @@ body.editing{padding-bottom:var(--ph,420px)}.panel{max-height:70vh;overflow:auto
 .nx{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 10px;margin:6px 0;font-size:12.5px;color:#166534}.nx button{font-size:11.5px;font-weight:700;color:#166534;background:#dcfce7;border:1px solid #86efac;border-radius:6px;padding:5px 9px;cursor:pointer;white-space:nowrap}
 .mn{font-size:13px;color:#475569;margin:10px 0 4px}
 .sheet.open{max-height:88vh;overflow:auto}
-</style><style>html:not(.canedit) #edit,html:not(.canedit) #dl{display:none!important}</style><style>@keyframes lotBreathe{0%,100%{filter:brightness(1) drop-shadow(0 0 0 rgba(93,255,168,0))}50%{filter:brightness(1.35) drop-shadow(0 0 4px rgba(93,255,168,.95))}}polygon.breathe{animation:lotBreathe 1.8s ease-in-out infinite}@media (prefers-reduced-motion:reduce){polygon.breathe{animation:none}}</style><style>@keyframes tapRing{0%{transform:scale(.3);opacity:1}100%{transform:scale(1.9);opacity:0}}.tapring{position:absolute;z-index:5;width:34px;height:34px;margin:-17px 0 0 -17px;border:2.5px solid #5dffa8;border-radius:50%;pointer-events:none;box-shadow:0 0 8px rgba(93,255,168,.7);animation:tapRing 1.6s ease-out infinite}@media (prefers-reduced-motion:reduce){.tapring{animation:none;opacity:0}}</style></head><body>
+</style><style>html:not(.canedit) #edit,html:not(.canedit) #dl{display:none!important}</style><style>@keyframes lotBreathe{0%,100%{filter:brightness(1) drop-shadow(0 0 0 rgba(93,255,168,0))}50%{filter:brightness(1.35) drop-shadow(0 0 4px rgba(93,255,168,.95))}}polygon.breathe{animation:lotBreathe 1.8s ease-in-out infinite}@media (prefers-reduced-motion:reduce){polygon.breathe{animation:none}}</style><style>@keyframes tapRing{0%{transform:scale(.3);opacity:1}100%{transform:scale(1.9);opacity:0}}.tapring{position:absolute;z-index:5;width:34px;height:34px;margin:-17px 0 0 -17px;border:2.5px solid #5dffa8;border-radius:50%;pointer-events:none;box-shadow:0 0 8px rgba(93,255,168,.7);animation:tapRing 1.6s ease-out infinite}@media (prefers-reduced-motion:reduce){.tapring{animation:none;opacity:0}}</style><style>.dsr{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e3e8ee;position:sticky;top:112px;z-index:14;font:600 13px Inter,system-ui,sans-serif;color:#0f2540}.dsr label{display:flex;align-items:center;gap:6px}.dsr input{border:1px solid #cbd5e1;border-radius:10px;padding:6px 8px;font:600 13px Inter,system-ui,sans-serif;color:#0f2540;background:#fff}.dsr button{border:0;border-radius:10px;padding:7px 14px;font:800 13px Inter,system-ui,sans-serif;background:#0f2540;color:#fff;cursor:pointer}.dsr button.ghost{background:#fff;color:#0f2540;border:1px solid #cbd5e1}#dsmsg{font-weight:700}#dsmsg.ok{color:#15803d}#dsmsg.no{color:#b91c1c}html.embed .dsr{top:52px}</style></head><body>
 <header><h1>Sunset Ridge RV Resort</h1><p id="sub"></p>
 <button class="edit-btn" id="edit">✎ Edit</button><div class="lang"><button id="en" class="on">EN</button><button id="es">ES</button></div></header>
 <div class="bar" id="bar"></div>
+<div class="dsr" id="dsr"><span class="dsl" id="dsl">📅 Search dates</span><label><span id="dsal">Arrive</span><input type="date" id="dsa"></label><label><span id="dsdl">Leave</span><input type="date" id="dsd"></label><button id="dsgo">Search</button><button id="dsclr" class="ghost">Clear</button><span id="dsmsg"></span></div>
 <div class="wrap" id="wrap"><div class="map" id="map"><img src="map.jpg" alt="Sunset Ridge RV Resort map"></div></div>
 <div class="zoom"><button id="zin">+</button><button id="zout">−</button></div>
 <div class="sheet" id="sheet"><div class="grab"></div><button class="close" id="x">×</button><div id="sc"></div><div id="scrollhint">↓ <span id="sht">Scroll for the calendar</span></div></div>
@@ -466,7 +467,7 @@ const INFRAME=(()=>{let f;try{f=window.self!==window.top}catch(e){f=true}return 
 // Nov 21 (per Mely): the whole map fits the screen at the smallest zoom everywhere (not only inside Explore)
 function baseW(){const W=document.getElementById("wrap").clientWidth;
  const im=map.querySelector("img"),ratio=im&&im.naturalHeight?im.naturalWidth/im.naturalHeight:981/1604;
- const top=(document.querySelector("header")||{offsetHeight:0}).offsetHeight+(document.getElementById("bar")||{offsetHeight:0}).offsetHeight;
+ const top=(document.querySelector("header")||{offsetHeight:0}).offsetHeight+(document.getElementById("bar")||{offsetHeight:0}).offsetHeight+(document.getElementById("dsr")||{offsetHeight:0}).offsetHeight;
  return Math.max(260,Math.min(W,(innerHeight-top-12)*ratio))}
 function fitNow(){map.style.width=Math.round(baseW()*z)+"px";render()}
 if(INFRAME)document.documentElement.classList.add("embed");
@@ -549,4 +550,19 @@ document.getElementById("dl").onclick=async()=>{const lay={sh:SH,st:ST,stv:2,num
  if(!done){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([src],{type:"text/html"}));a.download="21Palms-mapa.html";document.body.appendChild(a);a.click();a.remove()}
  try{localStorage.setItem("sunsetshapes5",JSON.stringify(lay))}catch(e){}say("Downloaded ✓ — open 21Palms-mapa.html on any computer")};
 load();lang("en");render();
+</script><script>
+// Nov 21 (per Mely): date search on top of the map (like the Aloha map) — pick arrival and departure,
+// the map shows only the lots free for those nights; tap one to see its calendar and book.
+(function(){const a=document.getElementById("dsa"),d=document.getElementById("dsd"),m=document.getElementById("dsmsg");
+ const iso=x=>`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
+ const t=new Date();a.min=iso(t);d.min=iso(new Date(t.getFullYear(),t.getMonth(),t.getDate()+1));
+ a.onchange=()=>{if(!a.value)return;const p=a.value.split("-").map(Number),n=iso(new Date(p[0],p[1]-1,p[2]+1));d.min=n;if(!d.value||d.value<=a.value)d.value=n};
+ const es=()=>typeof L!=="undefined"&&L=="es";
+ const lab=()=>{document.getElementById("dsl").textContent=es()?"📅 Buscar fechas":"📅 Search dates";document.getElementById("dsal").textContent=es()?"Llegada":"Arrive";document.getElementById("dsdl").textContent=es()?"Salida":"Leave";document.getElementById("dsgo").textContent=es()?"Buscar":"Search";document.getElementById("dsclr").textContent=es()?"Borrar":"Clear"};
+ lab();["en","es"].forEach(k=>{const b=document.getElementById(k);if(b)b.addEventListener("click",()=>setTimeout(lab,0))});
+ document.getElementById("dsgo").onclick=()=>{if(!a.value||!d.value||d.value<=a.value){m.className="no";m.textContent=es()?"Escoja llegada y salida":"Pick arrival and departure";return}
+  postMessage({type:"melyos-dates",arrive:a.value,depart:d.value},"*");
+  setTimeout(()=>{let n=0;try{SH.forEach((_,i)=>{if(okLot(i))n++})}catch(e){}m.className=n?"ok":"no";m.textContent=n?(es()?`✓ ${n} lotes libres — toque uno verde`:`✓ ${n} sites free — tap a green one`):(es()?"No hay lotes libres en esas fechas":"No sites free for those dates")},80)};
+ document.getElementById("dsclr").onclick=()=>{a.value="";d.value="";m.textContent="";postMessage({type:"melyos-dates",arrive:"",depart:""},"*")};
+})();
 </script></body></html>
