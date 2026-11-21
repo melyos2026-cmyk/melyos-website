@@ -48,6 +48,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
   }, []);
   const [picked, setPicked] = useState<string | null>(null);
   const [demo, setDemo] = useState<string | null>(null);
+  // Nov 21 (per Mely): side-by-side from tablet width up (also when the browser is zoomed in)
   // Nov 18 (per Mely): Dockwa-style search — dates, filters, list of cards, "search as I move the map"
   const [arrive, setArrive] = useState("");
   const [depart, setDepart] = useState("");
@@ -318,15 +319,15 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
 
   // Nov 18 (per Mely): Dockwa-style — the map fills the whole screen to the right, filters and list on the left
   return (
-    <div className="flex flex-col lg:h-[calc(100vh-6rem)] lg:flex-row">
-      <div className="relative order-1 h-[55vh] min-h-[320px] border-b border-slate-200 lg:order-2 lg:h-auto lg:flex-1 lg:border-b-0 lg:border-l">
+    <div className="flex flex-col md:h-[calc(100vh-6rem)] md:flex-row">
+      <div className="relative order-1 h-[55vh] min-h-[320px] border-b border-slate-200 md:order-2 md:h-auto md:flex-1 md:border-b-0 md:border-l">
         <div ref={mapEl} className="absolute inset-0 z-0 isolate" />
         <style>{`.mx-partner{position:relative}.mx-halo{position:absolute;left:50%;top:40%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(57,213,238,.45);animation:mxpulse 1.8s ease-out infinite}@keyframes mxpulse{0%{transform:scale(.5);opacity:.9}100%{transform:scale(1.9);opacity:0}}.mx-tip{background:rgba(255,255,255,.95);color:#071A33;border:1px solid #e2e8f0;border-radius:6px;padding:1px 6px;font:700 10.5px/1.4 system-ui,sans-serif;box-shadow:0 1px 4px rgba(7,26,51,.15)}.mx-tip:before{border-top-color:#fff!important}`}</style>
         <div className="absolute right-3 top-3 z-[500] flex rounded-xl bg-white p-1 text-[13px] font-bold shadow-md">
           {([["Map", false], ["Satellite", true]] as [string, boolean][]).map(([lab, v]) => <button key={lab} type="button" onClick={() => setSat(v)} className={`rounded-lg px-3 py-1.5 ${sat === v ? "bg-[#071A33] text-white" : "text-slate-600 hover:bg-slate-50"}`}>{lab}</button>)}
         </div>
       </div>
-      <div className="order-2 flex min-h-0 flex-col bg-white lg:order-1 lg:w-[560px] lg:overflow-y-auto xl:w-[620px]">
+      <div className="order-2 flex min-h-0 flex-col bg-white md:order-1 md:w-[360px] md:overflow-y-auto lg:w-[480px] xl:w-[620px]">
         <div className="grid gap-3 border-b border-slate-200 p-4">
           {heading}
     <div role="tablist" aria-label="Show" className="grid grid-cols-2 gap-1 rounded-2xl border border-slate-200 bg-white p-1 sm:flex">
@@ -401,7 +402,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
           <p className="text-sm font-bold text-[#071A33]">{rows ? `${listed.length.toLocaleString()} ${follow && bounds ? "in this area" : "places"}` : "Loading…"}</p>
           <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-600"><input type="checkbox" checked={follow} onChange={(e) => setFollow(e.target.checked)} className="h-4 w-4 accent-[#08B8D8]" />Search as I move the map</label>
         </div>
-        <div className="max-h-[70vh] overflow-y-auto lg:max-h-none lg:flex-1 lg:overflow-visible">
+        <div className="max-h-[70vh] overflow-y-auto md:max-h-none md:flex-1 md:overflow-visible">
           {rows && !listed.length && <p className="p-5 text-sm text-slate-500">Nothing here. Zoom out or move the map, clear a filter, or choose another state above.</p>}
           {partners.map((r) => {
             const photo = photoOf(r), star = extra.stars[r[7]], k = KIND[r[0]];
