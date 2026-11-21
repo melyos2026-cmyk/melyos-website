@@ -48,6 +48,14 @@ footer b{color:#0f2a4a}
 body.editing .lotold{cursor:move;touch-action:none}
 .psec{border:1px solid #e2e8f0;border-radius:12px;padding:8px 10px;margin:8px 0;background:#f8fafc}.psec h4{margin:0 0 6px;font:800 14px Inter,system-ui,sans-serif;color:#0f2540}.psec h4 small{font-weight:500;color:#64748b}.psec .prow label{min-width:54px}.psec .hint{color:#94a3b8;font-size:11px}
 #msg{position:fixed;left:50%;top:84px;transform:translateX(-50%);z-index:95;background:#0f2540;color:#fff;font:700 15px Inter,system-ui,sans-serif;padding:10px 16px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.3);max-width:90vw;text-align:center}#msg:empty{display:none}
+
+/* Nov 21 (per Mely): compact editor — only the box for what you tapped shows; on a computer it sits on the right side so the map stays visible */
+body:not(.haslot) #secLot,body:not(.haspoi) #secPoi{display:none}
+#ptip{margin:6px 0;color:#475569;font:600 13px Inter,system-ui,sans-serif}body.haslot #ptip,body.haspoi #ptip{display:none}
+.panel .prow button{padding:5px 9px;font-size:13px}.panel .prow input{padding:5px 8px;font-size:13px}.panel #pt span{display:none}
+@media (min-width:900px){body.editing .panel{left:auto;right:10px;top:78px;bottom:10px;width:310px;max-width:310px;max-height:none;border-radius:16px;margin:0}
+ body.editing{padding-bottom:0!important;padding-right:330px}body.editing .zoom{right:340px}
+ .psec .prow label{min-width:46px}}
 .panel{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -6px 24px rgba(0,0,0,.18);padding:10px 12px 14px;z-index:40;display:none;border-radius:16px 16px 0 0;max-width:760px;margin:0 auto}
 body.editing .panel{display:block}
 body.editing{padding-bottom:var(--ph,420px)}.panel{max-height:70vh;overflow:auto}
@@ -76,7 +84,7 @@ body.editing{padding-bottom:var(--ph,420px)}.panel{max-height:70vh;overflow:auto
 <div class="sheet" id="sheet"><div class="grab"></div><button class="close" id="x">×</button><div id="sc"></div><div id="scrollhint">↓ <span id="sht">Scroll for the calendar</span></div></div>
 <div class="panel" id="panel">
 <button id="pmin" type="button">▾ Hide</button><p class="t" id="pt">Edit mode <span>· drag the lot to move it · white corner = reshape · orange diamond = push a side · orange dot = rotate (Shift = free)</span></p>
-<div class="psec" id="secSave"><h4>💾 Save</h4>
+<p id="ptip">👆 Tap a lot or an icon on the map to edit it. Drag icons to move them.</p><div class="psec" id="secSave"><h4>💾 Save</h4>
 <div class="prow"><button class="ok" id="save">Save</button><button id="copy">Copy layout</button><button class="ok" id="dl">⬇ Download</button><button id="reset">Reset</button></div></div><div class="psec" id="secLot"><h4>🅿️ Lot <small>— tap a lot on the map</small></h4>
 <div class="prow"><label>Lot #</label><input id="pnum"></div>
 <div class="prow"><label>Status</label><button data-st="free">Avail.</button><button data-st="occ">Occ.</button><button data-st="res">Res.</button><button data-st="rent">For rent</button><button data-st="maint">Maint.</button></div>
@@ -303,7 +311,7 @@ document.getElementById("poiDel").onclick=()=>{if(needPoi())return;PO.splice(sel
 document.getElementById("poiIcon").onchange=e=>{if(selPoi<0||!PO[selPoi])return;const v=e.target.value;PO[selPoi][3]=v;PO[selPoi][4]=v=="wheelchair"?"ada":(v=="flame"||v=="tank")?"propane":"dark";render()};
 document.getElementById("poiAdd").onclick=()=>{const v=document.getElementById("poiIcon").value;const t=document.getElementById("poiText").value.trim()||"New label";
  PO.push([50,45,v=="wheelchair"?"":t,v,v=="wheelchair"?"ada":(v=="flame"||v=="tank")?"propane":"dark",1,document.getElementById("poiInfo").value||"",document.getElementById("poiEmoji").value.trim()||"",document.getElementById("poiHours").value||""]);selPoi=PO.length-1;poiPanel();render();say("Label added in the middle — drag it to its place")};
-function render(){svg.innerHTML='<defs><pattern id="mst" patternUnits="userSpaceOnUse" width="1.6" height="1.6" patternTransform="rotate(45)"><rect width="1.6" height="1.6" fill="#1f2937" fill-opacity=".85"/><rect width=".8" height="1.6" fill="#facc15" fill-opacity="1"/></pattern></defs>';over.innerHTML="";const W=map.clientWidth;
+function render(){document.body.classList.toggle('haslot',typeof sel!=='undefined'&&sel>=0);document.body.classList.toggle('haspoi',typeof selPoi!=='undefined'&&selPoi>=0);svg.innerHTML='<defs><pattern id="mst" patternUnits="userSpaceOnUse" width="1.6" height="1.6" patternTransform="rotate(45)"><rect width="1.6" height="1.6" fill="#1f2937" fill-opacity=".85"/><rect width=".8" height="1.6" fill="#facc15" fill-opacity="1"/></pattern></defs>';over.innerHTML="";const W=map.clientWidth;
  SH.forEach((pts,i)=>{let col=COLOR[ST[i]],srch=typeof RANGE!=="undefined"&&!!RANGE&&filt=="all",pk=srch&&PICKED>=0&&okLot(PICKED),hit=srch&&okLot(i)&&(!pk||i==PICKED),dim=(filt!="all"&&(ST[i]!=filt||(RANGE&&ST[i]!="maint"&&ST[i]!="occ"&&!freeFor(i,RANGE.a,RANGE.d))))||(srch&&!hit);   // a status chip shows that status in its own color (free for the dates when dates are set)
   const pg=document.createElementNS("http://www.w3.org/2000/svg","polygon");pg.setAttribute("points",pts.map(p=>p.join(",")).join(" "));
   if(GUEST||filt!="all"){const R=typeof RANGE!=="undefined"&&RANGE;
