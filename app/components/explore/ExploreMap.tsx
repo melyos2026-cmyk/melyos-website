@@ -327,16 +327,16 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
           {([["Map", false], ["Satellite", true]] as [string, boolean][]).map(([lab, v]) => <button key={lab} type="button" onClick={() => setSat(v)} className={`rounded-lg px-3 py-1.5 ${sat === v ? "bg-[#071A33] text-white" : "text-slate-600 hover:bg-slate-50"}`}>{lab}</button>)}
         </div>
       </div>
-      <div className="order-2 flex min-h-0 flex-col bg-white md:order-1 md:w-[360px] md:overflow-y-auto lg:w-[480px] xl:w-[620px]">
-        <div className="grid gap-3 border-b border-slate-200 p-4">
+      <div className="order-2 flex min-h-0 flex-col bg-white md:order-1 md:w-[380px] md:shrink-0 md:overflow-y-auto md:overflow-x-hidden lg:w-[460px] xl:w-[560px]">
+        <div className="grid min-w-0 gap-3 border-b border-slate-200 p-4 [&>*]:min-w-0">
           {heading}
-    <div role="tablist" aria-label="Show" className="grid grid-cols-2 gap-1 rounded-2xl border border-slate-200 bg-white p-1 sm:flex">
+    <div role="tablist" aria-label="Show" className="grid grid-cols-2 gap-1 rounded-2xl border border-slate-200 bg-white p-1 sm:flex md:grid xl:flex">
             {tabs.map(([id, label, ks]) => {
               const on = activeTab === id;
               const color = id === "all" ? "#071A33" : KIND[id].color;
               return (
                 <button key={id} type="button" role="tab" aria-selected={on} onClick={() => setKinds(ks)}
-                  className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-2 py-2 text-[13px] font-bold transition ${on ? "text-white shadow" : "text-slate-600 hover:bg-slate-50"}`}
+                  className={`flex min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-2 py-2 text-[13px] font-bold transition ${on ? "text-white shadow" : "text-slate-600 hover:bg-slate-50"}`}
                   style={on ? { background: color } : undefined}>
                   {id !== "all" && <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: on ? "#fff" : color }} />}
                   {label}
@@ -345,7 +345,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
               );
             })}
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2 [&>*]:min-w-0">
             <div className="[&>select]:w-full [&>select]:h-full"><StatePicker current={state} /></div>
             <input value={q} onChange={(e) => {
                 const v = e.target.value;
