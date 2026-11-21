@@ -135,7 +135,7 @@ export function RequestForm(l: L) {
           </select>
           {/* Nov 21 (per Mely): long stays / monthly / residency = application, not a booking */}
           {longMode && <div className="mt-2 rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2.5 text-sm text-indigo-950">
-            <b>Monthly stay or residency</b> is an application, not a booking: pick your move-in date, then fill it in online (ID, RV and insurance, background check), the park approves it, then you pay the deposit online.
+            <b>Monthly stay or residency</b> is an application, not a booking: pick your move-in date, then fill it in online (ID, RV and insurance, background check), the park approves it, then you pay the deposit and first month&apos;s rent online — before you move in. Rent after that is paid online every month (autopay available).
           </div>}
           {f.vessel.kind !== "rental" && <div className="mt-2 grid grid-cols-3 gap-2">
             <label className="text-xs font-bold text-slate-600">RV length (ft)<input className={inp} inputMode="numeric" placeholder="e.g. 35" value={f.vessel.length_ft || ""} onChange={(e) => setV("length_ft", e.target.value)} /></label>
@@ -172,10 +172,10 @@ export function RequestForm(l: L) {
         return <>
           {picked?.maxLen && <div className={`rounded-xl px-3 py-2 text-sm ${tooLong ? "border-2 border-rose-300 bg-rose-50 font-bold text-rose-700" : "bg-slate-50 text-slate-700"}`}>
             {tooLong ? `⚠ Your RV is ${len} ft — ${unit} ${picked.lot} takes RVs up to ${picked.maxLen} ft. Pick another ${unit}.` : `${unit[0].toUpperCase() + unit.slice(1)} ${picked.lot} takes RVs up to ${picked.maxLen} ft${len ? ` — your ${len} ft RV fits ✓` : ". Enter your RV length below to check."}`}</div>}
-          {long && <div className="rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900"><b>{nights} nights:</b> stays longer than 15 nights need a short application (ID, RV and insurance, background check). The button opens it — the park approves it, then you pay the deposit online.</div>}
+          {long && <div className="rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900"><b>{nights} nights:</b> stays longer than 15 nights need a short application (ID, RV and insurance, background check). The button opens it — once approved, you pay the deposit and first month&apos;s rent online before moving in.</div>}
           <button type="button" onClick={go} disabled={!ready} className={`w-full rounded-xl px-6 py-3.5 text-lg font-black transition disabled:opacity-60 ${booked && booked === picked?.lot ? "border-2 border-emerald-300 bg-emerald-50 text-base text-emerald-800" : "bg-[#08B8D8] text-white hover:bg-[#079db9]"}`}>
             {booked && booked === picked?.lot ? "✓ Checkout is open on the map — finish there" : !nights ? "Pick your dates" : !picked ? `Pick a ${unit}` : tooLong ? "Your RV is too long for this site" : long ? `Start the application · ${unit} ${picked.lot} →` : `Book & pay · ${unit} ${picked.lot} · ${nights} night${nights > 1 ? "s" : ""} →`}</button>
-          <p className="text-xs text-slate-500">{long ? "Once approved, you pay the deposit online." : "You pay securely by card on the park's own checkout. Prices and availability come straight from the park."}</p>
+          <p className="text-xs text-slate-500">{long ? "Once approved, you pay the deposit and first month's rent online before moving in." : "You pay securely by card on the park's own checkout. Prices and availability come straight from the park."}</p>
         </>;
       })() : <>
       <div className="grid gap-3 sm:grid-cols-3">
