@@ -54,7 +54,7 @@ footer{text-align:center;color:#6b776b;font-size:13px;padding:20px}
 <div id="avmsg"></div>
 <div style="margin-top:14px;font-size:13px;font-weight:700;color:#334033">Plan</div>
 <div class="plans" id="plans"><div class="note">Pick a lot first.</div></div>
-<p class="note">Only lots that are free for at least a month are listed, with the first date you can move in. Plans that would run into another reservation can’t be chosen.</p>
+<p class="note">Only lots free for a long stay are listed, with the first date you can move in. Plans that would run into another reservation can’t be chosen.</p>
 </div>
 
 <div class="card"><h2>Parties & contact</h2>
@@ -111,10 +111,10 @@ const fmt=d=>d.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"num
 // lot~firstMoveIn~freeNights(~r for the rental unit)
 const AV=(P.get("av")||"").split(",").filter(Boolean).map(x=>{const[l,s,n,r]=x.split("~");return{lot:l,start:dOf(s),run:+n||0,rent:r=="r"}}).filter(a=>a.start)
  .sort((a,b)=>a.lot.localeCompare(b.lot,undefined,{numeric:true}));
-const PLAN_N={m:30,q:90,h:180,y:365};
+const PLAN_N={m:365,q:90,h:180,y:365};   // month to month has no end date
 function plansFor(a){if(a.rent)return[["m","Monthly — Denali RV rental","$1,500 + electric"]];const c=a.lot[0];
- if(c=="N")return[["m","Monthly","$850"],["y","Annual","$7,500"]];if(c=="W")return[["m","Monthly","$900"],["y","Annual","$8,300"]];
- return[["m","Monthly","$775"],["q","3 months (season)","$2,000"],["h","6 months (season)","$3,750"],["y","Annual","$6,600"]]}
+ if(c=="N")return[["m","Month to month","$850"],["y","Annual","$7,500"]];if(c=="W")return[["m","Month to month","$900"],["y","Annual","$8,300"]];
+ return[["m","Month to month","$775"],["q","3 months (season)","$2,000"],["h","6 months (season)","$3,750"],["y","Annual","$6,600"]]}
 const typeOf=a=>a.rent?"Denali RV rental":a.lot[0]=="N"?"Premium":a.lot[0]=="W"?"Lake View":"Standard";
 const lotSel=document.getElementById("lot"),mv=document.getElementById("mv"),pl=document.getElementById("plans"),am=document.getElementById("avmsg");
 AV.forEach(a=>{const o=document.createElement("option");o.value=a.lot;o.textContent=`${a.lot} · ${typeOf(a)} · ${+a.start==+today?"available now":"from "+fmt(a.start)}`;lotSel.appendChild(o)});
