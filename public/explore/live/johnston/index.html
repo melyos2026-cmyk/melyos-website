@@ -128,7 +128,7 @@ let SH,ST,NUM;
 // Nov 20 (per Mely): a photo for every lot (sample photos until the park adds its own) — shown in the lot popup
 // and as a preview when the mouse is over a lot. In Edit mode: Photo… to upload one per lot.
 const DEF_PH={rent:"rent.jpg",any:"lot.jpg"};let PH={};
-const photoOf=i=>PH[NUM[i]]||(NUM[i]=="T-7"?"tent7.jpg":NUM[i]=="T-2"?"tent2.jpg":NUM[i]=="T-3"?"tent3.jpg":NUM[i]=="T-8"?"tent8.jpg":NUM[i]=="T-9"?"tent9.jpg":null)||(ST[i]=="rent"?DEF_PH.rent:DEF_PH.any);
+const photoOf=i=>PH[NUM[i]]||(NUM[i]=="T-7"?"tent7.jpg":NUM[i]=="T-2"?"tent2.jpg":NUM[i]=="T-3"?"tent3.jpg":NUM[i]=="T-8"?"tent8.jpg":NUM[i]=="T-9"?"tent9.jpg":sec(i)=="S"?"storage.jpg":null)||(ST[i]=="rent"?DEF_PH.rent:DEF_PH.any);   // Nov 22 (per Mely): RV storage photo
 function savePH(){try{localStorage.setItem("johnstonwidephotos",JSON.stringify(PH));return true}catch(e){return false}}
 // Nov 21 (per Mely): LABEL / EMOJI POSITIONS ARE FIXED — the ones in POIS above are the official places
 // (Clubhouse on the main building, fitness on the small building, 🏊 in the pool, ♿ in the parking, propane at the corner
@@ -641,7 +641,7 @@ new ResizeObserver(fitPanel).observe(panelEl);
 document.getElementById("dl").onclick=async()=>{const lay={sh:SH,st:ST,stv:2,num:NUM,po:PO,ph:PH};
  let src=SRC0.replace("const EMBED=null;","const EMBED="+JSON.stringify(lay).replace(/</g,"\\u003c")+";");
  try{const b=await (await fetch("map.jpg")).blob();const u=await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});src=src.replace('src="map-wide.jpg"','src="'+u+'"')}catch(e){}
- for(const f of ["lot.jpg","rent.jpg"]){try{const b=await (await fetch(f)).blob();const u=await new Promise(r=>{const x=new FileReader();x.onload=()=>r(x.result);x.readAsDataURL(b)});src=src.replace('"'+f+'"','"'+u+'"')}catch(e){}}
+ for(const f of ["lot.jpg","rent.jpg","storage.jpg"]){try{const b=await (await fetch(f)).blob();const u=await new Promise(r=>{const x=new FileReader();x.onload=()=>r(x.result);x.readAsDataURL(b)});src=src.replace('"'+f+'"','"'+u+'"')}catch(e){}}
  let done=false;
  try{const dlx=window.claude&&window.claude.use?await window.claude.use("downloads"):null;if(dlx){await dlx.save({filename:"21Palms-mapa.html",data:src});done=true}}catch(e){if(e&&/declin|cancel/i.test(String(e.message||e))){say("Download cancelled");return}}
  if(!done){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([src],{type:"text/html"}));a.download="21Palms-mapa.html";document.body.appendChild(a);a.click();a.remove()}
