@@ -128,7 +128,7 @@ let SH,ST,NUM;
 // Nov 20 (per Mely): a photo for every lot (sample photos until the park adds its own) — shown in the lot popup
 // and as a preview when the mouse is over a lot. In Edit mode: Photo… to upload one per lot.
 const DEF_PH={rent:"rent.jpg",any:"lot.jpg"};let PH={};
-const photoOf=i=>PH[NUM[i]]||(["T-8","T-9"].includes(NUM[i])?"tent.jpg":null)||(ST[i]=="rent"?DEF_PH.rent:DEF_PH.any);
+const photoOf=i=>PH[NUM[i]]||(NUM[i]=="T-7"?"tent7.jpg":["T-8","T-9"].includes(NUM[i])?"tent.jpg":null)||(ST[i]=="rent"?DEF_PH.rent:DEF_PH.any);
 function savePH(){try{localStorage.setItem("johnstonwidephotos",JSON.stringify(PH));return true}catch(e){return false}}
 // Nov 21 (per Mely): LABEL / EMOJI POSITIONS ARE FIXED — the ones in POIS above are the official places
 // (Clubhouse on the main building, fitness on the small building, 🏊 in the pool, ♿ in the parking, propane at the corner
