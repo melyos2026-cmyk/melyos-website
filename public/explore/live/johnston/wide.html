@@ -655,7 +655,7 @@ load();lang("en");render();
  const nameT=k=>({m:es()?"estadía larga":"a long stay",q:es()?"3 meses":"3 months",h:es()?"6 meses":"6 months",y:es()?"anual":"Annual",s:es()?"almacenaje":"RV storage"})[k];
  const setTy=k=>{TY=k;document.querySelectorAll("#dstype button").forEach(b=>b.classList.toggle("on",b.dataset.t==k));const long=k!="night";
   d.parentElement.style.setProperty("display",long?"none":"flex","important");document.getElementById("dsal").textContent=long?(es()?"Fecha de entrada":"Move-in date"):(es()?"Llegada":"Arrive");
-  if(long&&!a.value)a.value=iso(new Date());m.textContent="";if(long)document.getElementById("dsgo").click()};
+  if(long&&!a.value)a.value=iso(new Date());m.textContent="";if(long)document.getElementById("dsgo").click();else{d.value="";postMessage({type:"melyos-dates",arrive:"",depart:""},"*");m.className="";m.textContent=es()?"Escoja llegada y salida, y toque Buscar.":"Pick arrive and leave, then tap Search."}};   // Nov 22: switching back to nights clears the long-stay filter
  document.querySelectorAll("#dstype button").forEach(b=>b.onclick=()=>setTy(b.dataset.t));
  const dIso=s=>{const p=s.split("-").map(Number);return new Date(p[0],p[1]-1,p[2])};
  document.getElementById("dsgo").onclick=()=>{
