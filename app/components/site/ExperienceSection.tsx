@@ -19,7 +19,7 @@ export default function ExperienceSection() {
             <p className="mt-5 text-lg leading-8 text-slate-600">You don't have to learn or set up anything. Tell us what you need, we set it up for you, and you enjoy the result.</p>
           </div>
           {/* Nov 18 (per Mely): the MelyOS bee juggling everything a property runs — sells the feeling, not the screens */}
-          <video className="mx-auto w-full max-w-[440px] rounded-3xl shadow-xl ring-1 ring-slate-200" src="/video/melyos-bee-2026.mp4?v=2" poster="/video/melyos-bee-2026-poster.jpg"
+          <video className="mx-auto w-full max-w-[440px] rounded-3xl shadow-xl ring-1 ring-slate-200" src="/video/melyos-bee-2026.mp4?v=3" poster="/video/melyos-bee-2026-poster.jpg?v=3"
             autoPlay muted loop playsInline preload="metadata" aria-label="The MelyOS bee juggling payments, the live map, reservations, contracts, screening, utilities, accounting and the customer portal" />
         </div>
         <div className="mt-10 grid gap-5 md:grid-cols-3">
