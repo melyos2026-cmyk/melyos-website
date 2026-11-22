@@ -142,7 +142,7 @@ const EDITURL=READONLY&&/[?&]edit=1\b/.test(location.search);if(EDITURL)document
 function load(){let d=null,lab=null;
  // Nov 21 (per Mely): the file is the ONLY source of positions everywhere (melyos.io and the Claude map) — old
  // layouts saved in a browser are never loaded again, so icons can not show up in old places.
- if(true){PH={};PO=POIS.map(p=>p.length>5?[...p]:[...p,0.9,"","",""]);s=21;SH=BASE.map((b,i)=>POLY[i]||rectPts(b));ST=SH.map((_,i)=>{const r=rnd();return i>=101?"free":r<.58?"occ":r<.84?"free":r<.92?"res":r<.97?"rent":"maint"});NUM=SH.map((_,i)=>String(i+1));return}
+ if(true){PH={};PO=POIS.map(p=>p.length>5?[...p]:[...p,0.9,"","",""]);s=21;SH=BASE.map((b,i)=>POLY[i]||rectPts(b));ST=SH.map((_,i)=>{const r=rnd();return i>=101?"free":r<.58?"occ":r<.84?"free":r<.92?"res":r<.97?"rent":"maint"});NUM=SH.map((_,i)=>String(i+1));CAT=ST.slice();genBook();ST=liveST();return}
  try{PH=JSON.parse(localStorage.getItem("sunsetphotos")||"null")||(EMBED&&EMBED.ph)||{}}catch(e){PH={}}
  if(EMBED&&!localStorage.getItem("sunsetshapes5")){try{localStorage.setItem("sunsetshapes5",JSON.stringify(EMBED))}catch(e){}}
  // Nov 20 (per Mely): never lose her saved layout or label positions when the page updates — read the newest save,
@@ -393,16 +393,24 @@ document.getElementById("copy").onclick=async()=>{const t=JSON.stringify({sh:SH,
 document.getElementById("reset").onclick=()=>{try{localStorage.removeItem("sunsetshapes5")}catch(e){}select(-1);load();render();say("Back to the original layout")};
 document.getElementById("edit").onclick=()=>{editing=!editing;document.body.classList.toggle("editing",editing);const b=document.getElementById("edit");b.classList.toggle("on",editing);b.textContent=editing?"✓ Done":"✎ Edit";document.getElementById("sheet").classList.remove("open");if(!editing)select(-1);render();setTimeout(fitNow,30)};
 // Nov 20 (per Mely): lot popup like Aloha's map — guests see a calendar: open days green, taken days gray.
-const DAY=864e5,today=new Date(new Date().toDateString());
-function blocks(i){const st=ST[i];let a=(i*37)%23;const r=[];
- if(st=="occ")r.push([0,40+(i*13)%120]);
- if(st=="res")r.push([6+a,6+a+7+(i%5)*3]);
- if(st=="rent")r.push([2+a%9,6+a%9],[20+a,27+a]);
- if(st=="free"&&i%4==0)r.push([12+a,17+a]);
- const out=r.map(([x,y])=>[new Date(+today+x*DAY),new Date(+today+y*DAY)]);
- // Nov 20 (per Mely): fixed booked nights for the demo (last night inclusive)
- (FIXED[NUM[i]]||[]).forEach(([a,b])=>out.push([new Date(a+"T00:00:00"),new Date(+new Date(b+"T00:00:00")+DAY)]));
- return out}
+const DAY=864e5;let today=new Date(new Date().toDateString());
+// Nov 22 (per Mely — "debe actualizarse con el calendario real"): every lot has REAL bookings on fixed calendar
+// dates (made once from the lot number), so as days, hours and minutes pass, guests check in (3 PM) and check out
+// (11 AM) and the lot colors change by themselves: occupied now = red, booking starting in the next 7 days = reserved.
+let BOOK=[],CAT=[];
+function genBook(){const A=new Date(2026,9,1),H=h=>h*36e5;BOOK=SH.map((_,i)=>{let x=((i+1)*2654435761)%4294967296;const r=()=>{x=(x*1664525+1013904223)%4294967296;return x/4294967296};
+  const out=[];let d=new Date(+A-Math.floor(r()*90)*DAY);const end=new Date(+A+600*DAY);const c=CAT[i];
+  if(c=="maint")return out;
+  while(d<end){const gap=c=="occ"?Math.floor(r()*3):c=="res"?3+Math.floor(r()*18):8+Math.floor(r()*30);d=new Date(+d+gap*DAY);
+   const long=r()<(c=="occ"?.8:.05),n=long?30*(1+Math.floor(r()*5)):2+Math.floor(r()*6);
+   const a=new Date(d.getFullYear(),d.getMonth(),d.getDate()),b=new Date(+a+n*DAY);out.push([a,b]);d=b}
+  return out})}
+function stayOn(i,t){return (BOOK[i]||[]).some(([a,b])=>t>=+a+15*36e5&&t<+b+11*36e5)}
+function liveST(){const t=Date.now();return SH.map((_,i)=>{const c=CAT[i];if(c=="maint")return "maint";if(c=="rent")return "rent";
+  if(stayOn(i,t))return "occ";if((BOOK[i]||[]).some(([a])=>+a>=+today&&+a<t+7*DAY))return "res";return "free"})}
+function blocks(i){const out=(BOOK[i]||[]).filter(([a,b])=>+b>+today-DAY).map(([a,b])=>[a,b]);
+  (FIXED[NUM[i]]||[]).forEach(([a,b])=>out.push([new Date(a+"T00:00:00"),new Date(+new Date(b+"T00:00:00")+DAY)]));
+  return out}
 const FIXED={"91":[["2026-11-27","2026-11-29"]]};
 function isBlocked(i,d){if(ST[i]=="maint"&&d<maintUntil(i))return true;return d<today||blocks(i).some(([a,b])=>d>=a&&d<b)}
 let calM=null,arr=null,dep=null;
@@ -565,4 +573,16 @@ load();lang("en");render();
   setTimeout(()=>{let n=0;try{SH.forEach((_,i)=>{if(okLot(i))n++})}catch(e){}m.className=n?"ok":"no";m.textContent=n?(es()?`✓ ${n} lotes libres — toque uno verde`:`✓ ${n} sites free — tap a green one`):(es()?"No hay lotes libres en esas fechas":"No sites free for those dates")},80)};
  document.getElementById("dsclr").onclick=()=>{a.value="";d.value="";m.textContent="";postMessage({type:"melyos-dates",arrive:"",depart:""},"*")};
 })();
+</script><script>
+// Nov 22 (per Mely): live clock — the map refreshes itself while the page stays open (new day, check-ins at 3 PM,
+// check-outs at 11 AM). It never redraws while a lot card is open or in edit mode.
+(function(){const m=document.getElementById("dsmsg");const ck=document.createElement("span");ck.id="liveclock";
+ ck.style.cssText="margin-left:auto;font:700 12.5px Inter,system-ui,sans-serif;color:#0f2540;background:#e0f2fe;border-radius:999px;padding:5px 10px;white-space:nowrap";
+ const row=document.getElementById("dsr");if(row)row.appendChild(ck);
+ const tick=()=>{const now=new Date(),es=typeof L!=="undefined"&&L=="es";
+  ck.textContent="🟢 "+(es?"En vivo · ":"Live · ")+now.toLocaleString(es?"es-US":"en-US",{weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit",second:"2-digit"});
+  const d0=new Date(now.toDateString());if(+d0!==+today)today=d0;
+  if(now.getSeconds()%15===0&&typeof liveST==="function"&&!editing){const sh=document.getElementById("sheet"),open=sh&&sh.classList.contains("open");
+   const n=liveST();if(n.some((v,i)=>v!==ST[i])){ST=n;if(!open)render()}}};
+ tick();setInterval(tick,1000)})();
 </script></body></html>
