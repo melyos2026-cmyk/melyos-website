@@ -286,9 +286,16 @@ function validate(){const miss=[],bad=[];const need=(cond,label,...els)=>{els.fo
 function check(){drawFee();if(!TRIED)return [];const{miss,bad}=validate();
  const seen=new Map();bad.forEach(([e,b])=>{if(e)seen.set(e,(seen.get(e)||false)||b)});seen.forEach((b,e)=>mark(e,b));
  $("missing").innerHTML=miss.length?`<p style="margin:0">Please complete the following before submitting:</p><ul>${miss.map(m=>`<li>${m}</li>`).join("")}</ul>`:"";return miss}
+// Nov 22 (per Mely): phone numbers show as 407-555-1234 and Social Security as 123-45-6789 while typing
+const fmtPhone=v=>{const d=v.replace(/\D/g,"").slice(0,10);return d.length<=3?d:d.length<=6?`${d.slice(0,3)}-${d.slice(3)}`:`${d.slice(0,3)}-${d.slice(3,6)}-${d.slice(6)}`};
+const fmtSSN=v=>{const d=v.replace(/\D/g,"").slice(0,9);return d.length<=3?d:d.length<=5?`${d.slice(0,3)}-${d.slice(3)}`:`${d.slice(0,3)}-${d.slice(3,5)}-${d.slice(5)}`};
+function phoneInputs(){return [...document.querySelectorAll("label.f")].filter(l=>/^\s*Phone/i.test(l.firstChild&&l.firstChild.textContent||"")).map(l=>l.querySelector("input")).filter(Boolean)}
+function wireFormats(){phoneInputs().forEach(i=>{if(i.dataset.fmt)return;i.dataset.fmt=1;i.type="tel";i.inputMode="numeric";i.maxLength=12;i.placeholder="407-555-1234";i.addEventListener("input",()=>{i.value=fmtPhone(i.value)})});
+ const sn=$("ssn");if(!sn.dataset.fmt){sn.dataset.fmt=1;sn.maxLength=11;sn.addEventListener("input",()=>{sn.value=fmtSSN(sn.value)})}}
+wireFormats();
 document.addEventListener("input",()=>{if(TRIED)check()});document.addEventListener("change",()=>{if(TRIED)check()});
-function addOcc(){const d=document.createElement("div");d.className="occ";d.innerHTML=`<div class="g"><label class="f">Full name<input class="nm"></label><label class="f">Date of birth<input type="date" class="dob"></label><label class="f">Relationship<input></label></div><label class="f em-l" style="margin-top:10px;display:none">Email (required) — they'll get their own background check invite<input type="email" class="em" placeholder="their.email@example.com"></label><div class="age"></div>`;
- $("occrows").appendChild(d);const dob=d.querySelector(".dob");dob.max=iso(today);
+function addOcc(){const d=document.createElement("div");d.className="occ";d.innerHTML=`<div class="g"><label class="f">Full name<input class="nm"></label><label class="f">Date of birth<input type="date" class="dob"></label><label class="f">Relationship<input></label><label class="f">Phone #<input></label></div><label class="f em-l" style="margin-top:10px;display:none">Email (required) — they'll get their own background check invite<input type="email" class="em" placeholder="their.email@example.com"></label><div class="age"></div>`;
+ $("occrows").appendChild(d);wireFormats();const dob=d.querySelector(".dob");dob.max=iso(today);
  dob.onchange=()=>{const a=ageOf(dob.value);d.querySelector(".age").textContent=a==null?"":`Age: ${a} ${a>=18?"— counts toward background check fee":"— minor, no background check needed"}`;d.querySelector(".em-l").style.display=a!=null&&a>=18?"flex":"none";check()};
  d.querySelector(".em").oninput=check}
 const pa=()=>{const n=($("fn").value+" "+$("ln").value).trim();$("pa").textContent=n||"—"};
