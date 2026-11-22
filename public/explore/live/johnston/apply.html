@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Site Rental Application · Johnston Springs RV Campground</title>
+<!-- Nov 22 (per Mely): Johnston Springs demo application. Separate from the Sunset demo (nothing shared).
+     Only lots that can take a monthly-or-longer stay are offered, each with its first move-in date and
+     the number of nights it stays free, so an application can never overlap another booking. -->
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,-apple-system,"Segoe UI",Roboto,sans-serif;background:#f4f1ea;color:#1f2d1f}
+.top{background:#1f4d2b;color:#fff;text-align:center;font-size:14px;padding:8px}
+.top a{color:#fff}
+header{background:#fff;border-bottom:3px solid #1f4d2b}
+.hd{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:22px;padding:14px 20px;flex-wrap:wrap}
+.hd img{height:86px}.hd .ad{font-size:14px;color:#4b5b4b;line-height:1.5}.hd .ad b{color:#1f4d2b;font-size:18px}
+.hd .call{margin-left:auto;background:#1f4d2b;color:#fff;text-decoration:none;padding:10px 18px;border-radius:10px;font-weight:700}
+main{max-width:1100px;margin:0 auto;padding:26px 20px 60px}
+h1{font-family:Georgia,serif;font-size:30px;margin:0 0 4px;color:#1f4d2b}.sub{color:#4b5b4b;margin:0 0 20px}
+.card{background:#fff;border-radius:16px;padding:22px 24px;margin:0 0 18px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.card h2{font-size:15px;letter-spacing:.06em;text-transform:uppercase;margin:0 0 16px;color:#1f4d2b}
+.g{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.g2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:760px){.g,.g2{grid-template-columns:1fr}}
+label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:#334033}
+input,select,textarea{font:inherit;font-weight:500;padding:11px 12px;border:1px solid #cfd8cf;border-radius:10px;background:#fff}
+select:disabled,input:disabled{background:#f1f5f1}
+.note{font-size:13px;color:#4b5b4b;margin-top:6px}
+.av{margin-top:10px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.5}
+.av.ok{background:#ecfdf3;border:1px solid #86efac;color:#14532d}.av.no{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b}
+.plans{display:grid;gap:8px;margin-top:4px}
+.po{display:flex!important;flex-direction:row!important;align-items:center;gap:10px;font-size:15px;padding:11px 14px;border:2px solid #dfe7df;border-radius:12px;font-weight:600;cursor:pointer}
+.po b{margin-left:auto}.po.x{opacity:.45;cursor:not-allowed}.po.on{border-color:#1f4d2b;background:#f0f7f1}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}@media(max-width:760px){.steps{grid-template-columns:1fr}}
+.st{background:#fff;border-radius:14px;padding:14px;font-size:14px;border:1px solid #dfe7df}.st span{display:inline-flex;width:26px;height:26px;border-radius:13px;background:#1f4d2b;color:#fff;align-items:center;justify-content:center;font-weight:800;margin-right:8px}
+.chk{flex-direction:row;align-items:flex-start;gap:10px;font-weight:500}.chk input{margin-top:3px}
+button.go{width:100%;background:#1f4d2b;color:#fff;border:0;border-radius:12px;padding:16px;font-size:17px;font-weight:800;cursor:pointer}
+button.go:disabled{opacity:.5;cursor:not-allowed}
+.demo{font-size:12.5px;color:#6b776b;text-align:center;margin-top:10px}
+.done{display:none;text-align:center}.done .ok2{width:64px;height:64px;border-radius:32px;background:#16a34a;color:#fff;font-size:34px;display:inline-flex;align-items:center;justify-content:center}
+footer{text-align:center;color:#6b776b;font-size:13px;padding:20px}
+</style></head><body>
+<div class="top">🌴 Now accepting new residents! Call us at <a href="tel:4078700719">(407) 870-0719</a></div>
+<header><div class="hd"><img src="logo.png" alt="Johnston Springs RV Campground & Storage">
+<div class="ad"><b>Johnston Springs RV Campground</b><br>4261 Pleasant Hill Rd · Kissimmee, FL 34746<br>“Florida’s Best Kept Secret”</div>
+<a class="call" href="tel:4078700719">📞 Call us</a></div></header>
+<main>
+<div id="form">
+<h1>Site Rental Application</h1>
+<p class="sub">Monthly, seasonal or annual stays. Fill this out, the park reviews it, and once approved you pay the deposit and your first payment to move in.</p>
+<div class="steps"><div class="st"><span>1</span>Fill out this application (background check)</div><div class="st"><span>2</span>The park reviews and approves it</div><div class="st"><span>3</span>Pay the $300 deposit + first payment, then move in</div></div>
+
+<div class="card"><h2>Your site</h2>
+<div class="g g2">
+<label>Lot<select id="lot"><option value="">Select a lot…</option></select></label>
+<label>Move-in date<input type="date" id="mv"></label>
+</div>
+<div id="avmsg"></div>
+<div style="margin-top:14px;font-size:13px;font-weight:700;color:#334033">Plan</div>
+<div class="plans" id="plans"><div class="note">Pick a lot first.</div></div>
+<p class="note">Only lots that are free for at least a month are listed, with the first date you can move in. Plans that would run into another reservation can’t be chosen.</p>
+</div>
+
+<div class="card"><h2>Parties & contact</h2>
+<div class="g">
+<label>First name<input id="fn" placeholder="First name"></label>
+<label>Last name<input id="ln" placeholder="Last name"></label>
+<label>Phone<input placeholder="(407) 555-5555"></label>
+<label style="grid-column:span 2">Email<input placeholder="you@example.com"></label>
+<label>Date of birth<input type="date"></label>
+<label>Driver’s license #<input></label>
+<label>Photo of license<input type="file" accept="image/*"></label>
+<label>Number of occupants<select><option>1</option><option>2</option><option>3</option><option>4+</option></select></label>
+</div>
+<p class="note">Rates are for 1–2 people · extra person $3/day.</p>
+</div>
+
+<div class="card"><h2>Your RV</h2>
+<div class="g">
+<label>Type<select><option>Class A</option><option>Class C</option><option>Fifth wheel</option><option>Travel trailer</option><option>Park model</option></select></label>
+<label>Year · make · model<input placeholder="2021 Jayco Eagle"></label>
+<label>Length (ft)<input type="number" id="rvlen" placeholder="38"></label>
+<label>License plate / state<input></label>
+<label>Pets (max 3, leashed)<select><option>No pets</option><option>1</option><option>2</option><option>3</option></select></label>
+<label>Vehicles<input placeholder="Car, golf cart…"></label>
+</div>
+<div id="lenmsg"></div>
+</div>
+
+<div class="card"><h2>Emergency contact</h2>
+<div class="g"><label>Name<input></label><label>Phone<input></label><label>Relationship<input></label></div></div>
+
+<div class="card"><h2>Agreements</h2>
+<label class="chk"><input type="checkbox" id="bg"> I authorize Johnston Springs to run a background check on every adult in my party.</label><br>
+<label class="chk"><input type="checkbox" id="rules"> I agree to the park rules: pets on a leash and cleaned up after (max 3), quiet hours, and the cancellation policy (deposit non-refundable within 30 days of move-in).</label><br>
+<label class="chk"><input type="checkbox"> (Optional) Text me about my application and account. Message and data rates may apply. Reply STOP to opt out.</label>
+<label style="margin-top:14px">Signature (type your full name)<input id="sig" placeholder="Full name"></label>
+</div>
+
+<button class="go" id="go" disabled>Submit application</button>
+<p class="demo">Demo application built by MelyOS · nothing is sent and nothing is charged.</p>
+</div>
+
+<div class="card done" id="done"><div class="ok2">✓</div><h1 style="margin-top:12px">Application received</h1>
+<p class="sub" id="dmsg"></p><p class="note">Next: the park reviews your application and background check. Once approved you’ll get a secure link to pay the $300 deposit and your first payment.</p>
+<p><a href="index.html" style="color:#1f4d2b;font-weight:800">← Back to the map</a></p></div>
+</main>
+<footer>Johnston Springs RV Campground · 4261 Pleasant Hill Rd, Kissimmee, FL 34746 · (407) 870-0719<br>Powered by <b>MelyOS</b></footer>
+<script>
+const P=new URLSearchParams(location.search),DAY=864e5;
+const today=new Date(new Date().toDateString());
+const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const dOf=s=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||"");return m?new Date(+m[1],+m[2]-1,+m[3]):null};
+const fmt=d=>d.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
+// lot~firstMoveIn~freeNights(~r for the rental unit)
+const AV=(P.get("av")||"").split(",").filter(Boolean).map(x=>{const[l,s,n,r]=x.split("~");return{lot:l,start:dOf(s),run:+n||0,rent:r=="r"}}).filter(a=>a.start)
+ .sort((a,b)=>a.lot.localeCompare(b.lot,undefined,{numeric:true}));
+const PLAN_N={m:30,q:90,h:180,y:365};
+function plansFor(a){if(a.rent)return[["m","Monthly — Denali RV rental","$1,500 + electric"]];const c=a.lot[0];
+ if(c=="N")return[["m","Monthly","$850"],["y","Annual","$7,500"]];if(c=="W")return[["m","Monthly","$900"],["y","Annual","$8,300"]];
+ return[["m","Monthly","$775"],["q","3 months (season)","$2,000"],["h","6 months (season)","$3,750"],["y","Annual","$6,600"]]}
+const typeOf=a=>a.rent?"Denali RV rental":a.lot[0]=="N"?"Premium":a.lot[0]=="W"?"Lake View":"Standard";
+const lotSel=document.getElementById("lot"),mv=document.getElementById("mv"),pl=document.getElementById("plans"),am=document.getElementById("avmsg");
+AV.forEach(a=>{const o=document.createElement("option");o.value=a.lot;o.textContent=`${a.lot} · ${typeOf(a)} · ${+a.start==+today?"available now":"from "+fmt(a.start)}`;lotSel.appendChild(o)});
+if(!AV.length){const o=document.createElement("option");o.textContent="Open this application from the live map";o.disabled=true;lotSel.appendChild(o)}
+let PLAN=P.get("plan")||"";
+const cur=()=>AV.find(a=>a.lot==lotSel.value);
+function draw(){const a=cur();if(!a){pl.innerHTML='<div class="note">Pick a lot first.</div>';am.innerHTML="";check();return}
+ const last=new Date(+a.start+Math.max(0,a.run-30)*DAY);
+ mv.min=iso(a.start);mv.max=a.run>=400?"":iso(last);
+ let d=dOf(mv.value);if(!d||d<a.start||(a.run<400&&d>last)){d=a.start;mv.value=iso(d)}
+ const left=a.run>=400?9999:a.run-Math.round((d-a.start)/DAY);
+ const ends=a.run>=400?null:new Date(+a.start+a.run*DAY);
+ am.innerHTML=`<div class="av ok">✓ Lot <b>${a.lot}</b> is free from <b>${fmt(a.start)}</b>${ends?` until <b>${fmt(ends)}</b> (another reservation starts that day)`:" with no reservation after it"}.</div>`;
+ const ps=plansFor(a);if(!ps.some(p=>p[0]==PLAN&&left>=PLAN_N[p[0]]))PLAN=(ps.find(p=>left>=PLAN_N[p[0]])||[""])[0];
+ pl.innerHTML=ps.map(([k,n,v])=>{const ok=left>=PLAN_N[k];return `<label class="po${ok?"":" x"}${PLAN==k&&ok?" on":""}"><input type="radio" name="pl" value="${k}" ${ok?"":"disabled"} ${PLAN==k&&ok?"checked":""}> ${n}${ok?"":" — doesn’t fit before the next reservation"}<b>${v}</b></label>`}).join("")+`<div class="note">Deposit after approval: <b>$300</b></div>`;
+ pl.querySelectorAll("input").forEach(r=>r.onchange=()=>{PLAN=r.value;draw()});check()}
+function check(){const ok=cur()&&PLAN&&document.getElementById("fn").value.trim()&&document.getElementById("ln").value.trim()&&document.getElementById("bg").checked&&document.getElementById("rules").checked&&document.getElementById("sig").value.trim();
+ document.getElementById("go").disabled=!ok}
+// RV length: N lots take any RV (33 ft+); the others are for RVs up to 32 ft
+document.getElementById("rvlen").oninput=()=>{const a=cur(),L=+document.getElementById("rvlen").value,m=document.getElementById("lenmsg");
+ m.innerHTML=a&&L>32&&a.lot[0]!="N"&&!a.rent?`<div class="av no">Your RV is ${L} ft — lot ${a.lot} is for RVs up to 32 ft. Pick an N (Premium) lot for 33 ft or longer.</div>`:""};
+lotSel.onchange=()=>{mv.value="";draw()};mv.onchange=draw;
+["fn","ln","sig"].forEach(id=>document.getElementById(id).oninput=check);["bg","rules"].forEach(id=>document.getElementById(id).onchange=check);
+const want=P.get("lot");if(want&&AV.some(a=>a.lot==want))lotSel.value=want;else if(want){am.innerHTML=`<div class="av no">Lot <b>${want}</b> isn’t free for a month or longer right now. Pick one of the lots listed.</div>`}
+if(P.get("move_in"))mv.value=P.get("move_in");
+if(lotSel.value)draw();
+document.getElementById("go").onclick=()=>{const a=cur();const n=plansFor(a).find(p=>p[0]==PLAN);
+ document.getElementById("dmsg").innerHTML=`Lot <b>${a.lot}</b> · ${n[1]} (${n[2]}) · move-in <b>${fmt(dOf(mv.value))}</b>`;
+ document.getElementById("form").style.display="none";document.getElementById("done").style.display="block";scrollTo(0,0)};
+</script></body></html>
