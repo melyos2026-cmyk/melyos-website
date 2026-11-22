@@ -57,6 +57,12 @@ input:disabled,select:disabled{background:#f3f4f6;color:#6b7280}
 .fee{background:#f7f7f7;border-radius:8px;padding:12px 14px;margin:12px 0;font-size:14px}.fee div{display:flex;justify-content:space-between;margin-bottom:4px}.fee .tot{border-top:1px solid #ddd;padding-top:6px;margin-top:6px}
 .warn{font-size:12px;color:#991b1b;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:8px 10px}
 .pay{display:none}
+.err{border-color:#c00!important;background:#fff8f8}.ereq{font-size:12px;color:#c00;margin-top:4px;font-weight:500}
+.chk.err{color:#c00}.missing{color:#c00;font-size:13px;text-align:center;margin-top:10px}.missing ul{text-align:left;display:inline-block;margin:8px 0 0;padding-left:20px}
+.mod{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.mod>div{background:#fff;border-radius:14px;max-width:460px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.mod .mb{padding:24px 28px 8px}.mod h3{font-size:18px;margin:0 0 14px}.mod .mf{display:flex;gap:10px;padding:16px 28px 22px}.mod .mf button{flex:1;padding:12px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer}
+.mod .back{background:#fff;border:1px solid #d1d5db}.mod .cont{background:#000;color:#fff;border:0}
 .go{width:100%;background:#000;color:#fff;border:0;border-radius:8px;padding:15px;font-size:15px;font-weight:600;cursor:pointer}
 .go:disabled{opacity:.45;cursor:not-allowed}
 .demo{font-size:12px;color:#6b7280;text-align:center;margin-top:10px}
@@ -88,31 +94,31 @@ footer{background:#d9f3ef;padding:36px 24px 18px}
 </div>
 <div id="avmsg"></div>
 <div class="g g2" style="margin-top:16px">
-<label class="f">Email Address<input placeholder="you@example.com"></label>
-<label class="f">Phone<input placeholder="(407) 555-5555"></label>
+<label class="f">Email Address<input id="em" placeholder="you@example.com"></label>
+<label class="f">Phone<input id="ph" placeholder="(407) 555-5555"></label>
 <div></div>
 <label class="chk sms"><input type="checkbox"><span>(Optional) I agree to receive text messages from Johnston Springs RV Campground about my account, such as invoices, payment notices, rental application invitations and reservation confirmations. Message frequency varies. Message and data rates may apply. Reply STOP to opt out, HELP for help. Consent is not a condition of any rental or purchase.<small>Leave this box unchecked if you don't want texts. See our SMS terms and Privacy Policy.</small></span></label>
 </div>
 <div class="g" style="margin-top:16px">
-<label class="f">Primary Applicant Date of Birth<input type="date"></label>
-<label class="f">Primary Applicant Driver's License #<input></label>
-<label class="f">Photo of License<input type="file" accept="image/*"></label>
+<label class="f">Primary Applicant Date of Birth<input type="date" id="dob"></label>
+<label class="f">Primary Applicant Driver's License #<input id="dl"></label>
+<label class="f">Photo of License<input type="file" accept="image/*" id="dlp"></label>
 </div></div>
 
 <div class="card"><h2>Personal Information</h2>
-<div class="g g1"><label class="f">Social Security #<input placeholder="123-45-6789"></label><div class="hint">Stored securely. Park staff only see the last 4 digits.</div>
-<label class="f">Current Address<input></label></div>
-<div class="g" style="margin-top:16px"><label class="f">City<input></label><label class="f">State<input></label><label class="f">Zip<input></label></div>
+<div class="g g1"><label class="f">Social Security #<input id="ssn" placeholder="123-45-6789" inputmode="numeric"></label><div class="hint">Stored securely. Park staff only see the last 4 digits.</div>
+<label class="f">Current Address<input id="ad"></label></div>
+<div class="g" style="margin-top:16px"><label class="f">City<input id="ac"></label><label class="f">State<input id="as"></label><label class="f">Zip<input id="az"></label></div>
 <h3>Emergency Contact</h3>
-<div class="g"><label class="f">Name<input></label><label class="f">Phone #<input></label><label class="f">Relationship to you<input></label></div></div>
+<div class="g"><label class="f">Name<input id="ecn"></label><label class="f">Phone #<input id="ecp"></label><label class="f">Relationship to you<input id="ecr"></label></div></div>
 
 <div class="card"><h2>Employer Information</h2>
 <label class="chk"><input type="checkbox" id="retired"> Retired / not currently employed</label>
-<div id="emp"><div class="g g1" style="margin-top:6px"><label class="f">Employer<input></label><label class="f">Address<input></label></div>
+<div id="emp"><div class="g g1" style="margin-top:6px"><label class="f">Employer<input id="emn"></label><label class="f">Address<input></label></div>
 <div class="g" style="margin-top:16px"><label class="f">City<input></label><label class="f">State<input></label><label class="f">Zip<input></label></div>
 <div class="g g2" style="margin-top:16px"><label class="f">Phone #<input></label><label class="f">How long have you been with the company?<input placeholder="e.g. 2 years"></label></div>
 <div class="g g1" style="margin-top:16px"><label class="f">Name of manager or supervisor<input></label></div>
-<div class="g g2" style="margin-top:16px"><label class="f">Income ($)<input placeholder="e.g. 1200"></label><label class="f">How often<select><option>Select...</option><option>Weekly</option><option>Biweekly</option><option>Monthly</option></select></label></div></div></div>
+<div class="g g2" style="margin-top:16px"><label class="f">Income ($)<input id="inc" placeholder="e.g. 1200"></label><label class="f">How often<select id="incf"><option>Select...</option><option>Weekly</option><option>Biweekly</option><option>Monthly</option></select></label></div></div></div>
 
 <div class="card"><h2>Company Information</h2>
 <label class="chk"><input type="checkbox"> The company I work for is paying for my housing</label></div>
@@ -136,7 +142,7 @@ footer{background:#d9f3ef;padding:36px 24px 18px}
 <label class="chk"><input type="checkbox" data-x="veh"> I have a vehicle/car that will be parked at the property</label>
 <div class="extra" id="veh"><div class="g"><label class="f">Make &amp; model<input></label><label class="f">Color<input></label><label class="f">License plate / state<input></label></div></div>
 <div class="f" style="font-size:12.5px;font-weight:700;margin:16px 0 10px">RV / Unit Information</div>
-<div class="g"><label class="f">RV Make<input></label><label class="f">RV Model<input></label><label class="f">Year<input></label>
+<div class="g"><label class="f">RV Make<input id="rvmk"></label><label class="f">RV Model<input id="rvmd"></label><label class="f">Year<input id="rvyr"></label>
 <label class="f">Length (ft)<input type="number" id="rvlen"></label><label class="f">Width (ft) — with slide-outs extended<input></label><label class="f">VIN / License Tag<input></label></div>
 <div id="lenmsg"></div>
 <div class="g g2" style="margin-top:16px"><label class="f">Driver Side Slide-Outs<select><option>Select...</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4+</option></select></label>
@@ -184,10 +190,15 @@ footer{background:#d9f3ef;padding:36px 24px 18px}
 <div class="disc"><b>COLLECTION &amp; CREDIT REPORTING DISCLOSURE</b>If any amount I owe under this application or lease becomes past due, I authorize Johnston Springs RV Campground and its agents to share my information, including my name, date of birth, Social Security number, contact information, employer, and account balance, with collection agencies and consumer credit reporting agencies for the purpose of collecting the debt.<br><br>Any collection activity will comply with the Florida Consumer Collection Practices Act (Fla. Stat. §§ 559.55–559.785) and the federal Fair Debt Collection Practices Act. By checking the box below and signing, I acknowledge this disclosure.</div>
 <label class="chk"><input type="checkbox" id="cert"> By typing my name above, I certify that the information provided in this application is true, complete, and accurate to the best of my knowledge, and I understand that any false or misleading information may result in denial of this application or termination of any resulting lease. I also agree that this constitutes my electronic signature, which I understand is legally binding and as valid as a handwritten signature, and that all communications, agreements, notices, documents, and disclosures relating to this application may be sent to me electronically.</label></div>
 
-<button class="go" id="go" disabled>Submit Application</button>
+<button class="go" id="go">Submit Application</button><div class="missing" id="missing"></div>
 <p class="demo">Demo application built by MelyOS · nothing is sent and nothing is charged.</p>
 </div>
 
+<div class="mod" id="mod"><div><div class="mb"><h3>Before You Submit</h3>
+<p style="font-size:13px;color:#374151;line-height:1.55">Double-check that you've listed <b>everyone who will be living on the lot</b> — every adult and every child. Every adult (18+) needs their own background check.</p>
+<p style="font-size:13px;font-weight:600;border:1px solid #fde68a;background:#fffbeb;border-radius:8px;padding:10px 12px">Go to "Additional people besides the primary applicant" if anyone is missing.</p>
+<div class="fee" id="modfee" style="margin:12px 0 0"></div></div>
+<div class="mf"><button class="back" id="modback">Go back</button><button class="cont" id="modgo">Continue to payment</button></div></div></div>
 <div class="pay" id="pay"><h1>Pay &amp; Start Background Check</h1><p class="sub" id="paysub"></p>
 <div class="card"><h2>Payment summary</h2><div class="fee" id="paybox" style="margin:0 0 16px"></div>
 <div class="g g2"><label class="f">Name on card<input id="cn"></label><label class="f">Card number<input placeholder="4242 4242 4242 4242"></label><label class="f">Expiration<input placeholder="MM / YY"></label><label class="f">CVC<input placeholder="123"></label></div>
@@ -238,14 +249,44 @@ function draw(){const a=cur();if(!a){pl.innerHTML='<div class="hint">Pick a lot 
  pl.querySelectorAll("input").forEach(r=>r.onchange=()=>{PLAN=r.value;draw()});
  const sel=ps.find(p=>p[0]==PLAN);$("rent").textContent=sel?`${sel[2]} · ${sel[1]}`:"$TBD";check()}
 // Background check fees — same defaults as the Sunset demo (each park sets its own in admin)
-const FEE={primary:75,adult:50,proc:2.5};
+const FEE={primary:49.99,adult:49.99,proc:2.5};   // MelyOS: $49.99 per adult (screening cost, park can charge more) + $2.50 processing fee
 const money=n=>"$"+n.toFixed(2);
 const ageOf=v=>{const d=dOf(v);if(!d)return null;let a=today.getFullYear()-d.getFullYear();if(today<new Date(today.getFullYear(),d.getMonth(),d.getDate()))a--;return a};
 const adults=()=>$("occ").style.display=="block"?[...document.querySelectorAll(".occ")].filter(r=>{const a=ageOf(r.querySelector(".dob").value);return a!=null&&a>=18}):[];
 function fees(){const n=adults().length,bg=FEE.primary+n*FEE.adult;return{n,bg,tot:bg}}
 function drawFee(){const F=fees();$("feebox").innerHTML=`<div><span>Background Check (Primary Applicant)</span><b>${money(FEE.primary)}</b></div>${F.n?`<div><span>Background Check — ${F.n} additional adult${F.n>1?"s":""} (${money(FEE.adult)} each)</span><b>${money(F.n*FEE.adult)}</b></div>`:""}<div class="tot"><b>Total due now</b><b>${money(F.tot)}</b></div><div style="font-size:12px;color:#6b7280;margin:6px 0 0;display:block">The processing fee shows as a separate line on the next screen, when you pay.</div>`}
-function check(){const occOk=adults().every(r=>/.+@.+\..+/.test(r.querySelector(".em").value));
- const ok=cur()&&PLAN&&$("fn").value.trim()&&$("ln").value.trim()&&$("rules").checked&&$("bgc").checked&&occOk&&$("sig").value.trim()&&$("cert").checked;$("go").disabled=!ok;drawFee()}
+// Nov 22 (per Mely): works like the Aloha / Sunset application — on Submit every missing field turns red with
+// "Field required", a list of what's missing shows under the button, and it re-checks as the person fixes things.
+let TRIED=false;
+const val=id=>($(id).value||"").trim();
+function mark(el,bad){if(!el)return;const box=el.closest(".chk")||el;box.classList.toggle("err",bad);
+ const host=el.closest("label")||el.parentElement;let m=host.querySelector(":scope > .ereq");
+ if(bad&&!m){m=document.createElement("div");m.className="ereq";m.textContent="Field required";host.appendChild(m)}if(!bad&&m)m.remove()}
+function validate(){const miss=[],bad=[];const need=(cond,label,...els)=>{els.forEach(e=>bad.push([e,!cond]));if(!cond)miss.push(label)};
+ need(val("fn"),"First name",$("fn"));need(val("ln"),"Last name",$("ln"));
+ need(val("em"),"Email",$("em"));if(val("em")&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val("em"))){miss.push("Email format looks invalid");bad.push([$("em"),true])}
+ need(!!cur(),"Lot/space selection",$("lot"));need(!!(cur()&&PLAN),"Rent amount (select a lot and plan so this can calculate)",$("mv"));
+ const ag=ageOf(val("dob"));need(!!val("dob"),"Date of birth",$("dob"));if(ag!=null&&ag<18){miss.push("Primary applicant must be 18 or older");bad.push([$("dob"),true])}
+ need(val("dl"),"Driver's license number",$("dl"));need($("dlp").files.length>0,"Photo of driver's license",$("dlp"));
+ need(val("ssn").replace(/\D/g,"").length==9,"Social Security # (9 digits)",$("ssn"));
+ const ad=val("ad")&&val("ac")&&val("as")&&val("az");need(ad,"Current address (street, city, state, zip)");["ad","ac","as","az"].forEach(i=>bad.push([$(i),!val(i)]));
+ need(val("ecn")&&val("ecp")&&val("ecr"),"Emergency contact (name, phone, relationship)");["ecn","ecp","ecr"].forEach(i=>bad.push([$(i),!val(i)]));
+ const ret=$("retired").checked;if(!ret){need(val("emn"),"Employer (or check Retired / not currently employed)",$("emn"));
+  const inc=val("inc")&&$("incf").selectedIndex>0;need(inc,"Income amount and how often (weekly, biweekly, monthly)");bad.push([$("inc"),!val("inc")],[$("incf"),$("incf").selectedIndex<1])}
+ else bad.push([$("emn"),false],[$("inc"),false],[$("incf"),false]);
+ if($("occ").style.display=="block")document.querySelectorAll(".occ").forEach(r=>{const a=ageOf(r.querySelector(".dob").value);bad.push([r.querySelector(".nm"),!r.querySelector(".nm").value.trim()],[r.querySelector(".dob"),!r.querySelector(".dob").value]);
+  if(!r.querySelector(".nm").value.trim()||!r.querySelector(".dob").value)miss.includes("An occupant is missing their name or date of birth")||miss.push("An occupant is missing their name or date of birth");
+  const e=r.querySelector(".em"),eb=a!=null&&a>=18&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e.value.trim());bad.push([e,eb]);if(eb&&!miss.includes("An adult occupant is missing their email"))miss.push("An adult occupant is missing their email")});
+ need(val("rvlen"),"RV length",$("rvlen"));const a=cur(),L=+val("rvlen");if(a&&L>32&&a.lot[0]!="N"&&!a.rent){miss.push("RV is too long for the selected lot");bad.push([$("rvlen"),true])}
+ const nm=(val("fn")+" "+val("ln")).toLowerCase().replace(/\s+/g," ");need(val("sig"),"Signature (type your name)",$("sig"));
+ if(val("sig")&&val("sig").toLowerCase().replace(/\s+/g," ")!=nm){miss.push("Signature must exactly match your first + last name above");bad.push([$("sig"),true])}
+ need($("cert").checked,"You must check the signature agreement box",$("cert"));need($("rules").checked,"You must check the park rules acknowledgment box",$("rules"));
+ need($("bgc").checked,"You must check the background check consent box",$("bgc"));
+ return{miss,bad}}
+function check(){drawFee();if(!TRIED)return [];const{miss,bad}=validate();
+ const seen=new Map();bad.forEach(([e,b])=>{if(e)seen.set(e,(seen.get(e)||false)||b)});seen.forEach((b,e)=>mark(e,b));
+ $("missing").innerHTML=miss.length?`<p style="margin:0">Please complete the following before submitting:</p><ul>${miss.map(m=>`<li>${m}</li>`).join("")}</ul>`:"";return miss}
+document.addEventListener("input",()=>{if(TRIED)check()});document.addEventListener("change",()=>{if(TRIED)check()});
 function addOcc(){const d=document.createElement("div");d.className="occ";d.innerHTML=`<div class="g"><label class="f">Full name<input class="nm"></label><label class="f">Date of birth<input type="date" class="dob"></label><label class="f">Relationship<input></label></div><label class="f em-l" style="margin-top:10px;display:none">Email (required) — they'll get their own background check invite<input type="email" class="em" placeholder="their.email@example.com"></label><div class="age"></div>`;
  $("occrows").appendChild(d);const dob=d.querySelector(".dob");dob.max=iso(today);
  dob.onchange=()=>{const a=ageOf(dob.value);d.querySelector(".age").textContent=a==null?"":`Age: ${a} ${a>=18?"— counts toward background check fee":"— minor, no background check needed"}`;d.querySelector(".em-l").style.display=a!=null&&a>=18?"flex":"none";check()};
@@ -263,7 +304,11 @@ lotSel.onchange=()=>{mv.value="";draw()};mv.onchange=draw;
 const want=P.get("lot");if(want&&AV.some(a=>a.lot==want))lotSel.value=want;else if(want){am.innerHTML=`<div class="av no">Lot <b>${want}</b> isn't open for a long stay yet (it has a reservation coming up). Pick one of the lots listed.</div>`}
 if(P.get("move_in"))mv.value=P.get("move_in");
 if(lotSel.value)draw();
-$("go").onclick=()=>{const a=cur(),n=plansFor(a).find(p=>p[0]==PLAN),F=fees(),tot=F.tot+FEE.proc;
+$("go").onclick=()=>{TRIED=true;const miss=check();if(miss.length){const f=document.querySelector(".err");if(f)f.scrollIntoView({behavior:"smooth",block:"center"});return}
+ const F0=fees();$("modfee").innerHTML=`<div><span>Background Check (Primary Applicant)</span><b>${money(FEE.primary)}</b></div>${F0.n?`<div><span>Background Check — ${F0.n} additional adult${F0.n>1?"s":""}</span><b>${money(F0.n*FEE.adult)}</b></div>`:""}<div><span>Processing Fee</span><b>${money(FEE.proc)}</b></div><div class="tot"><b>Total due now</b><b>${money(F0.tot+FEE.proc)}</b></div>`;
+ $("mod").style.display="flex"};
+$("modback").onclick=()=>{$("mod").style.display="none"};
+$("modgo").onclick=()=>{$("mod").style.display="none";const a=cur(),n=plansFor(a).find(p=>p[0]==PLAN),F=fees(),tot=F.tot+FEE.proc;
  $("paysub").innerHTML=`Application for lot <b>${a.lot}</b> · ${n[1]} · move-in <b>${fmt(dOf(mv.value))}</b>. Rent is not charged today.`;
  $("paybox").innerHTML=`<div><span>Background Check (Primary Applicant)</span><b>${money(FEE.primary)}</b></div>${F.n?`<div><span>Background Check — ${F.n} additional adult${F.n>1?"s":""}</span><b>${money(F.n*FEE.adult)}</b></div>`:""}<div><span>Processing Fee</span><b>${money(FEE.proc)}</b></div><div class="tot"><b>Total</b><b>${money(tot)}</b></div>`;
  $("paygo").textContent=`Pay ${money(tot)} & Start Background Check${F.n?"s":""}`;$("cn").value=($("fn").value+" "+$("ln").value).trim();
