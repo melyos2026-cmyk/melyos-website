@@ -559,7 +559,7 @@ const iso=d=>d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${S
 let SHORT_AHEAD=60,LONG_AHEAD=120;try{const r=JSON.parse(localStorage.getItem("johnstonbookrules")||"null");if(r){SHORT_AHEAD=Math.max(1,+r.s||60);LONG_AHEAD=Math.max(1,+r.l||120)}}catch(e){}
 const tooFar=(a,n)=>a&&(a-today)/DAY>(n>LONG?LONG_AHEAD:SHORT_AHEAD);
 const PLAN_N={m:400,q:400,h:400,y:400};   // Nov 22 (per Mely): every stay over 15 nights (month to month, 3 mo, 6 mo, annual) has a move-in date but NO end date — the resident keeps the site until they set a move-out in their portal. So a long stay needs the site free with no reservation ahead.   // Nov 22 (per Mely): month-to-month has no end date (resident stays until they set a move-out), so it needs the lot free with no reservation ahead — like annual
-const APPLY_URL="apply.html";   // Nov 22 (per Mely): the demo uses the Sunset demo application so the full flow can be shown
+const APPLY_URL="apply.html";   // Nov 22 (per Mely): Johnston's application is a copy of the Sunset demo application (demo.melyos.io/apply), branded Johnston
 // Nov 22 (per Mely): the Johnston demo application only lists lots that can really take a monthly+ stay,
 // each with the first move-in date and how many nights stay free (no booking in between is ever offered)
 function applyAvail(){const out=[];SH.forEach((_,i)=>{const c=sec(i);if(c=="T"||c=="S"||ST[i]=="maint"||ST[i]=="na")return;

@@ -1,147 +1,236 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Site Rental Application · Johnston Springs RV Campground</title>
-<!-- Nov 22 (per Mely): Johnston Springs demo application. Separate from the Sunset demo (nothing shared).
-     Only lots that can take a monthly-or-longer stay are offered, each with its first move-in date and
-     the number of nights it stays free, so an application can never overlap another booking. -->
+<!-- Nov 22 (per Mely — "la aplicación debe ser la de Sunset"): copy of the Sunset Ridge demo application
+     (demo.melyos.io/apply) — same sections, fields and look — branded for Johnston Springs.
+     Kept from the Johnston demo: only lots that can take a monthly-or-longer stay are offered, each with its
+     first move-in date, so an application can never overlap another booking. Demo only: nothing is sent or charged. -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Inter,-apple-system,"Segoe UI",Roboto,sans-serif;background:#f4f1ea;color:#1f2d1f}
-.top{background:#1f4d2b;color:#fff;text-align:center;font-size:14px;padding:8px}
-.top a{color:#fff}
-header{background:#fff;border-bottom:3px solid #1f4d2b}
-.hd{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:22px;padding:14px 20px;flex-wrap:wrap}
-.hd img{height:86px}.hd .ad{font-size:14px;color:#4b5b4b;line-height:1.5}.hd .ad b{color:#1f4d2b;font-size:18px}
-.hd .call{margin-left:auto;background:#1f4d2b;color:#fff;text-decoration:none;padding:10px 18px;border-radius:10px;font-weight:700}
-main{max-width:1100px;margin:0 auto;padding:26px 20px 60px}
-h1{font-family:Georgia,serif;font-size:30px;margin:0 0 4px;color:#1f4d2b}.sub{color:#4b5b4b;margin:0 0 20px}
-.card{background:#fff;border-radius:16px;padding:22px 24px;margin:0 0 18px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
-.card h2{font-size:15px;letter-spacing:.06em;text-transform:uppercase;margin:0 0 16px;color:#1f4d2b}
-.g{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.g2{grid-template-columns:repeat(2,1fr)}
-@media(max-width:760px){.g,.g2{grid-template-columns:1fr}}
-label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:#334033}
-input,select,textarea{font:inherit;font-weight:500;padding:11px 12px;border:1px solid #cfd8cf;border-radius:10px;background:#fff}
-select:disabled,input:disabled{background:#f1f5f1}
-.note{font-size:13px;color:#4b5b4b;margin-top:6px}
-.av{margin-top:10px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,-apple-system,"Segoe UI",Roboto,sans-serif;background:#f7f7f8;color:#111827;font-size:14px}
+a{color:inherit}
+.top{background:#d9f3ef;text-align:center;font-size:13px;padding:8px 12px;color:#111}
+.top a{font-weight:700}
+header{background:#fff}
+.hd{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:12px 24px}
+.hd img{height:64px}
+.brand b{display:block;font-family:"Playfair Display",Georgia,serif;font-size:19px;letter-spacing:.02em;text-transform:uppercase}
+.brand small{font-size:10.5px;letter-spacing:.08em;color:#4b5563;text-transform:uppercase}
+.call{margin-left:auto;background:#bfeee5;color:#0f766e;text-decoration:none;padding:9px 18px;border-radius:8px;font-weight:700;font-size:13px;white-space:nowrap}
+nav{border-top:1px solid #e5e7eb;border-bottom:2px solid #111;background:#fff}
+nav div{max-width:1180px;margin:0 auto;display:flex;justify-content:center;gap:34px;padding:13px 16px;flex-wrap:wrap}
+nav a{text-decoration:none;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+nav a.on{border-bottom:2px solid #111;padding-bottom:2px}
+main{max-width:1080px;margin:0 auto;padding:34px 24px 50px}
+.park b{font-family:"Playfair Display",Georgia,serif;font-size:22px}.park div{color:#6b7280;font-size:12.5px;margin-bottom:40px}
+h1{font-family:"Playfair Display",Georgia,serif;font-size:26px;margin:0 0 6px}
+.lead{color:#0f766e;font-weight:600;font-size:12.5px;margin:0 0 22px}.sub{color:#6b7280;font-size:12.5px;margin:0 0 22px}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin:0 0 20px}
+.card h2{font-size:14.5px;letter-spacing:.06em;text-transform:uppercase;margin:0 0 18px;font-weight:700}
+.card h3{font-size:14.5px;letter-spacing:.06em;text-transform:uppercase;margin:22px 0 14px;font-weight:700}
+.g{display:grid;grid-template-columns:repeat(3,1fr);gap:16px 14px}.g2{grid-template-columns:repeat(2,1fr)}.g1{grid-template-columns:1fr}
+@media(max-width:760px){.g,.g2{grid-template-columns:1fr}.hd img{height:48px}.brand b{font-size:15px}nav div{gap:16px}}
+label.f{display:flex;flex-direction:column;gap:7px;font-size:12.5px;font-weight:600;color:#111}
+input,select,textarea{font:inherit;font-size:13.5px;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#111;width:100%}
+input::placeholder{color:#9ca3af}
+select{background:#f3f4f6}
+input:disabled,select:disabled{background:#f3f4f6;color:#6b7280}
+.hint{font-size:12px;color:#6b7280;margin-top:-2px}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;margin:10px 0;cursor:pointer}.chk input{width:auto;margin-top:3px}
+.sms{font-size:12.5px;color:#374151;line-height:1.55}.sms small{display:block;color:#6b7280;margin-top:8px}
+.kv p{margin:4px 0;font-size:13.5px}
+.legal{font-size:13px;line-height:1.6;color:#111}
+.box{border:1px solid #e5e7eb;background:#f9fafb;border-radius:8px;padding:12px 14px}
+.rules .box{margin:0 0 10px;background:#fff}.rules b{display:block;font-size:13.5px;margin-bottom:3px}
+.disc{border:1px solid #e5e7eb;background:#f9fafb;border-radius:8px;padding:12px 14px;font-size:12px;color:#4b5563;line-height:1.55;margin:14px 0}
+.disc b{display:block;color:#111;letter-spacing:.04em;font-size:11.5px;margin-bottom:6px}
+.av{margin-top:12px;padding:11px 13px;border-radius:8px;font-size:13px;line-height:1.5}
 .av.ok{background:#ecfdf3;border:1px solid #86efac;color:#14532d}.av.no{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b}
-.plans{display:grid;gap:8px;margin-top:4px}
-.po{display:flex!important;flex-direction:row!important;align-items:center;gap:10px;font-size:15px;padding:11px 14px;border:2px solid #dfe7df;border-radius:12px;font-weight:600;cursor:pointer}
-.po b{margin-left:auto}.po.x{opacity:.45;cursor:not-allowed}.po.on{border-color:#1f4d2b;background:#f0f7f1}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}@media(max-width:760px){.steps{grid-template-columns:1fr}}
-.st{background:#fff;border-radius:14px;padding:14px;font-size:14px;border:1px solid #dfe7df}.st span{display:inline-flex;width:26px;height:26px;border-radius:13px;background:#1f4d2b;color:#fff;align-items:center;justify-content:center;font-weight:800;margin-right:8px}
-.chk{flex-direction:row;align-items:flex-start;gap:10px;font-weight:500}.chk input{margin-top:3px}
-button.go{width:100%;background:#1f4d2b;color:#fff;border:0;border-radius:12px;padding:16px;font-size:17px;font-weight:800;cursor:pointer}
-button.go:disabled{opacity:.5;cursor:not-allowed}
-.demo{font-size:12.5px;color:#6b776b;text-align:center;margin-top:10px}
-.done{display:none;text-align:center}.done .ok2{width:64px;height:64px;border-radius:32px;background:#16a34a;color:#fff;font-size:34px;display:inline-flex;align-items:center;justify-content:center}
-footer{text-align:center;color:#6b776b;font-size:13px;padding:20px}
+.plans{display:grid;gap:8px;margin-top:8px}
+.po{display:flex;align-items:center;gap:10px;font-size:13.5px;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;cursor:pointer}
+.po input{width:auto}.po b{margin-left:auto}.po.x{opacity:.45;cursor:not-allowed}.po.on{border-color:#111;background:#f9fafb}
+.extra{display:none;margin-top:12px}
+.go{width:100%;background:#000;color:#fff;border:0;border-radius:8px;padding:15px;font-size:15px;font-weight:600;cursor:pointer}
+.go:disabled{opacity:.45;cursor:not-allowed}
+.demo{font-size:12px;color:#6b7280;text-align:center;margin-top:10px}
+.done{display:none;text-align:center;padding:40px 24px}.ok2{width:60px;height:60px;border-radius:30px;background:#16a34a;color:#fff;font-size:30px;display:inline-flex;align-items:center;justify-content:center}
+footer{background:#d9f3ef;padding:36px 24px 18px}
+.ft{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:24px;font-size:13px}
+@media(max-width:760px){.ft{grid-template-columns:1fr 1fr}}
+.ft h4{font-family:"Playfair Display",Georgia,serif;letter-spacing:.12em;font-size:12px;margin:0 0 14px;text-transform:uppercase}
+.ft p{margin:0 0 8px}.ft img{height:56px}
+.fb{max-width:1180px;margin:22px auto 0;border-top:1px solid #a7d9d1;padding-top:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:11.5px;color:#374151}
 </style></head><body>
-<div class="top">🌴 Now accepting new residents! Call us at <a href="tel:4078700719">(407) 870-0719</a></div>
+<div class="top">🌴 Now accepting new residents! Call us at <a href="tel:4078700719">(407) 870-0719</a> or <a href="#">Apply Online</a></div>
 <header><div class="hd"><img src="logo.png" alt="Johnston Springs RV Campground & Storage">
-<div class="ad"><b>Johnston Springs RV Campground</b><br>4261 Pleasant Hill Rd · Kissimmee, FL 34746<br>“Florida’s Best Kept Secret”</div>
-<a class="call" href="tel:4078700719">📞 Call us</a></div></header>
+<div class="brand"><b>Johnston Springs RV Campground</b><small>4261 Pleasant Hill Rd</small></div>
+<a class="call" href="tel:4078700719">📞 CALL US</a></div></header>
+<nav><div><a href="index.html">Home</a><a href="index.html">Reservations</a><a class="on" href="#">Apply</a><a href="index.html">Propane</a><a href="index.html">Events</a><a href="#">Residents Login</a></div></nav>
 <main>
 <div id="form">
+<div class="park"><b>Johnston Springs RV Campground</b><div>4261 Pleasant Hill Rd · Kissimmee, FL 34746</div></div>
 <h1>Site Rental Application</h1>
-<p class="sub">Month to month, seasonal or annual stays — a move-in date, no end date. Fill this out, the park reviews it, and once approved you pay the deposit and your first payment to move in.</p>
-<div class="steps"><div class="st"><span>1</span>Fill out this application (background check)</div><div class="st"><span>2</span>The park reviews and approves it</div><div class="st"><span>3</span>Pay the $300 deposit + first payment, then move in</div></div>
+<p class="lead">Month-to-month, seasonal or annual site rental (the space only — you bring your own RV or park model).</p>
+<p class="sub">Fill out this application to rent your site. You'll be able to review everything before signing.</p>
 
-<div class="card"><h2>Your site</h2>
-<div class="g g2">
-<label>Lot<select id="lot"><option value="">Select a lot…</option></select></label>
-<label>Move-in date<input type="date" id="mv"></label>
+<div class="card"><h2>Parties &amp; Property</h2>
+<div class="g">
+<label class="f">First Name<input id="fn" placeholder="First name"></label>
+<label class="f">Last Name<input id="ln" placeholder="Last name"></label>
+<label class="f">Lot<select id="lot"><option value="">Select a lot...</option></select></label>
 </div>
 <div id="avmsg"></div>
-<div style="margin-top:14px;font-size:13px;font-weight:700;color:#334033">Plan</div>
-<div class="plans" id="plans"><div class="note">Pick a lot first.</div></div>
-<p class="note">Only lots free for a long stay are listed, with the first date you can move in. Plans that would run into another reservation can’t be chosen. Move-in can be up to 120 days from today. Deposit ($300) is non-refundable if you cancel within 30 days of move-in.</p>
+<div class="g g2" style="margin-top:16px">
+<label class="f">Email Address<input placeholder="you@example.com"></label>
+<label class="f">Phone<input placeholder="(407) 555-5555"></label>
+<div></div>
+<label class="chk sms"><input type="checkbox"><span>(Optional) I agree to receive text messages from Johnston Springs RV Campground about my account, such as invoices, payment notices, rental application invitations and reservation confirmations. Message frequency varies. Message and data rates may apply. Reply STOP to opt out, HELP for help. Consent is not a condition of any rental or purchase.<small>Leave this box unchecked if you don't want texts. See our SMS terms and Privacy Policy.</small></span></label>
 </div>
+<div class="g" style="margin-top:16px">
+<label class="f">Primary Applicant Date of Birth<input type="date"></label>
+<label class="f">Primary Applicant Driver's License #<input></label>
+<label class="f">Photo of License<input type="file" accept="image/*"></label>
+</div></div>
 
-<div class="card"><h2>Parties & contact</h2>
-<div class="g">
-<label>First name<input id="fn" placeholder="First name"></label>
-<label>Last name<input id="ln" placeholder="Last name"></label>
-<label>Phone<input placeholder="(407) 555-5555"></label>
-<label style="grid-column:span 2">Email<input placeholder="you@example.com"></label>
-<label>Date of birth<input type="date"></label>
-<label>Driver’s license #<input></label>
-<label>Photo of license<input type="file" accept="image/*"></label>
-<label>Number of occupants<select><option>1</option><option>2</option><option>3</option><option>4+</option></select></label>
-</div>
-<p class="note">Rates are for 1–2 people · extra person $3/day.</p>
-</div>
+<div class="card"><h2>Personal Information</h2>
+<div class="g g1"><label class="f">Social Security #<input placeholder="123-45-6789"></label><div class="hint">Stored securely. Park staff only see the last 4 digits.</div>
+<label class="f">Current Address<input></label></div>
+<div class="g" style="margin-top:16px"><label class="f">City<input></label><label class="f">State<input></label><label class="f">Zip<input></label></div>
+<h3>Emergency Contact</h3>
+<div class="g"><label class="f">Name<input></label><label class="f">Phone #<input></label><label class="f">Relationship to you<input></label></div></div>
 
-<div class="card"><h2>Your RV</h2>
-<div class="g">
-<label>Type<select><option>Class A</option><option>Class C</option><option>Fifth wheel</option><option>Travel trailer</option><option>Park model</option></select></label>
-<label>Year · make · model<input placeholder="2021 Jayco Eagle"></label>
-<label>Length (ft)<input type="number" id="rvlen" placeholder="38"></label>
-<label>License plate / state<input></label>
-<label>Pets (max 3, leashed)<select><option>No pets</option><option>1</option><option>2</option><option>3</option></select></label>
-<label>Vehicles<input placeholder="Car, golf cart…"></label>
-</div>
+<div class="card"><h2>Employer Information</h2>
+<label class="chk"><input type="checkbox" id="retired"> Retired / not currently employed</label>
+<div id="emp"><div class="g g1" style="margin-top:6px"><label class="f">Employer<input></label><label class="f">Address<input></label></div>
+<div class="g" style="margin-top:16px"><label class="f">City<input></label><label class="f">State<input></label><label class="f">Zip<input></label></div>
+<div class="g g2" style="margin-top:16px"><label class="f">Phone #<input></label><label class="f">How long have you been with the company?<input placeholder="e.g. 2 years"></label></div>
+<div class="g g1" style="margin-top:16px"><label class="f">Name of manager or supervisor<input></label></div>
+<div class="g g2" style="margin-top:16px"><label class="f">Income ($)<input placeholder="e.g. 1200"></label><label class="f">How often<select><option>Select...</option><option>Weekly</option><option>Biweekly</option><option>Monthly</option></select></label></div></div></div>
+
+<div class="card"><h2>Company Information</h2>
+<label class="chk"><input type="checkbox"> The company I work for is paying for my housing</label></div>
+
+<div class="card"><h2>Rental Term &amp; Rent</h2>
+<div class="g g2"><label class="f">Rental Start Date (move-in)<input type="date" id="mv"></label><div></div></div>
+<div class="f" style="margin-top:16px;font-size:12.5px;font-weight:600">Plan</div>
+<div class="plans" id="plans"><div class="hint">Pick a lot first.</div></div>
+<div class="kv" style="margin-top:14px"><p><b>Rental End / Checkout Date:</b> none — the site is yours until you give your move-out notice in your resident portal.</p>
+<p><b>Rent:</b> <span id="rent">$TBD</span></p><p><b>Due Day:</b> 1 of each month</p><p><b>Security deposit:</b> $300 (paid after approval)</p><p><b>Notice to Terminate:</b> 15 days</p></div>
+<p class="hint" style="margin-top:12px">Only lots free for a long stay are listed, with the first date you can move in. Plans that would run into another reservation can't be chosen. Deposit is non-refundable if you cancel within 30 days of move-in.</p></div>
+
+<div class="card"><h2>Returned Payments</h2>
+<p class="legal">Returned Payments. If any payment made by Tenant (check, bank transfer/ACH, or other electronic payment) is returned or refused by Tenant's bank for any reason, including insufficient funds or a closed account, Tenant agrees to pay a returned-payment fee as allowed by Florida Statute 68.065: $29.00 if the payment was $50.00 or less, $34.00 if it was more than $50.00 and up to $300.00, and $35.00 if it was more than $300.00. The fee covers the returned-payment processing cost and a service charge, and is added to Tenant's account. The returned amount is due again immediately. If Tenant's automatic bank payment (autopay) is returned, autopay is turned off until Tenant sets it up again. After two returned payments in twelve months, Landlord may require future payments by certified funds or card.</p></div>
+
+<div class="card"><h2>Occupants, RV Info &amp; Utilities</h2>
+<div class="f" style="font-size:12.5px;font-weight:700;margin-bottom:8px">Everyone Living on the Lot</div>
+<div class="box"><div style="font-size:11px;font-weight:700;color:#4b5563;letter-spacing:.03em">PRIMARY APPLICANT (from Tenant Name(s) above)</div><div id="pa" style="margin-top:6px">—</div></div>
+<label class="chk"><input type="checkbox" data-x="occ"> Additional people besides the primary applicant</label>
+<div class="extra" id="occ"><div class="g"><label class="f">Full name<input></label><label class="f">Email<input placeholder="Required for adults (background check)"></label><label class="f">Relationship<input></label></div></div>
+<label class="chk"><input type="checkbox" data-x="veh"> I have a vehicle/car that will be parked at the property</label>
+<div class="extra" id="veh"><div class="g"><label class="f">Make &amp; model<input></label><label class="f">Color<input></label><label class="f">License plate / state<input></label></div></div>
+<div class="f" style="font-size:12.5px;font-weight:700;margin:16px 0 10px">RV / Unit Information</div>
+<div class="g"><label class="f">RV Make<input></label><label class="f">RV Model<input></label><label class="f">Year<input></label>
+<label class="f">Length (ft)<input type="number" id="rvlen"></label><label class="f">Width (ft) — with slide-outs extended<input></label><label class="f">VIN / License Tag<input></label></div>
 <div id="lenmsg"></div>
-</div>
+<div class="g g2" style="margin-top:16px"><label class="f">Driver Side Slide-Outs<select><option>Select...</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4+</option></select></label>
+<label class="f">Passenger Side Slide-Outs<select><option>Select...</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4+</option></select></label></div>
+<p class="hint" style="margin-top:12px">Full hookups: water, electric, sewer and Wi-Fi.</p></div>
 
-<div class="card"><h2>Emergency contact</h2>
-<div class="g"><label>Name<input></label><label>Phone<input></label><label>Relationship<input></label></div></div>
+<div class="card"><h2>Parking, Pets &amp; Smoking</h2>
+<div class="kv"><p><b>Parking:</b> On your site.</p><p><b>Pets:</b> Up to 3, on a leash at all times and picked up after.</p></div>
+<div class="g g2" style="margin-top:12px"><label class="f">Number of pets<select><option>No pets</option><option>1</option><option>2</option><option>3</option></select></label>
+<label class="f">Smoking Policy<select disabled><option>Prohibited everywhere</option><option>Permitted in specific areas</option></select></label></div></div>
 
-<div class="card"><h2>Agreements</h2>
-<label class="chk"><input type="checkbox" id="bg"> I authorize Johnston Springs to run a background check on every adult in my party.</label><br>
-<label class="chk"><input type="checkbox" id="rules"> I agree to the park rules: pets on a leash and cleaned up after (max 3), quiet hours, and the cancellation policy (deposit non-refundable within 30 days of move-in).</label><br>
-<label class="chk"><input type="checkbox"> (Optional) Text me about my application and account. Message and data rates may apply. Reply STOP to opt out.</label>
-<label style="margin-top:14px">Signature (type your full name)<input id="sig" placeholder="Full name"></label>
-</div>
+<div class="card"><h2>Golf Cart</h2>
+<p class="hint" style="margin:0 0 14px">All golf carts must be insured and driven by a person with a valid driver's license.</p>
+<label class="f">Will you have a golf cart at the park?<select id="gc"><option>No</option><option>Yes</option></select></label>
+<div class="extra" id="gcx"><div class="g"><label class="f">Make<input></label><label class="f">Color<input></label><label class="f">Insurance company<input></label></div></div></div>
 
-<button class="go" id="go" disabled>Submit application</button>
+<div class="card"><h2>Additional Terms</h2><p class="legal" style="margin:0">None.</p></div>
+
+<div class="card"><h2>RV Removal Upon Termination</h2>
+<p class="legal"><b>Tenant has 7 day(s) to remove the RV after termination.</b> After that, a storage fee of $25.00/day may apply.</p>
+<p class="legal">Upon termination of this Agreement, Tenant shall remove the RV and all personal property from the lot within the number of days stated above. If the RV and/or personal property is not removed within that period, Park may treat the RV as abandoned, may charge a daily storage fee as stated above until removal, and/or may remove, store, and dispose of the RV and any remaining personal property in accordance with Florida law, at Tenant's sole expense. Park shall not be liable for any damage to the RV or personal property in connection with such removal or storage.</p></div>
+
+<div class="card rules"><h2>Park Rules &amp; Community Guidelines</h2>
+<div class="box"><b>Quiet hours</b>10 pm to 7 am every day. Keep music, TVs and generators low so everyone can rest.</div>
+<div class="box"><b>Speed limit</b>5 mph inside the park. Watch for children, pets and golf carts.</div>
+<div class="box"><b>Pets</b>Up to 3 pets. Dogs on a leash at all times outside your site. Pick up after your pet. Proof of rabies vaccine on file.</div>
+<div class="box"><b>Guests &amp; visitors</b>Register guests at the office. Visitors staying more than 14 nights must be added to your household.</div>
+<div class="box"><b>Your site</b>Keep the site clean and free of trash and stored items. No changes to pedestals, sewer or water connections.</div>
+<div class="box"><b>Parking</b>Park only on your site. No parking on the grass or in other sites.</div>
+<div class="box"><b>Trash &amp; recycling</b>Bagged trash goes in the dumpster by Johnston Way.</div>
+<div class="box"><b>Ponds &amp; recreation</b>Fishing in the stocked ponds is catch &amp; release. Volleyball, shuffleboard and the Fellowship Hall are for residents and registered guests.</div>
+<div class="box"><b>Fires &amp; grills</b>Grills and fire pits are allowed on your site only, never left unattended. No open fires during burn bans.</div>
+<div class="box"><b>Rent &amp; payments</b>Rent is due on the 1st with a 5-day grace period. Pay online in your resident portal by card or bank, or set up autopay.</div>
+<label class="chk"><input type="checkbox" id="rules"> I have read and agree to follow the Park Rules &amp; Community Guidelines above.</label></div>
+
+<div class="card"><h2>Signature</h2>
+<label class="f">Type your full legal name<input id="sig" placeholder="Type your full legal name"></label>
+<div class="disc"><b>COLLECTION &amp; CREDIT REPORTING DISCLOSURE</b>If any amount I owe under this application or lease becomes past due, I authorize Johnston Springs RV Campground and its agents to share my information, including my name, date of birth, Social Security number, contact information, employer, and account balance, with collection agencies and consumer credit reporting agencies for the purpose of collecting the debt.<br><br>Any collection activity will comply with the Florida Consumer Collection Practices Act (Fla. Stat. §§ 559.55–559.785) and the federal Fair Debt Collection Practices Act. By checking the box below and signing, I acknowledge this disclosure.</div>
+<label class="chk"><input type="checkbox" id="cert"> By typing my name above, I certify that the information provided in this application is true, complete, and accurate to the best of my knowledge, and I understand that any false or misleading information may result in denial of this application or termination of any resulting lease. I also agree that this constitutes my electronic signature, which I understand is legally binding and as valid as a handwritten signature, and that all communications, agreements, notices, documents, and disclosures relating to this application may be sent to me electronically.</label></div>
+
+<button class="go" id="go" disabled>Submit Application</button>
 <p class="demo">Demo application built by MelyOS · nothing is sent and nothing is charged.</p>
 </div>
 
-<div class="card done" id="done"><div class="ok2">✓</div><h1 style="margin-top:12px">Application received</h1>
-<p class="sub" id="dmsg"></p><p class="note">Next: the park reviews your application and background check. Once approved you’ll get a secure link to pay the $300 deposit and your first payment.</p>
-<p><a href="index.html" style="color:#1f4d2b;font-weight:800">← Back to the map</a></p></div>
+<div class="card done" id="done"><div class="ok2">✓</div><h1 style="margin-top:14px">Application received</h1>
+<p class="sub" id="dmsg" style="margin-top:8px"></p><p class="sub">Next: the park reviews your application and background check. Once approved you'll get a secure link to pay the $300 deposit and your first payment.</p>
+<p><a href="index.html" style="font-weight:700">← Back to the map</a></p></div>
 </main>
-<footer>Johnston Springs RV Campground · 4261 Pleasant Hill Rd, Kissimmee, FL 34746 · (407) 870-0719<br>Powered by <b>MelyOS</b></footer>
+<footer><div class="ft">
+<div><img src="logo.png" alt=""><p style="margin-top:10px">“Florida's Best Kept Secret” — RV campground &amp; storage in Kissimmee.</p></div>
+<div><h4>Contact</h4><p>4261 Pleasant Hill Rd</p><p>Kissimmee, FL 34746</p><p><a href="tel:4078700719" style="color:#0f766e;font-weight:600">(407) 870-0719</a></p></div>
+<div><h4>Quick Links</h4><p><a href="index.html">Home</a></p><p><a href="#">Residents</a></p><p><a href="#">Apply</a></p><p><a href="index.html">Events</a></p></div>
+<div><h4>Office Hours</h4><p>Call the office for hours:</p><p><a href="tel:4078700719">(407) 870-0719</a></p></div></div>
+<div class="fb"><span>© 2026 Johnston Springs RV Campground. All rights reserved. · Privacy · Terms · Text Alerts</span><span>Powered by <b>MelyOS.io</b></span><span>4261 Pleasant Hill Rd</span></div></footer>
 <script>
 const P=new URLSearchParams(location.search),DAY=864e5;
 const today=new Date(new Date().toDateString());
 const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 const dOf=s=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||"");return m?new Date(+m[1],+m[2]-1,+m[3]):null};
 const fmt=d=>d.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
-// lot~firstMoveIn~freeNights(~r for the rental unit)
+let LONG_AHEAD=120;try{const r=JSON.parse(localStorage.getItem("johnstonbookrules")||"null");if(r&&+r.l)LONG_AHEAD=+r.l}catch(e){}   // same rule the park sets on the map
+// lot~firstMoveIn~freeNights(~r for the rental unit) — sent by the live map
 const AV=(P.get("av")||"").split(",").filter(Boolean).map(x=>{const[l,s,n,r]=x.split("~");return{lot:l,start:dOf(s),run:+n||0,rent:r=="r"}}).filter(a=>a.start)
  .sort((a,b)=>a.lot.localeCompare(b.lot,undefined,{numeric:true}));
 const PLAN_N={m:400,q:400,h:400,y:400};   // every long stay has a move-in date but no end date
-function plansFor(a){if(a.rent)return[["m","Monthly — Denali RV rental","$1,500 + electric"]];const c=a.lot[0];
- if(c=="N")return[["m","Month to month","$850"],["y","Annual","$7,500"]];if(c=="W")return[["m","Month to month","$900"],["y","Annual","$8,300"]];
- return[["m","Month to month","$775"],["q","3 months (season)","$2,000"],["h","6 months (season)","$3,750"],["y","Annual","$6,600"]]}
+function plansFor(a){if(a.rent)return[["m","Monthly — Denali RV rental","$1,500/mo + electric"]];const c=a.lot[0];
+ if(c=="N")return[["m","Month to month","$850/mo"],["y","Annual","$7,500"]];if(c=="W")return[["m","Month to month","$900/mo"],["y","Annual","$8,300"]];
+ return[["m","Month to month","$775/mo"],["q","3 months (season)","$2,000"],["h","6 months (season)","$3,750"],["y","Annual","$6,600"]]}
 const typeOf=a=>a.rent?"Denali RV rental":a.lot[0]=="N"?"Premium":a.lot[0]=="W"?"Lake View":"Standard";
-const lotSel=document.getElementById("lot"),mv=document.getElementById("mv"),pl=document.getElementById("plans"),am=document.getElementById("avmsg");
+const $=id=>document.getElementById(id);
+const lotSel=$("lot"),mv=$("mv"),pl=$("plans"),am=$("avmsg");
 AV.forEach(a=>{const o=document.createElement("option");o.value=a.lot;o.textContent=`${a.lot} · ${typeOf(a)} · ${+a.start==+today?"available now":"from "+fmt(a.start)}`;lotSel.appendChild(o)});
 if(!AV.length){const o=document.createElement("option");o.textContent="Open this application from the live map";o.disabled=true;lotSel.appendChild(o)}
 let PLAN=P.get("plan")||"";
 const cur=()=>AV.find(a=>a.lot==lotSel.value);
-function draw(){const a=cur();if(!a){pl.innerHTML='<div class="note">Pick a lot first.</div>';am.innerHTML="";check();return}
- const last=new Date(+today+120*DAY);   // long stays: apply up to 120 days ahead
- mv.min=iso(a.start);mv.max=a.run>=400?"":iso(last);
- let d=dOf(mv.value);if(!d||d<a.start||(a.run<400&&d>last)){d=a.start;mv.value=iso(d)}
+function draw(){const a=cur();if(!a){pl.innerHTML='<div class="hint">Pick a lot first.</div>';am.innerHTML="";$("rent").textContent="$TBD";check();return}
+ const last=new Date(+today+LONG_AHEAD*DAY);
+ mv.min=iso(a.start);mv.max=iso(last);
+ let d=dOf(mv.value);if(!d||d<a.start||d>last){d=a.start;mv.value=iso(d)}
  const left=a.run>=400?9999:a.run-Math.round((d-a.start)/DAY);
- const ends=a.run>=400?null:new Date(+a.start+a.run*DAY);
- am.innerHTML=`<div class="av ok">✓ Lot <b>${a.lot}</b> is free from <b>${fmt(a.start)}</b> with no reservation after it. Your stay has a move-in date but no end date — the site is yours until you give your move-out notice in your resident portal.</div>`;
+ am.innerHTML=`<div class="av ok">✓ Lot <b>${a.lot}</b> is free from <b>${fmt(a.start)}</b> with no reservation after it.</div>`;
  const ps=plansFor(a);if(!ps.some(p=>p[0]==PLAN&&left>=PLAN_N[p[0]]))PLAN=(ps.find(p=>left>=PLAN_N[p[0]])||[""])[0];
- pl.innerHTML=ps.map(([k,n,v])=>{const ok=left>=PLAN_N[k];return `<label class="po${ok?"":" x"}${PLAN==k&&ok?" on":""}"><input type="radio" name="pl" value="${k}" ${ok?"":"disabled"} ${PLAN==k&&ok?"checked":""}> ${n}${ok?"":" — doesn’t fit before the next reservation"}<b>${v}</b></label>`}).join("")+`<div class="note">Deposit after approval: <b>$300</b></div>`;
- pl.querySelectorAll("input").forEach(r=>r.onchange=()=>{PLAN=r.value;draw()});check()}
-function check(){const ok=cur()&&PLAN&&document.getElementById("fn").value.trim()&&document.getElementById("ln").value.trim()&&document.getElementById("bg").checked&&document.getElementById("rules").checked&&document.getElementById("sig").value.trim();
- document.getElementById("go").disabled=!ok}
+ pl.innerHTML=ps.map(([k,n,v])=>{const ok=left>=PLAN_N[k];return `<label class="po${ok?"":" x"}${PLAN==k&&ok?" on":""}"><input type="radio" name="pl" value="${k}" ${ok?"":"disabled"} ${PLAN==k&&ok?"checked":""}> ${n}${ok?"":" — doesn't fit before the next reservation"}<b>${v}</b></label>`}).join("");
+ pl.querySelectorAll("input").forEach(r=>r.onchange=()=>{PLAN=r.value;draw()});
+ const sel=ps.find(p=>p[0]==PLAN);$("rent").textContent=sel?`${sel[2]} · ${sel[1]}`:"$TBD";check()}
+function check(){const ok=cur()&&PLAN&&$("fn").value.trim()&&$("ln").value.trim()&&$("rules").checked&&$("sig").value.trim()&&$("cert").checked;$("go").disabled=!ok}
+const pa=()=>{const n=($("fn").value+" "+$("ln").value).trim();$("pa").textContent=n||"—"};
 // RV length: N lots take any RV (33 ft+); the others are for RVs up to 32 ft
-document.getElementById("rvlen").oninput=()=>{const a=cur(),L=+document.getElementById("rvlen").value,m=document.getElementById("lenmsg");
- m.innerHTML=a&&L>32&&a.lot[0]!="N"&&!a.rent?`<div class="av no">Your RV is ${L} ft — lot ${a.lot} is for RVs up to 32 ft. Pick an N (Premium) lot for 33 ft or longer.</div>`:""};
+$("rvlen").oninput=()=>{const a=cur(),L=+$("rvlen").value;
+ $("lenmsg").innerHTML=a&&L>32&&a.lot[0]!="N"&&!a.rent?`<div class="av no">Your RV is ${L} ft — lot ${a.lot} is for RVs up to 32 ft. Pick an N (Premium) lot for 33 ft or longer.</div>`:""};
+$("retired").onchange=e=>{$("emp").querySelectorAll("input,select").forEach(x=>x.disabled=e.target.checked)};
+document.querySelectorAll("[data-x]").forEach(c=>c.onchange=()=>{$(c.dataset.x).style.display=c.checked?"block":"none"});
+$("gc").onchange=e=>{$("gcx").style.display=e.target.value=="Yes"?"block":"none"};
 lotSel.onchange=()=>{mv.value="";draw()};mv.onchange=draw;
-["fn","ln","sig"].forEach(id=>document.getElementById(id).oninput=check);["bg","rules"].forEach(id=>document.getElementById(id).onchange=check);
-const want=P.get("lot");if(want&&AV.some(a=>a.lot==want))lotSel.value=want;else if(want){am.innerHTML=`<div class="av no">Lot <b>${want}</b> isn’t open for a long stay yet (it has a reservation coming up). Pick one of the lots listed.</div>`}
+["fn","ln"].forEach(id=>$(id).addEventListener("input",()=>{pa();check()}));$("sig").oninput=check;["rules","cert"].forEach(id=>$(id).onchange=check);
+const want=P.get("lot");if(want&&AV.some(a=>a.lot==want))lotSel.value=want;else if(want){am.innerHTML=`<div class="av no">Lot <b>${want}</b> isn't open for a long stay yet (it has a reservation coming up). Pick one of the lots listed.</div>`}
 if(P.get("move_in"))mv.value=P.get("move_in");
 if(lotSel.value)draw();
-document.getElementById("go").onclick=()=>{const a=cur();const n=plansFor(a).find(p=>p[0]==PLAN);
- document.getElementById("dmsg").innerHTML=`Lot <b>${a.lot}</b> · ${n[1]} (${n[2]}) · move-in <b>${fmt(dOf(mv.value))}</b>`;
- document.getElementById("form").style.display="none";document.getElementById("done").style.display="block";scrollTo(0,0)};
+$("go").onclick=()=>{const a=cur();const n=plansFor(a).find(p=>p[0]==PLAN);
+ $("dmsg").innerHTML=`Lot <b>${a.lot}</b> · ${n[1]} (${n[2]}) · move-in <b>${fmt(dOf(mv.value))}</b>`;
+ $("form").style.display="none";$("done").style.display="block";scrollTo(0,0)};
 </script></body></html>
