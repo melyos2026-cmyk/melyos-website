@@ -491,14 +491,14 @@ function drawLot(i){hideHov();const t=T[L],k=kind(i),st=ST[i],es=L=="es",inf=inf
   const wd=(es?["D","L","M","M","J","V","S"]:["S","M","T","W","T","F","S"]).map(x=>`<span class="cw">${x}</span>`).join("");
   let cells="";for(let s=0;s<first;s++)cells+="<span></span>";
   for(let d=1;d<=n;d++){const dt=new Date(y,m,d),b=isBlocked(i,dt),sel=(arr&&+dt==+arr)||(dep&&+dt==+dep),inr=arr&&dep&&dt>arr&&dt<dep;
-   const bk=b&&(BOOK[i]||[]).find(([a,e])=>dt>=a&&dt<e),rsv=bk&&dt>=today&&+bk[0]>Date.now()-15*36e5,occ=bk&&dt>=today&&!rsv;
+   const bk=b&&(BOOK[i]||[]).find(([a,e])=>dt>=a&&dt<e),rsv=bk&&dt>=today&&(bk[1]-bk[0])<28*DAY,occ=bk&&dt>=today&&!rsv;   // Nov 22 (per Mely): same rule as the map colors
    cells+=`<button class="cd ${b?"cb":"ca"}${rsv?" kres":""}${occ?" kocc":""}${sel?" cs":""}${inr?" ci":""}" ${b?"disabled":""} data-d="${+dt}">${d}</button>`}
   cal=`<div class="cal"><div class="ch"><button class="cn" data-m="-1" aria-label="Previous month">‹</button><b>${calM.toLocaleDateString(es?"es-US":"en-US",{month:"long",year:"numeric"})}</b><button class="cn" data-m="1" aria-label="Next month">›</button></div>
    <div class="cg">${wd}${cells}</div><div class="cl"><span><i class="ca"></i>${es?"Disponible":"Available"}</span><span><i class="kocc"></i>${es?"Ocupado":"Occupied"}</span><span><i class="kres"></i>${es?"Reservado":"Reserved"}</span></div></div>
    ${nxt?`<div class="nx"><span>${es?"Próxima fecha disponible":"Next available date"}: <b>${fmt(nxt)}</b></span><button id="usen">${es?"Usar esta fecha":"Use this date"}</button></div>`:""}
    <div class="rows"><div>${es?"Llegada":"Arrival"}<b>${arr?fmt(arr):"—"}</b></div><div>${es?"Salida":"Departure"}<b>${dep?(dep-today>300*DAY?dep.toLocaleDateString(es?"es-US":"en-US",{month:"short",day:"numeric",year:"numeric"}):fmt(dep)):"—"}</b></div></div>`}
  const ok=arr&&dep;
- const nb=(BOOK[i]||[]).find(([a,b])=>+b+11*36e5>Date.now()),RS=st=="res"&&nb?` · ${es?"llega el":"guest arrives"} ${fmt(nb[0])}`:st=="occ"&&RES_OPEN[i]?` · ${es?"residente":"resident"}`:st=="occ"&&nb?` · ${es?(MOVEOUT[i]?"se muda el":"sale el"):(MOVEOUT[i]?"move-out":"until")} ${fmt(nb[1])}`:"";
+ const nb=(BOOK[i]||[]).find(([a,b])=>+b+11*36e5>Date.now()),RS=st=="res"&&nb?(+nb[0]<=+today?` · ${es?"hasta el":"until"} ${fmt(nb[1])}`:` · ${es?"llega el":"guest arrives"} ${fmt(nb[0])}`):st=="occ"&&RES_OPEN[i]?` · ${es?"residente":"resident"}`:st=="occ"&&nb?` · ${es?(MOVEOUT[i]?"se muda el":"sale el"):(MOVEOUT[i]?"move-out":"until")} ${fmt(nb[1])}`:"";
  const okD=arr&&dep&&freeFor(i,arr,dep),stTxt=okD?(es?"Libre para sus fechas":"Free for your dates"):st=="maint"?`${t[st]} · ${es?"disponible desde el":"available from"} ${maintUntil(i).toLocaleDateString(es?"es-US":"en-US",{month:"short",day:"numeric"})}`:t[st]+RS,stCol=okD?(st=="rent"?"#8b5cf6":"#16a34a"):col;
  if(st=="occ"){document.getElementById("sc").innerHTML=`<h2>${t.lot} ${NUM[i]}<span class="badge" style="background:${col}">${t.occ}</span></h2><p style="color:#475569;margin:12px 0 4px">${es?"Este lote está ocupado.":"This site is occupied."}</p>`;return}   // Nov 22 (per Mely): occupied = closed, no other info
  document.getElementById("sc").innerHTML=`<img class="lph" src="${photoOf(i)}" alt="${t.lot} ${NUM[i]}"><h2>${t.lot} ${NUM[i]}<span class="badge" style="background:${stCol}">${stTxt}</span></h2>
