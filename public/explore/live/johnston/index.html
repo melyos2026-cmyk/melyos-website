@@ -453,6 +453,9 @@ function liveST(){const t=Date.now();return SH.map((_,i)=>{if(NA.has(NUM[i]))ret
   const cur=blocks(i).find(([a,b])=>+today>=+a&&+today<+b);if(!cur)return "free";return (cur[1]-cur[0])>=28*DAY?"occ":"res"})}   // Nov 22 (per Mely): nightly/weekly guests = Reserved (yellow); month-to-month / seasonal / annual residents = Occupied (red)   // Nov 22 (per Mely): status = TONIGHT. Green while tonight is still free (even if a guest arrives tomorrow); orange only on the arrival day before 3 PM check-in; red from check-in (3 PM) until check-out (11 AM)
 function blocks(i){const out=(BOOK[i]||[]).filter(([a,b])=>+b>+today-DAY).map(([a,b])=>[a,b]);
   (FIXED[NUM[i]]||[]).forEach(([a,b])=>out.push([new Date(a+"T00:00:00"),new Date(+new Date(b+"T00:00:00")+DAY)]));
+  // Nov 22 (per Mely): a lot on hold for someone filling out (or who paid) a long-stay application is blocked from
+  // their move-in date on — nights that end before it can still be sold. The hold expires on its own.
+  try{const h=JSON.parse(localStorage.getItem("johnstonhold")||"null");if(h&&h.exp>Date.now()&&String(h.lot)==String(NUM[i])){const m=new Date(h.mv+"T00:00:00");out.push([m,new Date(+m+500*DAY)])}}catch(e){}
   return out}
 const FIXED={};
 function isBlocked(i,d){if(ST[i]=="na")return true;if(ST[i]=="maint"&&d<maintUntil(i))return true;return d<today||blocks(i).some(([a,b])=>d>=a&&d<b)}
@@ -644,6 +647,7 @@ document.getElementById("dl").onclick=async()=>{const lay={sh:SH,st:ST,stv:2,num
  if(!done){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([src],{type:"text/html"}));a.download="21Palms-mapa.html";document.body.appendChild(a);a.click();a.remove()}
  try{localStorage.setItem("johnstonwideshapes5",JSON.stringify(lay))}catch(e){}say("Downloaded ✓ — open 21Palms-mapa.html on any computer")};
 load();lang("en");render();
+addEventListener("storage",e=>{if(e.key=="johnstonhold"&&!editing){render();if(typeof RANGE!=="undefined"&&RANGE)sendAvail()}});   // hold started/ended in the application tab
 // Nov 22: Booking rules (how far ahead guests can book) — set by the park in edit mode
 (function(){const rs=document.getElementById("ruleS"),rl=document.getElementById("ruleL");rs.value=SHORT_AHEAD;rl.value=LONG_AHEAD;
  document.getElementById("ruleSave").onclick=()=>{const a=Math.round(+rs.value),b=Math.round(+rl.value);if(!(a>=1&&a<=730&&b>=1&&b<=730)){say("Use 1 to 730 days");return}

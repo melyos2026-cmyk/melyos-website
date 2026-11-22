@@ -63,6 +63,22 @@ input:disabled,select:disabled{background:#f3f4f6;color:#6b7280}
 .mod>div{background:#fff;border-radius:14px;max-width:460px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25)}
 .mod .mb{padding:24px 28px 8px}.mod h3{font-size:18px;margin:0 0 14px}.mod .mf{display:flex;gap:10px;padding:16px 28px 22px}.mod .mf button{flex:1;padding:12px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer}
 .mod .back{background:#fff;border:1px solid #d1d5db}.mod .cont{background:#000;color:#fff;border:0}
+/* Nov 22: Ticketmaster-style hold timer + friendly popups */
+.tbar{position:sticky;top:0;z-index:900;display:none;justify-content:center;padding:10px 12px;background:linear-gradient(90deg,#0f766e,#115e59);color:#fff;font-size:14px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.tbar .in{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.tbar .clk{font:700 18px ui-monospace,Menlo,monospace;background:rgba(255,255,255,.16);border-radius:999px;padding:4px 14px;min-width:84px;text-align:center}
+.tbar.warn{background:linear-gradient(90deg,#b45309,#92400e)}.tbar.hot{background:linear-gradient(90deg,#b91c1c,#7f1d1d);animation:pulse 1s infinite}
+@keyframes pulse{50%{filter:brightness(1.15)}}
+.pop{position:fixed;inset:0;z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.55);backdrop-filter:blur(3px)}
+.pop .pc{background:#fff;border-radius:20px;max-width:420px;width:100%;padding:30px 28px 24px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.3);animation:popin .22s ease-out}
+@keyframes popin{from{transform:translateY(14px) scale(.97);opacity:0}to{transform:none;opacity:1}}
+.pop .ic{width:66px;height:66px;border-radius:33px;display:inline-flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:12px}
+.pop h3{font-family:"Playfair Display",Georgia,serif;font-size:23px;margin:0 0 8px}.pop p{color:#4b5563;font-size:14px;line-height:1.55;margin:0 0 18px}
+.pop .big{font:700 34px ui-monospace,Menlo,monospace;color:#111;margin:-4px 0 14px}
+.pop .bt{display:flex;flex-direction:column;gap:10px}.pop button{border-radius:12px;padding:14px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;border:0}
+.pop .p1{background:#000;color:#fff}.pop .p2{background:#fff;color:#111;border:1px solid #d1d5db}
+.ic.t{background:#ccfbf1}.ic.w{background:#fef3c7}.ic.r{background:#fee2e2}.ic.g{background:#dcfce7}
+.after{margin:26px auto 0;max-width:620px;text-align:left}
 .go{width:100%;background:#000;color:#fff;border:0;border-radius:8px;padding:15px;font-size:15px;font-weight:600;cursor:pointer}
 .go:disabled{opacity:.45;cursor:not-allowed}
 .demo{font-size:12px;color:#6b7280;text-align:center;margin-top:10px}
@@ -79,6 +95,10 @@ footer{background:#d9f3ef;padding:36px 24px 18px}
 <div class="brand"><b>Johnston Springs RV Campground</b><small>4261 Pleasant Hill Rd</small></div>
 <a class="call" href="tel:4078700719">📞 CALL US</a></div></header>
 <nav><div><a href="index.html">Home</a><a href="index.html">Reservations</a><a class="on" href="#">Apply</a><a href="index.html">Propane</a><a href="index.html">Events</a><a href="#">Residents Login</a></div></nav>
+<div class="tbar" id="tbar"><div class="in">⏱ <span id="tlot"></span><span class="clk" id="tclk">20:00</span><span style="opacity:.9;font-size:12.5px">Finish before the time runs out</span></div></div>
+<div class="pop" id="pMore"><div class="pc"><div class="ic w">⏳</div><h3>Need more time?</h3><p id="pMoreTxt">Only <b>3 minutes</b> left to finish your application. Want 5 more minutes to keep <b id="pMoreLot"></b> on hold?</p><div class="big" id="pMoreClk">3:00</div><div class="bt"><button class="p1" id="pMoreYes">Yes, add 5 minutes</button><button class="p2" id="pMoreNo">No thanks, I'm almost done</button></div></div></div>
+<div class="pop" id="pIdle"><div class="pc"><div class="ic w">👋</div><h3>Are you still there?</h3><p>We haven't seen any typing for a while. To keep your lot on hold, let us know you're still here.</p><div class="big" id="pIdleClk">60</div><div class="bt"><button class="p1" id="pIdleYes">I'm still here</button></div></div></div>
+<div class="pop" id="pEnd"><div class="pc"><div class="ic r">⌛</div><h3>Time's up</h3><p id="pEndTxt"></p><div class="bt"><button class="p1" id="pEndAgain">Start again</button><button class="p2" id="pEndMap">Back to the map</button></div></div></div>
 <main>
 <div id="form">
 <div class="park"><b>Johnston Springs RV Campground</b><div>4261 Pleasant Hill Rd · Kissimmee, FL 34746</div></div>
@@ -209,7 +229,14 @@ footer{background:#d9f3ef;padding:36px 24px 18px}
 <p class="sub" id="dmsg" style="margin-top:8px"></p>
 <div class="av ok" style="text-align:left;max-width:620px;margin:16px auto">📧 <b>Payment received — check your email</b> for a message with instructions to complete the background check. This can take a few minutes to arrive.<span id="occmail"></span><br>Your itemized receipt is emailed too.</div>
 <p class="sub">Next: the park reviews your application and background check. Once approved you'll get a secure link to pay the $300 deposit and your first payment.</p>
-<p><a href="index.html" style="font-weight:700">← Back to the map</a></p></div>
+<p><a href="index.html" style="font-weight:700">← Back to the map</a></p>
+<div class="after" id="after"><div class="card" style="background:#f9fafb"><h2>Demo · what happens after approval</h2>
+<p class="legal" style="margin-top:0">When the park approves the application, the applicant gets an email with a secure link to pay the deposit and first payment. Paying it finishes the move-in: the lease PDF and the resident portal login are emailed, and the lot turns red (occupied) on the map from the move-in date.</p>
+<button class="go" id="apprBtn" style="margin-top:6px">See the approval payment →</button></div></div>
+<div class="after" id="apprPay" style="display:none"><div class="card"><h2>✅ Application approved — pay to move in</h2><div class="fee" id="apprFee" style="margin:0 0 16px"></div>
+<div class="g g2"><label class="f">Name on card<input id="acn"></label><label class="f">Card number<input placeholder="4242 4242 4242 4242"></label></div>
+<button class="go" id="apprGo" style="margin-top:16px"></button><p class="demo">Demo: nothing is charged.</p></div></div>
+<div class="after" id="apprDone" style="display:none"><div class="av ok" style="font-size:14px">🎉 <b>You're all set — welcome to Johnston Springs!</b><br><span id="apprMsg"></span><br>Your lease PDF and your resident portal login were emailed to you.</div></div></div>
 </main>
 <footer><div class="ft">
 <div><img src="logo.png" alt=""><p style="margin-top:10px">“Florida's Best Kept Secret” — RV campground &amp; storage in Kissimmee.</p></div>
@@ -322,5 +349,52 @@ $("modgo").onclick=()=>{$("mod").style.display="none";const a=cur(),n=plansFor(a
  $("dmsg").innerHTML=`Lot <b>${a.lot}</b> · ${n[1]} (${n[2]}) · move-in <b>${fmt(dOf(mv.value))}</b>`;
  $("occmail").innerHTML=F.n?` Each additional adult also gets their own background check email.`:"";
  $("form").style.display="none";$("pay").style.display="block";scrollTo(0,0)};
-$("paygo").onclick=()=>{$("pay").style.display="none";$("done").style.display="block";scrollTo(0,0)};
+$("paygo").onclick=()=>{$("pay").style.display="none";$("done").style.display="block";scrollTo(0,0);HOLDT.paid()};
+$("apprBtn").onclick=()=>{const a=cur(),n=plansFor(a).find(p=>p[0]==PLAN),first=parseFloat(String(n[2]).replace(/[^0-9.]/g,""))||0;
+ $("apprFee").innerHTML=`<div><span>Security deposit</span><b>${money(300)}</b></div><div><span>First payment · ${n[1]}</span><b>${money(first)}</b></div><div class="tot"><b>Total</b><b>${money(300+first)}</b></div>`;
+ $("apprGo").textContent=`Pay ${money(300+first)} & finish move-in`;$("acn").value=($("fn").value+" "+$("ln").value).trim();
+ $("after").style.display="none";$("apprPay").style.display="block";$("apprPay").scrollIntoView({behavior:"smooth",block:"center"})};
+$("apprGo").onclick=()=>{const a=cur();$("apprMsg").innerHTML=`Lot <b>${a.lot}</b> is yours from <b>${fmt(dOf(mv.value))}</b>.`;$("apprPay").style.display="none";$("apprDone").style.display="block"};
+
+// ===== Nov 22 (per Mely): Ticketmaster-style hold while filling out the application =====
+// 20 min to finish · at 3 min left: "Need more time?" +5 min (asked again each time, while they keep working)
+// · 5 min with no typing/tapping closes it (60-second "Are you still there?" first) · 60 min max in total
+// · the hold also lives outside this page (the map reads it), so closing the tab still releases it on time
+// · what they typed is kept (except SSN / files), so starting again is quick.
+const HOLDT=(()=>{const KEY="johnstonhold",DK="johnstondraft",MIN=6e4,START=20*MIN,ADD=5*MIN,WARN=3*MIN,IDLE_ASK=4*MIN,IDLE_END=5*MIN,MAX=60*MIN;
+ let H=null,last=Date.now(),offeredAt=0,done=false,iv=null;
+ const show=(id,on)=>{$(id).style.display=on?"flex":"none"};
+ const mmss=ms=>{ms=Math.max(0,ms);const m=Math.floor(ms/6e4),s=Math.floor(ms%6e4/1e3);return m+":"+String(s).padStart(2,"0")};
+ const save=()=>{try{H?localStorage.setItem(KEY,JSON.stringify(H)):localStorage.removeItem(KEY)}catch(e){}};
+ function start(){const a=cur();if(!a||!mv.value||done)return;
+  if(H&&H.lot==a.lot&&H.mv==mv.value&&H.exp>Date.now())return;
+  const now=Date.now();H={lot:a.lot,mv:mv.value,start:now,exp:now+START,paid:false};offeredAt=0;last=now;save();
+  $("tbar").style.display="flex";$("tlot").innerHTML=`Lot <b>${a.lot}</b> is on hold for you`;tick();if(!iv)iv=setInterval(tick,1000)}
+ function release(){H=null;save();$("tbar").style.display="none"}
+ function end(why){const lot=H&&H.lot;release();show("pMore",0);show("pIdle",0);
+  $("pEndTxt").innerHTML=(why=="idle"?"We didn't see any activity for 5 minutes, so":"Your time ran out, so")+` lot <b>${lot}</b> was released for other guests. Don't worry — what you typed is saved. Tap <b>Start again</b> to hold the lot again (if it's still free).`;show("pEnd",1)}
+ function tick(){if(!H||H.paid)return;const now=Date.now(),left=H.exp-now,idle=now-last;
+  $("tclk").textContent=mmss(left);$("tbar").classList.toggle("warn",left<=WARN&&left>MIN);$("tbar").classList.toggle("hot",left<=MIN);
+  if(left<=0)return end("time");
+  if(idle>=IDLE_END)return end("idle");
+  if(idle>=IDLE_ASK){show("pMore",0);$("pIdleClk").textContent=Math.ceil((IDLE_END-idle)/1e3);show("pIdle",1);return}
+  if(left<=WARN&&offeredAt!=H.exp){offeredAt=H.exp;const canAdd=H.exp+ADD-H.start<=MAX;$("pMoreLot").textContent="lot "+H.lot;
+   $("pMoreYes").style.display=canAdd?"block":"none";$("pMoreTxt").innerHTML=canAdd?`Only <b>3 minutes</b> left to finish your application. Want 5 more minutes to keep <b>lot ${H.lot}</b> on hold?`:`You've reached the maximum time for this hold. Please finish now — <b>lot ${H.lot}</b> is released when the clock hits 0.`;
+   $("pMoreNo").textContent=canAdd?"No thanks, I'm almost done":"OK, finishing now";show("pMore",1)}
+  if($("pMore").style.display=="flex")$("pMoreClk").textContent=mmss(left)}
+ $("pMoreYes").onclick=()=>{if(H){H.exp+=ADD;save()}last=Date.now();show("pMore",0);tick()};
+ $("pMoreNo").onclick=()=>{last=Date.now();show("pMore",0)};
+ $("pIdleYes").onclick=()=>{last=Date.now();show("pIdle",0);tick()};
+ $("pEndAgain").onclick=()=>{show("pEnd",0);const a=cur();if(a&&AV.some(x=>x.lot==a.lot)){last=Date.now();start()}else location.reload()};
+ $("pEndMap").onclick=()=>{location.href="index.html"};
+ ["keydown","input","pointerdown","touchstart","change"].forEach(ev=>document.addEventListener(ev,()=>{if($("pIdle").style.display!="flex"&&$("pEnd").style.display!="flex")last=Date.now()},true));
+ lotSel.addEventListener("change",()=>setTimeout(start,0));mv.addEventListener("change",()=>{if(H&&!H.paid){H.mv=mv.value;save()}});
+ // draft: keep what they typed (never SSN, card or files)
+ const fields=[...document.querySelectorAll("#form input, #form select")].filter(e=>e.type!="file"&&e.id!="ssn"&&e.type!="radio"&&!e.closest("#occrows")&&!["lot","mv"].includes(e.id));
+ try{const D=JSON.parse(localStorage.getItem(DK)||"null");if(D)fields.forEach((e,k)=>{if(D[k]==null)return;if(e.type=="checkbox")e.checked=D[k];else e.value=D[k]})}catch(e){}
+ const saveDraft=()=>{try{localStorage.setItem(DK,JSON.stringify(fields.map(e=>e.type=="checkbox"?e.checked:e.value)))}catch(e){}};
+ document.addEventListener("input",saveDraft);document.addEventListener("change",saveDraft);
+ fields.forEach(e=>{if(e.type=="checkbox"&&e.checked)e.dispatchEvent(new Event("change"))});pa();
+ setTimeout(start,0);
+ return{paid(){if(!H)return;done=true;H.paid=true;H.exp=Date.now()+5*24*36e5;save();$("tbar").style.display="none";show("pMore",0);show("pIdle",0);try{localStorage.removeItem(DK)}catch(e){}}}})();
 </script></body></html>
