@@ -170,9 +170,9 @@ function ratesOf(i,es){const c=sec(i);
  const d=[[es?"Diario (full hookups)":"Daily (full hookups)","$65"],[es?"Good Sam (máx. 5 noches)":"Good Sam (5-night max)","$58.50"],[es?"Semanal":"Weekly","$375"]];
  if(c=="N")return[...d,[es?"Mensual":"Monthly","$850"],[es?"Anual":"Annual","$7,500"]];
  if(c=="W")return[...d,[es?"Mensual":"Monthly","$900"],[es?"Anual":"Annual","$8,300"]];
- if(c=="T")return[[es?"Tarifa":"Rate",es?"Llame a la oficina":"Call the office"]];
+ if(c=="T")return[[es?"Por noche (estimado)":"Per night (estimate)","$35"],[es?"Semanal (estimado)":"Weekly (estimate)","$210"]];
  return[...d,[es?"Mensual":"Monthly","$775"],["3 "+(es?"meses":"months"),"$2,000"],["6 "+(es?"meses":"months"),"$3,750"],[es?"Anual":"Annual","$6,600"]]}
-const rateOf=i=>{const c=sec(i);return c=="N"?"$850":c=="W"?"$900":c=="T"?(L=="es"?"Llame":"Call"):"$775"};
+const rateOf=i=>{const c=sec(i);return c=="N"?"$850":c=="W"?"$900":c=="T"?(L=="es"?"$35 / noche (est.)":"$35 / night (est.)"):"$775"};
 // Nov 20 (per Mely): lot details — amps, size, hookups — so every lot looks complete (examples until the park sends its real data)
 // Nov 20 (per Mely): "Pay" works in the demo — a MelyOS secure-checkout preview (test card only, nothing is charged)
 function payDemo(i,n,tot){const es=L=="es",ov=document.createElement("div");ov.id="payov";
@@ -200,7 +200,7 @@ function maintUntil(i){return new Date(+today+((+NUM[i]||i)%5+2)*DAY)}
 const LONG=15;
 // A Stripe TEST-mode Payment Link (no real charge; card 4242 4242 4242 4242) — opens from "Pay" when set
 const DEMO_PAY_URL="";
-function nightly(i){return 65}   // weekly ($375) applied in checkout for 7–14 nights
+function nightly(i){return sec(i)=="T"?35:65}   // weekly ($375) applied in checkout for 7–14 nights
 function checkout(i){const es=L=="es",n=Math.round((dep-arr)/DAY),box=document.getElementById("bkm"),sh=document.getElementById("sheet");
  const fmt=d=>d.toLocaleDateString(es?"es-US":"en-US",{month:"short",day:"numeric"});
  if(n>LONG){const fd=freeDays(i,arr,400),run=runFrom(fd,0),endFree=new Date(+fd.d0+run*DAY);
@@ -214,9 +214,9 @@ function checkout(i){const es=L=="es",n=Math.round((dep-arr)/DAY),box=document.g
   <button class="cta" id="apgo" ${plans.some(p=>p[2])?"":"disabled style=\"opacity:.5\""}>${es?"Llenar la aplicación →":"Start the application →"}</button>
   <div class="cn2">${es?"No se cobra nada ahora. Usted paga solo cuando el parque aprueba su aplicación.":"Nothing is charged now. You only pay once the park approves your application."}</div></div>`;
   box.querySelector("#apgo").onclick=()=>{try{window.open(APPLY_URL+"?lot="+encodeURIComponent(NUM[i])+"&move_in="+iso(arr)+"&park=johnston-springs&plan="+encodeURIComponent((box.querySelector("input[name=lplan]:checked")?.parentElement?.querySelector("span")?.textContent)||""),"_blank","noopener")}catch(e){}};}
- else{const r=nightly(i),sub=n>=7?Math.floor(n/7)*375+(n%7)*Math.min(65,375/7*1)*0+(n%7)*65:r*n,tx=n<=180,tax=tx?Math.round(sub*0.075*100)/100:0,tdt=tx?Math.round(sub*0.06*100)/100:0,tot=(sub+tax+tdt).toFixed(2);   // Osceola County: 7.5% sales tax + 6% tourist tax (stays under 6 months)
+ else{const r=nightly(i),sub=sec(i)=="T"?(n>=7?Math.floor(n/7)*210+(n%7)*35:35*n):n>=7?Math.floor(n/7)*375+(n%7)*Math.min(65,375/7*1)*0+(n%7)*65:r*n,tx=n<=180,tax=tx?Math.round(sub*0.075*100)/100:0,tdt=tx?Math.round(sub*0.06*100)/100:0,tot=(sub+tax+tdt).toFixed(2);   // Osceola County: 7.5% sales tax + 6% tourist tax (stays under 6 months)
   box.innerHTML=`<div class="co"><b>${es?"Pago":"Checkout"} · ${t9(es,"Lote","Lot")} ${NUM[i]}</b><div>${fmt(arr)} → ${fmt(dep)} · ${n} ${es?(n>1?"noches":"noche"):(n>1?"nights":"night")}</div>
-  <div class="cl2"><span>${n>=7?`${Math.floor(n/7)} ${es?"sem.":"wk"} × $375${n%7?` + ${n%7} × $65`:""}`:`${n} × $${r}`}</span><span>$${sub.toFixed(2)}</span></div><div class="cl2"><span>${es?"Impuesto de ventas (7.5%)":"Sales tax (7.5%)"}</span><span>$${tax.toFixed(2)}</span></div><div class="cl2"><span>${es?"Impuesto turístico Osceola (6%)":"Osceola tourist tax (6%)"}</span><span>$${tdt.toFixed(2)}</span></div><div class="cl2 ct"><span>Total</span><span>$${tot}</span></div>
+  <div class="cl2"><span>${n>=7?`${Math.floor(n/7)} ${es?"sem.":"wk"} × $${sec(i)=="T"?210:375}${n%7?` + ${n%7} × $${r}`:""}`:`${n} × $${r}`}</span><span>$${sub.toFixed(2)}</span></div><div class="cl2"><span>${es?"Impuesto de ventas (7.5%)":"Sales tax (7.5%)"}</span><span>$${tax.toFixed(2)}</span></div><div class="cl2"><span>${es?"Impuesto turístico Osceola (6%)":"Osceola tourist tax (6%)"}</span><span>$${tdt.toFixed(2)}</span></div><div class="cl2 ct"><span>Total</span><span>$${tot}</span></div>
   <button class="cta" id="pay">${es?`Pagar $${tot}`:`Pay $${tot}`}</button><div class="cn2" id="payn" style="display:none">${es?"Demo: no se cobró nada. En su mapa real el huésped paga seguro con tarjeta (Stripe), el lote queda reservado y le llega la confirmación por email.":"Demo: nothing was charged. On your live map the guest pays securely by card (Stripe), the lot is booked and the confirmation is emailed."}</div></div>`;
   box.querySelector("#pay").onclick=()=>{if(DEMO_PAY_URL){try{window.open(DEMO_PAY_URL,"_blank","noopener")}catch(e){}return}payDemo(i,n,tot)}}
  {const b=document.getElementById("bk");if(b)b.style.display="none"}setTimeout(()=>box.scrollIntoView({behavior:"smooth",block:"center"}),60);tell({type:"melyos-checkout",lot:NUM[i],nights:n})}
@@ -451,7 +451,7 @@ let calM=null,arr=null,dep=null;
 function open(i){PICKED=i;HINTDONE=true;select(i);render();{const sh=document.getElementById("sheet"),h=document.getElementById("scrollhint");sh.scrollTop=0;h.classList.remove("gone");document.getElementById("sht").textContent=L=="es"?"Baje para ver el calendario":"Scroll down for the calendar";sh.onscroll=()=>{if(sh.scrollTop>60)h.classList.add("gone")}}arr=dep=null;calM=new Date(today.getFullYear(),today.getMonth(),1);if(typeof RANGE!=="undefined"&&RANGE){arr=RANGE.a;dep=RANGE.d;calM=new Date(arr.getFullYear(),arr.getMonth(),1)}drawLot(i);document.getElementById("sheet").classList.add("open");setTimeout(()=>{const sh=document.getElementById("sheet");if(sh.scrollHeight<=sh.clientHeight+30)document.getElementById("scrollhint").classList.add("gone")},250)}
 const hov=document.createElement("div");hov.id="hov";document.body.appendChild(hov);
 function showHov(i,e){const t=T[L],st=ST[i],es=L=="es",k=kind(i);const col=COLOR[st];
- const price=st=="rent"?(es?"$1,500 / mes + electricidad":"$1,500 / month + electric"):(sec(i)=="T"?(es?"Tienda · llame a la oficina":"Tent · call the office"):rateOf(i)+(es?" / mes · $65 / noche":" / month · $65 / night"));
+ const price=st=="rent"?(es?"$1,500 / mes + electricidad":"$1,500 / month + electric"):(sec(i)=="T"?(es?"Tienda · $35 / noche (estimado)":"Tent · $35 / night (estimate)"):rateOf(i)+(es?" / mes · $65 / noche":" / month · $65 / night"));
  hov.style.width="230px";hov.innerHTML=`<img src="${photoOf(i)}" alt=""><div><b>${t.lot} ${NUM[i]}</b><i style="background:${col}">${t[st]}</i><br><span style="color:#475569">${st=="maint"?`<b style="color:#92400e;font-size:inherit">🛠 ${es?"Disponible desde":"Available from"} ${maintUntil(i).toLocaleDateString(es?"es-US":"en-US",{month:"short",day:"numeric"})}</b>`:price}</span><div style="padding:0;margin-top:3px;font-size:11.5px;color:#065f46;font-weight:600">📍 ${where(i).short}</div><div class="hf">${(()=>{const f=info(i);return [f.amp,f.size,...(f.sleeps?[f.sleeps]:[])].map(x=>`<span>${x}</span>`).join("")})()}</div>${(()=>{const a=nearby(i,1)[0];return a?`<div style="margin-top:6px;font-size:11.5px;color:#64748b">${a.e} ${es?"Lo más cerca":"Closest"}: <b style="font-weight:600;font-size:inherit;color:#0f2540">${a.t}</b> · ${walk(a.m)}</div>`:""})()}</div>`;hov.style.display="block";moveHov(e)}
 function moveHov(e){// Nov 20 (per Mely): the card always stays fully inside the map — never cut off at an edge
  const W=innerWidth,Hh=innerHeight;if(hov.style.width){const want=parseInt(hov.style.width)||230;hov.style.width=Math.min(want,W-16)+"px"}
