@@ -361,6 +361,7 @@ function render(){document.body.classList.toggle('haslot',typeof sel!=='undefine
      pkOk=PICKED>=0&&freeFor(PICKED,R.a,R.d);srch=true;hit=okG&&catOk&&(!pkOk||i==PICKED);dim=!hit}
    else if(filt!="all"){srch=true;hit=ST[i]==filt;dim=!hit;if(hit)col=COLOR[ST[i]]}
    else{srch=false;hit=false;dim=false}}
+  if(typeof RANGE!=="undefined"&&RANGE&&NEED.plan=="s"&&sec(i)!="S"&&filt=="all"){srch=false;hit=false;dim=false;col=COLOR[ST[i]]}   // Nov 22 (per Mely): RV storage search only filters the storage lots — every other lot keeps its normal color until a lot stay is searched again
   const cc=hit?(srch&&typeof RANGE!=="undefined"&&RANGE&&(filt=="all"||filt=="free"||filt=="rent")?(ST[i]=="rent"?COLOR.rent:COLOR.free):COLOR[ST[i]]):srch?"#6b7280":col;pg.setAttribute("fill",srch&&!hit?"#9ca3afcc":cc+(dim?"10":hit?"88":"55"));pg.setAttribute("stroke",i==sel?"#fff":cc);if(ST[i]=="maint"&&!dim&&!(srch&&!hit)){pg.setAttribute("fill","url(#mst)");pg.setAttribute("stroke",i==sel?"#fff":"#facc15")}   // Nov 22: same as the Sunset demo · Nov 20 (per Mely): maintenance = construction stripes, never plain gray
   pg.setAttribute("stroke-width",i==sel?2.6:1.6);
   pg.setAttribute("vector-effect","non-scaling-stroke");pg.setAttribute("class","lp"+(!editing&&!dim&&i!=sel&&(hit||(!srch&&(ST[i]=="free"||ST[i]=="rent")))?" blink":""));pg.setAttribute("stroke-linejoin","round");
@@ -402,7 +403,7 @@ function moveDrag(e){if(!drag||sel<0)return;const[x,y]=pos(e);const P=SH[sel];
 function select(i){sel=i;if(i>=0)selPoi=-1;if(i<0)vi=-1;document.getElementById("pnum").value=i>=0?NUM[i]:"";document.getElementById("pt").firstChild.textContent=i>=0?("Lot "+NUM[i]+" "):"Edit mode "}
 function say(t){const m=document.getElementById("msg");m.textContent=t;setTimeout(()=>{if(m.textContent==t)m.textContent=""},2600)}
 function bar(){const c={all:SH.length,free:0,occ:0,res:0,rent:0,maint:0};ST.forEach(x=>c[x]=(c[x]||0)+1);
- if(GUEST){const R=typeof RANGE!=="undefined"&&RANGE;c.free=0;c.rent=0;SH.forEach((_,i)=>{const g=gcat(i)=="na"&&!R?null:ST[i]=="rent"?"rent":"free";if(ST[i]=="maint")return;if(R?freeFor(i,R.a,R.d):g)c[ST[i]=="rent"?"rent":"free"]++});
+ if(GUEST){const R=typeof RANGE!=="undefined"&&RANGE;c.free=0;c.rent=0;SH.forEach((_,i)=>{const g=gcat(i)=="na"&&!R?null:ST[i]=="rent"?"rent":"free";if(ST[i]=="maint")return;if(R&&!(NEED.plan=="s"&&sec(i)!="S")?freeFor(i,R.a,R.d):(R?gcat(i)!="na":g))c[ST[i]=="rent"?"rent":"free"]++});
   if(!["all","free","occ","res","rent","maint"].includes(filt))filt="all";c.occ=ST.filter(x=>x=="occ").length;c.res=ST.filter(x=>x=="res").length;c.maint=ST.filter(x=>x=="maint").length;
   document.getElementById("bar").innerHTML=["all","free","occ","res","rent","maint"].filter(k=>k=="all"||c[k]).map(k=>`<button class="chip ${filt==k?"on":""}" data-k="${k}">${k!="all"?`<span class="dot ${k}"></span>`:""}${k=="free"?(R?(L=="es"?"Disponible":"Available"):(L=="es"?"Disponible hoy":"Available today")):k=="rent"&&!R?(L=="es"?"En renta hoy":"For rent today"):T[L][k]}${k=="all"?"":` · ${c[k]}`}</button>`).join("");
   document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{filt=b.dataset.k;render()});return}
