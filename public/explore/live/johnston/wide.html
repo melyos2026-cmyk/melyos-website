@@ -342,8 +342,8 @@ function render(){document.body.classList.toggle('haslot',typeof sel!=='undefine
      pkOk=PICKED>=0&&freeFor(PICKED,R.a,R.d);srch=true;hit=okG&&catOk&&(!pkOk||i==PICKED);dim=!hit}
    else if(filt!="all"){srch=true;hit=ST[i]==filt;dim=!hit;if(hit)col=COLOR[ST[i]]}
    else{srch=false;hit=false;dim=false}}
-  const cc=hit?(srch&&typeof RANGE!=="undefined"&&RANGE&&(filt=="all"||filt=="free"||filt=="rent")?(ST[i]=="rent"?COLOR.rent:COLOR.free):COLOR[ST[i]]):srch?"#6b7280":col;pg.setAttribute("fill",srch&&!hit?"#9ca3afcc":cc+(dim?"10":hit?"88":"55"));pg.setAttribute("stroke",i==sel?"#fff":cc);if(ST[i]=="maint"&&!dim&&!(srch&&!hit)){pg.setAttribute("fill","url(#mst)");pg.setAttribute("stroke",i==sel?"#fff":"#facc15")}   // Nov 20 (per Mely): maintenance = construction stripes, never plain gray
-  pg.setAttribute("stroke-width",i==sel?2.6:1.6);
+  const cc=hit?(srch&&typeof RANGE!=="undefined"&&RANGE&&(filt=="all"||filt=="free"||filt=="rent")?(ST[i]=="rent"?COLOR.rent:COLOR.free):COLOR[ST[i]]):srch?"#6b7280":col;pg.setAttribute("fill",srch&&!hit?"#9ca3af66":cc+(dim?"08":hit?"70":(ST[i]=="free"||ST[i]=="rent")?"55":"1e"));pg.setAttribute("stroke",i==sel?"#fff":cc+((ST[i]=="free"||ST[i]=="rent")?"ee":"88"));   // Nov 22 (per Mely — "muy chillón"): soft tint over the cream lots, thin outline   // Nov 20 (per Mely): maintenance = construction stripes, never plain gray
+  pg.setAttribute("stroke-width",i==sel?2.4:0.9);
   pg.setAttribute("vector-effect","non-scaling-stroke");pg.setAttribute("class","lp"+(!editing&&!dim&&i!=sel&&(hit||(!srch&&(ST[i]=="free"||ST[i]=="rent")))?" blink":""));pg.setAttribute("stroke-linejoin","round");
   pg.style.cssText=`pointer-events:auto;cursor:${editing?"move":"pointer"};opacity:${srch?1:dim?.35:1};filter:${i==sel||(srch&&!hit)?"none":`drop-shadow(0 0 1.5px ${cc})`}`;
   pg.onpointerdown=e=>{HINTDONE=true;if(!editing&&e.pointerType==="mouse"&&e.button===0){PEND=i;return}downShape(e,i)};if(ST[i]=="free"&&!srch&&!dim)pg.classList.add("breathe");svg.appendChild(pg);
