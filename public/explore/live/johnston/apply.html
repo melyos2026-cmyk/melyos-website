@@ -43,7 +43,7 @@ footer{text-align:center;color:#6b776b;font-size:13px;padding:20px}
 <main>
 <div id="form">
 <h1>Site Rental Application</h1>
-<p class="sub">Monthly, seasonal or annual stays. Fill this out, the park reviews it, and once approved you pay the deposit and your first payment to move in.</p>
+<p class="sub">Month to month, seasonal or annual stays — a move-in date, no end date. Fill this out, the park reviews it, and once approved you pay the deposit and your first payment to move in.</p>
 <div class="steps"><div class="st"><span>1</span>Fill out this application (background check)</div><div class="st"><span>2</span>The park reviews and approves it</div><div class="st"><span>3</span>Pay the $300 deposit + first payment, then move in</div></div>
 
 <div class="card"><h2>Your site</h2>
@@ -111,7 +111,7 @@ const fmt=d=>d.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"num
 // lot~firstMoveIn~freeNights(~r for the rental unit)
 const AV=(P.get("av")||"").split(",").filter(Boolean).map(x=>{const[l,s,n,r]=x.split("~");return{lot:l,start:dOf(s),run:+n||0,rent:r=="r"}}).filter(a=>a.start)
  .sort((a,b)=>a.lot.localeCompare(b.lot,undefined,{numeric:true}));
-const PLAN_N={m:365,q:90,h:180,y:365};   // month to month has no end date
+const PLAN_N={m:400,q:400,h:400,y:400};   // every long stay has a move-in date but no end date
 function plansFor(a){if(a.rent)return[["m","Monthly — Denali RV rental","$1,500 + electric"]];const c=a.lot[0];
  if(c=="N")return[["m","Month to month","$850"],["y","Annual","$7,500"]];if(c=="W")return[["m","Month to month","$900"],["y","Annual","$8,300"]];
  return[["m","Month to month","$775"],["q","3 months (season)","$2,000"],["h","6 months (season)","$3,750"],["y","Annual","$6,600"]]}
@@ -122,12 +122,12 @@ if(!AV.length){const o=document.createElement("option");o.textContent="Open this
 let PLAN=P.get("plan")||"";
 const cur=()=>AV.find(a=>a.lot==lotSel.value);
 function draw(){const a=cur();if(!a){pl.innerHTML='<div class="note">Pick a lot first.</div>';am.innerHTML="";check();return}
- const last=new Date(Math.min(+a.start+Math.max(0,a.run-30)*DAY,+today+120*DAY));   // long stays: apply up to 120 days ahead
+ const last=new Date(+today+120*DAY);   // long stays: apply up to 120 days ahead
  mv.min=iso(a.start);mv.max=a.run>=400?"":iso(last);
  let d=dOf(mv.value);if(!d||d<a.start||(a.run<400&&d>last)){d=a.start;mv.value=iso(d)}
  const left=a.run>=400?9999:a.run-Math.round((d-a.start)/DAY);
  const ends=a.run>=400?null:new Date(+a.start+a.run*DAY);
- am.innerHTML=`<div class="av ok">✓ Lot <b>${a.lot}</b> is free from <b>${fmt(a.start)}</b>${ends?` until <b>${fmt(ends)}</b> (another reservation starts that day)`:" with no reservation after it"}.</div>`;
+ am.innerHTML=`<div class="av ok">✓ Lot <b>${a.lot}</b> is free from <b>${fmt(a.start)}</b> with no reservation after it. Your stay has a move-in date but no end date — the site is yours until you give your move-out notice in your resident portal.</div>`;
  const ps=plansFor(a);if(!ps.some(p=>p[0]==PLAN&&left>=PLAN_N[p[0]]))PLAN=(ps.find(p=>left>=PLAN_N[p[0]])||[""])[0];
  pl.innerHTML=ps.map(([k,n,v])=>{const ok=left>=PLAN_N[k];return `<label class="po${ok?"":" x"}${PLAN==k&&ok?" on":""}"><input type="radio" name="pl" value="${k}" ${ok?"":"disabled"} ${PLAN==k&&ok?"checked":""}> ${n}${ok?"":" — doesn’t fit before the next reservation"}<b>${v}</b></label>`}).join("")+`<div class="note">Deposit after approval: <b>$300</b></div>`;
  pl.querySelectorAll("input").forEach(r=>r.onchange=()=>{PLAN=r.value;draw()});check()}
@@ -138,7 +138,7 @@ document.getElementById("rvlen").oninput=()=>{const a=cur(),L=+document.getEleme
  m.innerHTML=a&&L>32&&a.lot[0]!="N"&&!a.rent?`<div class="av no">Your RV is ${L} ft — lot ${a.lot} is for RVs up to 32 ft. Pick an N (Premium) lot for 33 ft or longer.</div>`:""};
 lotSel.onchange=()=>{mv.value="";draw()};mv.onchange=draw;
 ["fn","ln","sig"].forEach(id=>document.getElementById(id).oninput=check);["bg","rules"].forEach(id=>document.getElementById(id).onchange=check);
-const want=P.get("lot");if(want&&AV.some(a=>a.lot==want))lotSel.value=want;else if(want){am.innerHTML=`<div class="av no">Lot <b>${want}</b> isn’t free for a month or longer right now. Pick one of the lots listed.</div>`}
+const want=P.get("lot");if(want&&AV.some(a=>a.lot==want))lotSel.value=want;else if(want){am.innerHTML=`<div class="av no">Lot <b>${want}</b> isn’t open for a long stay yet (it has a reservation coming up). Pick one of the lots listed.</div>`}
 if(P.get("move_in"))mv.value=P.get("move_in");
 if(lotSel.value)draw();
 document.getElementById("go").onclick=()=>{const a=cur();const n=plansFor(a).find(p=>p[0]==PLAN);
