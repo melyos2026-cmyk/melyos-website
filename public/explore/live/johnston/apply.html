@@ -54,7 +54,7 @@ footer{text-align:center;color:#6b776b;font-size:13px;padding:20px}
 <div id="avmsg"></div>
 <div style="margin-top:14px;font-size:13px;font-weight:700;color:#334033">Plan</div>
 <div class="plans" id="plans"><div class="note">Pick a lot first.</div></div>
-<p class="note">Only lots free for a long stay are listed, with the first date you can move in. Plans that would run into another reservation can’t be chosen.</p>
+<p class="note">Only lots free for a long stay are listed, with the first date you can move in. Plans that would run into another reservation can’t be chosen. Move-in can be up to 120 days from today. Deposit ($300) is non-refundable if you cancel within 30 days of move-in.</p>
 </div>
 
 <div class="card"><h2>Parties & contact</h2>
@@ -122,7 +122,7 @@ if(!AV.length){const o=document.createElement("option");o.textContent="Open this
 let PLAN=P.get("plan")||"";
 const cur=()=>AV.find(a=>a.lot==lotSel.value);
 function draw(){const a=cur();if(!a){pl.innerHTML='<div class="note">Pick a lot first.</div>';am.innerHTML="";check();return}
- const last=new Date(+a.start+Math.max(0,a.run-30)*DAY);
+ const last=new Date(Math.min(+a.start+Math.max(0,a.run-30)*DAY,+today+120*DAY));   // long stays: apply up to 120 days ahead
  mv.min=iso(a.start);mv.max=a.run>=400?"":iso(last);
  let d=dOf(mv.value);if(!d||d<a.start||(a.run<400&&d>last)){d=a.start;mv.value=iso(d)}
  const left=a.run>=400?9999:a.run-Math.round((d-a.start)/DAY);
