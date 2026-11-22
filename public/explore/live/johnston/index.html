@@ -162,8 +162,9 @@ function load(){let d=null,lab=null;
 const kind=i=>"rv";
 // Nov 22 (per Mely — Johnston Springs): N = Super sites (33 ft+), A/B/C/O/W = Standard (under 32 ft), T = tent / water-electric (from the park's own map). Rates are examples.
 const sec=i=>String(NUM[i]||"").charAt(0);
-const typeOf=i=>{const es=L=="es",c=sec(i);return c=="N"?(es?"Super site (33 pies o más)":"Super site (33 ft or longer)"):c=="T"?(es?"Tienda · agua y luz":"Tent · water & electric"):(es?"Sitio estándar (menos de 32 pies)":"Standard site (under 32 ft)")};
-const rateOf=i=>{const c=sec(i);return c=="N"?"$700":c=="T"?"—":"$600"};
+// Nov 22 (per Mely): official Johnston Springs rates from johnstonsprings.com
+const typeOf=i=>{const es=L=="es",c=sec(i);return c=="N"?(es?"Premium (33 pies o más)":"Premium site (33 ft or longer)"):c=="W"?(es?"Vista al lago":"Lake View site"):c=="T"?(es?"Tienda · agua y luz":"Tent · water & electric"):(es?"Sitio estándar":"Standard site")};
+const rateOf=i=>{const c=sec(i);return c=="N"?"$850":c=="W"?"$900":c=="T"?(L=="es"?"Llame":"Call"):"$775"};
 // Nov 20 (per Mely): lot details — amps, size, hookups — so every lot looks complete (examples until the park sends its real data)
 // Nov 20 (per Mely): "Pay" works in the demo — a MelyOS secure-checkout preview (test card only, nothing is charged)
 function payDemo(i,n,tot){const es=L=="es",ov=document.createElement("div");ov.id="payov";
@@ -191,7 +192,7 @@ function maintUntil(i){return new Date(+today+((+NUM[i]||i)%5+2)*DAY)}
 const LONG=15;
 // A Stripe TEST-mode Payment Link (no real charge; card 4242 4242 4242 4242) — opens from "Pay" when set
 const DEMO_PAY_URL="";
-function nightly(i){const c=sec(i);return c=="N"?55:c=="T"?30:45}
+function nightly(i){return 65}
 function checkout(i){const es=L=="es",n=Math.round((dep-arr)/DAY),box=document.getElementById("bkm"),sh=document.getElementById("sheet");
  const fmt=d=>d.toLocaleDateString(es?"es-US":"en-US",{month:"short",day:"numeric"});
  if(n>LONG){box.innerHTML=`<div class="co"><b>${es?"Aplicación":"Application"} · ${t9(es,"Lote","Lot")} ${NUM[i]}</b><div>${fmt(arr)} → ${fmt(dep)} · ${n} ${es?"noches":"nights"}</div><div class="cn2">${es?"Demo: en su mapa real esto abre la aplicación del parque con las fechas y el lote ya puestos. Al aprobarla, el huésped paga el depósito en línea.":"Demo: on your live map this opens the park's application with the dates and lot filled in. Once approved, the guest pays the deposit online."}</div></div>`;}
