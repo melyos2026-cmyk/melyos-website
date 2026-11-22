@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<html lang="en"><head><script>(function(){function pick(){var w=innerWidth,h=innerHeight,wantWide=w>=820&&w>h;var isWide=false;if(wantWide!==isWide){var u=location.pathname.replace(/[^/]*$/,wantWide?"wide.html":"index.html")+location.search+location.hash;location.replace(u)}}pick();var t;addEventListener("resize",function(){clearTimeout(t);t=setTimeout(pick,350)})})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Johnston Springs RV Campground — Live Map (MelyOS demo)</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -239,7 +239,10 @@ const cen=p=>[p.reduce((a,q)=>a+q[0],0)/p.length,p.reduce((a,q)=>a+q[1],0)/p.len
 function label(pts,name,max){const W=map.clientWidth,H=map.clientHeight;const px=pts.map(([x,y])=>[x*W/100,y*H/100]);
  // Nov 22 (Johnston): numbers always level (the paper map's slanted lots made them stand up)
  const xs=px.map(p=>p[0]),ys=px.map(p=>p[1]),bw=Math.max(...xs)-Math.min(...xs),bh=Math.max(...ys)-Math.min(...ys);
- const ang=0,size=Math.min(max,bh*0.5,(bw*0.62)/(0.62*Math.max(1,name.length)));return size<5?null:{size,ang}}
+ let ar=0;for(let k=0;k<px.length;k++){const [x1,y1]=px[k],[x2,y2]=px[(k+1)%px.length];ar+=x1*y2-x2*y1}ar=Math.abs(ar)/2;
+ const ew=Math.min(bw,ar/Math.max(1,bh)),eh=Math.min(bh,ar/Math.max(1,bw));   // real width/height of slanted lots
+ const n=Math.max(1,name.length),flat=Math.min(max,eh*0.5,(ew*0.8)/(0.62*n)),up=Math.min(max,ew*0.5,(eh*0.8)/(0.62*n));
+ const ang=up>flat*1.15?-90:0,size=ang?up:flat;return size<5?null:{size,ang}}
 
 // Nov 20 (per Mely): amenity labels on the map — clean icons, not emojis, so it looks professional.
 const OLDINFO={"house": "Office, check-in and activities. Packages and mail at the front desk.", "dumbbell": "For residents and registered guests. Please wipe down equipment after use.", "pool": "No lifeguard on duty — swim at your own risk.\nShower before entering.\nNo glass or food in the pool area.\nChildren under 14 must be with an adult.\nResidents and registered guests only.", "tank": "Propane refills. Pay ahead online with the QR code or charge it to your resident account.", "fish": "Catch and release. Residents and guests only.", "ambulance": "In an emergency call 911 right away.\nGive this address: Johnston Springs RV Campground — the office will give you the address — and your lot number.\nThen let the office know.", "road": "Main road in front of the park. The park entrance is on this road."};
