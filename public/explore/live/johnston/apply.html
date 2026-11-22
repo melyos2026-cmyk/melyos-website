@@ -198,12 +198,12 @@ footer{background:#d9f3ef;padding:36px 24px 18px}
 <div class="box"><b>Rent &amp; payments</b>Rent is due on the 1st with a 5-day grace period. Pay online in your resident portal by card or bank, or set up autopay.</div>
 <label class="chk"><input type="checkbox" id="rules"> I have read and agree to follow the Park Rules &amp; Community Guidelines above.</label></div>
 
-<div class="card"><h2>Background Check</h2>
+<div class="card"><h2>Application Fee &amp; Background Check</h2>
 <p style="font-size:13px;margin-top:0">Every applicant must pass a background check before the application is approved.</p>
 <p class="warn">Every adult (18+) planning to live long-term on the lot must be registered and background-checked. Unregistered occupants can result in lease cancellation and forfeiture of all non-refundable fees already paid.</p>
 <div class="fee" id="feebox"></div>
 <label class="chk"><input type="checkbox" id="bgc"> <span>I authorize Johnston Springs RV Campground to obtain a consumer background report on me (and any additional adult occupants listed above) for purposes of evaluating this rental application, and I acknowledge that the application fee, background check fee and processing fee are non-refundable once paid, and that a $15 fee applies to any payment dispute or chargeback.</span></label>
-<div style="font-size:12px;color:#999;margin-top:10px">Note: Rent is not charged today. Only the background check is due now. Rent begins once your application is approved.</div></div>
+<div style="font-size:12px;color:#999;margin-top:10px">Note: Rent is not charged today. Only the application fee &amp; background check are due now. Rent begins once your application is approved.</div></div>
 
 <div class="card"><h2>Signature</h2>
 <label class="f">Type your full legal name<input id="sig" placeholder="Type your full legal name"></label>
@@ -219,7 +219,7 @@ footer{background:#d9f3ef;padding:36px 24px 18px}
 <p style="font-size:13px;font-weight:600;border:1px solid #fde68a;background:#fffbeb;border-radius:8px;padding:10px 12px">Go to "Additional people besides the primary applicant" if anyone is missing.</p>
 <div class="fee" id="modfee" style="margin:12px 0 0"></div></div>
 <div class="mf"><button class="back" id="modback">Go back</button><button class="cont" id="modgo">Continue to payment</button></div></div></div>
-<div class="pay" id="pay"><h1>Pay &amp; Start Background Check</h1><p class="sub" id="paysub"></p>
+<div class="pay" id="pay"><h1>Pay Application Fee &amp; Background Check</h1><p class="sub" id="paysub"></p>
 <div class="card"><h2>Payment summary</h2><div class="fee" id="paybox" style="margin:0 0 16px"></div>
 <div class="g g2"><label class="f">Name on card<input id="cn"></label><label class="f">Card number<input placeholder="4242 4242 4242 4242"></label><label class="f">Expiration<input placeholder="MM / YY"></label><label class="f">CVC<input placeholder="123"></label></div>
 <p class="hint" style="margin-top:12px">Payments are processed securely by MelyOS Connect. Fees are non-refundable once paid.</p></div>
@@ -227,6 +227,7 @@ footer{background:#d9f3ef;padding:36px 24px 18px}
 
 <div class="card done" id="done"><div class="ok2">✓</div><h1 style="margin-top:14px">Application submitted &amp; paid</h1>
 <p class="sub" id="dmsg" style="margin-top:8px"></p>
+<div class="fee" id="rcpt" style="max-width:460px;margin:16px auto;text-align:left"></div>
 <div class="av ok" style="text-align:left;max-width:620px;margin:16px auto">📧 <b>Payment received — check your email</b> for a message with instructions to complete the background check. This can take a few minutes to arrive.<span id="occmail"></span><br>Your itemized receipt is emailed too.</div>
 <p class="sub">Next: the park reviews your application and background check. Once approved you'll get a secure link to pay the $300 deposit and your first payment.</p>
 <p><a href="index.html" style="font-weight:700">← Back to the map</a></p>
@@ -281,7 +282,7 @@ const money=n=>"$"+n.toFixed(2);
 const ageOf=v=>{const d=dOf(v);if(!d)return null;let a=today.getFullYear()-d.getFullYear();if(today<new Date(today.getFullYear(),d.getMonth(),d.getDate()))a--;return a};
 const adults=()=>$("occ").style.display=="block"?[...document.querySelectorAll(".occ")].filter(r=>{const a=ageOf(r.querySelector(".dob").value);return a!=null&&a>=18}):[];
 function fees(){const n=adults().length,bg=FEE.primary+n*FEE.adult;return{n,bg,tot:bg}}
-function drawFee(){const F=fees();$("feebox").innerHTML=`<div><span>Background Check (Primary Applicant)</span><b>${money(FEE.primary)}</b></div>${F.n?`<div><span>Background Check — ${F.n} additional adult${F.n>1?"s":""} (${money(FEE.adult)} each)</span><b>${money(F.n*FEE.adult)}</b></div>`:""}<div class="tot"><b>Total due now</b><b>${money(F.tot)}</b></div><div style="font-size:12px;color:#6b7280;margin:6px 0 0;display:block">The processing fee shows as a separate line on the next screen, when you pay.</div>`}
+function drawFee(){const F=fees();$("feebox").innerHTML=`<div><span>Background Check (Primary Applicant)</span><b>${money(FEE.primary)}</b></div>${F.n?`<div><span>Background Check — ${F.n} additional adult${F.n>1?"s":""} (${money(FEE.adult)} each)</span><b>${money(F.n*FEE.adult)}</b></div>`:""}<div><span>Application Fee</span><b>${money(FEE.proc)}</b></div><div class="tot"><b>Total due now</b><b>${money(F.tot+FEE.proc)}</b></div><div style="font-size:12px;color:#6b7280;margin:6px 0 0;display:block">Charged when you submit. Rent is not charged today.</div>`}
 // Nov 22 (per Mely): works like the Aloha / Sunset application — on Submit every missing field turns red with
 // "Field required", a list of what's missing shows under the button, and it re-checks as the person fixes things.
 let TRIED=false;
@@ -339,17 +340,17 @@ const want=P.get("lot");if(want&&AV.some(a=>a.lot==want))lotSel.value=want;else 
 if(P.get("move_in"))mv.value=P.get("move_in");
 if(lotSel.value)draw();
 $("go").onclick=()=>{TRIED=true;const miss=check();if(miss.length){const f=document.querySelector(".err");if(f)f.scrollIntoView({behavior:"smooth",block:"center"});return}
- const F0=fees();$("modfee").innerHTML=`<div><span>Background Check (Primary Applicant)</span><b>${money(FEE.primary)}</b></div>${F0.n?`<div><span>Background Check — ${F0.n} additional adult${F0.n>1?"s":""}</span><b>${money(F0.n*FEE.adult)}</b></div>`:""}<div><span>Processing Fee</span><b>${money(FEE.proc)}</b></div><div class="tot"><b>Total due now</b><b>${money(F0.tot+FEE.proc)}</b></div>`;
+ const F0=fees();$("modfee").innerHTML=`<div><span>Background Check (Primary Applicant)</span><b>${money(FEE.primary)}</b></div>${F0.n?`<div><span>Background Check — ${F0.n} additional adult${F0.n>1?"s":""}</span><b>${money(F0.n*FEE.adult)}</b></div>`:""}<div><span>Application Fee</span><b>${money(FEE.proc)}</b></div><div class="tot"><b>Total due now</b><b>${money(F0.tot+FEE.proc)}</b></div>`;
  $("mod").style.display="flex"};
 $("modback").onclick=()=>{$("mod").style.display="none"};
 $("modgo").onclick=()=>{$("mod").style.display="none";const a=cur(),n=plansFor(a).find(p=>p[0]==PLAN),F=fees(),tot=F.tot+FEE.proc;
  $("paysub").innerHTML=`Application for lot <b>${a.lot}</b> · ${n[1]} · move-in <b>${fmt(dOf(mv.value))}</b>. Rent is not charged today.`;
- $("paybox").innerHTML=`<div><span>Background Check (Primary Applicant)</span><b>${money(FEE.primary)}</b></div>${F.n?`<div><span>Background Check — ${F.n} additional adult${F.n>1?"s":""}</span><b>${money(F.n*FEE.adult)}</b></div>`:""}<div><span>Processing Fee</span><b>${money(FEE.proc)}</b></div><div class="tot"><b>Total</b><b>${money(tot)}</b></div>`;
+ $("paybox").innerHTML=`<div><span>Background Check (Primary Applicant)</span><b>${money(FEE.primary)}</b></div>${F.n?`<div><span>Background Check — ${F.n} additional adult${F.n>1?"s":""}</span><b>${money(F.n*FEE.adult)}</b></div>`:""}<div><span>Application Fee</span><b>${money(FEE.proc)}</b></div><div class="tot"><b>Total</b><b>${money(tot)}</b></div>`;
  $("paygo").textContent=`Pay ${money(tot)} & Start Background Check${F.n?"s":""}`;$("cn").value=($("fn").value+" "+$("ln").value).trim();
  $("dmsg").innerHTML=`Lot <b>${a.lot}</b> · ${n[1]} (${n[2]}) · move-in <b>${fmt(dOf(mv.value))}</b>`;
  $("occmail").innerHTML=F.n?` Each additional adult also gets their own background check email.`:"";
  $("form").style.display="none";$("pay").style.display="block";scrollTo(0,0)};
-$("paygo").onclick=()=>{$("pay").style.display="none";$("done").style.display="block";scrollTo(0,0);HOLDT.paid()};
+$("paygo").onclick=()=>{const rn="JS-"+Date.now().toString().slice(-6);$("rcpt").innerHTML=`<div style="font-size:11.5px;font-weight:700;letter-spacing:.05em;color:#4b5563;display:block;margin-bottom:8px">RECEIPT #${rn} · PAID BY CARD</div>`+$("paybox").innerHTML.replace("<b>Total</b>","<b>Total paid</b>");$("pay").style.display="none";$("done").style.display="block";scrollTo(0,0);HOLDT.paid()};
 $("apprBtn").onclick=()=>{const a=cur(),n=plansFor(a).find(p=>p[0]==PLAN),first=parseFloat(String(n[2]).replace(/[^0-9.]/g,""))||0;
  $("apprFee").innerHTML=`<div><span>Security deposit</span><b>${money(300)}</b></div><div><span>First payment · ${n[1]}</span><b>${money(first)}</b></div><div class="tot"><b>Total</b><b>${money(300+first)}</b></div>`;
  $("apprGo").textContent=`Pay ${money(300+first)} & finish move-in`;$("acn").value=($("fn").value+" "+$("ln").value).trim();
