@@ -94,7 +94,7 @@ footer{background:#d9f3ef;padding:36px 24px 18px}
 <header><div class="hd"><img src="logo.png" alt="Johnston Springs RV Campground & Storage">
 <div class="brand"><b>Johnston Springs RV Campground</b><small>4261 Pleasant Hill Rd</small></div>
 <a class="call" href="tel:4078700719">📞 CALL US</a></div></header>
-<nav><div><a href="index.html">Home</a><a href="index.html">Reservations</a><a class="on" href="#">Apply</a><a href="index.html">Propane</a><a href="index.html">Events</a><a href="#">Residents Login</a></div></nav>
+<nav><div><a href="index.html?map=1">Home</a><a href="index.html?map=1">Reservations</a><a class="on" href="#">Apply</a><a href="index.html?map=1">Propane</a><a href="index.html?map=1">Events</a><a href="#">Residents Login</a></div></nav>
 <div class="tbar" id="tbar"><div class="in">⏱ <span id="tlot"></span><span class="clk" id="tclk">20:00</span><span style="opacity:.9;font-size:12.5px">Finish before the time runs out</span></div></div>
 <div class="pop" id="pMore"><div class="pc"><div class="ic w">⏳</div><h3>Need more time?</h3><p id="pMoreTxt">Only <b>3 minutes</b> left to finish your application. Want 5 more minutes to keep <b id="pMoreLot"></b> on hold?</p><div class="big" id="pMoreClk">3:00</div><div class="bt"><button class="p1" id="pMoreYes">Yes, add 5 minutes</button><button class="p2" id="pMoreNo">No thanks, I'm almost done</button></div></div></div>
 <div class="pop" id="pIdle"><div class="pc"><div class="ic w">👋</div><h3>Are you still there?</h3><p>We haven't seen any typing for a while. To keep your lot on hold, let us know you're still here.</p><div class="big" id="pIdleClk">60</div><div class="bt"><button class="p1" id="pIdleYes">I'm still here</button></div></div></div>
@@ -230,7 +230,7 @@ footer{background:#d9f3ef;padding:36px 24px 18px}
 <div class="fee" id="rcpt" style="max-width:460px;margin:16px auto;text-align:left"></div>
 <div class="av ok" style="text-align:left;max-width:620px;margin:16px auto">📧 <b>Payment received — check your email</b> for a message with instructions to complete the background check. This can take a few minutes to arrive.<span id="occmail"></span><br>Your itemized receipt is emailed too.</div>
 <p class="sub">Next: the park reviews your application and background check. Once approved you'll get a secure link to pay online the $300 deposit and your first payment — monthly or annual, the plan you chose.</p>
-<p><a href="index.html" style="font-weight:700">← Back to the map</a></p>
+<p><a href="index.html?map=1" style="font-weight:700">← Back to the map</a></p>
 <div class="after" id="after"><div class="card" style="background:#f9fafb"><h2>Demo · what happens after approval</h2>
 <p class="legal" style="margin-top:0">When the park approves the application, the applicant gets an email with a secure link to pay the $300 deposit and the first payment (monthly or annual, the plan they chose). Paying it finishes the move-in: the lease PDF and the resident portal login are emailed, and the lot turns red (occupied) on the map from the move-in date.</p>
 <button class="go" id="apprBtn" style="margin-top:6px">See the approval payment →</button></div></div>
@@ -242,7 +242,7 @@ footer{background:#d9f3ef;padding:36px 24px 18px}
 <footer><div class="ft">
 <div><img src="logo.png" alt=""><p style="margin-top:10px">“Florida's Best Kept Secret” — RV campground &amp; storage in Kissimmee.</p></div>
 <div><h4>Contact</h4><p>4261 Pleasant Hill Rd</p><p>Kissimmee, FL 34746</p><p><a href="tel:4078700719" style="color:#0f766e;font-weight:600">(407) 870-0719</a></p></div>
-<div><h4>Quick Links</h4><p><a href="index.html">Home</a></p><p><a href="#">Residents</a></p><p><a href="#">Apply</a></p><p><a href="index.html">Events</a></p></div>
+<div><h4>Quick Links</h4><p><a href="index.html?map=1">Home</a></p><p><a href="#">Residents</a></p><p><a href="#">Apply</a></p><p><a href="index.html?map=1">Events</a></p></div>
 <div><h4>Office Hours</h4><p>Call the office for hours:</p><p><a href="tel:4078700719">(407) 870-0719</a></p></div></div>
 <div class="fb"><span>© 2026 Johnston Springs RV Campground. All rights reserved. · Privacy · Terms · Text Alerts</span><span>Powered by <b>MelyOS.io</b></span><span>4261 Pleasant Hill Rd</span></div></footer>
 <script>
@@ -390,7 +390,7 @@ const HOLDT=(()=>{const KEY="johnstonhold",DK="johnstondraft",MIN=6e4,START=20*M
  $("pMoreNo").onclick=()=>{last=Date.now();show("pMore",0)};
  $("pIdleYes").onclick=()=>{last=Date.now();show("pIdle",0);tick()};
  $("pEndAgain").onclick=()=>{show("pEnd",0);const a=cur();if(a&&AV.some(x=>x.lot==a.lot)){last=Date.now();start()}else location.reload()};
- $("pEndMap").onclick=()=>{location.href="index.html"};
+ $("pEndMap").onclick=()=>{location.href="index.html?map=1"};
  ["keydown","input","pointerdown","touchstart","change"].forEach(ev=>document.addEventListener(ev,()=>{if($("pIdle").style.display!="flex"&&$("pEnd").style.display!="flex")last=Date.now()},true));
  lotSel.addEventListener("change",()=>setTimeout(start,0));mv.addEventListener("change",()=>{if(H&&!H.paid){H.mv=mv.value;save()}});
  // draft: keep what they typed (never SSN, card or files)

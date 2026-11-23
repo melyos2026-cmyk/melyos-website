@@ -91,7 +91,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
               <p className="text-sm font-black uppercase tracking-[0.18em] text-[#0891b2]">Live {unit} map</p>
               <h2 className="text-2xl font-black md:text-3xl">Pick your {unit} and book online</h2>
             </div>
-            <a href={liveMap} target="_blank" rel="noopener" className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-black">Open full screen ↗</a>
+            <a href={demoMap ? `${liveMap}${liveMap.includes("?") ? "&" : "?"}map=1` : liveMap} target="_blank" rel="noopener" className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-black">Open full screen ↗</a>
           </div>
           <div className={`grid gap-5 ${demoMap ? "md:flex md:items-stretch md:justify-center" : "md:grid-cols-[1fr_340px] lg:grid-cols-[1fr_400px]"}`}>
             <LiveMap src={liveMap} fixed={!!demoMap} ratio={demoMap ? DEMO_RATIO[row[7]] : undefined} title={`${name} — live ${unit} map`} />

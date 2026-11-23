@@ -198,7 +198,7 @@ export function RequestForm(l: L) {
       {storageMode && <p className="rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-600">RV storage: pick the first and last day you need it — the map shows only the free storage spaces.</p>}
       {l.live && l.towUrl && (
         <a href={l.towUrl} target="_blank" rel="noopener" className="flex items-center gap-3 rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 to-cyan-50 p-3 no-underline transition hover:border-[#0e7490]">
-          <span className="text-2xl" aria-hidden>🚐</span>
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0e7490] to-[#0891b2] text-white shadow-md" aria-hidden><svg width="26" height="26" viewBox="2 4 20 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M13.5 16.5V9h3.6l3.4 3.8v3.7h-1.3"/><path d="M13.5 16.5H8.2M4 16.5H2.5v-3.2h11"/><path d="M15.2 9.2v2.6h3.1"/><path d="M3.2 13.3 8.6 6.2"/><path d="M8.6 6.2v3"/><path d="M8.6 9.2a1.1 1.1 0 1 1-1.1 1.1"/><circle cx="6.1" cy="16.9" r="1.8"/><circle cx="17" cy="16.9" r="1.8"/></svg></span>
           <span className="min-w-0 flex-1"><span className="block text-sm font-black text-slate-900">Need a {l.towLabel || "tow"}?</span><span className="block text-xs text-slate-600">Request it online — upload your license, sign the release, the office sends you the rate.</span></span>
           <span className="shrink-0 rounded-full bg-[#0e7490] px-3 py-1.5 text-xs font-black text-white">Request →</span>
         </a>
