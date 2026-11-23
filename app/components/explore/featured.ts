@@ -30,13 +30,16 @@ export const FEATURED_INFO: Record<string, { amenities: string; stays: string[] 
 // Nov 20 (per Mely): sales demos — a prospect's live map, shown on its Explore page only with ?demo=<id>.
 export const DEMO_MAP: Record<string, string> = {
   "x-21-palms": "/explore/live/21palms/index.html",
+  // Nov 22 (per Mely): Johnston Springs demo starts on the Florida map — /explore/fl?demo=w1551804176
+  "w1551804176": "/explore/live/johnston/index.html",
 };
 
 // Nov 21 (per Mely): photo for a sales-demo prospect (list card + pin preview), only with ?demo=<id>.
 export const DEMO_PHOTO: Record<string, string> = {
   "x-21-palms": "/explore/featured/21palms.jpg",
+  "w1551804176": "/explore/live/johnston/lot.jpg",
 };
 
 // Nov 21 (per Mely — full demo): stays longer than 15 nights / monthly / residency go to the park's online
 // application. Demo maps use the MelyOS sample park's real application.
-export const DEMO_APPLY: Record<string, string> = { "x-21-palms": "https://demo.melyos.io/apply" };
+export const DEMO_APPLY: Record<string, string> = { "x-21-palms": "https://demo.melyos.io/apply", "w1551804176": "/explore/live/johnston/apply.html" };
