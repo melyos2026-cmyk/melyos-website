@@ -282,8 +282,8 @@ const money=n=>"$"+n.toFixed(2);
 const ageOf=v=>{const d=dOf(v);if(!d)return null;let a=today.getFullYear()-d.getFullYear();if(today<new Date(today.getFullYear(),d.getMonth(),d.getDate()))a--;return a};
 const adults=()=>$("occ").style.display=="block"?[...document.querySelectorAll(".occ")].filter(r=>{const a=ageOf(r.querySelector(".dob").value);return a!=null&&a>=18}):[];
 // Nov 22 (per Mely): Online Service Fee — 3.5% (minimum $2.25) on every online payment, shown before paying.
-const OSF=x=>Math.round(Math.max(x*0.035,2.25)*100)/100;
-const osfRow=v=>`<div><span title="Covers secure online payment processing and the MelyOS online booking & account platform.">Online Service Fee (3.5%) ⓘ</span><b>${money(v)}</b></div>`;
+const OSF=x=>Math.round(Math.max(x*0.035,2.25)*(2/3.5)*100)/100;   // Nov 23 (per Mely): guest pays 2% of the 3.5% fee (the park covers the rest)
+const osfRow=v=>`<div><span title="Covers secure online payment processing and the MelyOS online booking & account platform.">Online Service Fee (2%) ⓘ</span><b>${money(v)}</b></div>`;
 function fees(){const n=adults().length,bg=FEE.primary+n*FEE.adult,osf=OSF(bg+FEE.proc);return{n,bg,osf,tot:Math.round((bg+FEE.proc+osf)*100)/100}}
 function drawFee(){const F=fees();$("feebox").innerHTML=`<div><span>Background Check (Primary Applicant)</span><b>${money(FEE.primary)}</b></div>${F.n?`<div><span>Background Check — ${F.n} additional adult${F.n>1?"s":""} (${money(FEE.adult)} each)</span><b>${money(F.n*FEE.adult)}</b></div>`:""}<div style="font-size:12px;color:#6b7280;margin:6px 0 0;display:block">Paid when you submit. The application fee and the Online Service Fee are shown on the payment page. Rent is not charged today.</div>`}   // Nov 22 (per Mely — like Aloha): fees show on the payment page, not inside the application
 // Nov 22 (per Mely): works like the Aloha / Sunset application — on Submit every missing field turns red with
