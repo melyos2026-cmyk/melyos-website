@@ -57,7 +57,10 @@ export function RequestForm(l: L) {
   const applyHref = l.applyUrl ? `${l.applyUrl}${l.applyUrl.includes("?") ? "&" : "?"}${new URLSearchParams({ ...(f.arrive ? { move_in: f.arrive } : {}), ...(picked?.lot ? { lot: picked.lot } : {}) }).toString()}` : "";
   useEffect(() => {
     if (!l.live) return;
-    window.dispatchEvent(new CustomEvent("melyos-dates", { detail: { arrive: f.arrive || "", depart: f.depart || "", length: f.vessel?.length_ft || "", power: f.vessel?.power_amp || "", rental: f.vessel?.kind === "rental", driverSlideOuts: f.vessel?.slide_driver || "", passengerSlideOuts: f.vessel?.slide_passenger || "", plan: stay === "storage" && l.storage ? "s" : "" } }));
+    // Nov 22 (per Mely): Monthly / resident = only the sites free from the move-in date for at least a month
+    const monthly = stay === "long" && l.kind !== "m";
+    const dep = monthly ? (f.arrive ? isoOf(new Date(Date.parse(f.arrive + "T12:00:00") + 30 * 86400000)) : "") : f.depart || "";
+    window.dispatchEvent(new CustomEvent("melyos-dates", { detail: { arrive: f.arrive || "", depart: dep, length: f.vessel?.length_ft || "", power: f.vessel?.power_amp || "", rental: f.vessel?.kind === "rental", driverSlideOuts: f.vessel?.slide_driver || "", passengerSlideOuts: f.vessel?.slide_passenger || "", plan: stay === "storage" && l.storage ? "s" : monthly ? "m" : "" } }));
   }, [l.live, stay, l.storage, f.arrive, f.depart, f.vessel?.length_ft, f.vessel?.power_amp, f.vessel?.kind, f.vessel?.slide_driver, f.vessel?.slide_passenger]);
   useEffect(() => {
     if (!l.live) return;
@@ -163,6 +166,7 @@ export function RequestForm(l: L) {
       {longMode ? <>
           <button type="button" disabled={!f.arrive || !applyHref} onClick={() => window.open(applyHref, "_blank", "noopener")} className="w-full rounded-xl bg-[#08B8D8] px-6 py-3.5 text-lg font-black text-white transition hover:bg-[#079db9] disabled:opacity-60">
             {!f.arrive ? "Pick your move-in date" : `Start the application${picked?.lot ? ` · ${unit} ${picked.lot}` : ""} →`}</button>
+          {f.arrive && avail && <div className={`rounded-xl px-3 py-2 text-sm font-bold ${avail.available ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-700"}`}>{avail.available ? `✓ ${avail.available} ${unit}s free from your move-in date — tap a green one on the map` : `No ${unit}s free from that date — try another move-in date.`}</div>}
           <p className="text-xs text-slate-500">No leave date needed. You can tap a {unit} on the map first (optional) — the park confirms your {unit} when it approves the application.</p>
         </>
       : l.live ? (() => {
