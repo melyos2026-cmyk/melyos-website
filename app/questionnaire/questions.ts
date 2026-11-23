@@ -60,6 +60,10 @@ const rv: Section[] = [
       // Nov 22 (per Mely): the Aloha way — a number of kWh included in the rent, then a price per kWh above it.
       { id: "electric_rate", label: "If you use meter readings: how many kWh are included, and what do you charge per kWh?", kind: "text", placeholder: "e.g. 100 kWh included, then $0.18 per kWh" },
       { id: "other_charges", label: "Other charges you bill", kind: "multi", options: ["Water / sewer", "Trash", "Laundry", "Storage", "Pets", "Extra vehicles", "Late fees", "Propane"] },
+      // Nov 22 (per Mely): the late fee details the admin's Lease Defaults need.
+      { id: "late_fee_amount", label: "If you charge late fees: how much is the late fee?", kind: "text", placeholder: "e.g. $25, or 5% of the rent" },
+      { id: "late_fee_when", label: "How often is the late fee charged?", kind: "choice", options: ["One time per late payment", "Every day it's late", "Every week it's late"] },
+      { id: "late_fee_rules", label: "How many grace days before it starts, and what is the most a late fee can add up to?", kind: "text", placeholder: "e.g. starts after 5 days, maximum $100" },
       { id: "propane", label: "Do you sell propane?", kind: "choice", options: yesNo },
       { id: "storage_lots", label: "Do you rent storage lots (boats, RVs, trailers)?", kind: "choice", options: yesNo },
       { id: "home_sales", label: "Do you sell homes or offer rent-to-own?", kind: "choice", options: yesNo },
