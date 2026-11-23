@@ -148,7 +148,7 @@ footer{background:#d9f3ef;padding:36px 24px 18px}
 <div class="f" style="margin-top:16px;font-size:12.5px;font-weight:600">Plan</div>
 <div class="plans" id="plans"><div class="hint">Pick a lot first.</div></div>
 <div class="kv" style="margin-top:14px"><p><b>Rental End / Checkout Date:</b> none — the site is yours until you give your move-out notice in your resident portal.</p>
-<p><b>Rent:</b> <span id="rent">$TBD</span></p><p><b>Due Day:</b> 1 of each month</p><p><b>Security deposit:</b> $300 (paid after approval)</p><p><b>Notice to Terminate:</b> 15 days</p></div>
+<p><b>Rent:</b> <span id="rent">$TBD</span></p><p><b>Due Day:</b> 1 of each month</p><p><b>First payment:</b> paid online after approval (monthly or annual, as chosen)</p><p><b>Notice to Terminate:</b> 15 days</p></div>
 <p class="hint" style="margin-top:12px">Only lots free for a long stay are listed, with the first date you can move in. Plans that would run into another reservation can't be chosen. Refunds for monthly and longer stays need 30 days' notice before move-in. Rates include 1–2 people; each extra person is $3 per day.</p></div>
 
 <div class="card"><h2>Returned Payments</h2>
@@ -229,10 +229,10 @@ footer{background:#d9f3ef;padding:36px 24px 18px}
 <p class="sub" id="dmsg" style="margin-top:8px"></p>
 <div class="fee" id="rcpt" style="max-width:460px;margin:16px auto;text-align:left"></div>
 <div class="av ok" style="text-align:left;max-width:620px;margin:16px auto">📧 <b>Payment received — check your email</b> for a message with instructions to complete the background check. This can take a few minutes to arrive.<span id="occmail"></span><br>Your itemized receipt is emailed too.</div>
-<p class="sub">Next: the park reviews your application and background check. Once approved you'll get a secure link to pay the $300 deposit and your first payment.</p>
+<p class="sub">Next: the park reviews your application and background check. Once approved you'll get a secure link to pay your first payment online — monthly or annual, the plan you chose.</p>
 <p><a href="index.html" style="font-weight:700">← Back to the map</a></p>
 <div class="after" id="after"><div class="card" style="background:#f9fafb"><h2>Demo · what happens after approval</h2>
-<p class="legal" style="margin-top:0">When the park approves the application, the applicant gets an email with a secure link to pay the deposit and first payment. Paying it finishes the move-in: the lease PDF and the resident portal login are emailed, and the lot turns red (occupied) on the map from the move-in date.</p>
+<p class="legal" style="margin-top:0">When the park approves the application, the applicant gets an email with a secure link to pay the first payment (monthly or annual, the plan they chose). Paying it finishes the move-in: the lease PDF and the resident portal login are emailed, and the lot turns red (occupied) on the map from the move-in date.</p>
 <button class="go" id="apprBtn" style="margin-top:6px">See the approval payment →</button></div></div>
 <div class="after" id="apprPay" style="display:none"><div class="card"><h2>✅ Application approved — pay to move in</h2><div class="fee" id="apprFee" style="margin:0 0 16px"></div>
 <div class="g g2"><label class="f">Name on card<input id="acn"></label><label class="f">Card number<input placeholder="4242 4242 4242 4242"></label></div>
@@ -354,8 +354,8 @@ $("modgo").onclick=()=>{$("mod").style.display="none";const a=cur(),n=plansFor(a
  $("occmail").innerHTML=F.n?` Each additional adult also gets their own background check email.`:"";
  $("form").style.display="none";$("pay").style.display="block";scrollTo(0,0)};
 $("paygo").onclick=()=>{const rn="JS-"+Date.now().toString().slice(-6);$("rcpt").innerHTML=`<div style="font-size:11.5px;font-weight:700;letter-spacing:.05em;color:#4b5563;display:block;margin-bottom:8px">RECEIPT #${rn} · PAID BY CARD</div>`+$("paybox").innerHTML.replace("<b>Total</b>","<b>Total paid</b>");$("pay").style.display="none";$("done").style.display="block";scrollTo(0,0);HOLDT.paid()};
-$("apprBtn").onclick=()=>{const a=cur(),n=plansFor(a).find(p=>p[0]==PLAN),first=parseFloat(String(n[2]).replace(/[^0-9.]/g,""))||0,aosf=OSF(300+first),atot=Math.round((300+first+aosf)*100)/100;
- $("apprFee").innerHTML=`<div><span>Security deposit</span><b>${money(300)}</b></div><div><span>First payment · ${n[1]}</span><b>${money(first)}</b></div>${osfRow(aosf)}<div class="tot"><b>Total</b><b>${money(atot)}</b></div>`;
+$("apprBtn").onclick=()=>{const a=cur(),n=plansFor(a).find(p=>p[0]==PLAN),first=parseFloat(String(n[2]).replace(/[^0-9.]/g,""))||0,aosf=OSF(first),atot=Math.round((first+aosf)*100)/100;   // Nov 22 (per Mely): no fixed deposit — the plan chosen (monthly or annual) is paid online
+ $("apprFee").innerHTML=`<div><span>${n[0]=="m"?"First month":"Payment"} · ${n[1]}</span><b>${money(first)}</b></div>${osfRow(aosf)}<div class="tot"><b>Total</b><b>${money(atot)}</b></div>`;
  $("apprGo").textContent=`Pay ${money(atot)} & finish move-in`;$("acn").value=($("fn").value+" "+$("ln").value).trim();
  $("after").style.display="none";$("apprPay").style.display="block";$("apprPay").scrollIntoView({behavior:"smooth",block:"center"})};
 $("apprGo").onclick=()=>{const a=cur();$("apprMsg").innerHTML=`Lot <b>${a.lot}</b> is yours from <b>${fmt(dOf(mv.value))}</b>.`;$("apprPay").style.display="none";$("apprDone").style.display="block"};
