@@ -7,7 +7,7 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 //   form → map: window event "melyos-dates" {arrive, depart} is posted into the map
 //   map → form: messages from the map (melyos-avail / melyos-lot / melyos-ready) are re-sent as window event "melyos-map"
 // Only messages from the map's own origin are accepted.
-export default function LiveMap({ src, title, fixed }: { src: string; title: string; fixed?: boolean }) {
+export default function LiveMap({ src, title, fixed, ratio }: { src: string; title: string; fixed?: boolean; ratio?: number }) {
   const [h, setH] = useState(720);
   const frame = useRef<HTMLIFrameElement>(null);
   const last = useRef<{ arrive?: string; depart?: string } | null>(null);
@@ -36,13 +36,16 @@ export default function LiveMap({ src, title, fixed }: { src: string; title: str
   // Nov 20: a self-contained demo map. Nov 21 (per Mely — "que se vea impresionante cuando uno entre", like the big
   // Florida map): from tablet width up the map fills its whole column and the frame grows tall to fit the whole map
   // (page scrolls, the booking form stays beside it). Phones: full width, screen height.
-  if (fixed) return <FixedMap frame={frame} src={src} title={title} />;
+  if (fixed) return <FixedMap frame={frame} src={src} title={title} ratio={ratio} />;
   return <div className="overflow-hidden rounded-2xl ring-1 ring-slate-200" style={{ height: h }}>
     <iframe ref={frame} src={src} title={title} className="h-full w-full border-0" scrolling="no" loading="lazy" />
   </div>;
 }
 
-function FixedMap({ frame, src, title }: { frame: RefObject<HTMLIFrameElement | null>; src: string; title: string }) {
+function FixedMap({ frame, src, title, ratio }: { frame: RefObject<HTMLIFrameElement | null>; src: string; title: string; ratio?: number }) {
+  // Nov 22 (per Mely — "como el mapa de Florida"): width ÷ height of the park map. 21 Palms is tall (0.612);
+  // Johnston Springs is wide (1.28), so its map takes the whole column like the big Florida map.
+  const R = ratio && ratio > 0 ? ratio : 0.612;
   const box = useRef<HTMLDivElement>(null);
   const [hh, setHh] = useState<{ h: number; w: number } | null>(null);
   useEffect(() => {
@@ -54,12 +57,12 @@ function FixedMap({ frame, src, title }: { frame: RefObject<HTMLIFrameElement | 
       // Nov 21 (per Mely — "que todo se vea bien y moderado"): map and booking card sit together, centered —
       // the room for the map is the row minus the card next to it (no empty bands around the map)
       const side = par.querySelector("aside") as HTMLElement | null, gap = parseFloat(getComputedStyle(par).columnGap) || 20;
-      const col = Math.max(300, par.clientWidth - (side ? side.offsetWidth + gap : 0)), h = Math.min(Math.round(col / 0.612 + 62), Math.max(560, window.innerHeight - 104));
-      setHh({ h, w: Math.min(col, Math.round((h - 62) * 0.612 + 2)) });
+      const col = Math.max(300, par.clientWidth - (side ? side.offsetWidth + gap : 0)), h = Math.min(Math.round(col / R + 62), Math.max(560, window.innerHeight - 104));
+      setHh({ h, w: Math.min(col, Math.round((h - 62) * R + 2)) });
     };
     fit(); const ro = new ResizeObserver(fit); ro.observe(par); window.addEventListener("resize", fit);
     return () => { ro.disconnect(); window.removeEventListener("resize", fit); };
-  }, []);
+  }, [R]);
   return <div ref={box} className="w-full min-w-0 md:w-auto md:shrink-0" style={hh ? { width: hh.w } : undefined}>
     <div className="mx-auto w-full overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200" style={hh ? { height: hh.h, width: hh.w } : { height: "max(520px, calc(100vh - 7.5rem))" }}>
       <iframe ref={frame} src={src} title={title} className="h-full w-full border-0" />

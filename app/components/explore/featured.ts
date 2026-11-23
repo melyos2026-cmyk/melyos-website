@@ -44,3 +44,6 @@ export const DEMO_PHOTO: Record<string, string> = {
 // application. Demo maps use the MelyOS sample park's real application.
 export const DEMO_APPLY: Record<string, string> = { "x-21-palms": "https://demo.melyos.io/apply", "w1551804176": "/explore/live/johnston/apply.html" };
 
+
+// Nov 22 (per Mely): width ÷ height of a demo park map, so a wide map fills the page like the Florida map.
+export const DEMO_RATIO: Record<string, number> = { "w1551804176": 2840 / 2216 };
