@@ -44,8 +44,9 @@ const rv: Section[] = [
     title: "Lots and residents",
     fields: [
       { id: "lots_total", label: "Total number of lots", kind: "number", required: true },
-      { id: "lots_long_term", label: "How many are long-term residents (monthly or longer)?", kind: "number" },
-      { id: "lots_short_term", label: "How many are for short stays (nightly or weekly)?", kind: "number" },
+      // Nov 22 (per Mely): a lot can usually be rented either way, so ask how the lots are used, not fixed counts.
+      { id: "lot_use", label: "Can each lot be rented for any stay (nightly, weekly, monthly or longer)?", kind: "choice", options: ["Yes, any lot can be any stay", "Some lots are only for long stays or only for short stays", "Not sure"] },
+      { id: "lots_long_term", label: "About how many lots have long-term residents (monthly or longer) right now?", kind: "number", hint: "An estimate is fine. It changes over time." },
       { id: "mobile_homes", label: "Do you have mobile homes or park models?", kind: "choice", options: ["Yes, owned by residents", "Yes, owned by the park", "Both", "No"] },
       { id: "lot_power", label: "Electric service at the lots", kind: "multi", options: ["20 amp", "30 amp", "50 amp", "Some lots have no power"] },
       { id: "lot_hookups", label: "Water and sewer at the lots", kind: "choice", options: ["Full hookups at every lot", "Some lots", "Water only", "None"] },
