@@ -43,3 +43,7 @@ export const DEMO_PHOTO: Record<string, string> = {
 // Nov 21 (per Mely — full demo): stays longer than 15 nights / monthly / residency go to the park's online
 // application. Demo maps use the MelyOS sample park's real application.
 export const DEMO_APPLY: Record<string, string> = { "x-21-palms": "https://demo.melyos.io/apply", "w1551804176": "/explore/live/johnston/apply.html" };
+
+// Nov 22 (per Mely): MelyOS partners hidden from the map in a given sales demo (e.g. Aloha sits right next to
+// Johnston Springs, so their pins overlap). Only with ?demo=<id>; the normal Explore map is unchanged.
+export const DEMO_HIDE: Record<string, string[]> = { "w1551804176": ["melyos-aloha"] };

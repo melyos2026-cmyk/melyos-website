@@ -7,7 +7,7 @@ import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { STATES, KIND, type Row } from "./states";
 import StatePicker from "./StatePicker";
 import { useBoater } from "./useBoater";
-import { FEATURED, FEATURED_PHOTO, FEATURED_INFO, DEMO_PHOTO, isFeatured } from "./featured";
+import { FEATURED, FEATURED_PHOTO, FEATURED_INFO, DEMO_PHOTO, DEMO_HIDE, isFeatured } from "./featured";
 import { AMENITIES, STAY_FILTERS, AmenIcon, hasAmen } from "./amenities";
 import { listingPath } from "./slug";
 
@@ -122,8 +122,11 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
     setRows(null);
     Promise.all(sts.map((st) => fetch(`/explore/${st}.json`).then((r) => (r.ok ? r.json() : { rows: [] })).catch(() => ({ rows: [] })).then((j) => {
       // MelyOS properties first; drop the public-map copy of the same place if there is one.
-      const feat = FEATURED[st] || [];
-      const names = new Set(feat.map((r) => r[1].toLowerCase()));
+      // Nov 22 (per Mely): in some sales demos other MelyOS partners are hidden (no pins on top of each other).
+      const dmo = new URLSearchParams(window.location.search).get("demo") || "";
+      const hide = DEMO_HIDE[dmo] || [];
+      const feat = (FEATURED[st] || []).filter((r) => !hide.includes(String(r[7])));
+      const names = new Set((FEATURED[st] || []).map((r) => r[1].toLowerCase()));
       const list = [...feat, ...((j.rows || []) as Row[]).filter((r) => !names.has(String(r[1]).toLowerCase()))];
       for (const r of list) stateOf.current[r[7]] = st;
       return list;
