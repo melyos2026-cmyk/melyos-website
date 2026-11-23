@@ -281,8 +281,11 @@ const FEE={primary:49.99,adult:49.99,proc:2.5};   // MelyOS: $49.99 per adult (s
 const money=n=>"$"+n.toFixed(2);
 const ageOf=v=>{const d=dOf(v);if(!d)return null;let a=today.getFullYear()-d.getFullYear();if(today<new Date(today.getFullYear(),d.getMonth(),d.getDate()))a--;return a};
 const adults=()=>$("occ").style.display=="block"?[...document.querySelectorAll(".occ")].filter(r=>{const a=ageOf(r.querySelector(".dob").value);return a!=null&&a>=18}):[];
-function fees(){const n=adults().length,bg=FEE.primary+n*FEE.adult;return{n,bg,tot:bg}}
-function drawFee(){const F=fees();$("feebox").innerHTML=`<div><span>Background Check (Primary Applicant)</span><b>${money(FEE.primary)}</b></div>${F.n?`<div><span>Background Check — ${F.n} additional adult${F.n>1?"s":""} (${money(FEE.adult)} each)</span><b>${money(F.n*FEE.adult)}</b></div>`:""}<div><span>Application Fee</span><b>${money(FEE.proc)}</b></div><div class="tot"><b>Total due now</b><b>${money(F.tot+FEE.proc)}</b></div><div style="font-size:12px;color:#6b7280;margin:6px 0 0;display:block">Charged when you submit. Rent is not charged today.</div>`}
+// Nov 22 (per Mely): Online Service Fee — 3.5% (minimum $2.25) on every online payment, shown before paying.
+const OSF=x=>Math.round(Math.max(x*0.035,2.25)*100)/100;
+const osfRow=v=>`<div><span title="Covers secure online payment processing and the MelyOS online booking & account platform.">Online Service Fee (3.5%) ⓘ</span><b>${money(v)}</b></div>`;
+function fees(){const n=adults().length,bg=FEE.primary+n*FEE.adult,osf=OSF(bg+FEE.proc);return{n,bg,osf,tot:Math.round((bg+FEE.proc+osf)*100)/100}}
+function drawFee(){const F=fees();$("feebox").innerHTML=`<div><span>Background Check (Primary Applicant)</span><b>${money(FEE.primary)}</b></div>${F.n?`<div><span>Background Check — ${F.n} additional adult${F.n>1?"s":""} (${money(FEE.adult)} each)</span><b>${money(F.n*FEE.adult)}</b></div>`:""}<div><span>Application Fee</span><b>${money(FEE.proc)}</b></div>${osfRow(F.osf)}<div class="tot"><b>Total due now</b><b>${money(F.tot)}</b></div><div style="font-size:12px;color:#6b7280;margin:6px 0 0;display:block">Charged when you submit. Rent is not charged today.</div>`}
 // Nov 22 (per Mely): works like the Aloha / Sunset application — on Submit every missing field turns red with
 // "Field required", a list of what's missing shows under the button, and it re-checks as the person fixes things.
 let TRIED=false;
@@ -340,20 +343,20 @@ const want=P.get("lot");if(want&&AV.some(a=>a.lot==want))lotSel.value=want;else 
 if(P.get("move_in"))mv.value=P.get("move_in");
 if(lotSel.value)draw();
 $("go").onclick=()=>{TRIED=true;const miss=check();if(miss.length){const f=document.querySelector(".err");if(f)f.scrollIntoView({behavior:"smooth",block:"center"});return}
- const F0=fees();$("modfee").innerHTML=`<div><span>Background Check (Primary Applicant)</span><b>${money(FEE.primary)}</b></div>${F0.n?`<div><span>Background Check — ${F0.n} additional adult${F0.n>1?"s":""}</span><b>${money(F0.n*FEE.adult)}</b></div>`:""}<div><span>Application Fee</span><b>${money(FEE.proc)}</b></div><div class="tot"><b>Total due now</b><b>${money(F0.tot+FEE.proc)}</b></div>`;
+ const F0=fees();$("modfee").innerHTML=`<div><span>Background Check (Primary Applicant)</span><b>${money(FEE.primary)}</b></div>${F0.n?`<div><span>Background Check — ${F0.n} additional adult${F0.n>1?"s":""}</span><b>${money(F0.n*FEE.adult)}</b></div>`:""}<div><span>Application Fee</span><b>${money(FEE.proc)}</b></div>${osfRow(F0.osf)}<div class="tot"><b>Total due now</b><b>${money(F0.tot)}</b></div>`;
  $("mod").style.display="flex"};
 $("modback").onclick=()=>{$("mod").style.display="none"};
-$("modgo").onclick=()=>{$("mod").style.display="none";const a=cur(),n=plansFor(a).find(p=>p[0]==PLAN),F=fees(),tot=F.tot+FEE.proc;
+$("modgo").onclick=()=>{$("mod").style.display="none";const a=cur(),n=plansFor(a).find(p=>p[0]==PLAN),F=fees(),tot=F.tot;
  $("paysub").innerHTML=`Application for lot <b>${a.lot}</b> · ${n[1]} · move-in <b>${fmt(dOf(mv.value))}</b>. Rent is not charged today.`;
- $("paybox").innerHTML=`<div><span>Background Check (Primary Applicant)</span><b>${money(FEE.primary)}</b></div>${F.n?`<div><span>Background Check — ${F.n} additional adult${F.n>1?"s":""}</span><b>${money(F.n*FEE.adult)}</b></div>`:""}<div><span>Application Fee</span><b>${money(FEE.proc)}</b></div><div class="tot"><b>Total</b><b>${money(tot)}</b></div>`;
+ $("paybox").innerHTML=`<div><span>Background Check (Primary Applicant)</span><b>${money(FEE.primary)}</b></div>${F.n?`<div><span>Background Check — ${F.n} additional adult${F.n>1?"s":""}</span><b>${money(F.n*FEE.adult)}</b></div>`:""}<div><span>Application Fee</span><b>${money(FEE.proc)}</b></div>${osfRow(F.osf)}<div class="tot"><b>Total</b><b>${money(tot)}</b></div>`;
  $("paygo").textContent=`Pay ${money(tot)} & Start Background Check${F.n?"s":""}`;$("cn").value=($("fn").value+" "+$("ln").value).trim();
  $("dmsg").innerHTML=`Lot <b>${a.lot}</b> · ${n[1]} (${n[2]}) · move-in <b>${fmt(dOf(mv.value))}</b>`;
  $("occmail").innerHTML=F.n?` Each additional adult also gets their own background check email.`:"";
  $("form").style.display="none";$("pay").style.display="block";scrollTo(0,0)};
 $("paygo").onclick=()=>{const rn="JS-"+Date.now().toString().slice(-6);$("rcpt").innerHTML=`<div style="font-size:11.5px;font-weight:700;letter-spacing:.05em;color:#4b5563;display:block;margin-bottom:8px">RECEIPT #${rn} · PAID BY CARD</div>`+$("paybox").innerHTML.replace("<b>Total</b>","<b>Total paid</b>");$("pay").style.display="none";$("done").style.display="block";scrollTo(0,0);HOLDT.paid()};
-$("apprBtn").onclick=()=>{const a=cur(),n=plansFor(a).find(p=>p[0]==PLAN),first=parseFloat(String(n[2]).replace(/[^0-9.]/g,""))||0;
- $("apprFee").innerHTML=`<div><span>Security deposit</span><b>${money(300)}</b></div><div><span>First payment · ${n[1]}</span><b>${money(first)}</b></div><div class="tot"><b>Total</b><b>${money(300+first)}</b></div>`;
- $("apprGo").textContent=`Pay ${money(300+first)} & finish move-in`;$("acn").value=($("fn").value+" "+$("ln").value).trim();
+$("apprBtn").onclick=()=>{const a=cur(),n=plansFor(a).find(p=>p[0]==PLAN),first=parseFloat(String(n[2]).replace(/[^0-9.]/g,""))||0,aosf=OSF(300+first),atot=Math.round((300+first+aosf)*100)/100;
+ $("apprFee").innerHTML=`<div><span>Security deposit</span><b>${money(300)}</b></div><div><span>First payment · ${n[1]}</span><b>${money(first)}</b></div>${osfRow(aosf)}<div class="tot"><b>Total</b><b>${money(atot)}</b></div>`;
+ $("apprGo").textContent=`Pay ${money(atot)} & finish move-in`;$("acn").value=($("fn").value+" "+$("ln").value).trim();
  $("after").style.display="none";$("apprPay").style.display="block";$("apprPay").scrollIntoView({behavior:"smooth",block:"center"})};
 $("apprGo").onclick=()=>{const a=cur();$("apprMsg").innerHTML=`Lot <b>${a.lot}</b> is yours from <b>${fmt(dOf(mv.value))}</b>.`;$("apprPay").style.display="none";$("apprDone").style.display="block"};
 

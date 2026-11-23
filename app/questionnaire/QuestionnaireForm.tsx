@@ -67,6 +67,7 @@ export default function QuestionnaireForm({ type, name, sections }: { type: QTyp
             {sections.map((s) => (
               <section key={s.title} className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 space-y-5">
                 <h2 className="text-lg font-bold text-slate-900">{s.title}</h2>
+                {s.intro && <p className="text-sm text-slate-600 -mt-2 leading-relaxed">{s.intro}</p>}
                 {s.fields.map((f) => (
                   <div key={f.id} id={`q-${f.id}`}>
                     <label className="block text-sm font-semibold text-slate-800 mb-1.5">{f.label}{"required" in f && f.required && <span className="text-red-600"> *</span>}</label>

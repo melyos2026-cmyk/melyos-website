@@ -143,6 +143,17 @@ const shared = (t: QType): Section[] => [
       { id: "staff_roles", label: "What do they do? Anything only the owner should see?", kind: "textarea", placeholder: "Office manager, two dock hands. Only the owner sees revenue." },
     ],
   },
+  // Nov 22 (per Mely): how the Online Service Fee works — 3.5% on every online payment, and the
+  // property decides how it is split (set later in the admin's Fee Settings).
+  {
+    title: "Online payments",
+    intro: "Every online payment through MelyOS (card or debit) has a 3.5% Online Service Fee (minimum $2.25). It covers secure payment processing and the MelyOS platform, and your customers see it at checkout before they pay. Bank (ACH) payments cost less: 1.2% (minimum $2.00, maximum $9.95). You decide who pays it: your customers can pay all of it, you can pay all of it, or you can split it — for example, the customer pays 2% and you pay 1.5%. You can change this anytime from your admin panel.",
+    fields: [
+      { id: "fee_split", label: "Who should pay the 3.5% Online Service Fee?", kind: "choice", options: ["The customer pays all 3.5%", "Split it between the customer and us", "We pay all of it", "Not sure yet"] },
+      { id: "fee_split_amount", label: "If you split it, how much should the customer pay?", kind: "text", placeholder: "Customer 2% · we pay 1.5%" },
+      { id: "fee_today", label: "Do you charge a card fee today? How much?", kind: "text", placeholder: "2% on cards" },
+    ],
+  },
   {
     title: "Website and domain",
     fields: [
