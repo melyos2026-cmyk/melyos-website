@@ -71,7 +71,7 @@ body.editing{padding-bottom:var(--ph,420px)}.panel{max-height:70vh;overflow:auto
 .cal{margin:10px 0 6px;border:1px solid #e2e8f0;border-radius:12px;padding:10px}.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;font-size:14px;color:#0f2540;text-transform:capitalize}.cn{width:30px;height:30px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;font-size:18px;cursor:pointer}
 .cg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}.cw{font-size:11px;color:#64748b;text-align:center;font-weight:700}.cd{height:30px;border:0;border-radius:6px;font:600 12.5px Inter,system-ui,sans-serif;cursor:pointer}
 .cd.ca{background:#bbf7d0;color:#14532d}.cd.ca:hover{background:#86efac}.cd.cb{background:#f1f5f9;color:#9ca3af;text-decoration:line-through;cursor:not-allowed}.cd.cs{background:#16a34a!important;color:#fff!important}.cd.ci{background:#dcfce7}
-.cl{display:flex;gap:14px;margin-top:6px;font-size:11.5px;color:#475569}.cl i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:-1px}.cl i.ca{background:#bbf7d0}.cl i.cb{background:#e2e8f0}
+.cio{margin-top:6px;font-size:12px;color:#0f2540;font-weight:600}.cd.cout{background:#fff;border:1.5px dashed #16a34a!important;color:#166534}.cl{display:flex;gap:14px;margin-top:6px;font-size:11.5px;color:#475569}.cl i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:-1px}.cl i.ca{background:#bbf7d0}.cl i.cb{background:#e2e8f0}
 .nx{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 10px;margin:6px 0;font-size:12.5px;color:#166534}.nx button{font-size:11.5px;font-weight:700;color:#166534;background:#dcfce7;border:1px solid #86efac;border-radius:6px;padding:5px 9px;cursor:pointer;white-space:nowrap}
 .mn{font-size:13px;color:#475569;margin:10px 0 4px}
 .sheet.open{max-height:88vh;overflow:auto}
@@ -283,8 +283,8 @@ function where(i){const nm=NUM[i],es=L=="es",c=CORNER.has(nm),k=sec(i),n=parseIn
  return{short:(es?z[1]:z[0])+(c?(es?" · Esquina":" · Corner"):""),long:(es?z[3]:z[2])+(c?(es?" Lote de esquina, con más espacio al lado.":" A corner lot, with extra room to the side."):""),corner:c}}
 // Nov 20 (per Mely — like Aloha): the amenities closest to each lot, measured on the map, shown softly in the cards
 function nearby(i,n){const es=L=="es",c=cen(SH[i]);
- const nm={house:es?"Oficina":"Office",dumbbell:es?"Gimnasio":"Fitness center",pool:es?"Piscina":"Pool",tank:es?"Propano":"Propane",fish:es?"Laguna":"Pond",laundry:es?"Baños y lavandería":"Bathhouse & laundry",shower:es?"Duchas":"Showers",restroom:es?"Baños":"Restrooms",flame:"BBQ Corral",shuffle:"Shuffleboard",horseshoe:es?"Herraduras":"Horseshoes"};
- const em={laundry:"🚿",flame:"🍖",house:"🏠",dumbbell:"🏋️",pool:"🏊",tank:"🔥",fish:"🎣",shuffle:"🥌",horseshoe:"🧲"};
+ const nm={house:es?"Oficina":"Office",dumbbell:es?"Gimnasio":"Fitness center",pool:es?"Piscina":"Pool",tank:es?"Propano":"Propane",fish:es?"Laguna":"Pond",laundry:es?"Lavandería":"Laundry",shower:es?"Duchas":"Showers",restroom:es?"Baños":"Restrooms",flame:"BBQ Corral",shuffle:"Shuffleboard",horseshoe:es?"Herraduras":"Horseshoes"};
+ const em={laundry:"🧺",shower:"🚿",restroom:"🚻",flame:"🍖",house:"🏠",dumbbell:"🏋️",pool:"🏊",tank:"🔥",fish:"🎣",shuffle:"🥌",horseshoe:"🧲"};
  return PO.filter(p=>nm[p[3]]).map(p=>{const d=Math.hypot((p[0]-c[0])*AX,(p[1]-c[1])*AY);const m=Math.max(1,Math.round(d*0.46*1.3/80));
    return{t:nm[p[3]],e:em[p[3]],m,d}}).sort((a,b)=>a.d-b.d).filter((x,k,arr)=>arr.findIndex(y=>y.t==x.t)==k).slice(0,n||3)}
 const walk=m=>L=="es"?`${m} min a pie`:`${m} min walk`;
@@ -546,11 +546,12 @@ function drawLot(i){hideHov();const t=T[L],k=kind(i),st=ST[i],es=L=="es",inf=inf
  {const y=calM.getFullYear(),m=calM.getMonth(),first=new Date(y,m,1).getDay(),n=new Date(y,m+1,0).getDate();
   const wd=(es?["D","L","M","M","J","V","S"]:["S","M","T","W","T","F","S"]).map(x=>`<span class="cw">${x}</span>`).join("");
   let cells="";for(let s=0;s<first;s++)cells+="<span></span>";
-  for(let d=1;d<=n;d++){const dt=new Date(y,m,d),b=isBlocked(i,dt),sel=(arr&&+dt==+arr)||(dep&&+dt==+dep),inr=arr&&dep&&dt>arr&&dt<dep;
+  const outOK=dt=>{if(!arr||dep||dt<=arr)return false;for(let x=new Date(+arr);x<dt;x=new Date(+x+DAY))if(isBlocked(i,x))return false;return true};   // Nov 23 (per Mely): check-out at 11 AM — the day a reservation starts can still be your departure
+  for(let d=1;d<=n;d++){const dt=new Date(y,m,d),b0=isBlocked(i,dt),cout=b0&&outOK(dt),b=b0&&!cout,sel=(arr&&+dt==+arr)||(dep&&+dt==+dep),inr=arr&&dep&&dt>arr&&dt<dep;
    const bk=b&&(BOOK[i]||[]).find(([a,e])=>dt>=a&&dt<e),rsv=bk&&dt>=today&&(bk[1]-bk[0])<28*DAY,occ=bk&&dt>=today&&!rsv;   // Nov 22 (per Mely): same rule as the map colors
-   cells+=`<button class="cd ${b?"cb":"ca"}${rsv?" kres":""}${occ?" kocc":""}${sel?" cs":""}${inr?" ci":""}" ${b?"disabled":""} data-d="${+dt}">${d}</button>`}
+   cells+=`<button class="cd ${b?"cb":"ca"}${cout?" cout":""}${rsv&&!cout?" kres":""}${occ&&!cout?" kocc":""}${sel?" cs":""}${inr?" ci":""}" ${b?"disabled":""} data-d="${+dt}">${d}</button>`}
   cal=`<div class="cal"><div class="ch"><button class="cn" data-m="-1" aria-label="Previous month">‹</button><b>${calM.toLocaleDateString(es?"es-US":"en-US",{month:"long",year:"numeric"})}</b><button class="cn" data-m="1" aria-label="Next month">›</button></div>
-   <div class="cg">${wd}${cells}</div><div class="cl"><span><i class="ca"></i>${es?"Disponible":"Available"}</span><span><i class="kocc"></i>${es?"Ocupado":"Occupied"}</span><span><i class="kres"></i>${es?"Reservado":"Reserved"}</span></div></div>
+   <div class="cg">${wd}${cells}</div><div class="cl"><span><i class="ca"></i>${es?"Disponible":"Available"}</span><span><i class="kocc"></i>${es?"Ocupado":"Occupied"}</span><span><i class="kres"></i>${es?"Reservado":"Reserved"}</span></div><div class="cio">🕒 ${es?"Llegada desde las 3 PM · Salida a las 11 AM":"Check-in 3 PM · Check-out 11 AM"}${arr&&!dep?` — ${es?"ahora toque su día de salida":"now tap your departure day"}`:""}</div></div>
    ${nxt?`<div class="nx"><span>${es?"Próxima fecha disponible":"Next available date"}: <b>${fmt(nxt)}</b></span><button id="usen">${es?"Usar esta fecha":"Use this date"}</button></div>`:""}
    <div class="rows"><div>${es?"Llegada":"Arrival"}<b>${arr?fmt(arr):"—"}</b></div><div>${es?"Salida":"Departure"}<b>${dep?(dep-today>300*DAY?dep.toLocaleDateString(es?"es-US":"en-US",{month:"short",day:"numeric",year:"numeric"}):fmt(dep)):"—"}</b></div></div>`}
  const ok=arr&&dep;
@@ -577,7 +578,7 @@ ${st=="maint"?`<p class="mnt">🛠 ${es?`Este lote está en mantenimiento. Estar
  sc.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{calM=new Date(calM.getFullYear(),calM.getMonth()+Number(b.dataset.m),1);drawLot(i)});
  sc.querySelectorAll(".cd.ca").forEach(b=>b.onclick=()=>{const d=new Date(Number(b.dataset.d));
   if(!arr||dep||d<=arr){arr=d;dep=null}else{let clash=false;for(let x=new Date(+arr);x<d;x=new Date(+x+DAY))if(isBlocked(i,x))clash=true;if(clash){arr=d;dep=null}else dep=d}drawLot(i)});
- const u=sc.querySelector("#usen");if(u)u.onclick=()=>{arr=nxt;dep=null;calM=new Date(nxt.getFullYear(),nxt.getMonth(),1);drawLot(i)};
+ const u=sc.querySelector("#usen");if(u)u.onclick=()=>{arr=nxt;dep=new Date(+nxt+DAY);calM=new Date(nxt.getFullYear(),nxt.getMonth(),1);drawLot(i)};
  const bk=sc.querySelector("#bk");if(bk&&NEED.len&&!fitsLen(i,NEED.len)){bk.disabled=true;bk.style.opacity=.5}else if(bk&&ok&&!tooFar(arr,Math.round((dep-arr)/DAY)))bk.onclick=()=>checkout(i);}
 document.getElementById("x").onclick=()=>{document.getElementById("sheet").classList.remove("open");select(-1);render()};
 addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("sheet").classList.contains("open"))document.getElementById("x").click()});
