@@ -577,10 +577,12 @@ function baseW(){const W=document.getElementById("wrap").clientWidth;
  const top=(document.querySelector("header")||{offsetHeight:0}).offsetHeight+(document.getElementById("bar")||{offsetHeight:0}).offsetHeight+(document.getElementById("dsr")||{offsetHeight:0}).offsetHeight;
  // Nov 22 (per Mely — "like 21 Palms"): inside the Explore page the map fills the frame's height (scroll sideways)
  if(INFRAME)return Math.max(260,W,(innerHeight-top-4)*ratio);
- // Nov 22 (per Mely — "ready to use, like Sunset"): on its own page the wide map fills the page width
- return Math.max(260,W)}
+ return Math.max(260,Math.min(W,(innerHeight-top-12)*ratio))}
 function fitNow(){map.style.width=Math.round(baseW()*z)+"px";render()}
 if(INFRAME)document.documentElement.classList.add("embed");
+// Nov 22 (per Mely — "ready to use, like Sunset" + working zoom): on its own page the map opens filling the page width;
+// the − button zooms out to the whole park on one screen, + zooms in.
+if(!INFRAME){const fill=()=>{const W=document.getElementById("wrap");if(!W)return;const f=W.clientWidth/baseW();if(f>1.02){z=Math.min(4,f);fitNow()}};setTimeout(fill,60);const im0=map.querySelector("img");if(im0&&!im0.complete)im0.addEventListener("load",()=>setTimeout(fill,30),{once:true})}
 if(INFRAME){const c=()=>{const W=document.getElementById("wrap");if(W)W.scrollLeft=Math.max(0,(W.scrollWidth-W.clientWidth)/2)};setTimeout(c,150);setTimeout(c,700)}
 {addEventListener("resize",fitNow);const im=map.querySelector("img");if(im&&!im.complete)im.addEventListener("load",fitNow);setTimeout(fitNow,0)}
 // Nov 20 (per Mely — the Explore request form and the map work together):
