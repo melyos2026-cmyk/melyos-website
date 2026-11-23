@@ -94,7 +94,7 @@ export function RequestForm(l: L) {
     <form onSubmit={send} className="space-y-3">
       <input type="text" name="website_hp" className="hidden" tabIndex={-1} autoComplete="off" onChange={(e) => set("website_hp", e.target.value)} />
       {l.live && l.kind !== "m" && <div className={`grid ${l.storage ? "grid-cols-3" : "grid-cols-2"} gap-1.5 rounded-2xl bg-slate-100 p-1.5`}>
-        {([["short", "Short stay", "Book & pay now"], ["long", "Monthly / resident", "Apply online"], ...(l.storage ? [["storage", "RV storage", "Monthly"]] : [])] as ["short" | "long" | "storage", string, string][]).map(([k, t, d]) => (
+        {([["short", "Nightly / weekly", "Book & pay now"], ["long", "Long stay", "Month to month, season or annual"], ...(l.storage ? [["storage", "RV storage", "Monthly"]] : [])] as ["short" | "long" | "storage", string, string][]).map(([k, t, d]) => (
           <button key={k} type="button" onClick={() => { setStay(k); if (k === "long") setF((x: any) => ({ ...x, depart: "" })); }}
             className={`rounded-xl px-2 py-2 text-center leading-tight transition ${stay === k ? "bg-white shadow-sm ring-1 ring-[#08B8D8]" : "text-slate-600 hover:bg-white/60"}`}>
             <span className="block text-sm font-black">{t}</span><span className="block text-xs text-slate-500">{d}</span></button>))}
