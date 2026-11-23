@@ -7,7 +7,7 @@ import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { STATES, KIND, type Row } from "./states";
 import StatePicker from "./StatePicker";
 import { useBoater } from "./useBoater";
-import { FEATURED, FEATURED_PHOTO, FEATURED_INFO, DEMO_PHOTO, DEMO_HIDE, isFeatured } from "./featured";
+import { FEATURED, FEATURED_PHOTO, FEATURED_INFO, DEMO_PHOTO, isFeatured } from "./featured";
 import { AMENITIES, STAY_FILTERS, AmenIcon, hasAmen } from "./amenities";
 import { listingPath } from "./slug";
 
@@ -122,11 +122,8 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
     setRows(null);
     Promise.all(sts.map((st) => fetch(`/explore/${st}.json`).then((r) => (r.ok ? r.json() : { rows: [] })).catch(() => ({ rows: [] })).then((j) => {
       // MelyOS properties first; drop the public-map copy of the same place if there is one.
-      // Nov 22 (per Mely): in some sales demos other MelyOS partners are hidden (no pins on top of each other).
-      const dmo = new URLSearchParams(window.location.search).get("demo") || "";
-      const hide = DEMO_HIDE[dmo] || [];
-      const feat = (FEATURED[st] || []).filter((r) => !hide.includes(String(r[7])));
-      const names = new Set((FEATURED[st] || []).map((r) => r[1].toLowerCase()));
+      const feat = FEATURED[st] || [];
+      const names = new Set(feat.map((r) => r[1].toLowerCase()));
       const list = [...feat, ...((j.rows || []) as Row[]).filter((r) => !names.has(String(r[1]).toLowerCase()))];
       for (const r of list) stateOf.current[r[7]] = st;
       return list;
@@ -221,9 +218,14 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
     for (const r of shown) {
       const k = KIND[r[0]];
       const feat = isFeatured(r), book = bookable(r), pt = partner(r);
+      // Nov 22 (per Mely): two partners in the same area (Aloha + Johnston Springs, ~10 km apart) — at state
+      // zoom their pins sat on top of each other. The west one is drawn a bit to the left, the east one a bit to
+      // the right, so both pins and both names show side by side.
+      const near = pt ? shown.filter((o) => o !== r && partner(o) && Math.abs(o[2] - r[2]) < 0.35 && Math.abs(o[3] - r[3]) < 0.35) : [];
+      const nudge = near.length ? (near.some((o) => o[3] > r[3]) ? 9 : -9) : 0; // px: + = draw left of the point
       // Red teardrop pin = Online Booking (like Dockwa). Small kind-colored dot = Inquiry only.
       const icon = pt
-        ? Lm.divIcon({ className: "", html: `<svg width="22" height="29" viewBox="0 0 30 40" style="filter:drop-shadow(0 2px 3px rgba(7,26,51,.35))"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 39 15 39s14-13.6 14-24.1C29 7.2 22.7 1 15 1z" fill="${RED}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="14.6" r="7.6" fill="#fff"/><path d="m15 9.4 1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#d4a94a"/></svg>`, iconSize: [22, 29], iconAnchor: [11, 28], popupAnchor: [0, -34] })
+        ? Lm.divIcon({ className: "", html: `<svg width="22" height="29" viewBox="0 0 30 40" style="filter:drop-shadow(0 2px 3px rgba(7,26,51,.35))"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 39 15 39s14-13.6 14-24.1C29 7.2 22.7 1 15 1z" fill="${RED}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="14.6" r="7.6" fill="#fff"/><path d="m15 9.4 1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#d4a94a"/></svg>`, iconSize: [22, 29], iconAnchor: [11 + nudge, 28], popupAnchor: [-nudge, -34] })
         : book
         ? Lm.divIcon({ className: "", html: `<svg width="30" height="40" viewBox="0 0 30 40" style="filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))"><path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.4 15 39 15 39s14-13.6 14-24.1C29 7.2 22.7 1 15 1z" fill="${RED}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="15" r="5.5" fill="#fff"/></svg>`, iconSize: [30, 40], iconAnchor: [15, 39], popupAnchor: [0, -34] })
         : Lm.divIcon({ className: "", html: `<span style="display:block;width:16px;height:16px;border-radius:50%;background:${k.color};border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45)"></span>`, iconSize: [16, 16], iconAnchor: [8, 8] });
@@ -231,7 +233,7 @@ export default function ExploreMap({ state, initialKinds, heading }: { state: st
       // Nov 21 (per Mely): partners close together (Aloha + 21 Palms) — names to the left / right so they never cover each other
       if (pt) {
         const westOfAnother = shown.some((o) => o !== r && partner(o) && Math.abs(o[2] - r[2]) < 0.6 && o[3] > r[3] && o[3] - r[3] < 1.2);
-        m.bindTooltip(`<span style="color:#fbbf24">&#9733;</span> ${esc(nice(r[1]))}`, { permanent: true, direction: westOfAnother ? "left" : "right", offset: westOfAnother ? [-10, -15] : [10, -15], className: "mx-tip" });
+        m.bindTooltip(`<span style="color:#fbbf24">&#9733;</span> ${esc(nice(r[1]))}`, { permanent: true, direction: westOfAnother ? "left" : "right", offset: westOfAnother ? [-10 - nudge, -15] : [10 - nudge, -15], className: "mx-tip" });
       }
       const photo = photoOf(r);
       const ov = extra.overrides[r[7]] || {};
