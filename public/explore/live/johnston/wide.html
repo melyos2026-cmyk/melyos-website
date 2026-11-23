@@ -566,7 +566,7 @@ addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("she
 function zoomTo(nz,cx,cy){const W=document.getElementById("wrap"),r0=map.getBoundingClientRect();
  if(cx==null){const wr=W.getBoundingClientRect();cx=wr.left+wr.width/2;cy=Math.max(wr.top,0)+Math.min(wr.height,innerHeight)/2}
  const fx=(cx-r0.left)/r0.width,fy=(cy-r0.top)/r0.height;z=Math.min(4,Math.max(1,nz));map.style.width=Math.round(baseW()*z)+"px";
- const r1=map.getBoundingClientRect();W.scrollLeft+=r1.left+fx*r1.width-cx;window.scrollBy(0,r1.top+fy*r1.height-cy);render()}
+ const r1=map.getBoundingClientRect();W.scrollLeft+=r1.left+fx*r1.width-cx;window.scrollBy(0,r1.top+fy*r1.height-cy);render();sizeDsr()}
 function zoom(d){zoomTo(z+d)}
 // Nov 20 (per Mely): inside MelyOS Explore (iframe) the whole map fits the screen at first; zoom from there.
 // Embed layout only inside the MelyOS Explore page — the Claude artifact keeps the header with Edit / Download
@@ -578,7 +578,9 @@ function baseW(){const W=document.getElementById("wrap").clientWidth;
  // Nov 22 (per Mely — "like 21 Palms"): inside the Explore page the map fills the frame's height (scroll sideways)
  if(INFRAME)return Math.max(260,W,(innerHeight-top-4)*ratio);
  return Math.max(260,Math.min(W,(innerHeight-top-12)*ratio))}
-function fitNow(){map.style.width=Math.round(baseW()*z)+"px";render()}
+function fitNow(){map.style.width=Math.round(baseW()*z)+"px";render();sizeDsr()}
+// Nov 22 (per Mely): the search box above is as wide as the map under it (never wider than the page)
+function sizeDsr(){const d=document.getElementById("dsr"),W=document.getElementById("wrap");if(!d||!W||INFRAME)return;const w=Math.min(map.getBoundingClientRect().width,W.clientWidth);if(w>300)d.style.setProperty("max-width",Math.round(w)+"px","important")}
 if(INFRAME)document.documentElement.classList.add("embed");
 // Nov 22 (per Mely — "ready to use, like Sunset" + working zoom): on its own page the map opens filling the page width;
 // the − button zooms out to the whole park on one screen, + zooms in.
