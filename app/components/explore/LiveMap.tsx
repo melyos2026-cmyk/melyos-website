@@ -13,7 +13,7 @@ export default function LiveMap({ src, title, fixed, ratio }: { src: string; tit
   const last = useRef<{ arrive?: string; depart?: string } | null>(null);
   useEffect(() => {
     const origin = new URL(src, window.location.href).origin;
-    const post = (d: any) => { try { frame.current?.contentWindow?.postMessage({ type: "melyos-dates", arrive: d?.arrive || "", depart: d?.depart || "", length: String(d?.length || "").slice(0, 6), power: String(d?.power || "").slice(0, 12), rental: !!d?.rental, driverSlideOuts: String(d?.driverSlideOuts || "").slice(0, 2), passengerSlideOuts: String(d?.passengerSlideOuts || "").slice(0, 2) }, origin); } catch {} };
+    const post = (d: any) => { try { frame.current?.contentWindow?.postMessage({ type: "melyos-dates", arrive: d?.arrive || "", depart: d?.depart || "", length: String(d?.length || "").slice(0, 6), power: String(d?.power || "").slice(0, 12), rental: !!d?.rental, driverSlideOuts: String(d?.driverSlideOuts || "").slice(0, 2), passengerSlideOuts: String(d?.passengerSlideOuts || "").slice(0, 2), plan: d?.plan === "s" ? "s" : "" }, origin); } catch {} };
     const on = (e: MessageEvent) => {
       if (e.origin !== origin) return;
       if (e.data?.type === "aloha-map-height" && typeof e.data.height === "number") setH(Math.max(420, Math.min(4000, e.data.height)));

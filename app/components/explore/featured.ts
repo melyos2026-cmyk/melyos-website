@@ -47,3 +47,8 @@ export const DEMO_APPLY: Record<string, string> = { "x-21-palms": "https://demo.
 
 // Nov 22 (per Mely): width ÷ height of a demo park map, so a wide map fills the page like the Florida map.
 export const DEMO_RATIO: Record<string, number> = { "w1551804176": 2840 / 2216 };
+
+// Nov 22 (per Mely): extras on a demo's "Book your site" — RV storage tab (connected to the map) and online towing.
+export const DEMO_EXTRAS: Record<string, { storage?: boolean; towUrl?: string; towLabel?: string }> = {
+  "w1551804176": { storage: true, towUrl: "/explore/live/johnston/tow.html", towLabel: "tow to Cypress Cove" },
+};

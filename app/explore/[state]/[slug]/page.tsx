@@ -7,7 +7,7 @@ import SiteFooter from "../../../components/site/Footer";
 import AccountPill from "../../../components/explore/AccountPill";
 import { FavoriteButton, Fuel, RequestForm, Reviews } from "../../../components/explore/ListingActions";
 import { STATES, KIND } from "../../../components/explore/states";
-import { isFeatured, FEATURED_MAP, DEMO_MAP, DEMO_RATIO, DEMO_APPLY } from "../../../components/explore/featured";
+import { isFeatured, FEATURED_MAP, DEMO_MAP, DEMO_RATIO, DEMO_EXTRAS, DEMO_APPLY } from "../../../components/explore/featured";
 import LiveMap from "../../../components/explore/LiveMap";
 import SpotMap from "../../../components/explore/SpotMap";
 import { exploreApi, findListing, keyFromSlug, listingPath, nice } from "../../../lib/explore";
@@ -100,7 +100,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
               <div className={`rounded-3xl border-2 border-[#08B8D8] bg-white p-5 shadow-sm ${demoMap ? "md:w-full md:overflow-y-auto" : "md:sticky md:top-24"}`}>
                 <h2 className="text-2xl font-black">Book your {unit}</h2>
                 <p className="mb-3 mt-1 text-slate-600">Pick your dates and a {unit}, then book and pay online.</p>
-                <RequestForm {...L} stays={stays} live applyUrl={applyUrl} />
+                <RequestForm {...L} stays={stays} live applyUrl={applyUrl} {...(demoMap ? DEMO_EXTRAS[row[7]] || {} : {})} />
               </div>
             </aside>
           </div>

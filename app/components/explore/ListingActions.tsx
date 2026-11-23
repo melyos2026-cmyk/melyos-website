@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import { useBoater, post } from "./useBoater";
 
 // Nov 17 (per Mely): on every Explore listing — ♡ Save, Request a slip / site, reviews (read + write).
-type L = { state: string; listing_key: string; listing_name: string; kind: string; slip?: string; stays?: string[]; live?: boolean; applyUrl?: string };
+// Nov 22 (per Mely): storage = the park rents RV storage (a 3rd tab, connected to the map's storage lots);
+// towUrl/towLabel = an online towing request the park offers (shown as a card under the form).
+type L = { state: string; listing_key: string; listing_name: string; kind: string; slip?: string; stays?: string[]; live?: boolean; applyUrl?: string; storage?: boolean; towUrl?: string; towLabel?: string };
 const inp = "w-full rounded-xl border border-slate-300 px-3 py-2.5 text-[15px] outline-none focus:border-[#08B8D8]";
 const Stars = ({ n, size = "text-base" }: { n: number; size?: string }) => <span className={`${size} text-amber-500`} aria-label={`${n} of 5 stars`}>{"★★★★★".slice(0, Math.round(n))}<span className="text-slate-300">{"★★★★★".slice(Math.round(n))}</span></span>;
 
@@ -49,13 +51,14 @@ export function RequestForm(l: L) {
   const [picked, setPicked] = useState<{ lot: string; available: boolean | null; status: string; maxLen?: number | null } | null>(null);
   const [booked, setBooked] = useState("");
   // Nov 21 (per Mely): "Monthly / resident" = an application with a move-in date only (no leave date)
-  const [stay, setStay] = useState<"short" | "long">("short");
+  const [stay, setStay] = useState<"short" | "long" | "storage">("short");
+  const storageMode = !!l.live && !!l.storage && stay === "storage";
   const longMode = !!l.live && l.kind !== "m" && stay === "long";
   const applyHref = l.applyUrl ? `${l.applyUrl}${l.applyUrl.includes("?") ? "&" : "?"}${new URLSearchParams({ ...(f.arrive ? { move_in: f.arrive } : {}), ...(picked?.lot ? { lot: picked.lot } : {}) }).toString()}` : "";
   useEffect(() => {
     if (!l.live) return;
-    window.dispatchEvent(new CustomEvent("melyos-dates", { detail: { arrive: f.arrive || "", depart: f.depart || "", length: f.vessel?.length_ft || "", power: f.vessel?.power_amp || "", rental: f.vessel?.kind === "rental", driverSlideOuts: f.vessel?.slide_driver || "", passengerSlideOuts: f.vessel?.slide_passenger || "" } }));
-  }, [l.live, f.arrive, f.depart, f.vessel?.length_ft, f.vessel?.power_amp, f.vessel?.kind, f.vessel?.slide_driver, f.vessel?.slide_passenger]);
+    window.dispatchEvent(new CustomEvent("melyos-dates", { detail: { arrive: f.arrive || "", depart: f.depart || "", length: f.vessel?.length_ft || "", power: f.vessel?.power_amp || "", rental: f.vessel?.kind === "rental", driverSlideOuts: f.vessel?.slide_driver || "", passengerSlideOuts: f.vessel?.slide_passenger || "", plan: stay === "storage" && l.storage ? "s" : "" } }));
+  }, [l.live, stay, l.storage, f.arrive, f.depart, f.vessel?.length_ft, f.vessel?.power_amp, f.vessel?.kind, f.vessel?.slide_driver, f.vessel?.slide_passenger]);
   useEffect(() => {
     if (!l.live) return;
     const on = (e: Event) => {
@@ -87,8 +90,8 @@ export function RequestForm(l: L) {
   return (
     <form onSubmit={send} className="space-y-3">
       <input type="text" name="website_hp" className="hidden" tabIndex={-1} autoComplete="off" onChange={(e) => set("website_hp", e.target.value)} />
-      {l.live && l.kind !== "m" && <div className="grid grid-cols-2 gap-1.5 rounded-2xl bg-slate-100 p-1.5">
-        {([["short", "Short stay", "Book & pay now"], ["long", "Monthly / resident", "Apply online"]] as const).map(([k, t, d]) => (
+      {l.live && l.kind !== "m" && <div className={`grid ${l.storage ? "grid-cols-3" : "grid-cols-2"} gap-1.5 rounded-2xl bg-slate-100 p-1.5`}>
+        {([["short", "Short stay", "Book & pay now"], ["long", "Monthly / resident", "Apply online"], ...(l.storage ? [["storage", "RV storage", "Monthly"]] : [])] as ["short" | "long" | "storage", string, string][]).map(([k, t, d]) => (
           <button key={k} type="button" onClick={() => { setStay(k); if (k === "long") setF((x: any) => ({ ...x, depart: "" })); }}
             className={`rounded-xl px-2 py-2 text-center leading-tight transition ${stay === k ? "bg-white shadow-sm ring-1 ring-[#08B8D8]" : "text-slate-600 hover:bg-white/60"}`}>
             <span className="block text-sm font-black">{t}</span><span className="block text-xs text-slate-500">{d}</span></button>))}
@@ -96,8 +99,8 @@ export function RequestForm(l: L) {
       {longMode ? <label className="block text-sm font-bold">Move-in date<input type="date" className={inp} min={todayIso()} value={f.arrive || ""} onChange={(e) => set("arrive", e.target.value)} /></label>
       : <div className="grid grid-cols-2 gap-3">
         {/* Nov 21 (per Mely): no past dates — a past arrival made every site look taken. Leave is always after Arrive. */}
-        <label className="text-sm font-bold">Arrive<input type="date" className={inp} min={todayIso()} value={f.arrive || ""} onChange={(e) => { const v = e.target.value; setF((x: any) => ({ ...x, arrive: v, depart: x.depart && v && x.depart <= v ? addDayIso(v) : x.depart })); }} /></label>
-        <label className="text-sm font-bold">Leave<input type="date" className={inp} min={f.arrive ? addDayIso(f.arrive) : addDayIso(todayIso())} value={f.depart || ""} onChange={(e) => set("depart", e.target.value)} /></label>
+        <label className="text-sm font-bold">{storageMode ? "Start" : "Arrive"}<input type="date" className={inp} min={todayIso()} value={f.arrive || ""} onChange={(e) => { const v = e.target.value; setF((x: any) => ({ ...x, arrive: v, depart: x.depart && v && x.depart <= v ? addDayIso(v) : x.depart })); }} /></label>
+        <label className="text-sm font-bold">{storageMode ? "End" : "Leave"}<input type="date" className={inp} min={f.arrive ? addDayIso(f.arrive) : addDayIso(todayIso())} value={f.depart || ""} onChange={(e) => set("depart", e.target.value)} /></label>
       </div>}
       {longMode ? null : l.live && f.arrive && f.arrive < todayIso() ? <div className="rounded-xl bg-amber-50 px-3 py-2 text-sm font-bold text-amber-800">Arrival can&apos;t be before today — pick today or a later date.</div>
         : l.live && (f.arrive && f.depart && avail ? <div className={`rounded-xl px-3 py-2 text-sm font-bold ${avail.available ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-700"}`}>
@@ -167,7 +170,7 @@ export function RequestForm(l: L) {
         // (its real checkout). Stays longer than 15 nights go to the park's application instead.
         const nights = f.arrive && f.depart ? Math.round((Date.parse(f.depart) - Date.parse(f.arrive)) / 86400000) : 0;
         const len = Number(f.vessel?.length_ft) || 0, tooLong = !!(picked?.maxLen && len > picked.maxLen);
-        const long = nights > 15, ready = nights > 0 && !!picked && picked.available !== false && !tooLong;
+        const long = nights > 15 && !storageMode, ready = nights > 0 && !!picked && picked.available !== false && !tooLong;
         const go = () => { if (!ready || !picked) return; if (long && applyHref) { window.open(applyHref, "_blank", "noopener"); return; } setBooked(picked.lot); window.dispatchEvent(new CustomEvent("melyos-book", { detail: { lot: picked.lot, arrive: f.arrive, depart: f.depart, length: f.vessel?.length_ft || "", driverSlideOuts: f.vessel?.slide_driver || "", passengerSlideOuts: f.vessel?.slide_passenger || "" } })); };
         return <>
           {picked?.maxLen && <div className={`rounded-xl px-3 py-2 text-sm ${tooLong ? "border-2 border-rose-300 bg-rose-50 font-bold text-rose-700" : "bg-slate-50 text-slate-700"}`}>
@@ -188,6 +191,14 @@ export function RequestForm(l: L) {
         <button disabled={st.busy || (l.live && picked?.available === false)} className="w-full rounded-xl bg-[#08B8D8] px-6 py-3.5 text-lg font-black text-white transition hover:bg-[#079db9] disabled:opacity-60">{st.busy ? "Sending…" : slip ? `Request ${unit} ${slip}` : `Request a ${unit}`}</button>
         <p className="text-xs text-slate-500">Free. Your request goes to the property; they confirm availability and price with you.</p>
       </>}
+      {storageMode && <p className="rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-600">RV storage: pick the first and last day you need it — the map shows only the free storage spaces.</p>}
+      {l.live && l.towUrl && (
+        <a href={l.towUrl} target="_blank" rel="noopener" className="flex items-center gap-3 rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 to-cyan-50 p-3 no-underline transition hover:border-[#0e7490]">
+          <span className="text-2xl" aria-hidden>🚐</span>
+          <span className="min-w-0 flex-1"><span className="block text-sm font-black text-slate-900">Need a {l.towLabel || "tow"}?</span><span className="block text-xs text-slate-600">Request it online — upload your license, sign the release, the office sends you the rate.</span></span>
+          <span className="shrink-0 rounded-full bg-[#0e7490] px-3 py-1.5 text-xs font-black text-white">Request →</span>
+        </a>
+      )}
     </form>
   );
 }
