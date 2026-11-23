@@ -93,10 +93,11 @@ export default async function Page({ params, searchParams }: { params: Promise<{
             </div>
             <a href={liveMap} target="_blank" rel="noopener" className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-black">Open full screen ↗</a>
           </div>
-          <div className={`grid gap-5 ${demoMap ? "md:flex md:items-start md:justify-center" : "md:grid-cols-[1fr_340px] lg:grid-cols-[1fr_400px]"}`}>
+          <div className={`grid gap-5 ${demoMap ? "md:flex md:items-stretch md:justify-center" : "md:grid-cols-[1fr_340px] lg:grid-cols-[1fr_400px]"}`}>
             <LiveMap src={liveMap} fixed={!!demoMap} ratio={demoMap ? DEMO_RATIO[row[7]] : undefined} title={`${name} — live ${unit} map`} />
-            <aside id="request" className={`scroll-mt-24 ${demoMap ? "md:w-[340px] md:shrink-0 lg:w-[400px]" : ""}`}>
-              <div className="rounded-3xl border-2 border-[#08B8D8] bg-white p-5 shadow-sm md:sticky md:top-24">
+            <aside id="request" className={`scroll-mt-24 ${demoMap ? "md:flex md:w-[340px] md:shrink-0 lg:w-[400px]" : ""}`}>
+              {/* Nov 22 (per Mely): in demos the booking card is as tall as the map, top and bottom lined up */}
+              <div className={`rounded-3xl border-2 border-[#08B8D8] bg-white p-5 shadow-sm ${demoMap ? "md:w-full md:overflow-y-auto" : "md:sticky md:top-24"}`}>
                 <h2 className="text-2xl font-black">Book your {unit}</h2>
                 <p className="mb-3 mt-1 text-slate-600">Pick your dates and a {unit}, then book and pay online.</p>
                 <RequestForm {...L} stays={stays} live applyUrl={applyUrl} />
