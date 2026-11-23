@@ -56,7 +56,9 @@ const rv: Section[] = [
   {
     title: "Billing and services",
     fields: [
-      { id: "electric_billing", label: "How do you charge for electricity?", kind: "choice", options: ["Included in rent", "Meter readings each month", "Flat monthly fee", "Mixed"] },
+      { id: "electric_billing", label: "How do you charge for electricity?", kind: "choice", options: ["Included in rent", "Meter readings each month", "Meter readings: some kWh included, then a rate per kWh", "Flat monthly fee", "Mixed"] },
+      // Nov 22 (per Mely): the Aloha way — a number of kWh included in the rent, then a price per kWh above it.
+      { id: "electric_rate", label: "If you use meter readings: how many kWh are included, and what do you charge per kWh?", kind: "text", placeholder: "e.g. 100 kWh included, then $0.18 per kWh" },
       { id: "other_charges", label: "Other charges you bill", kind: "multi", options: ["Water / sewer", "Trash", "Laundry", "Storage", "Pets", "Extra vehicles", "Late fees", "Propane"] },
       { id: "propane", label: "Do you sell propane?", kind: "choice", options: yesNo },
       { id: "storage_lots", label: "Do you rent storage lots (boats, RVs, trailers)?", kind: "choice", options: yesNo },
