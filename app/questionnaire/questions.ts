@@ -152,6 +152,7 @@ const shared = (t: QType): Section[] => [
       { id: "fee_split", label: "Who should pay the 3.5% Online Service Fee?", kind: "choice", options: ["The customer pays all 3.5%", "Split it between the customer and us", "We pay all of it", "Not sure yet"] },
       { id: "fee_split_amount", label: "If you split it, how much should the customer pay?", kind: "text", placeholder: "Customer 2% · we pay 1.5%" },
       { id: "fee_today", label: "Do you charge a card fee today? How much?", kind: "text", placeholder: "2% on cards" },
+      { id: "office_payments", label: "In the office, how would you like to take payments?", kind: "choice", options: ["With MelyOS", "Keep our card machine (we record the payment in MelyOS)", "Both", "Not sure"] },
     ],
   },
   {
