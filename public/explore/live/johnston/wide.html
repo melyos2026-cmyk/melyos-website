@@ -749,7 +749,13 @@ addEventListener("storage",e=>{if(e.key=="johnstonhold"&&!editing){render();if(t
   setMax();if(long&&!a.value)a.value=iso(new Date());m.textContent="";if(long)GO();else{const t0=new Date();a.value=iso(t0);d.min=iso(new Date(t0.getFullYear(),t0.getMonth(),t0.getDate()+1));d.value=d.min;TONIGHT=true;GO()}};   // Nov 22 (per Mely): Nightly / weekly works like Long stay — with no dates picked it shows TONIGHT (today → tomorrow), so only what is really free tonight stays green   // Nov 22: switching back to nights clears the long-stay filter
  const setMax=()=>{const t0=new Date(),n=TY&&TY!="night"?LONG_AHEAD:SHORT_AHEAD;a.max=iso(new Date(t0.getFullYear(),t0.getMonth(),t0.getDate()+n));d.max=TY&&TY!="night"?"":iso(new Date(t0.getFullYear(),t0.getMonth(),t0.getDate()+n+30))};setMax();window.dsRules=()=>{setMax();if(TY)GO()};
  a.addEventListener("change",()=>{TONIGHT=false});d.addEventListener("change",()=>{TONIGHT=false});
- document.querySelectorAll("#dstype button").forEach(b=>b.onclick=()=>setTy(b.dataset.t));
+ document.querySelectorAll("#dstype button").forEach(b=>b.onclick=()=>{setTy(b.dataset.t);if(b.dataset.t=="s")setTimeout(showStorage,150)});
+ // Nov 23 (per Mely): RV storage → the page scrolls so the storage area (S lots) is in view
+ function showStorage(){try{const mp=document.getElementById("map"),w=document.getElementById("wrap"),r=mp.getBoundingClientRect();const ix=SH.map((_,i)=>i).filter(i=>sec(i)=="S");if(!ix.length)return;
+  let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;ix.forEach(i=>SH[i].forEach(([x,y])=>{x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y)}));
+  const cx=r.left+r.width*(x0+x1)/200,cy=r.top+r.height*(y0+y1)/200;
+  if(w&&w.scrollWidth>w.clientWidth)w.scrollTo({left:w.scrollLeft+cx-w.getBoundingClientRect().left-w.clientWidth/2,behavior:"smooth"});
+  scrollTo({top:scrollY+cy-innerHeight*0.55,behavior:"smooth"})}catch(e){}}
  const dIso=s=>{const p=s.split("-").map(Number);return new Date(p[0],p[1]-1,p[2])};
  // Nov 23 (per Mely): RV length — lots it doesn't fit fade out; longer than any site → red message (Aloha's wording)
  const li=document.getElementById("dsl2"),LN=()=>{const v=Math.round(+li.value)||0;return v>0&&v<100?v:0};
