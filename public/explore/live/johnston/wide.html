@@ -558,7 +558,7 @@ function genBook(){const A=new Date(2026,9,1),H=h=>h*36e5;BOOK=SH.map((_,i)=>{le
 const RES_OPEN={},MOVEOUT={};   // demo: these lots are open from today on (long stays possible)
 function stayOn(i,t){return (BOOK[i]||[]).some(([a,b])=>t>=+a+15*36e5&&t<+b+11*36e5)}
 const NA=new Set(["W-6B"]);
-const RENTU=new Set(["W-3"]);   // Nov 22 (per Mely): the park's Denali RV unit rental ($1,500/mo + electric) — demo lot   // Nov 22 (per Mely): open space next to W-6 — gray, not for booking
+const RENTU=new Set([]);   // Nov 22 (per Mely): the park's Denali RV unit rental ($1,500/mo + electric) — demo lot   // Nov 22 (per Mely): open space next to W-6 — gray, not for booking
 function liveST(){const t=Date.now();return SH.map((_,i)=>{if(NA.has(NUM[i]))return "na";if(RENTU.has(NUM[i]))return "rent";const c=CAT[i];if(c=="maint")return "maint";if(c=="rent")return "rent";
   const cur=blocks(i).find(([a,b])=>+today>=+a&&+today<+b);if(!cur)return "free";return (cur[1]-cur[0])>=28*DAY?"occ":"res"})}   // Nov 22 (per Mely): nightly/weekly guests = Reserved (yellow); month-to-month / seasonal / annual residents = Occupied (red)   // Nov 22 (per Mely): status = TONIGHT. Green while tonight is still free (even if a guest arrives tomorrow); orange only on the arrival day before 3 PM check-in; red from check-in (3 PM) until check-out (11 AM)
 function blocks(i){const out=(BOOK[i]||[]).filter(([a,b])=>+b>+today-DAY).map(([a,b])=>[a,b]);
