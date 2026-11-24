@@ -778,9 +778,10 @@ addEventListener("message",e=>{const m=e.data||{};if(m.type!=="melyos-pick")retu
 const STAFF=/[?&]staff=1\b/.test(location.search);
 if(!STAFF){
  T.en.free="Open";T.es.free="Abierto";T.en.res="Full tonight";T.es.res="Lleno esta noche";
- const wipe=()=>{try{if(!SH||!SH.length||!BOOK)return;SH.forEach((_,i)=>{if(clsOf(i)){BOOK[i]=[];delete RES_OPEN[i];delete MOVEOUT[i]}})}catch(e){}};wipe();setTimeout(wipe,1500);
+ const wipe=()=>{try{if(!SH||!SH.length||!BOOK)return;const BL=window.__brain.lots||{};SH.forEach((_,i)=>{if(!clsOf(i))return;delete MOVEOUT[i];if(BL[NUM[i]]=="occ"){BOOK[i]=[[new Date(+today-30*DAY),new Date(+today+700*DAY)]];RES_OPEN[i]=true}else{BOOK[i]=[];delete RES_OPEN[i]}})}catch(e){}};wipe();setTimeout(wipe,1500);
  const __bb=brainBlocks;brainBlocks=function(B){__bb(B);wipe()};
- const __ls2=liveST;liveST=function(){const base=__ls2(),B=window.__brain.free;if(!Array.isArray(base))return base;return base.map((v,i)=>{const c=clsOf(i);if(!c||v=="na"||v=="rent"||v=="maint")return v;if(!B)return "free";return ((B.c[c]||[])[0]||0)>0?"free":"res"})};
+ const __ls2=liveST;liveST=function(){const base=__ls2(),B=window.__brain.free;if(!Array.isArray(base))return base;return base.map((v,i)=>{const c=clsOf(i);if(!c||v=="na"||v=="rent"||v=="maint")return v;const BL=window.__brain.lots;if(BL&&BL[NUM[i]]=="occ")return "occ";   // residents and monthly guests stay red
+ if(!B)return "free";return ((B.c[c]||[])[0]||0)>0?"free":"res"})};
  const css=document.createElement("style");css.textContent=`#bar{display:none!important}#clsbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 12px;font:600 13.5px Inter,system-ui,sans-serif;color:#0f2540}#clsbar .cb{border:1px solid #e2e8f0;border-radius:999px;padding:6px 12px;background:#fff;white-space:nowrap}#clsbar .cb b{margin-left:4px}#clsbar .cb.full{color:#991b1b;background:#fef2f2;border-color:#fecaca}#clsbar .cb.ok{color:#065f46;background:#ecfdf5;border-color:#a7f3d0}#clsbar small{color:#64748b;font-weight:500}`;document.head.appendChild(css);
  const upd=()=>{const B=window.__brain.free,bar=document.getElementById("bar");if(!bar)return;let el=document.getElementById("clsbar");if(!el){el=document.createElement("div");el.id="clsbar";bar.parentNode.insertBefore(el,bar.nextSibling)}
   const es=L=="es";if(!B){el.innerHTML=`<small>${es?"Cargando disponibilidad…":"Loading availability…"}</small>`;return}
