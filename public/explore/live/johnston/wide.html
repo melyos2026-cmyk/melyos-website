@@ -710,7 +710,7 @@ const bIso=x=>`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${St
 function brainLoad(){fetch(BRAIN+"/availability?park="+BPARK+"&days=400").then(r=>r.json()).then(j=>{if(!j||!j.classes)return;window.__brain.free={start:new Date(j.start+"T00:00:00"),c:j.classes};window.__brain.lots=j.lots||null;window.__brain.rates=j.rates||null;window.__brain.rules=j.rules||null;if(j.blocks)brainBlocks(j.blocks);try{ST=liveST();render()}catch(e){}}).catch(()=>{})}
 // Nov 24 (per Mely): each lot's REAL reservations replace the sample ones (popup dates + calendar)
 function brainBlocks(B){const D=x=>new Date(x+"T00:00:00");SH.forEach((_,i)=>{const L=B[NUM[i]]||[];delete RES_OPEN[i];delete MOVEOUT[i];
- BOOK[i]=L.map(([a,b,k])=>{if(k=="resident"){RES_OPEN[i]=true;return [new Date(+today-30*DAY),new Date(+today+700*DAY)]}if(k=="moveout"){MOVEOUT[i]=D(b);return [new Date(+today-30*DAY),D(b)]}const A=D(a),Z=D(b);return k=="occ"&&Z-A<28*DAY?[new Date(+A-28*DAY),Z]:[A,Z]}).sort((x,y)=>x[0]-y[0])})}
+ BOOK[i]=L.map(([a,b,k])=>{if(k=="guest")return [new Date(+today-30*DAY),b?D(b):new Date(+today+365*DAY)];if(k=="resident"){RES_OPEN[i]=true;return [new Date(+today-30*DAY),new Date(+today+700*DAY)]}if(k=="moveout"){MOVEOUT[i]=D(b);return [new Date(+today-30*DAY),D(b)]}const A=D(a),Z=D(b);return k=="occ"&&Z-A<28*DAY?[new Date(+A-28*DAY),Z]:[A,Z]}).sort((x,y)=>x[0]-y[0])})}
 // Nov 24 (per Mely): we sell CLASSES, not lots. Every site card says which class it is, how many of that class are
 // open tonight, and that the system picks the exact site (number on arrival day). An occupied site still lets the
 // guest book its class. The search counts open sites per class (not every green lot).
@@ -778,10 +778,10 @@ addEventListener("message",e=>{const m=e.data||{};if(m.type!=="melyos-pick")retu
 // map with ?staff=1 and keeps the lot-by-lot view (who is where, until when).
 const STAFF=/[?&]staff=1\b/.test(location.search);
 if(!STAFF){
- T.en.free="Open tonight";T.es.free="Abierto esta noche";T.en.occ="Taken tonight";T.es.occ="Ocupado esta noche";
+ T.en.free="Open tonight";T.es.free="Abierto esta noche";
  const wipe=()=>{try{if(!SH||!SH.length||!BOOK)return;const BL=window.__brain.lots||{};SH.forEach((_,i)=>{if(!clsOf(i))return;delete MOVEOUT[i];if(BL[NUM[i]]=="occ"){BOOK[i]=[[new Date(+today-30*DAY),new Date(+today+700*DAY)]];RES_OPEN[i]=true}else{BOOK[i]=[];delete RES_OPEN[i]}})}catch(e){}};wipe();setTimeout(wipe,1500);
  const __bb=brainBlocks;brainBlocks=function(B){__bb(B);wipe()};
- const __ls2=liveST;liveST=function(){const base=__ls2(),B=window.__brain.free;if(!Array.isArray(base))return base;return base.map((v,i)=>{const c=clsOf(i);if(!c||v=="na"||v=="rent"||v=="maint")return v;const BL=window.__brain.lots;if(BL&&(BL[NUM[i]]=="occ"||BL[NUM[i]]=="res"))return "occ";   // taken tonight (resident, monthly or a guest) = red, no dates shown
+ const __ls2=liveST;liveST=function(){const base=__ls2(),B=window.__brain.free;if(!Array.isArray(base))return base;return base.map((v,i)=>{const c=clsOf(i);if(!c||v=="na"||v=="rent"||v=="maint")return v;const BL=window.__brain.lots;if(BL&&BL[NUM[i]]=="occ")return "occ";if(BL&&BL[NUM[i]]=="res")return "res";   // resident = red, guest = orange (reserved); no dates or names shown
  if(BL&&BL[NUM[i]]=="free")return "free";if(!B)return "free";return ((B.c[c]||[])[0]||0)>0?"free":"occ"})};
  const css=document.createElement("style");css.textContent=`#bar{display:none!important}#clsbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 12px;font:600 13.5px Inter,system-ui,sans-serif;color:#0f2540}#clsbar .cb{border:1px solid #e2e8f0;border-radius:999px;padding:6px 12px;background:#fff;white-space:nowrap}#clsbar .cb b{margin-left:4px}#clsbar .cb.full{color:#991b1b;background:#fef2f2;border-color:#fecaca}#clsbar .cb.ok{color:#065f46;background:#ecfdf5;border-color:#a7f3d0}#clsbar small{color:#64748b;font-weight:500}`;document.head.appendChild(css);
  const upd=()=>{const B=window.__brain.free,bar=document.getElementById("bar");if(!bar)return;let el=document.getElementById("clsbar");if(!el){el=document.createElement("div");el.id="clsbar";bar.parentNode.insertBefore(el,bar.nextSibling)}
