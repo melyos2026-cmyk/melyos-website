@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><script>/* Nov 22 (per Mely): opened on its own, this link starts on the Florida map (Explore) where Johnston shows as a MelyOS partner; ?map=1 opens the map itself (Explore's "Open full screen", the application's links). Inside Explore's frame it is the map. */(function(){try{if(window.top===window.self&&!/[?&](map|edit)=1\b/.test(location.search)){location.replace("/explore/fl?demo=w1551804176");return}}catch(e){}})();(function(){function pick(){var w=innerWidth,h=innerHeight,wantWide=w>=820&&w>h;var isWide=false;if(wantWide!==isWide){var u=location.pathname.replace(/[^/]*$/,wantWide?"wide.html":"index.html")+location.search+location.hash;location.replace(u)}}pick();var t;addEventListener("resize",function(){clearTimeout(t);t=setTimeout(pick,350)})})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<html lang="en"><head><script>/* Nov 22 (per Mely): opened on its own, this link starts on the Florida map (Explore) where Johnston shows as a MelyOS partner; ?map=1 opens the map itself (Explore's "Open full screen", the application's links). Inside Explore's frame it is the map. */(function(){try{if(window.top===window.self&&!/[?&](map|edit)=1\b|[?&]site=/.test(location.search)){location.replace("/explore/fl?demo=w1551804176");return}}catch(e){}})();(function(){function pick(){var w=innerWidth,h=innerHeight,wantWide=w>=820&&w>h;var isWide=false;if(wantWide!==isWide){var u=location.pathname.replace(/[^/]*$/,wantWide?"wide.html":"index.html")+location.search+location.hash;location.replace(u)}}pick();var t;addEventListener("resize",function(){clearTimeout(t);t=setTimeout(pick,350)})})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Johnston Springs RV Campground — Live Site Map · Book Online</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -680,6 +680,34 @@ function brainLoad(){fetch(BRAIN+"/availability?park="+BPARK+"&days=400").then(r
 function brainBlocks(B){const D=x=>new Date(x+"T00:00:00");SH.forEach((_,i)=>{const L=B[NUM[i]]||[];delete RES_OPEN[i];delete MOVEOUT[i];
  BOOK[i]=L.map(([a,b,k])=>{if(k=="resident"){RES_OPEN[i]=true;return [new Date(+today-30*DAY),new Date(+today+700*DAY)]}if(k=="moveout"){MOVEOUT[i]=D(b);return [new Date(+today-30*DAY),D(b)]}const A=D(a),Z=D(b);return k=="occ"&&Z-A<28*DAY?[new Date(+A-28*DAY),Z]:[A,Z]}).sort((x,y)=>x[0]-y[0])})}
 brainLoad();setInterval(brainLoad,120000);   // the park's real colors, refreshed every 2 minutes
+// Nov 24 (per Mely): "Your site" map. The text with the site number links here (?site=N-24&n=Ana): their site
+// blinks, a pin says "Your site", the map zooms to it and a welcome bar sits on top. Booking search is hidden.
+(function mySite(){const q=new URLSearchParams(location.search),want=(q.get("site")||"").toUpperCase().replace(/\s/g,"");if(!want)return;
+ if(typeof NUM==="undefined"||!NUM||!SH||!SH.length){setTimeout(mySite,200);return}
+ const MY=NUM.findIndex(x=>String(x).toUpperCase().replace(/\s/g,"")==want);if(MY<0)return;
+ const nm=(q.get("n")||"").replace(/[^A-Za-zÀ-ÿ' -]/g,"").slice(0,20),es=L=="es";HINTDONE=true;document.body.classList.add("mysite");
+ const css=document.createElement("style");css.textContent=`body.mysite #dsr,body.mysite #hand,body.mysite #handtip{display:none!important} body.mysite svg polygon:not(.mylot){opacity:.6}
+ .mylot{fill:#22c55e;stroke:#fff;stroke-width:3px;vector-effect:non-scaling-stroke;pointer-events:none;animation:mylot 1s ease-in-out infinite}
+ @keyframes mylot{0%,100%{fill:#22c55e;fill-opacity:1;stroke:#fff}50%{fill:#facc15;fill-opacity:.55;stroke:#111827}}
+ .myring{position:absolute;width:16px;height:16px;border:3px solid #facc15;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;animation:myring 1.8s ease-out infinite}
+ @keyframes myring{from{width:16px;height:16px;opacity:1}to{width:110px;height:110px;opacity:0}}
+ .mypin{position:absolute;pointer-events:none;background:#111827;color:#fff;font:800 13px/1 system-ui,sans-serif;padding:7px 11px;border-radius:10px;white-space:nowrap;box-shadow:0 6px 16px rgba(0,0,0,.35);animation:mypin 1.2s ease-in-out infinite;z-index:5}
+ .mypin:after{content:"";position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);border:6px solid transparent;border-top-color:#111827;border-bottom:0}
+ @keyframes mypin{0%,100%{transform:translate(-50%,-150%)}50%{transform:translate(-50%,-175%)}}
+ #mybar{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:80;background:#1f4431;color:#fff;border-radius:16px;padding:12px 18px 12px 18px;font:600 14px/1.35 system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.3);width:max-content;max-width:92vw;text-align:center}
+ #mybar b{font-size:22px;letter-spacing:.5px} #mybar small{display:block;opacity:.85;font-weight:500;margin-top:2px}
+ #mybar button{margin-top:8px;background:#fff;color:#1f4431;border:0;border-radius:999px;padding:6px 14px;font:700 13px system-ui,sans-serif;cursor:pointer}`;
+ document.head.appendChild(css);
+ const bar=document.createElement("div");bar.id="mybar";
+ bar.innerHTML=`${nm?(es?`¡Bienvenido, ${nm}! `:`Welcome, ${nm}! `):""}${es?"Su sitio es":"Your site is"} <b>${NUM[MY]}</b><small>${es?"Está parpadeando en el mapa. El código del portón está en su mensaje.":"It's blinking on the map. Your gate code is in your text."}</small><button id="myfind">${es?"📍 Mostrar mi sitio":"📍 Show my site"}</button>`;
+ document.body.appendChild(bar);
+ const __r=render;render=function(){__r.apply(this,arguments);try{const pg=document.createElementNS("http://www.w3.org/2000/svg","polygon");pg.setAttribute("points",SH[MY].map(p=>p.join(",")).join(" "));pg.setAttribute("class","mylot");svg.appendChild(pg);
+  const c=cen(SH[MY]);[0,.9].forEach(d=>{const r=document.createElement("span");r.className="myring";r.style.left=c[0]+"%";r.style.top=c[1]+"%";r.style.animationDelay=d+"s";over.appendChild(r)});
+  const p=document.createElement("span");p.className="mypin";p.style.left=c[0]+"%";p.style.top=c[1]+"%";p.textContent=(es?"📍 Su sitio ":"📍 Your site ")+NUM[MY];over.appendChild(p)}catch(e){}};
+ function center(){try{const W=document.getElementById("wrap");let c=cen(SH[MY]),r=map.getBoundingClientRect();zoomTo(Math.max(z,innerWidth<700?2.6:1.8),r.left+c[0]/100*r.width,r.top+c[1]/100*r.height);
+  r=map.getBoundingClientRect();const x=r.left+c[0]/100*r.width,y=r.top+c[1]/100*r.height,wr=W.getBoundingClientRect();W.scrollLeft+=x-(wr.left+wr.width/2);window.scrollBy({top:y-innerHeight/2,behavior:"smooth"})}catch(e){}}
+ document.getElementById("myfind").onclick=center;
+ setTimeout(()=>{render();center()},700)})();
 // tonight's REAL color of each lot (red = resident or monthly, yellow = nightly/weekly guest, green = open, maintenance)
 const __lst=liveST;
 liveST=function(){const base=__lst(),B=window.__brain.lots;if(!B)return base;return base.map((v,i)=>{if(v=="na"||v=="rent")return v;const r=B[NUM[i]];return r?r:v})};
