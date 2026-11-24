@@ -242,7 +242,7 @@ async function bookBrain(ov,i,n,tot,c,opt){const es=L=="es",fmt=d=>d.toLocaleDat
   <div class="pd2" style="background:#ecfdf5;color:#065f46;border-radius:10px;padding:8px 10px">${es?"Esta reserva ya aparece en el Site Planner del parque.":"This booking now shows in the park's Site Planner."}${r.demo?(es?" (Demo: no se cobró nada.)":" (Demo: nothing was charged.)"):""}</div>
   <button class="cta" id="pdn">${es?"Listo":"Done"}</button>`;
  ov.querySelector("#pdn").onclick=()=>{ov.remove();document.getElementById("x").click()};tell({type:"melyos-paid",lot:NUM[i],cls:r.cls});
- fetch(BRAIN+"/availability?park="+BPARK+"&days=400").then(x=>x.json()).then(j=>{if(j&&j.classes){window.__brain.free={start:new Date(j.start+"T00:00:00"),c:j.classes};try{render()}catch(e){}}}).catch(()=>{})}
+ brainLoad()}
 function lenMax(i){const c=sec(i);if(c=="T")return null;if(LOTMAX[NUM[i]])return +LOTMAX[NUM[i]];return c=="S"?LENR.sto:c=="N"?LENR.nMax:LENR.std}
 function lenMin(i){return sec(i)=="N"&&!LENR.small?LENR.nMin:0}
 function fitsLen(i,L){if(!L)return true;const mx=lenMax(i);return mx!=null&&L<=mx&&L>=lenMin(i)}
@@ -675,7 +675,11 @@ window.__brain={free:null};
 function clsOf(i){const c=sec(i);return c=="N"?"premium":c=="W"?"lakeside":(c=="A"||c=="B"||c=="C"||c=="O")?"standard":null}
 const CLSNAME={standard:["Standard","Estándar"],premium:["Premium","Premium"],lakeside:["Lakeside","Frente al lago"]};
 const bIso=x=>`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
-fetch(BRAIN+"/availability?park="+BPARK+"&days=400").then(r=>r.json()).then(j=>{if(!j||!j.classes)return;window.__brain.free={start:new Date(j.start+"T00:00:00"),c:j.classes};try{render()}catch(e){}}).catch(()=>{});
+function brainLoad(){fetch(BRAIN+"/availability?park="+BPARK+"&days=400").then(r=>r.json()).then(j=>{if(!j||!j.classes)return;window.__brain.free={start:new Date(j.start+"T00:00:00"),c:j.classes};window.__brain.lots=j.lots||null;try{ST=liveST();render()}catch(e){}}).catch(()=>{})}
+brainLoad();setInterval(brainLoad,120000);   // the park's real colors, refreshed every 2 minutes
+// tonight's REAL color of each lot (red = resident or monthly, yellow = nightly/weekly guest, green = open, maintenance)
+const __lst=liveST;
+liveST=function(){const base=__lst(),B=window.__brain.lots;if(!B)return base;return base.map((v,i)=>{if(v=="na"||v=="rent")return v;const r=B[NUM[i]];return r?r:v})};
 const __ib=isBlocked;
 isBlocked=function(i,d){const B=window.__brain.free,c=clsOf(i);if(!B||!c||ST[i]=="na"||ST[i]=="maint"||ST[i]=="rent")return __ib(i,d);if(d<today)return true;const k=Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-B.start)/DAY);const a=B.c[c]||[];if(k<0)return true;if(k>=a.length)return __ib(i,d);return !(a[k]>0)};
 async function brainPost(path,body){const r=await fetch(BRAIN+"/"+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.assign({park:BPARK},body))});return r.json().then(j=>Object.assign({httpOk:r.ok},j)).catch(()=>({httpOk:false,error:"Could not reach the park."}))}
