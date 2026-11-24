@@ -694,12 +694,12 @@ brainLoad();setInterval(brainLoad,120000);   // the park's real colors, refreshe
  .mypin{position:absolute;pointer-events:none;background:#111827;color:#fff;font:800 13px/1 system-ui,sans-serif;padding:7px 11px;border-radius:10px;white-space:nowrap;box-shadow:0 6px 16px rgba(0,0,0,.35);animation:mypin 1.2s ease-in-out infinite;z-index:5}
  .mypin:after{content:"";position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);border:6px solid transparent;border-top-color:#111827;border-bottom:0}
  @keyframes mypin{0%,100%{transform:translate(-50%,-150%)}50%{transform:translate(-50%,-175%)}}
- #mybar{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:80;background:#1f4431;color:#fff;border-radius:16px;padding:12px 18px 12px 18px;font:600 14px/1.35 system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.3);width:max-content;max-width:92vw;text-align:center}
+ #mybar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:80;background:#1f4431;color:#fff;border-radius:16px;padding:12px 18px;font:600 14px/1.35 system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.3);width:max-content;max-width:92vw;text-align:center;transition:all .35s} #mybar.mini{padding:8px 14px;border-radius:999px;cursor:pointer} #mybar.mini small,#mybar.mini .mywel,#mybar.mini button{display:none} #mybar.mini b{font-size:15px}
  #mybar b{font-size:22px;letter-spacing:.5px} #mybar small{display:block;opacity:.85;font-weight:500;margin-top:2px}
  #mybar button{margin-top:8px;background:#fff;color:#1f4431;border:0;border-radius:999px;padding:6px 14px;font:700 13px system-ui,sans-serif;cursor:pointer}`;
  document.head.appendChild(css);
  const bar=document.createElement("div");bar.id="mybar";
- bar.innerHTML=`${nm?(es?`¡Bienvenido, ${nm}! `:`Welcome, ${nm}! `):""}${es?"Su sitio es":"Your site is"} <b>${NUM[MY]}</b><small>${es?"Está parpadeando en el mapa. El código del portón está en su mensaje.":"It's blinking on the map. Your gate code is in your text."}</small><button id="myfind">${es?"📍 Mostrar mi sitio":"📍 Show my site"}</button>`;
+ bar.innerHTML=`<span class="mywel">${nm?(es?`¡Bienvenido, ${nm}! `:`Welcome, ${nm}! `):""}${es?"Su sitio es":"Your site is"} </span><b>📍 ${NUM[MY]}</b><small>${es?"Está parpadeando en el mapa. El código del portón está en su mensaje.":"It's blinking on the map. Your gate code is in your text."}</small><button id="myfind">${es?"📍 Mostrar mi sitio":"📍 Show my site"}</button>`;
  document.body.appendChild(bar);
  const __r=render;render=function(){__r.apply(this,arguments);try{const pg=document.createElementNS("http://www.w3.org/2000/svg","polygon");pg.setAttribute("points",SH[MY].map(p=>p.join(",")).join(" "));pg.setAttribute("class","mylot");svg.appendChild(pg);
   const c=cen(SH[MY]);[0,.9].forEach(d=>{const r=document.createElement("span");r.className="myring";r.style.left=c[0]+"%";r.style.top=c[1]+"%";r.style.animationDelay=d+"s";over.appendChild(r)});
@@ -707,7 +707,8 @@ brainLoad();setInterval(brainLoad,120000);   // the park's real colors, refreshe
  function center(){try{const W=document.getElementById("wrap");let c=cen(SH[MY]),r=map.getBoundingClientRect();zoomTo(Math.max(z,innerWidth<700?2.6:1.8),r.left+c[0]/100*r.width,r.top+c[1]/100*r.height);
   r=map.getBoundingClientRect();const x=r.left+c[0]/100*r.width,y=r.top+c[1]/100*r.height,wr=W.getBoundingClientRect();W.scrollLeft+=x-(wr.left+wr.width/2);window.scrollBy({top:y-innerHeight/2,behavior:"smooth"})}catch(e){}}
  document.getElementById("myfind").onclick=center;
- setTimeout(()=>{render();center()},700)})();
+ bar.addEventListener("click",()=>{if(bar.classList.contains("mini"))center()});
+ setTimeout(()=>{render();center()},700);setTimeout(()=>bar.classList.add("mini"),6000)})();
 // tonight's REAL color of each lot (red = resident or monthly, yellow = nightly/weekly guest, green = open, maintenance)
 const __lst=liveST;
 liveST=function(){const base=__lst(),B=window.__brain.lots;if(!B)return base;return base.map((v,i)=>{if(v=="na"||v=="rent")return v;const r=B[NUM[i]];return r?r:v})};
