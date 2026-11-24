@@ -205,9 +205,9 @@ function payDemo(i,n,tot){const es=L=="es",ov=document.createElement("div");ov.i
  ov.innerHTML=`<div class="pv2"><div class="ph2"><b>MelyOS</b><span>🔒 ${es?"Pago seguro":"Secure checkout"}</span></div>
  <div class="pt2">Johnston Springs RV Campground · ${clsOf(i)?`${es?"Sitio":""} ${CLSNAME[clsOf(i)][es?1:0]}${es?"":" site"}`:`${es?"Lote":"Lot"} ${NUM[i]}`}<br><small>${fmt(arr)} → ${fmt(dep)} · ${n} ${es?(n>1?"noches":"noche"):(n>1?"nights":"night")}</small>${clsOf(i)?`<br><small>${es?"Su número de sitio y el código del portón le llegan el día de llegada.":"Your site number and gate code are sent on arrival day."}</small>`:""}</div>
  <div class="pa2">$${tot}</div>
- <label>${es?"Nombre":"Name"}<input id="bkname" placeholder="${es?"Nombre y apellido":"First and last name"}"></label>
- <label>Email<input id="bkmail" value="guest@example.com"></label>
- <label>${es?"Celular (para su número de sitio y avisos)":"Mobile (for your site number and arrival texts)"}<input id="bkphone" value="(407) 555-0123"></label>
+ <label>${es?"Nombre":"Name"}<input id="bkname" value="${(TRAV.name||"").replace(/"/g,"")}" placeholder="${es?"Nombre y apellido":"First and last name"}"></label>
+ <label>Email<input id="bkmail" value="${(TRAV.email||"guest@example.com").replace(/"/g,"")}"></label>
+ <label>${es?"Celular (para su número de sitio y avisos)":"Mobile (for your site number and arrival texts)"}<input id="bkphone" value="${(TRAV.phone||"(407) 555-0123").replace(/"/g,"")}"></label>
  <label style="display:flex;gap:8px;align-items:flex-start;font-size:11.5px;line-height:1.35;color:#475569;font-weight:400"><input id="bksms" type="checkbox" style="width:auto;margin-top:2px"> <span>${es?"Acepto recibir mensajes de texto de Johnston Springs RV Campground sobre mi reserva, como la hora de llegada, mi número de lote y avisos. La frecuencia varía. Pueden aplicar cargos de mensajes y datos. Responda STOP para cancelar, HELP para ayuda. No es requisito para reservar.":"I agree to receive text messages from Johnston Springs RV Campground about my reservation, such as my arrival time, lot number and notices. Message frequency varies. Message and data rates may apply. Reply STOP to opt out, HELP for help. Consent is not a condition of booking."}</span></label>
  <label>${es?"Tarjeta":"Card"}<input value="4242 4242 4242 4242" readonly></label>
  <div class="pr2"><label>${es?"Vence":"Expires"}<input value="12 / 30" readonly></label><label>CVC<input value="123" readonly></label></div>
@@ -218,7 +218,7 @@ function payDemo(i,n,tot){const es=L=="es",ov=document.createElement("div");ov.i
   setTimeout(()=>{const code="JS-"+String(Date.now()).slice(-6);
    ov.querySelector(".pv2").innerHTML=`<div class="ok2">✓</div><h3>${es?"¡Reservación confirmada!":"Booking confirmed!"}</h3>
    <div class="pt2">Johnston Springs RV Campground · ${es?"Lote":"Lot"} ${NUM[i]}<br><small>${fmt(arr)} → ${fmt(dep)} · ${n} ${es?(n>1?"noches":"noche"):(n>1?"nights":"night")}</small></div>
-   <div class="pa2">$${tot} ${es?"pagado":"paid"}</div>${window.__gsPaid?`<div class="pd2" style="background:#ecfdf5;color:#065f46;border-radius:10px;padding:8px 10px;margin-bottom:8px">Good Sam #${window.__gsPaid.num} · −$${window.__gsPaid.off.toFixed(2)} ${es?"aplicado":"applied"}<br><small>${es?"El parque verifica su membresía antes de su llegada.":"The park verifies your membership before you arrive."}</small></div>`:""}<div class="pd2">${es?"Confirmación":"Confirmation"} <b>${code}</b><br>${es?"El recibo y las instrucciones de llegada se envían por email al huésped. El lote queda reservado en el mapa del parque.":"The receipt and check-in details are emailed to the guest. The lot is now booked on the park's map."}</div>
+   <div class="pa2">$${tot} ${es?"pagado":"paid"}</div><a href="https://admin.melyos.io/trips?email=${encodeURIComponent(mail)}" target="_top" style="display:block;margin-top:10px;font-size:13px;color:#1f4431;font-weight:700">${es?"Cree su cuenta gratis de MelyOS Travel para ver sus viajes y reservar otra vez →":"Create your free MelyOS Travel account to see your trips and book again →"}</a>${window.__gsPaid?`<div class="pd2" style="background:#ecfdf5;color:#065f46;border-radius:10px;padding:8px 10px;margin-bottom:8px">Good Sam #${window.__gsPaid.num} · −$${window.__gsPaid.off.toFixed(2)} ${es?"aplicado":"applied"}<br><small>${es?"El parque verifica su membresía antes de su llegada.":"The park verifies your membership before you arrive."}</small></div>`:""}<div class="pd2">${es?"Confirmación":"Confirmation"} <b>${code}</b><br>${es?"El recibo y las instrucciones de llegada se envían por email al huésped. El lote queda reservado en el mapa del parque.":"The receipt and check-in details are emailed to the guest. The lot is now booked on the park's map."}</div>
    <button class="cta" id="pdn">${es?"Listo":"Done"}</button>`;
    ov.querySelector("#pdn").onclick=()=>{ov.remove();document.getElementById("x").click()};tell({type:"melyos-paid",lot:NUM[i]})},1400)}}
 // Nov 20 (per Mely): a lot under maintenance says when it is back (sample dates in the demo; the park sets them)
@@ -693,6 +693,9 @@ function freeFor(i,a,d){for(let x=new Date(+a);x<d;x=new Date(+x+DAY))if(isBlock
 // Calendars show the REAL free sites of the lot's class (Standard / Premium / Lakeside) — guests book a class,
 // the site number comes on arrival day. Paying books through the same brain the office uses.
 const BRAIN="https://admin.melyos.io/api/public/site-planner",BPARK="johnston-springs";
+// Nov 24 (per Mely): a MelyOS Travel account opens the map with the traveler's info filled in
+const TRAV=(()=>{const q=new URLSearchParams(location.search),c=x=>String(q.get(x)||"").replace(/[<>"]/g,"").slice(0,80);return {name:c("name"),email:c("email"),phone:c("phone"),len:+(q.get("len")||0)||0}})();
+if(TRAV.len>0&&TRAV.len<100)window.__rvl=Math.round(TRAV.len);
 window.__brain={free:null};
 function clsOf(i){const c=sec(i);return c=="N"?"premium":c=="W"?"lakeside":(c=="A"||c=="B"||c=="C"||c=="O")?"standard":null}
 const CLSNAME={standard:["Standard","Estándar"],premium:["Premium","Premium"],lakeside:["Lakeside","Frente al lago"]};
