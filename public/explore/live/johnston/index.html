@@ -210,7 +210,7 @@ function payDemo(i,n,tot){const es=L=="es",ov=document.createElement("div");ov.i
 // Nov 20 (per Mely): a lot under maintenance says when it is back (sample dates in the demo; the park sets them)
 // Nov 23 (per Mely): RV length rules — like Aloha's "Max RV length" per lot. N = Super Sites (33 ft+), A/B/C/O/W = Standard (under 32 ft),
 // from the park's own map legend. The park sets them in ✎ Edit → Booking rules (and per lot in ✎ Edit → Lot), incl. whether smaller RVs may book a Super Site.
-let LENR={std:32,nMin:33,nMax:45,sto:45,small:true},LOTMAX={};try{const r=JSON.parse(localStorage.getItem("johnstonlenrules")||"null");if(r)LENR={...LENR,...r};LOTMAX=JSON.parse(localStorage.getItem("johnstonlotmax")||"{}")||{}}catch(e){}
+let LENR={std:32,nMin:33,nMax:0,sto:45,small:true},LOTMAX={};try{const r=JSON.parse(localStorage.getItem("johnstonlenrules")||"null");if(r)LENR={...LENR,...r};LOTMAX=JSON.parse(localStorage.getItem("johnstonlotmax")||"{}")||{}}catch(e){}
 // Nov 24 (per Mely): pay = book through the park's brain (same rules and options as the office)
 async function bookBrain(ov,i,n,tot,c,opt){const es=L=="es",fmt=d=>d.toLocaleDateString(es?"es-US":"en-US",{month:"short",day:"numeric"}),fmtS=s=>fmt(new Date(s+"T00:00:00"));
  const v=id=>{const e=ov.querySelector(id);return e?e.value.trim():""},err=ov.querySelector("#bkerr"),b=ov.querySelector("#pgo");
@@ -252,7 +252,7 @@ async function bookBrain(ov,i,n,tot,c,opt){const es=L=="es",fmt=d=>d.toLocaleDat
   <button class="cta" id="pdn">${es?"Listo":"Done"}</button>`;
  ov.querySelector("#pdn").onclick=()=>{ov.remove();document.getElementById("x").click()};tell({type:"melyos-paid",lot:NUM[i],cls:r.cls});
  brainLoad()}
-function lenMax(i){const c=sec(i);if(c=="T")return null;if(LOTMAX[NUM[i]])return +LOTMAX[NUM[i]];return c=="S"?LENR.sto:c=="N"?LENR.nMax:LENR.std}
+function lenMax(i){const c=sec(i);if(c=="T")return null;if(LOTMAX[NUM[i]])return +LOTMAX[NUM[i]];return c=="S"?LENR.sto:c=="N"?(LENR.nMax||999):LENR.std}
 function lenMin(i){return sec(i)=="N"&&!LENR.small?LENR.nMin:0}
 function fitsLen(i,L){if(!L)return true;const mx=lenMax(i);return mx!=null&&L<=mx&&L>=lenMin(i)}
 const ALLMAX=()=>Math.max(LENR.std,LENR.nMax,LENR.sto,...Object.values(LOTMAX).map(Number).filter(x=>x>0));
@@ -338,7 +338,7 @@ function info(i){const n=i+1,k=kind(i),es=L=="es",st=ST[i];
  if(sec(i)=="S")return{amp:es?"Sin conexiones":"No hookups",size:es?`Hasta ${lenMax(i)} pies`:`Up to ${lenMax(i)} ft`,pad:es?"Grava":"Gravel",chips:es?["Área cercada y segura","Pago mensual","Acceso 24/7 con código"]:["Gated & secure","Monthly","24/7 gate code access"]};
  const num=parseInt(String(NUM[i]).split("-")[1])||0,sc=sec(i),prem=sc=="N",tent=sc=="T";
  const amp=prem?"100/50/30 amp":tent?(es?"Agua y luz":"Water & electric"):"50/30/20 amp";
- const mx=lenMax(i),len=tent?(es?"Tienda / van":"Tent / van"):prem?(LENR.small?(es?`Hasta ${mx} pies · hecho para ${LENR.nMin}+ pies`:`Up to ${mx} ft · built for ${LENR.nMin} ft+`):(es?`${LENR.nMin}–${mx} pies`:`${LENR.nMin}–${mx} ft`)):(es?`Hasta ${mx} pies`:`Up to ${mx} ft`);
+ const mx=lenMax(i),len=tent?(es?"Tienda / van":"Tent / van"):prem?(mx>=999?(es?`Cualquier largo · hecho para ${LENR.nMin}+ pies`:`Any length · built for ${LENR.nMin} ft+`):LENR.small?(es?`Hasta ${mx} pies · hecho para ${LENR.nMin}+ pies`:`Up to ${mx} ft · built for ${LENR.nMin} ft+`):(es?`${LENR.nMin}–${mx} pies`:`${LENR.nMin}–${mx} ft`)):(es?`Hasta ${mx} pies`:`Up to ${mx} ft`);
  const pad=prem?(es?"Losa 8×20 pies · 50 pies de ancho, 96–156 de largo":"8×20 ft slab · 50 ft wide, 96–156 ft long"):(es?"Entrada de piedra caliza":"Lime rock drive");
  const base=tent?(es?["Agua","Electricidad","Wi-Fi gratis (casi todos los sitios)"]:["Water","Electric","Free Wi-Fi (most sites)"]):(es?["Agua","Electricidad","Alcantarillado","Wi-Fi gratis (casi todos los sitios)"]:["Water","Electric","Sewer","Free Wi-Fi (most sites)"]);
  return{amp,size:len,pad,chips:[...(prem?[es?"Espacio para slide-outs":"Room for slide-outs"]:[]),...(CORNER.has(NUM[i])?[es?"Lote de esquina":"Corner lot"]:[]),amp,...base,es?"Mascotas OK (máx. 3, con correa · algunas razas no)":"Pets OK (max 3, leashed · breed limits)"]}}
@@ -805,7 +805,7 @@ addEventListener("storage",e=>{if(e.key=="johnstonhold"&&!editing){render();if(t
 (function(){const rs=document.getElementById("ruleS"),rl=document.getElementById("ruleL");rs.value=SHORT_AHEAD;rl.value=LONG_AHEAD;
  document.getElementById("ruleSave").onclick=()=>{const a=Math.round(+rs.value),b=Math.round(+rl.value);if(!(a>=1&&a<=730&&b>=1&&b<=730)){say("Use 1 to 730 days");return}
   const g=k=>Math.round(+document.getElementById(k).value),nl={std:g("lenStd"),nMin:g("lenNmin"),nMax:g("lenNmax"),sto:g("lenSto"),small:document.getElementById("lenSmall").checked};
-  if(![nl.std,nl.nMin,nl.nMax,nl.sto].every(x=>x>=10&&x<=80)||nl.nMin>nl.nMax){say("RV lengths: 10 to 80 ft, and Super Site min ≤ max");return}
+  if(!([nl.std,nl.nMin,nl.sto].every(x=>x>=10&&x<=80)&&(nl.nMax===0||(nl.nMax>=10&&nl.nMax<=80))&&!(nl.nMax&&nl.nMin>nl.nMax))){say("RV lengths: 10 to 80 ft, and Super Site min ≤ max");return}
   LENR=nl;try{localStorage.setItem("johnstonlenrules",JSON.stringify(nl))}catch(e){}
   SHORT_AHEAD=a;LONG_AHEAD=b;try{localStorage.setItem("johnstonbookrules",JSON.stringify({s:a,l:b}))}catch(e){}
   if(typeof window.dsRules==="function")window.dsRules();render();if(RANGE)sendAvail();say(`Saved ✓ Nights/weeks: ${a} days ahead · Long stays: ${b} days ahead`)}})();
