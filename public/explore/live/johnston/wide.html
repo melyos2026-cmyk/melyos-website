@@ -245,6 +245,9 @@ async function bookBrain(ov,i,n,tot,c,opt){const es=L=="es",fmt=d=>d.toLocaleDat
  b.textContent=es?"Procesando…":"Processing…";
  // the site is held for the guest while they pay (15 min, a class spot), then confirmed — never double booked
  const h=await brainPost("hold",Object.assign({},base,{option:opt}));
+ // Nov 24 (per Mely): live parks go to the secure card page, then back to the guest's reservation page
+ if(h.ok){const k=await brainPost("checkout",{holdId:h.holdId});if(k.url){b.textContent=es?"Abriendo el pago seguro…":"Opening secure payment…";try{(INFRAME?top:window).location.href=k.url}catch(e){location.href=k.url}return}
+  if(!k.demo){b.disabled=false;b.textContent=es?`Pagar $${tot}`:`Pay $${tot}`;say(k.error||(es?"No se pudo abrir el pago.":"Could not open the payment."));return}}
  const r=h.ok?await brainPost("confirm",{holdId:h.holdId}):h;
  if(!r.ok){b.disabled=false;b.textContent=es?`Pagar $${tot}`:`Pay $${tot}`;say(r.error||(es?"No se pudo reservar.":"Could not book."));return}
  const code="JS-"+String(Date.now()).slice(-6),cn=CLSNAME[r.cls][es?1:0];
