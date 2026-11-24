@@ -675,13 +675,16 @@ window.__brain={free:null};
 function clsOf(i){const c=sec(i);return c=="N"?"premium":c=="W"?"lakeside":(c=="A"||c=="B"||c=="C"||c=="O")?"standard":null}
 const CLSNAME={standard:["Standard","Estándar"],premium:["Premium","Premium"],lakeside:["Lakeside","Frente al lago"]};
 const bIso=x=>`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
-function brainLoad(){fetch(BRAIN+"/availability?park="+BPARK+"&days=400").then(r=>r.json()).then(j=>{if(!j||!j.classes)return;window.__brain.free={start:new Date(j.start+"T00:00:00"),c:j.classes};window.__brain.lots=j.lots||null;try{ST=liveST();render()}catch(e){}}).catch(()=>{})}
+function brainLoad(){fetch(BRAIN+"/availability?park="+BPARK+"&days=400").then(r=>r.json()).then(j=>{if(!j||!j.classes)return;window.__brain.free={start:new Date(j.start+"T00:00:00"),c:j.classes};window.__brain.lots=j.lots||null;if(j.blocks)brainBlocks(j.blocks);try{ST=liveST();render()}catch(e){}}).catch(()=>{})}
+// Nov 24 (per Mely): each lot's REAL reservations replace the sample ones (popup dates + calendar)
+function brainBlocks(B){const D=x=>new Date(x+"T00:00:00");SH.forEach((_,i)=>{const L=B[NUM[i]]||[];delete RES_OPEN[i];delete MOVEOUT[i];
+ BOOK[i]=L.map(([a,b,k])=>{if(k=="resident"){RES_OPEN[i]=true;return [new Date(+today-30*DAY),new Date(+today+700*DAY)]}if(k=="moveout"){MOVEOUT[i]=D(b);return [new Date(+today-30*DAY),D(b)]}const A=D(a),Z=D(b);return k=="occ"&&Z-A<28*DAY?[new Date(+A-28*DAY),Z]:[A,Z]}).sort((x,y)=>x[0]-y[0])})}
 brainLoad();setInterval(brainLoad,120000);   // the park's real colors, refreshed every 2 minutes
 // tonight's REAL color of each lot (red = resident or monthly, yellow = nightly/weekly guest, green = open, maintenance)
 const __lst=liveST;
 liveST=function(){const base=__lst(),B=window.__brain.lots;if(!B)return base;return base.map((v,i)=>{if(v=="na"||v=="rent")return v;const r=B[NUM[i]];return r?r:v})};
 const __ib=isBlocked;
-isBlocked=function(i,d){const B=window.__brain.free,c=clsOf(i);if(!B||!c||ST[i]=="na"||ST[i]=="maint"||ST[i]=="rent")return __ib(i,d);if(d<today)return true;const k=Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-B.start)/DAY);const a=B.c[c]||[];if(k<0)return true;if(k>=a.length)return __ib(i,d);return !(a[k]>0)};
+isBlocked=function(i,d){const B=window.__brain.free,c=clsOf(i);if(!B||!c||ST[i]=="na"||ST[i]=="maint"||ST[i]=="rent")return __ib(i,d);if(d<today)return true;const k=Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-B.start)/DAY);const a=B.c[c]||[];if(k<0)return true;if(k>=a.length)return __ib(i,d);if(__ib(i,d))return true;return !(a[k]>0)};   // the lot's own nights first, then the class
 async function brainPost(path,body){const r=await fetch(BRAIN+"/"+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.assign({park:BPARK},body))});return r.json().then(j=>Object.assign({httpOk:r.ok},j)).catch(()=>({httpOk:false,error:"Could not reach the park."}))}
 function tell(m){if(INFRAME)try{parent.postMessage(Object.assign({source:"melyos-map"},m),"*")}catch(e){}}
 function sendAvail(){if(!RANGE)return;let n=0;const lots=[];SH.forEach((_,i)=>{if(okLot(i)){n++;lots.push({lot:NUM[i],rent:ST[i]=="rent",maxLen:maxLen(i)})}});lots.sort((a,b)=>String(a.lot).localeCompare(String(b.lot),undefined,{numeric:true}));tell({type:"melyos-avail",available:n,lots,total:SH.length,arrive:iso(RANGE.a),depart:iso(RANGE.d)})}
