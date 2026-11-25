@@ -827,8 +827,8 @@ if(!STAFF){
  const cssK=document.createElement("style");cssK.textContent=`svg polygon.kc{transition:transform .12s ease,filter .12s ease;transform-box:fill-box;transform-origin:center}
  svg polygon.kc.dn{transform:translateY(5%) scale(.96);filter:brightness(.78) drop-shadow(0 0 0 transparent)!important}
  .kclb{transition:transform .12s ease}.kclb.dn{margin-top:2px}
- svg polygon.kc.hv{stroke:#fff!important;stroke-width:2.8px!important;filter:drop-shadow(0 0 1px rgba(0,0,0,.75))!important}
- svg polygon.kc.gy{fill:#8F9DB0!important;fill-opacity:1!important;mix-blend-mode:multiply;filter:none!important;stroke:#6B7280!important}
+ svg polygon.kc.hv{stroke:#0f172a!important;stroke-width:2.4px!important}
+ svg polygon.kc.gy{fill:#9CA3AF!important;fill-opacity:1!important;mix-blend-mode:color!important;filter:none!important;stroke:#9CA3AF!important}
  #hov.khov{pointer-events:none!important;width:auto!important;max-width:none!important;padding:0!important;border-radius:999px!important;overflow:hidden;box-shadow:0 14px 34px rgba(15,37,64,.28)!important;border:0!important}
  #kcp{position:fixed;inset:0;z-index:95;background:rgba(15,23,42,.55);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:14px}
  #kcp .c{background:#fff;border-radius:20px;max-width:520px;width:100%;max-height:94vh;overflow:auto;font:500 14px/1.45 Inter,system-ui,sans-serif;color:#334155;box-shadow:0 30px 70px rgba(2,6,23,.35)}
@@ -855,17 +855,30 @@ if(!STAFF){
  const kRender=render;render=function(){kRender.apply(this,arguments);try{if(document.body.classList.contains("mysite")||(typeof RANGE!=="undefined"&&RANGE))return;
   svg.querySelectorAll("polygon[data-i]").forEach(pg=>{const i=+pg.dataset.i,c=clsOf(i);if(!c||ST[i]=="na")return;const K=KC[c];
    pg.classList.remove("blink","breathe");pg.classList.add("kc");pg.dataset.c=c;pg.setAttribute("fill",K[0]+(pg.getAttribute("fill")||"").slice(7,9).replace(/^$/,"99"));pg.setAttribute("stroke",i==sel?"#fff":K[1]);
-   if(!/(10|33)$/.test(pg.getAttribute("fill")))pg.setAttribute("fill",K[0]+"aa");pg.style.filter=`drop-shadow(0 1.5px 1.5px rgba(0,0,0,.45))`;pg.style.stroke=K[1];pg.style.strokeWidth="1.6"});
+   pg.setAttribute("fill",K[0]);pg.style.fillOpacity="1";pg.style.mixBlendMode="color";pg.style.filter="none";pg.style.stroke=K[1];pg.style.strokeWidth="1.6"});
   over.querySelectorAll("span[data-i]").forEach(sp=>{const i=+sp.dataset.i,c=clsOf(i);if(!c||ST[i]=="na")return;sp.classList.add("kclb");sp.dataset.c=c;sp.style.color=KC[c][2];sp.style.textShadow=KC[c][2]=="#ffffff"?"0 0 2px #000,0 1px 2px #000":"0 0 2px #fff,0 0 3px #fff"});const ht=document.getElementById("handtip");if(ht)ht.textContent=L=="es"?"Toque un color":"Tap a color"}catch(e){}};
  // the chain: press one, the whole type goes down; release, it comes up
  const kDown=c=>{svg.querySelectorAll(`polygon.kc[data-c="${c}"]`).forEach(p=>p.classList.add("dn"));over.querySelectorAll(`.kclb[data-c="${c}"]`).forEach(p=>p.classList.add("dn"))};
  const kUp=()=>{svg.querySelectorAll("polygon.kc.dn").forEach(p=>p.classList.remove("dn"));over.querySelectorAll(".kclb.dn").forEach(p=>p.classList.remove("dn"))};
  // hover on the public map: the TYPE, never one lot's status
- const kHov=showHov;showHov=function(i,e){const c=clsOf(i);if(!c||document.body.classList.contains("mysite"))return kHov.apply(this,arguments);const es=L=="es",K=KC[c];
-  hov.classList.add("khov");
-  hov.innerHTML=`<div style="display:flex;align-items:center;gap:8px;padding:7px 12px;font:700 13px Inter,system-ui,sans-serif;color:#0f2540;white-space:nowrap"><i style="width:12px;height:12px;border-radius:4px;background:${K[0]};border:2px solid ${K[1]}"></i>${es?`Sitios ${CLSNAME[c][1]} · toque para ver fechas`:`${CLSNAME[c][0]} sites · click to see dates`}</div>`;
-  hov.style.display="block";moveHov(e)};
- const kHide=hideHov;hideHov=function(){hov.classList.remove("khov");return kHide.apply(this,arguments)};
+ // hover: a big, steady card (it doesn't follow the mouse and can't be clicked) — the type, its price, the next
+ // two weeks at a glance, and what to do. Clicking any site of the type opens the booking box with the calendar.
+ const kCard=document.createElement("div");kCard.id="kcard";document.body.appendChild(kCard);
+ const cssC=document.createElement("style");cssC.textContent=`#kcard{position:fixed;bottom:18px;transform:translateY(12px);opacity:0;transition:opacity .15s,transform .15s;z-index:70;pointer-events:none;width:min(460px,92vw);background:#fff;border-radius:18px;box-shadow:0 18px 44px rgba(2,6,23,.3);overflow:hidden;font:500 13.5px/1.45 Inter,system-ui,sans-serif;color:#334155}
+ #kcard.on{opacity:1;transform:none}#kcard.lft{left:18px;right:auto}#kcard.rgt{right:18px;left:auto}#kcard .h{padding:14px 18px;display:flex;align-items:center;gap:12px}#kcard .h b{font:800 19px Inter,system-ui,sans-serif}#kcard .h .p{margin-left:auto;text-align:right;font:800 19px Inter,system-ui,sans-serif}#kcard .h .p small{display:block;font:600 11.5px Inter,system-ui,sans-serif;opacity:.85}
+ #kcard .b{padding:12px 18px 14px}#kcard .sp{color:#64748b}#kcard .wk{display:grid;grid-template-columns:repeat(14,1fr);gap:3px;margin:10px 0 4px}#kcard .wk span{text-align:center;font:700 10.5px Inter,system-ui,sans-serif;color:#64748b}#kcard .wk i{display:block;height:22px;border-radius:6px;margin:3px 0}
+ #kcard .kc2{margin-top:10px;display:flex;align-items:center;gap:8px;font:800 14px Inter,system-ui,sans-serif;color:#0f172a}#kcard .kc2 em{font-style:normal;background:#0f172a;color:#fff;border-radius:8px;padding:3px 8px;font-size:12px}`;document.head.appendChild(cssC);
+ let kCardC=null;
+ const kHov=showHov;showHov=function(i,e){const c=clsOf(i);if(!c||document.body.classList.contains("mysite"))return kHov.apply(this,arguments);hov.style.display="none";const R=e&&e.clientX>innerWidth/2;kCard.classList.toggle("lft",!!R);kCard.classList.toggle("rgt",!R);if(kCardC===c){kCard.classList.add("on");return}kCardC=c;
+  const es=L=="es",K=KC[c],I=CLSINFO[c],B=window.__brain.free,A=B?(B.c[c]||[]):[],cnt=CLSCOUNT(c);
+  const days=[...Array(14)].map((_,x)=>{const d=new Date(today.getFullYear(),today.getMonth(),today.getDate()+x);const k=B?Math.round((d-B.start)/DAY):-1;const n=k>=0&&k<A.length?A[k]:null;return {d,n}});
+  kCard.innerHTML=`<div class="h" style="background:${K[0]};color:${K[2]}"><div><b>${es?`Sitios ${CLSNAME[c][1]}`:`${CLSNAME[c][0]} sites`}</b><div style="font-weight:600;opacity:.9">${cnt} ${es?"sitios":"sites"} · ${I[1]} · ${I[2]}</div></div><div class="p">$${NIGHT(c)}<small>${es?"por noche":"per night"}</small></div></div>
+   <div class="b"><div class="sp">${es?"Próximas 2 semanas":"Next 2 weeks"} · <span style="color:#10b981">■</span> ${es?"hay sitios":"open"} · <span style="color:#cbd5e1">■</span> ${es?"lleno":"full"}</div>
+   <div class="wk">${days.map(({d,n})=>`<span>${d.toLocaleDateString(es?"es-US":"en-US",{weekday:"narrow"})}<i style="background:${n!=null&&n>0?"#10b981":"#e2e8f0"}"></i>${d.getDate()}</span>`).join("")}</div>
+   <div class="kc2"><em>👆 ${es?"Clic":"Click"}</em>${es?`cualquier sitio ${CLSNAME[c][1]} para escoger sus fechas`:`any ${CLSNAME[c][0]} site to choose your dates`}</div>
+   <div class="sp" style="font-size:12px;margin-top:4px">${es?"Usted reserva el tipo; el número de su sitio llega el día de llegada. ¿Quiere uno exacto? Puede asegurarlo al reservar.":"You book the type; your site number comes on arrival day. Want one exact site? You can lock it when you book."}</div></div>`;
+  kCard.classList.add("on")};
+ const kHide=hideHov;hideHov=function(){kCard.classList.remove("on");kCardC=null;return kHide.apply(this,arguments)};
  const CLSCOUNT=c=>NUM.filter((_,x)=>clsOf(x)==c&&ST[x]!="na").length;
  // the printed legend on the map image says "Site status" (green/red…): on the public map it shows the TYPES instead
  const kLeg=()=>{try{if(document.body.classList.contains("mysite")||document.getElementById("kleg"))return;const es=L=="es",d=document.createElement("div");d.id="kleg";
