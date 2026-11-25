@@ -231,7 +231,7 @@ async function bookBrain(ov,i,n,tot,c,opt){const es=L=="es",fmt=d=>d.toLocaleDat
  const name=v("#bkname"),mail=v("#bkmail"),phone=v("#bkphone"),sms=!!(ov.querySelector("#bksms")||{}).checked;
  const say=t=>{if(err){err.style.display="block";err.innerHTML=t}};
  if(name.length<2){say(es?"Escriba su nombre.":"Type your name.");ov.querySelector("#bkname").focus();return}
- const gs=window.__gs||{};const base={site_class:c,arrive:bIso(arr),depart:bIso(dep),rv_length_ft:window.__rvl||null,guest_name:name,guest_email:mail,guest_phone:phone,sms_ok:sms,people:window.__ppl||2,good_sam:gs.on&&gs.tier!="basic"?{number:gs.num||"",tier:gs.tier||"standard"}:null};
+ const gs=window.__gs||{};const base={site_class:c,arrive:bIso(arr),depart:bIso(dep),rv_length_ft:window.__rvl||null,amp_needed:+window.__amp||null,guest_name:name,guest_email:mail,guest_phone:phone,sms_ok:sms,people:window.__ppl||2,good_sam:gs.on&&gs.tier!="basic"?{number:gs.num||"",tier:gs.tier||"standard"}:null};
  b.disabled=true;b.textContent=es?"Buscando su sitio…":"Finding your site…";
  if(opt==null&&window.__lockLot)opt=0;
  if(opt==null){const s=await brainPost("search",base);const o=(s.options||[]);
@@ -930,7 +930,7 @@ const kHov=showHov;showHov=function(i,e){const c=clsOf(i);if(!c||document.body.c
  const kOpen=open;open=function(i){if(i===kTap&&clsOf(i)&&!document.body.classList.contains("mysite")){kTap=-1;kUp();return kPop(clsOf(i),i)}return kOpen.apply(this,arguments)};
  // the popup: which nights? (the type's open nights, like a hotel calendar)
  function kPop(c,i){const es=L=="es",K=KC[c],B=window.__brain.free,RU=window.__brain.rules||{},fee=+RU.lock_fee_stay||0,nm=CLSNAME[c][es?1:0],inf=CLSINFO[c],night=NIGHT(c);
-  let lk=NUM[i],alts=[],a0=null,d0=null,mon=new Date(today.getFullYear(),today.getMonth(),1),pickLock=false,lockState="",lockMsg="";window.__lockLot=null;window.__lockFee=0;
+  const AMPS={standard:[30,50,20],premium:[50,100,30],lakeside:[30,50,20]},MAXL={standard:32,lakeside:32,premium:null};let rvMsg="",lk=NUM[i],alts=[],a0=null,d0=null,mon=new Date(today.getFullYear(),today.getMonth(),1),pickLock=false,lockState="",lockMsg="";window.__lockLot=null;window.__lockFee=0;
   const k=d=>B?Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-B.start)/DAY):-1;
   const open1=d=>{if(d<today)return false;if(!B)return true;const x=k(d),A=B.c[c]||[];return x>=0&&(x>=A.length||A[x]>0)};
   // Nov 24 (per Mely): open on the first month that has an open night for this type (not an empty month)
@@ -938,8 +938,9 @@ const kHov=showHov;showHov=function(i,e){const c=clsOf(i);if(!c||document.body.c
   const m=document.createElement("div");m.id="kcp";document.getElementById("kcp")?.remove();document.body.appendChild(m);
   const close=()=>{m.remove();window.__lockLot=null;window.__lockFee=0};
   const fmt=d=>d.toLocaleDateString(es?"es-US":"en-US",{weekday:"short",month:"short",day:"numeric"});
-  const runLock=async()=>{lockState="checking";lockMsg="";alts=[];draw();
-   const r=await brainPost("search",{site_class:c,arrive:bIso(a0),depart:bIso(d0),rv_length_ft:window.__rvl||null,lock_lot:lk});
+  const rvOk=()=>{const L0=+window.__rvl||0;rvMsg="";if(!L0){rvMsg=es?"Escriba el largo de su RV para confirmar que cabe.":"Type your RV length so we can confirm it fits.";return false}if(MAXL[c]&&L0>MAXL[c]){rvMsg=es?`Los sitios ${nm} son hasta ${MAXL[c]} pies. Para su RV de ${L0} pies escoja un sitio Premium.`:`${nm} sites fit RVs up to ${MAXL[c]} ft. For your ${L0} ft RV, please book a Premium site.`;return false}return true};
+  const runLock=async()=>{if(!rvOk()){pickLock=false;draw();return}lockState="checking";lockMsg="";alts=[];draw();
+   const r=await brainPost("search",{site_class:c,arrive:bIso(a0),depart:bIso(d0),rv_length_ft:window.__rvl||null,lock_lot:lk,amp_needed:+window.__amp||null});
    if(r.lock&&r.lock.ok){lockState="ok";window.__lockLot=lk;window.__lockFee=+r.lock.fee||0;lockMsg=r.lock.lastOne?"free":""}else{lockState="no";window.__lockLot=null;window.__lockFee=0;alts=(r.lock&&r.lock.alternatives)||[];lockMsg=(r.lock&&r.lock.reason)||(es?"Ese sitio no está libre para esas fechas.":"That site isn't free for those dates.")}draw()};
   const draw=()=>{const y=mon.getFullYear(),mo=mon.getMonth(),first=new Date(y,mo,1).getDay(),dim=new Date(y,mo+1,0).getDate();
    const nights=a0&&d0?Math.round((d0-a0)/DAY):0;let cells="";for(let x=0;x<first;x++)cells+="<span></span>";
@@ -952,7 +953,11 @@ const kHov=showHov;showHov=function(i,e){const c=clsOf(i);if(!c||document.body.c
    <div class="mh"><button id="kp" aria-label="Previous month">‹</button><span>${mon.toLocaleDateString(es?"es-US":"en-US",{month:"long",year:"numeric"})}</span><button id="kn" aria-label="Next month">›</button></div>
    <div class="cal">${(es?["D","L","M","M","J","V","S"]:["S","M","T","W","T","F","S"]).map(w=>`<b>${w}</b>`).join("")}${cells}</div>
    <div class="lg"><span><i style="border:1px solid #6ee7b7;background:#d1fae5"></i>${es?"Disponible":"Available"}</span><span><i style="background:#f1f5f9"></i>${es?"Lleno":"Full"}</span><span><i style="background:#0f172a"></i>${es?"Sus fechas":"Your dates"}</span></div>
-   ${nights?`<div class="q" style="margin-top:16px">${es?"¿Cómo quiere su sitio?":"How would you like your site?"}</div>
+   ${nights?`<div class="q" style="margin-top:16px">${es?"Su RV":"Your RV"}</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><label style="flex:1;min-width:140px;font-size:12.5px;color:#475569">${es?"Largo (pies)":"Length (ft)"}<input id="krvl" type="number" inputmode="numeric" min="10" max="60" value="${window.__rvl||""}" placeholder="${es?"ej. 30":"e.g. 30"}" style="display:block;width:100%;margin-top:4px;border:1.5px solid #e2e8f0;border-radius:10px;padding:9px 10px;font:700 14px Inter,system-ui,sans-serif;color:#0f172a"></label>
+    <label style="flex:1;min-width:140px;font-size:12.5px;color:#475569">${es?"Electricidad":"Power"}<select id="kamp" style="display:block;width:100%;margin-top:4px;border:1.5px solid #e2e8f0;border-radius:10px;padding:9px 10px;font:700 14px Inter,system-ui,sans-serif;color:#0f172a;background:#fff">${AMPS[c].map(a=>`<option value="${a}" ${String(window.__amp||"")==String(a)?"selected":""}>${a} amp</option>`).join("")}</select></label></div>
+    ${rvMsg?`<div class="note no">${rvMsg}</div>`:""}
+    <div class="q" style="margin-top:16px">${es?"¿Cómo quiere su sitio?":"How would you like your site?"}</div>
     <button class="opt ${pickLock?"":"on"}" id="kopt1"><span class="rd"></span><span><b>${es?`El mejor sitio ${nm} disponible`:`Best available ${nm} site`}</b>${es?"El sistema escoge el mejor sitio para su RV. Le enviamos el número el día de llegada.":"We match the best site for your RV and send you the site number on arrival day."}</span><span class="am inc">${es?"Incluido":"Included"}</span></button>
     ${fee>0?`<button class="opt ${pickLock?"on":""}" id="kopt2"><span class="rd"></span><span><b>🔒 ${es?`Asegurar el sitio ${lk}`:`Lock site ${lk}`}</b>${es?"Quédese en este sitio exacto toda su estadía. Sabe su número desde hoy.":"Stay on this exact site for your whole stay. You know your site number today."}</span><span class="am">+$${fee} ${es?"por estadía":"per stay"}</span></button>
     ${pickLock?`<div class="note ${lockState=="ok"?"ok":lockState=="no"?"no":""}">${lockState=="checking"?(es?"Revisando el sitio…":"Checking the site…"):lockState=="ok"?(lockMsg=="free"?(es?`✓ El sitio ${lk} es el último de este tipo para sus fechas: se lo aseguramos gratis.`:`✓ Site ${lk} is the last one of this type for your dates, so we lock it for you free.`):(es?`✓ El sitio ${lk} está libre y queda asegurado para usted.`:`✓ Site ${lk} is free and will be locked for you.`)):lockMsg}${lockState=="no"&&alts.length?`<div style="margin-top:6px;color:#334155">${es?"Estos sitios sí se pueden asegurar para sus fechas:":"These sites can be locked for your dates:"} ${alts.map(x=>`<button class="lk2" data-l="${x}" style="margin:3px 4px 0 0;border:1.5px solid #0f172a;background:#fff;border-radius:999px;padding:4px 10px;font:800 12.5px Inter,system-ui,sans-serif;cursor:pointer">🔒 ${x}</button>`).join("")}</div>`:lockState=="no"?`<div style="margin-top:4px;color:#334155">${es?"Puede reservar el tipo y el sistema le escoge el mejor sitio.":"You can still book the type and the system picks the best site for you."}</div>`:""}</div>`:""}`:""}`:""}
@@ -965,9 +970,10 @@ const kHov=showHov;showHov=function(i,e){const c=clsOf(i);if(!c||document.body.c
     if(!a0||d0||d<=a0){a0=d;d0=null;
      // Nov 24 (per Mely): arriving on the last day of the month → the calendar moves to next month to pick the leave day
      const nx=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1);if(nx.getMonth()!==d.getMonth())mon=new Date(nx.getFullYear(),nx.getMonth(),1)}else d0=d;draw()});
+   const rl=m.querySelector("#krvl");if(rl)rl.onchange=()=>{window.__rvl=Math.round(+rl.value)||null;pickLock=false;lockState="";window.__lockLot=null;window.__lockFee=0;rvOk();setTimeout(draw,0)};const ka=m.querySelector("#kamp");if(ka){if(!window.__amp)window.__amp=+ka.value;ka.onchange=()=>{window.__amp=+ka.value;pickLock=false;lockState="";window.__lockLot=null;setTimeout(draw,0)}}
    const o1=m.querySelector("#kopt1");if(o1)o1.onclick=()=>{pickLock=false;lockState="";window.__lockLot=null;window.__lockFee=0;draw()};
    m.querySelectorAll(".lk2").forEach(x=>x.onclick=()=>{lk=x.dataset.l;pickLock=true;runLock()});const o2=m.querySelector("#kopt2");if(o2)o2.onclick=()=>{if(pickLock)return;pickLock=true;runLock()};
-   m.querySelector("#kgo").onclick=()=>{if(!a0||!d0)return;const keep=[window.__lockLot,window.__lockFee];m.remove();window.__lockLot=keep[0];window.__lockFee=keep[1];
+   m.querySelector("#kgo").onclick=()=>{if(!a0||!d0)return;if(!rvOk()){draw();return}const keep=[window.__lockLot,window.__lockFee];m.remove();window.__lockLot=keep[0];window.__lockFee=keep[1];
     kOpen(i);arr=a0;dep=d0;calM=new Date(a0.getFullYear(),a0.getMonth(),1);drawLot(i);checkout(i)}};
   draw()}
 }
