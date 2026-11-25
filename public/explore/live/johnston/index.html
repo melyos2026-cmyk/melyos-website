@@ -857,6 +857,8 @@ if(!STAFF){
   let a0=null,d0=null,mon=new Date(today.getFullYear(),today.getMonth(),1),lockOn=false,lockMsg="";window.__lockLot=null;window.__lockFee=0;
   const k=d=>B?Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-B.start)/DAY):-1;
   const open1=d=>{if(d<today)return false;if(!B)return true;const x=k(d),A=B.c[c]||[];return x>=0&&(x>=A.length||A[x]>0)};
+  // Nov 24 (per Mely): open on the first month that has an open night for this type (not an empty month)
+  for(let x=0;x<400;x++){const d=new Date(today.getFullYear(),today.getMonth(),today.getDate()+x);if(open1(d)){mon=new Date(d.getFullYear(),d.getMonth(),1);break}}
   const m=document.createElement("div");m.id="kcp";document.getElementById("kcp")?.remove();document.body.appendChild(m);
   const close=()=>{m.remove();window.__lockLot=null;window.__lockFee=0};
   const draw=()=>{const y=mon.getFullYear(),mo=mon.getMonth(),first=new Date(y,mo,1).getDay(),dim=new Date(y,mo+1,0).getDate();
