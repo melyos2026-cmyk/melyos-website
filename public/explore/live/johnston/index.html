@@ -879,6 +879,16 @@ const kHov=showHov;showHov=function(i,e){const c=clsOf(i);if(!c||document.body.c
  const kHv=c=>{svg.querySelectorAll("polygon.kc").forEach(p=>{p.classList.toggle("hv",!!c&&p.dataset.c===c);p.classList.toggle("gy",!!c&&p.dataset.c!==c)});over.querySelectorAll(".kclb").forEach(x=>x.classList.toggle("gy",!!c&&x.dataset.c!==c))};
  svg.addEventListener("pointerover",e=>{const pg=e.target.closest&&e.target.closest("polygon.kc");kHv(pg?pg.dataset.c:null)});
  svg.addEventListener("pointerleave",()=>kHv(null));
+ // Nov 24 (per Mely): the map calls people in, like the Sunset map: the type blocks flash one after another
+ // (Premium, Standard, Lakeside), the hand with its rings shows where to click; it goes away on the first click and
+ // comes back after ~2½ minutes without anyone touching the map ("I'm still here, book me").
+ const cssP=document.createElement("style");cssP.textContent=`svg polygon.kc.kpl{animation:kpl 1.5s ease-in-out}@keyframes kpl{0%,100%{opacity:1;stroke-width:1.6px}40%{opacity:.12;stroke:#fff;stroke-width:3.2px}70%{opacity:1;stroke:#fff;stroke-width:3.2px}} #hand{transform:scale(1.35)}.tapring{width:46px!important;height:46px!important;margin:-23px 0 0 -23px!important}`;document.head.appendChild(cssP);
+ let kPi=0,kAct=Date.now();
+ setInterval(()=>{try{if(document.body.classList.contains("mysite")||document.getElementById("kcp")||kHand.style.display=="block"||document.hidden)return;
+  const c=["premium","standard","lakeside"][kPi++%3];svg.querySelectorAll(`polygon.kc[data-c="${c}"]`).forEach(p=>{p.classList.remove("kpl");void p.getBBox;p.classList.add("kpl")});
+  setTimeout(()=>svg.querySelectorAll("polygon.kc.kpl").forEach(p=>p.classList.remove("kpl")),1550)}catch(e){}},1800);
+ ["pointermove","pointerdown","keydown","wheel","scroll","touchstart"].forEach(n=>addEventListener(n,()=>{kAct=Date.now()},{passive:true}));
+ setInterval(()=>{if(HINTDONE&&Date.now()-kAct>150000&&!document.getElementById("kcp")&&!document.body.classList.contains("mysite")){HINTDONE=false;try{render()}catch(e){}}},10000);
  let kTap=-1;
  svg.addEventListener("pointerdown",e=>{const pg=e.target.closest&&e.target.closest("polygon.kc");if(!pg)return;kTap=+pg.dataset.i;kDown(pg.dataset.c)},true);
  addEventListener("pointerup",()=>setTimeout(kUp,60));addEventListener("pointercancel",kUp);
