@@ -809,20 +809,30 @@ if(!STAFF){
  svg polygon.kc.dn{transform:translateY(5%) scale(.96);filter:brightness(.78) drop-shadow(0 0 0 transparent)!important}
  .kclb{transition:transform .12s ease}.kclb.dn{margin-top:2px}
  svg polygon.kc.hv{stroke:#fff!important;stroke-width:2.8px!important;filter:drop-shadow(0 0 1px rgba(0,0,0,.75))!important}
- svg polygon.kc.gy{filter:grayscale(1)!important;fill-opacity:.55!important;stroke:#9ca3af!important}.kclb.gy{color:#6b7280!important;text-shadow:0 0 2px #fff!important}
+ svg polygon.kc.gy{fill:#8F9DB0!important;fill-opacity:1!important;mix-blend-mode:multiply;filter:none!important;stroke:#6B7280!important}
  #hov.khov{pointer-events:none!important;width:auto!important;max-width:none!important;padding:0!important;border-radius:999px!important;overflow:hidden;box-shadow:0 14px 34px rgba(15,37,64,.28)!important;border:0!important}
- #kcp{position:fixed;inset:0;z-index:95;background:rgba(15,37,64,.55);display:flex;align-items:center;justify-content:center;padding:14px}
- #kcp .c{background:#fff;border-radius:18px;max-width:460px;width:100%;max-height:92vh;overflow:auto;padding:18px 18px 16px;font:500 14px/1.45 Inter,system-ui,sans-serif;color:#334155;box-shadow:0 20px 50px rgba(0,0,0,.3)}
- #kcp h3{margin:0;font:800 20px Inter,system-ui,sans-serif;color:#0f2540;display:flex;align-items:center;gap:8px}#kcp h3 i{width:16px;height:16px;border-radius:5px;display:inline-block;flex:none}
- #kcp .inf{color:#64748b;font-size:13px;margin:2px 0 10px}#kcp .q{font-weight:800;color:#0f2540;margin:6px 0}
- #kcp .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;font-size:13px}#kcp .cal b{font-size:11px;color:#94a3b8;font-weight:700}
- #kcp .cal button{border:0;border-radius:8px;padding:7px 0;background:#ecfdf5;color:#065f46;font-weight:700;cursor:pointer}#kcp .cal button.x{background:#f1f5f9;color:#cbd5e1;text-decoration:line-through;cursor:not-allowed}
- #kcp .cal button.in{background:#bfdbfe;color:#0f2540}#kcp .cal button.ed{background:#0f2540;color:#fff}
- #kcp .mh{display:flex;justify-content:space-between;align-items:center;margin:8px 0 4px;font-weight:800;color:#0f2540}#kcp .mh button{border:1px solid #e2e8f0;background:#fff;border-radius:8px;padding:2px 10px;cursor:pointer}
- #kcp .sum{margin:10px 0;padding:10px 12px;border-radius:12px;background:#f8fafc;font-size:13.5px}#kcp .lot{margin-top:10px;padding:10px 12px;border:1px dashed #cbd5e1;border-radius:12px;font-size:13px}
- #kcp .go{margin-top:12px;width:100%;background:#0f2540;color:#fff;border:0;border-radius:12px;padding:12px;font:800 15px Inter,system-ui,sans-serif;cursor:pointer}#kcp .go:disabled{opacity:.45;cursor:default}
- #kcp .lk{margin-top:6px;background:#fff;border:1.5px solid #0f2540;color:#0f2540;border-radius:999px;padding:6px 12px;font:800 13px Inter,system-ui,sans-serif;cursor:pointer}
- #kcp .x2{float:right;border:0;background:none;font-size:22px;line-height:1;color:#94a3b8;cursor:pointer}`;document.head.appendChild(cssK);
+ #kcp{position:fixed;inset:0;z-index:95;background:rgba(15,23,42,.55);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:14px}
+ #kcp .c{background:#fff;border-radius:20px;max-width:520px;width:100%;max-height:94vh;overflow:auto;font:500 14px/1.45 Inter,system-ui,sans-serif;color:#334155;box-shadow:0 30px 70px rgba(2,6,23,.35)}
+ #kcp .top{height:6px}#kcp .hd{padding:18px 22px 12px;display:flex;gap:14px;align-items:flex-start;border-bottom:1px solid #f1f5f9}
+ #kcp .hd h3{margin:0;font:800 20px/1.2 Inter,system-ui,sans-serif;color:#0f172a;letter-spacing:-.01em}#kcp .hd .sp{color:#64748b;font-size:13px;margin-top:3px}
+ #kcp .pr{margin-left:auto;text-align:right;white-space:nowrap}#kcp .pr b{display:block;font:800 20px Inter,system-ui,sans-serif;color:#0f172a}#kcp .pr small{color:#64748b}
+ #kcp .x2{border:0;background:#f1f5f9;width:32px;height:32px;border-radius:50%;font-size:18px;line-height:1;color:#475569;cursor:pointer;flex:none}
+ #kcp .st{display:flex;gap:6px;padding:12px 22px 0;font:700 11.5px Inter,system-ui,sans-serif;color:#94a3b8;letter-spacing:.04em;text-transform:uppercase}#kcp .st span{display:flex;align-items:center;gap:6px}#kcp .st span.on{color:#0f172a}#kcp .st i{font-style:normal;width:18px;height:18px;border-radius:50%;background:#e2e8f0;color:#64748b;display:inline-flex;align-items:center;justify-content:center;font-size:10.5px}#kcp .st span.on i{background:#0f172a;color:#fff}#kcp .st em{flex:1;height:1px;background:#e2e8f0;align-self:center;min-width:12px}
+ #kcp .bd{padding:14px 22px 6px}#kcp .q{font:800 15px Inter,system-ui,sans-serif;color:#0f172a;margin:2px 0 8px}
+ #kcp .mh{display:flex;justify-content:space-between;align-items:center;margin:4px 0 8px;font:800 14px Inter,system-ui,sans-serif;color:#0f172a}#kcp .mh button{width:32px;height:32px;border:1px solid #e2e8f0;background:#fff;border-radius:10px;cursor:pointer;color:#0f172a;font-size:16px}
+ #kcp .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}#kcp .cal b{font:700 11px Inter,system-ui,sans-serif;color:#94a3b8;padding:2px 0}
+ #kcp .cal button{border:1px solid #e2e8f0;border-radius:10px;padding:8px 0;background:#fff;color:#0f172a;font:700 13.5px Inter,system-ui,sans-serif;cursor:pointer;position:relative}
+ #kcp .cal button:hover:not(:disabled){border-color:#0f172a}#kcp .cal button.x{background:#f8fafc;border-color:#f1f5f9;color:#cbd5e1;text-decoration:line-through;cursor:not-allowed}
+ #kcp .cal button.in{background:#e0f2fe;border-color:#e0f2fe}#kcp .cal button.ed{background:#0f172a;border-color:#0f172a;color:#fff}
+ #kcp .lg{display:flex;gap:14px;font-size:12px;color:#64748b;margin:8px 0 2px}#kcp .lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+ #kcp .opt{display:flex;gap:12px;align-items:flex-start;border:1.5px solid #e2e8f0;border-radius:14px;padding:12px 14px;margin:8px 0;cursor:pointer;background:#fff;width:100%;text-align:left;font:500 13px/1.45 Inter,system-ui,sans-serif;color:#475569}
+ #kcp .opt.on{border-color:#0f172a;box-shadow:0 0 0 3px rgba(15,23,42,.08)}#kcp .opt:disabled{opacity:.55;cursor:not-allowed}
+ #kcp .opt .rd{width:18px;height:18px;border-radius:50%;border:2px solid #cbd5e1;flex:none;margin-top:2px}#kcp .opt.on .rd{border:6px solid #0f172a}
+ #kcp .opt b{display:block;font:800 14px Inter,system-ui,sans-serif;color:#0f172a}#kcp .opt .am{margin-left:auto;font:800 13.5px Inter,system-ui,sans-serif;color:#0f172a;white-space:nowrap}#kcp .opt .am.inc{color:#047857}
+ #kcp .note{font-size:12.5px;margin:2px 2px 0}#kcp .note.ok{color:#047857;font-weight:700}#kcp .note.no{color:#b91c1c}
+ #kcp .ft{position:sticky;bottom:0;background:#fff;border-top:1px solid #f1f5f9;padding:12px 22px 16px;display:flex;align-items:center;gap:14px}
+ #kcp .ft .tt{font-size:12.5px;color:#64748b}#kcp .ft .tt b{display:block;font:800 18px Inter,system-ui,sans-serif;color:#0f172a}
+ #kcp .go{margin-left:auto;background:#0f172a;color:#fff;border:0;border-radius:12px;padding:13px 20px;font:800 15px Inter,system-ui,sans-serif;cursor:pointer;white-space:nowrap}#kcp .go:disabled{background:#cbd5e1;cursor:default}`;document.head.appendChild(cssK);
  const kRender=render;render=function(){kRender.apply(this,arguments);try{if(document.body.classList.contains("mysite")||(typeof RANGE!=="undefined"&&RANGE))return;
   svg.querySelectorAll("polygon[data-i]").forEach(pg=>{const i=+pg.dataset.i,c=clsOf(i);if(!c||ST[i]=="na")return;const K=KC[c];
    pg.classList.remove("blink","breathe");pg.classList.add("kc");pg.dataset.c=c;pg.setAttribute("fill",K[0]+(pg.getAttribute("fill")||"").slice(7,9).replace(/^$/,"99"));pg.setAttribute("stroke",i==sel?"#fff":K[1]);
@@ -853,35 +863,42 @@ if(!STAFF){
  addEventListener("pointerup",()=>setTimeout(kUp,60));addEventListener("pointercancel",kUp);
  const kOpen=open;open=function(i){if(i===kTap&&clsOf(i)&&!document.body.classList.contains("mysite")){kTap=-1;kUp();return kPop(clsOf(i),i)}return kOpen.apply(this,arguments)};
  // the popup: which nights? (the type's open nights, like a hotel calendar)
- function kPop(c,i){const es=L=="es",K=KC[c],B=window.__brain.free,RU=window.__brain.rules||{},fee=+RU.lock_fee_night||0,nm=CLSNAME[c][es?1:0],inf=CLSINFO[c];
-  let a0=null,d0=null,mon=new Date(today.getFullYear(),today.getMonth(),1),lockOn=false,lockMsg="";window.__lockLot=null;window.__lockFee=0;
+ function kPop(c,i){const es=L=="es",K=KC[c],B=window.__brain.free,RU=window.__brain.rules||{},fee=+RU.lock_fee_night||0,nm=CLSNAME[c][es?1:0],inf=CLSINFO[c],night=NIGHT(c);
+  let a0=null,d0=null,mon=new Date(today.getFullYear(),today.getMonth(),1),pickLock=false,lockState="",lockMsg="";window.__lockLot=null;window.__lockFee=0;
   const k=d=>B?Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-B.start)/DAY):-1;
   const open1=d=>{if(d<today)return false;if(!B)return true;const x=k(d),A=B.c[c]||[];return x>=0&&(x>=A.length||A[x]>0)};
   // Nov 24 (per Mely): open on the first month that has an open night for this type (not an empty month)
   for(let x=0;x<400;x++){const d=new Date(today.getFullYear(),today.getMonth(),today.getDate()+x);if(open1(d)){mon=new Date(d.getFullYear(),d.getMonth(),1);break}}
   const m=document.createElement("div");m.id="kcp";document.getElementById("kcp")?.remove();document.body.appendChild(m);
   const close=()=>{m.remove();window.__lockLot=null;window.__lockFee=0};
+  const fmt=d=>d.toLocaleDateString(es?"es-US":"en-US",{weekday:"short",month:"short",day:"numeric"});
+  const runLock=async()=>{lockState="checking";lockMsg="";draw();
+   const r=await brainPost("search",{site_class:c,arrive:bIso(a0),depart:bIso(d0),rv_length_ft:window.__rvl||null,lock_lot:NUM[i]});
+   if(r.lock&&r.lock.ok){lockState="ok";window.__lockLot=NUM[i];window.__lockFee=fee}else{lockState="no";window.__lockLot=null;window.__lockFee=0;lockMsg=(r.lock&&r.lock.reason)||(es?"Ese sitio no está libre para esas fechas.":"That site isn't free for those dates.")}draw()};
   const draw=()=>{const y=mon.getFullYear(),mo=mon.getMonth(),first=new Date(y,mo,1).getDay(),dim=new Date(y,mo+1,0).getDate();
    const nights=a0&&d0?Math.round((d0-a0)/DAY):0;let cells="";for(let x=0;x<first;x++)cells+="<span></span>";
    for(let dd=1;dd<=dim;dd++){const d=new Date(y,mo,dd),ok=open1(d)||(a0&&!d0&&d>a0),inR=a0&&d0&&d>a0&&d<d0,ed=(a0&&+d==+a0)||(d0&&+d==+d0);cells+=`<button data-d="${+d}" class="${ed?"ed":inR?"in":ok?"":"x"}" ${ok||ed?"":"disabled"}>${dd}</button>`}
-   const fmt=d=>d.toLocaleDateString(es?"es-US":"en-US",{weekday:"short",month:"short",day:"numeric"});
-   m.innerHTML=`<div class="c"><button class="x2" id="kx">×</button><h3><i style="background:${K[0]};border:2px solid ${K[1]}"></i>${es?`Reservar un sitio ${nm}`:`Book a ${nm} site`}</h3>
-   <div class="inf">${inf[0]} · ${inf[1]} · ${inf[2]} · <b>$${NIGHT(c)}</b>/${es?"noche":"night"}</div>
-   <div class="q">${!a0?(es?"¿Qué día llega?":"Which day do you arrive?"):!d0?(es?"¿Qué día se va?":"Which day do you leave?"):(es?"Sus fechas":"Your dates")}</div>
-   <div class="mh"><button id="kp">‹</button><span>${mon.toLocaleDateString(es?"es-US":"en-US",{month:"long",year:"numeric"})}</span><button id="kn">›</button></div>
+   const step=!nights?1:2,locked=pickLock&&lockState=="ok",extra=locked?fee*nights:0,est=nights?nights*night+extra:0;
+   m.innerHTML=`<div class="c" role="dialog" aria-label="${es?`Reservar sitio ${nm}`:`Book a ${nm} site`}"><div class="top" style="background:${K[0]}"></div>
+   <div class="hd"><div><h3>${es?`Reservar un sitio ${nm}`:`Book a ${nm} site`}</h3><div class="sp">${inf[0]} · ${inf[1]} · ${inf[2]}</div></div><div class="pr"><b>$${night}</b><small>/ ${es?"noche":"night"}</small></div><button class="x2" id="kx" aria-label="Close">×</button></div>
+   <div class="st"><span class="${step>=1?"on":""}"><i>1</i>${es?"Fechas":"Dates"}</span><em></em><span class="${step>=2?"on":""}"><i>2</i>${es?"Su sitio":"Your site"}</span><em></em><span><i>3</i>${es?"Pago":"Payment"}</span></div>
+   <div class="bd"><div class="q">${!a0?(es?"¿Qué día llega?":"When do you arrive?"):!d0?(es?"¿Qué día se va?":"When do you leave?"):`${fmt(a0)} → ${fmt(d0)} · ${nights} ${es?(nights>1?"noches":"noche"):(nights>1?"nights":"night")}`}</div>
+   <div class="mh"><button id="kp" aria-label="Previous month">‹</button><span>${mon.toLocaleDateString(es?"es-US":"en-US",{month:"long",year:"numeric"})}</span><button id="kn" aria-label="Next month">›</button></div>
    <div class="cal">${(es?["D","L","M","M","J","V","S"]:["S","M","T","W","T","F","S"]).map(w=>`<b>${w}</b>`).join("")}${cells}</div>
-   ${nights?`<div class="sum">${fmt(a0)} → ${fmt(d0)} · <b>${nights} ${es?(nights>1?"noches":"noche"):(nights>1?"nights":"night")}</b><br><small>${es?`Le reservamos un sitio ${nm}. El sistema escoge el mejor para su RV y le envía el número el día de llegada.`:`We reserve a ${nm} site for you. The system picks the best one for your RV and sends you the site number on arrival day.`}</small></div>`:`<div class="sum"><small>${es?"Verde = hay sitios de este tipo esa noche. Usted reserva el tipo; el número llega el día de llegada.":"Green = sites of this type open that night. You book the type; the site number comes on arrival day."}</small></div>`}
-   ${fee>0?`<div class="lot">🔒 <b>${es?`¿Quiere exactamente el sitio ${NUM[i]}?`:`Want exactly site ${NUM[i]}?`}</b><br>${es?`Asegúrelo por <b>+$${fee}</b> por noche, si está libre en sus fechas.`:`Lock it for <b>+$${fee}</b> per night, if it's free on your dates.`}<br>${lockOn?`<span style="color:#047857;font-weight:700">✓ ${es?`Sitio ${NUM[i]} asegurado para sus fechas`:`Site ${NUM[i]} locked for your dates`} (+$${(fee*nights).toFixed(2)})</span> <a href="#" id="kul" style="color:#64748b">${es?"quitar":"remove"}</a>`:`<button class="lk" id="klk" ${nights?"":"disabled"}>🔒 ${es?`Asegurar ${NUM[i]}`:`Lock this site`}</button>`}${lockMsg?`<div style="color:#b91c1c;margin-top:4px">${lockMsg}</div>`:""}</div>`:""}
-   <button class="go" id="kgo" ${nights?"":"disabled"}>${nights?(lockOn?(es?`Continuar con el sitio ${NUM[i]}`:`Continue with site ${NUM[i]}`):(es?`Continuar · sitio ${nm}`:`Continue · ${nm} site`)):(es?"Escoja sus fechas":"Pick your dates")}</button></div>`;
+   <div class="lg"><span><i style="border:1px solid #cbd5e1;background:#fff"></i>${es?"Disponible":"Available"}</span><span><i style="background:#f1f5f9"></i>${es?"Lleno":"Full"}</span><span><i style="background:#0f172a"></i>${es?"Sus fechas":"Your dates"}</span></div>
+   ${nights?`<div class="q" style="margin-top:16px">${es?"¿Cómo quiere su sitio?":"How would you like your site?"}</div>
+    <button class="opt ${pickLock?"":"on"}" id="kopt1"><span class="rd"></span><span><b>${es?`El mejor sitio ${nm} disponible`:`Best available ${nm} site`}</b>${es?"El sistema escoge el mejor sitio para su RV. Le enviamos el número el día de llegada.":"We match the best site for your RV and send you the site number on arrival day."}</span><span class="am inc">${es?"Incluido":"Included"}</span></button>
+    ${fee>0?`<button class="opt ${pickLock?"on":""}" id="kopt2"><span class="rd"></span><span><b>🔒 ${es?`Asegurar el sitio ${NUM[i]}`:`Lock site ${NUM[i]}`}</b>${es?"Quédese en este sitio exacto toda su estadía. Sabe su número desde hoy.":"Stay on this exact site for your whole stay. You know your site number today."}</span><span class="am">+$${fee}/${es?"noche":"night"}</span></button>
+    ${pickLock?`<div class="note ${lockState=="ok"?"ok":lockState=="no"?"no":""}">${lockState=="checking"?(es?"Revisando el sitio…":"Checking the site…"):lockState=="ok"?(es?`✓ El sitio ${NUM[i]} está libre y queda asegurado para usted.`:`✓ Site ${NUM[i]} is free and will be locked for you.`):lockMsg}</div>`:""}`:""}`:""}
+   </div>
+   <div class="ft"><div class="tt">${nights?`${es?"Total estimado":"Estimated total"}<b>$${est.toFixed(2)}</b>`:`${es?"Escoja sus fechas":"Pick your dates"}`}</div><button class="go" id="kgo" ${nights&&!(pickLock&&lockState!="ok")?"":"disabled"}>${es?"Continuar":"Continue"} →</button></div></div>`;
    m.querySelector("#kx").onclick=close;m.onclick=e=>{if(e.target===m)close()};
    m.querySelector("#kp").onclick=()=>{const p=new Date(mon.getFullYear(),mon.getMonth()-1,1);if(p>=new Date(today.getFullYear(),today.getMonth(),1)){mon=p;draw()}};
    m.querySelector("#kn").onclick=()=>{mon=new Date(mon.getFullYear(),mon.getMonth()+1,1);draw()};
-   m.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{const d=new Date(+b.dataset.d);lockOn=false;lockMsg="";window.__lockLot=null;window.__lockFee=0;
-    if(!a0||d0||d<=a0){a0=d;d0=null}else{let ok=true;for(let x=new Date(+a0);x<d;x=new Date(+x+DAY))if(!open1(x))ok=false;d0=d;if(!ok)lockMsg=""}draw()});
-   const lk=m.querySelector("#klk");if(lk)lk.onclick=async()=>{lk.disabled=true;lk.textContent=es?"Revisando…":"Checking…";
-    const r=await brainPost("search",{site_class:c,arrive:bIso(a0),depart:bIso(d0),rv_length_ft:window.__rvl||null,lock_lot:NUM[i]});
-    if(r.lock&&r.lock.ok){lockOn=true;lockMsg="";window.__lockLot=NUM[i];window.__lockFee=fee}else{lockOn=false;lockMsg=(r.lock&&r.lock.reason)||(es?"Ese sitio no se puede asegurar para esas fechas. Puede reservar el tipo.":"That site can't be locked for those dates. You can still book the type.")}draw()};
-   const ul=m.querySelector("#kul");if(ul)ul.onclick=e=>{e.preventDefault();lockOn=false;window.__lockLot=null;window.__lockFee=0;draw()};
+   m.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{const d=new Date(+b.dataset.d);pickLock=false;lockState="";window.__lockLot=null;window.__lockFee=0;
+    if(!a0||d0||d<=a0){a0=d;d0=null}else d0=d;draw()});
+   const o1=m.querySelector("#kopt1");if(o1)o1.onclick=()=>{pickLock=false;lockState="";window.__lockLot=null;window.__lockFee=0;draw()};
+   const o2=m.querySelector("#kopt2");if(o2)o2.onclick=()=>{if(pickLock)return;pickLock=true;runLock()};
    m.querySelector("#kgo").onclick=()=>{if(!a0||!d0)return;const keep=[window.__lockLot,window.__lockFee];m.remove();window.__lockLot=keep[0];window.__lockFee=keep[1];
     kOpen(i);arr=a0;dep=d0;calM=new Date(a0.getFullYear(),a0.getMonth(),1);drawLot(i);checkout(i)}};
   draw()}
