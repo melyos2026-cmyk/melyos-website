@@ -827,6 +827,10 @@ if(!STAFF){
  const cssK=document.createElement("style");cssK.textContent=`svg polygon.kc{transition:transform .12s ease,filter .12s ease;transform-box:fill-box;transform-origin:center}
  svg polygon.kc.dn{transform:translateY(5%) scale(.96);filter:brightness(.78) drop-shadow(0 0 0 transparent)!important}
  .kclb{transition:transform .12s ease}.kclb.dn{margin-top:2px}
+ svg polygon.kc.hv{fill-opacity:1!important;filter:brightness(1.06) drop-shadow(0 0 1.2px #fff)!important}
+ svg polygon.kc.hv[data-c=premium]{stroke:#FACC15!important}svg polygon.kc.hv[data-c=standard]{stroke:#3B82F6!important}svg polygon.kc.hv[data-c=lakeside]{stroke:#A78BFA!important}
+ svg polygon.kc.gy{filter:grayscale(1)!important;fill-opacity:.55!important;stroke:#9ca3af!important}.kclb.gy{color:#6b7280!important;text-shadow:0 0 2px #fff!important}
+ #hov.khov{width:auto!important;max-width:none!important;padding:0!important;border-radius:16px!important;overflow:hidden;box-shadow:0 14px 34px rgba(15,37,64,.28)!important;border:0!important}
  #kcp{position:fixed;inset:0;z-index:95;background:rgba(15,37,64,.55);display:flex;align-items:center;justify-content:center;padding:14px}
  #kcp .c{background:#fff;border-radius:18px;max-width:460px;width:100%;max-height:92vh;overflow:auto;padding:18px 18px 16px;font:500 14px/1.45 Inter,system-ui,sans-serif;color:#334155;box-shadow:0 20px 50px rgba(0,0,0,.3)}
  #kcp h3{margin:0;font:800 20px Inter,system-ui,sans-serif;color:#0f2540;display:flex;align-items:center;gap:8px}#kcp h3 i{width:16px;height:16px;border-radius:5px;display:inline-block;flex:none}
@@ -842,15 +846,21 @@ if(!STAFF){
  const kRender=render;render=function(){kRender.apply(this,arguments);try{if(document.body.classList.contains("mysite")||(typeof RANGE!=="undefined"&&RANGE))return;
   svg.querySelectorAll("polygon[data-i]").forEach(pg=>{const i=+pg.dataset.i,c=clsOf(i);if(!c||ST[i]=="na")return;const K=KC[c];
    pg.classList.remove("blink","breathe");pg.classList.add("kc");pg.dataset.c=c;pg.setAttribute("fill",K[0]+(pg.getAttribute("fill")||"").slice(7,9).replace(/^$/,"99"));pg.setAttribute("stroke",i==sel?"#fff":K[1]);
-   if(!/(10|33)$/.test(pg.getAttribute("fill")))pg.setAttribute("fill",K[0]+"aa");pg.style.filter=`drop-shadow(0 1.5px 1.5px rgba(0,0,0,.45))`});
-  over.querySelectorAll("span[data-i]").forEach(sp=>{const i=+sp.dataset.i,c=clsOf(i);if(!c||ST[i]=="na")return;sp.classList.add("kclb");sp.dataset.c=c;sp.style.color=KC[c][2];sp.style.textShadow=KC[c][2]=="#ffffff"?"0 0 2px #000,0 1px 2px #000":"0 0 2px #fff,0 0 3px #fff"})}catch(e){}};
+   if(!/(10|33)$/.test(pg.getAttribute("fill")))pg.setAttribute("fill",K[0]+"aa");pg.style.filter=`drop-shadow(0 1.5px 1.5px rgba(0,0,0,.45))`;pg.style.stroke=K[1];pg.style.strokeWidth="1.6"});
+  over.querySelectorAll("span[data-i]").forEach(sp=>{const i=+sp.dataset.i,c=clsOf(i);if(!c||ST[i]=="na")return;sp.classList.add("kclb");sp.dataset.c=c;sp.style.color=KC[c][2];sp.style.textShadow=KC[c][2]=="#ffffff"?"0 0 2px #000,0 1px 2px #000":"0 0 2px #fff,0 0 3px #fff"});const ht=document.getElementById("handtip");if(ht)ht.textContent=L=="es"?"Toque un color":"Tap a color"}catch(e){}};
  // the chain: press one, the whole type goes down; release, it comes up
  const kDown=c=>{svg.querySelectorAll(`polygon.kc[data-c="${c}"]`).forEach(p=>p.classList.add("dn"));over.querySelectorAll(`.kclb[data-c="${c}"]`).forEach(p=>p.classList.add("dn"))};
  const kUp=()=>{svg.querySelectorAll("polygon.kc.dn").forEach(p=>p.classList.remove("dn"));over.querySelectorAll(".kclb.dn").forEach(p=>p.classList.remove("dn"))};
  // hover on the public map: the TYPE, never one lot's status
- const kHov=showHov;showHov=function(i,e){const c=clsOf(i);if(!c||document.body.classList.contains("mysite"))return kHov.apply(this,arguments);const es=L=="es",K=KC[c],I=CLSINFO[c];
-  hov.innerHTML=`<div style="padding:10px 12px;font:600 13px Inter,system-ui,sans-serif;color:#0f2540;max-width:240px"><div style="display:flex;align-items:center;gap:6px;font-weight:800;font-size:15px"><i style="width:12px;height:12px;border-radius:4px;background:${K[0]};border:2px solid ${K[1]}"></i>${es?`Sitio ${CLSNAME[c][1]}`:`${CLSNAME[c][0]} site`}</div><div style="color:#64748b;font-weight:500;margin:2px 0 6px">${I[1]} · ${I[2]} · $${NIGHT(c)}/${es?"noche":"night"}</div><div style="color:#0e7490">${es?"Toque para escoger sus fechas":"Click to pick your dates"}</div></div>`;
+ const kHov=showHov;showHov=function(i,e){const c=clsOf(i);if(!c||document.body.classList.contains("mysite"))return kHov.apply(this,arguments);const es=L=="es",K=KC[c],I=CLSINFO[c],B=window.__brain.free,n=B?((B.c[c]||[])[0]||0):null,cnt=CLSCOUNT(c);
+  hov.classList.add("khov");
+  hov.innerHTML=`<div style="width:270px;font:500 13px/1.45 Inter,system-ui,sans-serif;color:#334155"><div style="background:${K[0]};color:${K[2]};padding:12px 14px"><div style="font:800 17px Inter,system-ui,sans-serif">${es?`Sitios ${CLSNAME[c][1]}`:`${CLSNAME[c][0]} sites`}</div><div style="font-weight:600;opacity:.9">${cnt} ${es?"sitios en este grupo":"sites in this group"}</div></div>
+   <div style="padding:10px 14px 12px"><div>${I[1]} · ${I[2]}</div><div style="margin:2px 0 8px"><b style="color:#0f2540;font-size:15px">$${NIGHT(c)}</b> / ${es?"noche":"night"}${n!=null?` · <span style="color:${n>0?"#047857":"#b91c1c"};font-weight:700">${n>0?(es?`${n} abierto${n>1?"s":""} esta noche`:`${n} open tonight`):(es?"lleno esta noche":"full tonight")}</span>`:""}</div>
+   <div style="background:#0f2540;color:#fff;border-radius:999px;padding:7px 12px;text-align:center;font-weight:800">${es?"Toque para escoger sus fechas →":"Click to pick your dates →"}</div>
+   <div style="color:#64748b;font-size:11.5px;margin-top:6px;text-align:center">${es?"Reserva el tipo; su número llega el día de llegada":"You book the type; your site number comes on arrival day"}</div></div></div>`;
   hov.style.display="block";moveHov(e)};
+ const kHide=hideHov;hideHov=function(){hov.classList.remove("khov");return kHide.apply(this,arguments)};
+ const CLSCOUNT=c=>NUM.filter((_,x)=>clsOf(x)==c&&ST[x]!="na").length;
  // the printed legend on the map image says "Site status" (green/red…): on the public map it shows the TYPES instead
  const kLeg=()=>{try{if(document.body.classList.contains("mysite")||document.getElementById("kleg"))return;const es=L=="es",d=document.createElement("div");d.id="kleg";
   d.style.cssText="position:absolute;left:1.55%;top:32.4%;width:18.7%;height:14.2%;background:#f6f4ec;border-radius:6px;padding:.6% .9%;box-sizing:border-box;pointer-events:none;z-index:3;font:600 clamp(7px,1.05vw,14px)/1.55 Inter,system-ui,sans-serif;color:#0f2540";
@@ -858,6 +868,9 @@ if(!STAFF){
   d.innerHTML=`<div style="font-weight:800;letter-spacing:.02em;margin-bottom:2%">${es?"TIPOS DE SITIO":"SITE TYPES"}</div>`+row(KC.premium,es?"Premium · N":"Premium · N")+row(KC.standard,es?"Estándar · A B C O":"Standard · A B C O")+row(KC.lakeside,es?"Frente al lago · W":"Lakeside · W")+`<div style="font-weight:500;color:#64748b;font-size:.85em;margin-top:2%">${es?"Toque un color para ver fechas":"Tap a color to see dates"}</div>`;
   map.appendChild(d)}catch(e){}};setTimeout(kLeg,800);
  const kLang=lang;lang=function(){kLang.apply(this,arguments);document.getElementById("kleg")?.remove();kLeg()};
+ const kHv=c=>{svg.querySelectorAll("polygon.kc").forEach(p=>{p.classList.toggle("hv",!!c&&p.dataset.c===c);p.classList.toggle("gy",!!c&&p.dataset.c!==c)});over.querySelectorAll(".kclb").forEach(x=>x.classList.toggle("gy",!!c&&x.dataset.c!==c))};
+ svg.addEventListener("pointerover",e=>{const pg=e.target.closest&&e.target.closest("polygon.kc");kHv(pg?pg.dataset.c:null)});
+ svg.addEventListener("pointerleave",()=>kHv(null));
  let kTap=-1;
  svg.addEventListener("pointerdown",e=>{const pg=e.target.closest&&e.target.closest("polygon.kc");if(!pg)return;kTap=+pg.dataset.i;kDown(pg.dataset.c)},true);
  addEventListener("pointerup",()=>setTimeout(kUp,60));addEventListener("pointercancel",kUp);
