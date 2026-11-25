@@ -930,7 +930,7 @@ const kHov=showHov;showHov=function(i,e){const c=clsOf(i);if(!c||document.body.c
  const kOpen=open;open=function(i){if(i===kTap&&clsOf(i)&&!document.body.classList.contains("mysite")){kTap=-1;kUp();return kPop(clsOf(i),i)}return kOpen.apply(this,arguments)};
  // the popup: which nights? (the type's open nights, like a hotel calendar)
  function kPop(c,i){const es=L=="es",K=KC[c],B=window.__brain.free,RU=window.__brain.rules||{},fee=+RU.lock_fee_stay||0,nm=CLSNAME[c][es?1:0],inf=CLSINFO[c],night=NIGHT(c);
-  let a0=null,d0=null,mon=new Date(today.getFullYear(),today.getMonth(),1),pickLock=false,lockState="",lockMsg="";window.__lockLot=null;window.__lockFee=0;
+  let lk=NUM[i],alts=[],a0=null,d0=null,mon=new Date(today.getFullYear(),today.getMonth(),1),pickLock=false,lockState="",lockMsg="";window.__lockLot=null;window.__lockFee=0;
   const k=d=>B?Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-B.start)/DAY):-1;
   const open1=d=>{if(d<today)return false;if(!B)return true;const x=k(d),A=B.c[c]||[];return x>=0&&(x>=A.length||A[x]>0)};
   // Nov 24 (per Mely): open on the first month that has an open night for this type (not an empty month)
@@ -938,9 +938,9 @@ const kHov=showHov;showHov=function(i,e){const c=clsOf(i);if(!c||document.body.c
   const m=document.createElement("div");m.id="kcp";document.getElementById("kcp")?.remove();document.body.appendChild(m);
   const close=()=>{m.remove();window.__lockLot=null;window.__lockFee=0};
   const fmt=d=>d.toLocaleDateString(es?"es-US":"en-US",{weekday:"short",month:"short",day:"numeric"});
-  const runLock=async()=>{lockState="checking";lockMsg="";draw();
-   const r=await brainPost("search",{site_class:c,arrive:bIso(a0),depart:bIso(d0),rv_length_ft:window.__rvl||null,lock_lot:NUM[i]});
-   if(r.lock&&r.lock.ok){lockState="ok";window.__lockLot=NUM[i];window.__lockFee=+r.lock.fee||0;lockMsg=r.lock.lastOne?"free":""}else{lockState="no";window.__lockLot=null;window.__lockFee=0;lockMsg=(r.lock&&r.lock.reason)||(es?"Ese sitio no está libre para esas fechas.":"That site isn't free for those dates.")}draw()};
+  const runLock=async()=>{lockState="checking";lockMsg="";alts=[];draw();
+   const r=await brainPost("search",{site_class:c,arrive:bIso(a0),depart:bIso(d0),rv_length_ft:window.__rvl||null,lock_lot:lk});
+   if(r.lock&&r.lock.ok){lockState="ok";window.__lockLot=lk;window.__lockFee=+r.lock.fee||0;lockMsg=r.lock.lastOne?"free":""}else{lockState="no";window.__lockLot=null;window.__lockFee=0;alts=(r.lock&&r.lock.alternatives)||[];lockMsg=(r.lock&&r.lock.reason)||(es?"Ese sitio no está libre para esas fechas.":"That site isn't free for those dates.")}draw()};
   const draw=()=>{const y=mon.getFullYear(),mo=mon.getMonth(),first=new Date(y,mo,1).getDay(),dim=new Date(y,mo+1,0).getDate();
    const nights=a0&&d0?Math.round((d0-a0)/DAY):0;let cells="";for(let x=0;x<first;x++)cells+="<span></span>";
    for(let dd=1;dd<=dim;dd++){const d=new Date(y,mo,dd),ok=open1(d)||(a0&&!d0&&d>a0),inR=a0&&d0&&d>a0&&d<d0,ed=(a0&&+d==+a0)||(d0&&+d==+d0);cells+=`<button data-d="${+d}" class="${ed?"ed":inR?"in":ok?"":"x"}" ${ok||ed?"":"disabled"}>${dd}</button>`}
@@ -954,8 +954,8 @@ const kHov=showHov;showHov=function(i,e){const c=clsOf(i);if(!c||document.body.c
    <div class="lg"><span><i style="border:1px solid #6ee7b7;background:#d1fae5"></i>${es?"Disponible":"Available"}</span><span><i style="background:#f1f5f9"></i>${es?"Lleno":"Full"}</span><span><i style="background:#0f172a"></i>${es?"Sus fechas":"Your dates"}</span></div>
    ${nights?`<div class="q" style="margin-top:16px">${es?"¿Cómo quiere su sitio?":"How would you like your site?"}</div>
     <button class="opt ${pickLock?"":"on"}" id="kopt1"><span class="rd"></span><span><b>${es?`El mejor sitio ${nm} disponible`:`Best available ${nm} site`}</b>${es?"El sistema escoge el mejor sitio para su RV. Le enviamos el número el día de llegada.":"We match the best site for your RV and send you the site number on arrival day."}</span><span class="am inc">${es?"Incluido":"Included"}</span></button>
-    ${fee>0?`<button class="opt ${pickLock?"on":""}" id="kopt2"><span class="rd"></span><span><b>🔒 ${es?`Asegurar el sitio ${NUM[i]}`:`Lock site ${NUM[i]}`}</b>${es?"Quédese en este sitio exacto toda su estadía. Sabe su número desde hoy.":"Stay on this exact site for your whole stay. You know your site number today."}</span><span class="am">+$${fee} ${es?"por estadía":"per stay"}</span></button>
-    ${pickLock?`<div class="note ${lockState=="ok"?"ok":lockState=="no"?"no":""}">${lockState=="checking"?(es?"Revisando el sitio…":"Checking the site…"):lockState=="ok"?(lockMsg=="free"?(es?`✓ El sitio ${NUM[i]} es el último de este tipo para sus fechas: se lo aseguramos gratis.`:`✓ Site ${NUM[i]} is the last one of this type for your dates, so we lock it for you free.`):(es?`✓ El sitio ${NUM[i]} está libre y queda asegurado para usted.`:`✓ Site ${NUM[i]} is free and will be locked for you.`)):lockMsg}</div>`:""}`:""}`:""}
+    ${fee>0?`<button class="opt ${pickLock?"on":""}" id="kopt2"><span class="rd"></span><span><b>🔒 ${es?`Asegurar el sitio ${lk}`:`Lock site ${lk}`}</b>${es?"Quédese en este sitio exacto toda su estadía. Sabe su número desde hoy.":"Stay on this exact site for your whole stay. You know your site number today."}</span><span class="am">+$${fee} ${es?"por estadía":"per stay"}</span></button>
+    ${pickLock?`<div class="note ${lockState=="ok"?"ok":lockState=="no"?"no":""}">${lockState=="checking"?(es?"Revisando el sitio…":"Checking the site…"):lockState=="ok"?(lockMsg=="free"?(es?`✓ El sitio ${lk} es el último de este tipo para sus fechas: se lo aseguramos gratis.`:`✓ Site ${lk} is the last one of this type for your dates, so we lock it for you free.`):(es?`✓ El sitio ${lk} está libre y queda asegurado para usted.`:`✓ Site ${lk} is free and will be locked for you.`)):lockMsg}${lockState=="no"&&alts.length?`<div style="margin-top:6px;color:#334155">${es?"Estos sitios sí se pueden asegurar para sus fechas:":"These sites can be locked for your dates:"} ${alts.map(x=>`<button class="lk2" data-l="${x}" style="margin:3px 4px 0 0;border:1.5px solid #0f172a;background:#fff;border-radius:999px;padding:4px 10px;font:800 12.5px Inter,system-ui,sans-serif;cursor:pointer">🔒 ${x}</button>`).join("")}</div>`:lockState=="no"?`<div style="margin-top:4px;color:#334155">${es?"Puede reservar el tipo y el sistema le escoge el mejor sitio.":"You can still book the type and the system picks the best site for you."}</div>`:""}</div>`:""}`:""}`:""}
    </div>
    <div class="ft"><div class="tt">${nights?`${es?"Total estimado":"Estimated total"}<b>$${est.toFixed(2)}</b>`:`${es?"Escoja sus fechas":"Pick your dates"}`}</div><button class="go" id="kgo" ${nights&&!(pickLock&&lockState!="ok")?"":"disabled"}>${es?"Continuar":"Continue"} →</button></div></div>`;
    m.querySelector("#kx").onclick=close;m.onclick=e=>{if(e.target===m)close()};
@@ -966,7 +966,7 @@ const kHov=showHov;showHov=function(i,e){const c=clsOf(i);if(!c||document.body.c
      // Nov 24 (per Mely): arriving on the last day of the month → the calendar moves to next month to pick the leave day
      const nx=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1);if(nx.getMonth()!==d.getMonth())mon=new Date(nx.getFullYear(),nx.getMonth(),1)}else d0=d;draw()});
    const o1=m.querySelector("#kopt1");if(o1)o1.onclick=()=>{pickLock=false;lockState="";window.__lockLot=null;window.__lockFee=0;draw()};
-   const o2=m.querySelector("#kopt2");if(o2)o2.onclick=()=>{if(pickLock)return;pickLock=true;runLock()};
+   m.querySelectorAll(".lk2").forEach(x=>x.onclick=()=>{lk=x.dataset.l;pickLock=true;runLock()});const o2=m.querySelector("#kopt2");if(o2)o2.onclick=()=>{if(pickLock)return;pickLock=true;runLock()};
    m.querySelector("#kgo").onclick=()=>{if(!a0||!d0)return;const keep=[window.__lockLot,window.__lockFee];m.remove();window.__lockLot=keep[0];window.__lockFee=keep[1];
     kOpen(i);arr=a0;dep=d0;calM=new Date(a0.getFullYear(),a0.getMonth(),1);drawLot(i);checkout(i)}};
   draw()}
