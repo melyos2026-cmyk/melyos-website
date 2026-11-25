@@ -943,7 +943,9 @@ const kHov=showHov;showHov=function(i,e){const c=clsOf(i);if(!c||document.body.c
    m.querySelector("#kp").onclick=()=>{const p=new Date(mon.getFullYear(),mon.getMonth()-1,1);if(p>=new Date(today.getFullYear(),today.getMonth(),1)){mon=p;draw()}};
    m.querySelector("#kn").onclick=()=>{mon=new Date(mon.getFullYear(),mon.getMonth()+1,1);draw()};
    m.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{const d=new Date(+b.dataset.d);pickLock=false;lockState="";window.__lockLot=null;window.__lockFee=0;
-    if(!a0||d0||d<=a0){a0=d;d0=null}else d0=d;draw()});
+    if(!a0||d0||d<=a0){a0=d;d0=null;
+     // Nov 24 (per Mely): arriving on the last day of the month → the calendar moves to next month to pick the leave day
+     const nx=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1);if(nx.getMonth()!==d.getMonth())mon=new Date(nx.getFullYear(),nx.getMonth(),1)}else d0=d;draw()});
    const o1=m.querySelector("#kopt1");if(o1)o1.onclick=()=>{pickLock=false;lockState="";window.__lockLot=null;window.__lockFee=0;draw()};
    const o2=m.querySelector("#kopt2");if(o2)o2.onclick=()=>{if(pickLock)return;pickLock=true;runLock()};
    m.querySelector("#kgo").onclick=()=>{if(!a0||!d0)return;const keep=[window.__lockLot,window.__lockFee];m.remove();window.__lockLot=keep[0];window.__lockFee=keep[1];
