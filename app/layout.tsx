@@ -75,12 +75,20 @@ const jsonLd = {
       address: { "@type": "PostalAddress", addressLocality: "Kissimmee", addressRegion: "FL", addressCountry: "US" },
       areaServed: "US",
       contactPoint: [{ "@type": "ContactPoint", contactType: "sales", telephone: "+14075646640", email: "info@melyos.io", availableLanguage: ["English", "Spanish"] }],
+      // Nov 27 (per Mely): MelyOS's official profiles, so Google ties them to melyos.io.
+      sameAs: [
+        "https://www.linkedin.com/company/melyos-io",
+        "https://www.facebook.com/GetMelyOS",
+        "https://www.instagram.com/melyos.io/",
+        "https://www.tiktok.com/@melyos.io",
+      ],
     },
     {
       "@type": "WebSite",
       "@id": "https://melyos.io/#website",
       url: "https://melyos.io",
       name: "MelyOS",
+      alternateName: ["MelyOS LLC", "melyos.io"],
       publisher: { "@id": "https://melyos.io/#organization" },
       inLanguage: "en-US",
     },
